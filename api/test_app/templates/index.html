@@ -1,0 +1,27 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+{% load pwa %}
+{% progressive_web_app_meta %}
+<link rel="manifest" href="manifest.json">
+<head>
+    <title>Campus Ride</title>
+</head>
+<body>
+    <h1> Campus Ride </h1>
+    <h2> This is the PWA </h2>
+    <h2> DB test </h2>
+
+    {% if recurring_trip %}
+        <ul>
+        {% for trip in recurring_trip %}
+            <li><a href="/trips/{{ trip.id }}/">{{ trip.driver }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No trips are available.</p>
+    {% endif %}
+
+</body>
+</html>

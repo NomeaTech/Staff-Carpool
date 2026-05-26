@@ -14,7 +14,7 @@ class User(models.Model):
     password = models.CharField(max_length=200)
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
-    pfp = models.ImageField(upload_to='images/')
+    pfp = models.ImageField(upload_to='static/images/')
     address = models.ForeignKey(Address, on_delete=models.CASCADE)
     date_joined = models.DateTimeField("date added")
 
