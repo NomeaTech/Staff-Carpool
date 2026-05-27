@@ -1,0 +1,6 @@
+asgiref==3.11.1
+Django==6.0.5
+django-pwa==2.0.1
+pillow==12.2.0
+psycopg==3.3.4
+sqlparse==0.5.5
