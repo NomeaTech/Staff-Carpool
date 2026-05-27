@@ -171,5 +171,12 @@ PWA_APP_SCREENSHOTS = [
       'src': '/static/images/icons/splash-750x1334.png',
       'sizes': '750x1334',
       "type": "image/png"
+    },
+    {
+      'src': '/static/images/icons/splash-750x1334.png',
+      'sizes': '750x1334',
+      "type": "image/png",
+      "platform": "wide",
+      "form_factor": "wide"
     }
 ]
