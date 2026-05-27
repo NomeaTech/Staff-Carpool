@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.1.170', 'localhost', '127.0.0.1', 'https://ride.fentorweb.hu']
 
-CSRF_TRUSTED_ORIGINS = ['ride.fentorweb.hu']
+CSRF_TRUSTED_ORIGINS = ['https://ride.fentorweb.hu']
 
 CSRF_COOKIE_DOMAIN = 'fentorweb.hu'
 
