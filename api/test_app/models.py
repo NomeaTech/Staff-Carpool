@@ -25,8 +25,8 @@ class Recurring_Trip(models.Model):
     )
     
     private = models.BooleanField()
-    start = models.ForeignKey(Address, on_delete=models.CASCADE, related_name="start")
-    destination = models.ForeignKey(Address, on_delete=models.CASCADE, related_name="destination")
+    start = models.ForeignKey('test_app.Address', on_delete=models.CASCADE, related_name="start")
+    destination = models.ForeignKey('test_app.Address', on_delete=models.CASCADE, related_name="destination")
     created_at = models.DateTimeField("date added")
 
     def __str__(self):

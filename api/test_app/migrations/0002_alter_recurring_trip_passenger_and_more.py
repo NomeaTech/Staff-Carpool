@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('test_app', '0002_alter_user_pfp'),
+        ('test_app', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -22,16 +22,5 @@ class Migration(migrations.Migration):
             model_name='recurring_trip',
             name='driver',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='driver', to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.CreateModel(
-            name='Profile',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('pfp', models.ImageField(upload_to='static/images/')),
-                ('address', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='test_app.address')),
-            ],
-        ),
-        migrations.DeleteModel(
-            name='User',
         ),
     ]

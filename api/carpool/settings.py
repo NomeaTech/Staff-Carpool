@@ -42,6 +42,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 INSTALLED_APPS = [
     'pwa',
     'accounts',
+    'django_extensions',
     'test_app.apps.TestAppConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -134,6 +135,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+AUTH_USER_MODEL = "accounts.User"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
