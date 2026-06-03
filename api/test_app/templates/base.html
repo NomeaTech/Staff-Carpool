@@ -1,0 +1,18 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+{% load pwa %}
+{% progressive_web_app_meta %}
+<link rel="manifest" href="manifest.json">
+<head>
+    <title>{% block title%}Campus Ride{% endblock %}</title>
+</head>
+<body>
+    <h1>Campus Ride</h1>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>
