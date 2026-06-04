@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}My Trips{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<h3>Logged in user: {{user.username}}</h3>
+<hr>
+
+{% if recurring_trips %}
+<h2>My Trips</h2>
+    <ul>
+    {% for trip in recurring_trips %}
+        <li>Driver: <a href="/trips/{{ trip.id }}/"> {{ trip.driver }}</a> {{ trip.passenger.all.count }}</li>
+        {% for p in trip.passenger.all %}
+            <p>{{p}}</p>
+        {% endfor %}
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No trips are available.</p>
+{% endif %}
+
+{% endif %}
+{% endblock %}
