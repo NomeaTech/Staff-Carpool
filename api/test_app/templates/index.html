@@ -1,27 +1,52 @@
-{% load static %}
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html>
-{% load pwa %}
-{% progressive_web_app_meta %}
-<link rel="manifest" href="manifest.json">
-<head>
-    <title>Campus Ride</title>
-</head>
-<body>
-    <h1> Campus Ride </h1>
-    <h2> This is the PWA </h2>
-    <h2> This is a test for CI / CD. If you see this, pop some shampagne</h2>
+{% block title %}Home{% endblock %}
 
-    {% if recurring_trip %}
-        <ul>
-        {% for trip in recurring_trip %}
-            <li><a href="/trips/{{ trip.id }}/">{{ trip.driver }}</a></li>
+{% block content %}
+{% if user.is_authenticated %}
+<h3>Logged in user: {{user.username}}</h3>
+<p><a href="{% url 'password_change' %}">Change Password</a></p>
+<p><a href="{% url 'My Trips (Driver)' %}">Change Password</a></p>
+<p><a href="{% url 'My Trips (Passenger)' %}">Change Password</a></p>
+
+<form action="{% url 'logout' %}" method="post">
+
+    {% csrf_token %}
+    <button type="submit">Log Out</button>
+</form>
+
+<h1>Debug</h1>
+<hr>
+
+{% if recurring_trip %}
+<h2>Trips</h2>
+    <ul>
+    {% for trip in recurring_trip %}
+        <li>Driver: <a href="/trips/{{ trip.id }}/"> {{ trip.driver }}</a> {{ trip.passenger.all.count }}</li>
+        {% for p in trip.passenger.all %}
+            <p>{{p}}</p>
         {% endfor %}
-        </ul>
-    {% else %}
-        <p>No trips are available.</p>
-    {% endif %}
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No trips are available.</p>
+{% endif %}
 
-</body>
-</html>
+<!-- User test -->
+
+<h2>Users</h2>
+{% if users %}
+    <ul>
+    {% for user in users %}
+        <li><a href="/users/{{ user.id }}/">{{ user.first_name }} {{ user.last_name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No users are available.</p>
+{% endif %}
+
+{% else %} <!-- Else for authentication check -->
+<h3>Access denied</h3>
+<a href="{%url 'login' %}">Log In</a>
+{% endif %}
+{% endblock %}

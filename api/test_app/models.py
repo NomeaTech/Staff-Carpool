@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 class Address(models.Model):
     country = models.CharField(max_length=200)
@@ -10,27 +11,26 @@ class Address(models.Model):
     def __str__(self):
         return f"{self.country}, {self.city}, {self.postcode}, {self.street} {self.number}"
 
-class User(models.Model):
-    password = models.CharField(max_length=200)
-    first_name = models.CharField(max_length=200)
-    last_name = models.CharField(max_length=200)
-    pfp = models.ImageField(upload_to='static/images/')
-    address = models.ForeignKey(Address, on_delete=models.CASCADE)
-    date_joined = models.DateTimeField("date added")
-
-    def __str__(self):
-        return f"{self.first_name} {self.last_name}"
-
 class Recurring_Trip(models.Model):
-    driver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="driver")
-    passenger = models.ForeignKey(User, on_delete=models.CASCADE, related_name="passenger")
+    driver = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name="driver"
+    )
+
+    passenger = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, 
+        related_name="passenger"
+    )
+    
     private = models.BooleanField()
-    start = models.ForeignKey(Address, on_delete=models.CASCADE, related_name="start")
-    destination = models.ForeignKey(Address, on_delete=models.CASCADE, related_name="destination")
+    start = models.ForeignKey('test_app.Address', on_delete=models.CASCADE, related_name="start")
+    destination = models.ForeignKey('test_app.Address', on_delete=models.CASCADE, related_name="destination")
     created_at = models.DateTimeField("date added")
 
     def __str__(self):
-        return f"Driver: {self.driver}, Passenger: {self.passenger}"
+        passengers = " ".join([ str(p) for p in self.passenger.all() ])
+        return f"Driver: {self.driver}, Passenger: {passengers}"
 
 def to_string(self):
     l = ""
