@@ -29,8 +29,8 @@ class Recurring_Trip(models.Model):
     created_at = models.DateTimeField("date added")
 
     def __str__(self):
-        passengers = " ".join([ str(p) for p in self.passenger.all() ])
-        return f"Driver: {self.driver}, Passenger: {passengers}"
+        passengers = ", ".join([ str(p) for p in self.passenger.all() ])
+        return f"Driver: {self.driver}, Passengers: {passengers}"
 
 def to_string(self):
     l = ""
