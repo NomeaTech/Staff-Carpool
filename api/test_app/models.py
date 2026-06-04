@@ -18,9 +18,8 @@ class Recurring_Trip(models.Model):
         related_name="driver"
     )
 
-    passenger = models.ForeignKey(
+    passenger = models.ManyToManyField(
         settings.AUTH_USER_MODEL, 
-        on_delete=models.CASCADE, 
         related_name="passenger"
     )
     
@@ -30,7 +29,8 @@ class Recurring_Trip(models.Model):
     created_at = models.DateTimeField("date added")
 
     def __str__(self):
-        return f"Driver: {self.driver}, Passenger: {self.passenger}"
+        passengers = " ".join([ str(p) for p in self.passenger.all() ])
+        return f"Driver: {self.driver}, Passenger: {passengers}"
 
 def to_string(self):
     l = ""
