@@ -12,3 +12,11 @@ def index(request):
     context = {"recurring_trip": trip_list, "users": users}
 
     return render(request, "index.html", context)
+
+@login_required
+def my_trips(request):
+    user = request.user
+    trip_list = user.recurring_trips.all()
+    context = {"recurring_trips": trip_list}
+
+    return render(request, "my_trips.html", context)
