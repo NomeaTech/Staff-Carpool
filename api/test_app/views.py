@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Recurring_Trip
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
@@ -20,3 +20,11 @@ def my_trips(request):
     context = {"recurring_trips": trip_list}
 
     return render(request, "my_trips.html", context)
+
+@login_required
+def recurring_trip_detail(request, recurring_trip_id):
+    recurring_trip = get_object_or_404(Recurring_Trip, pk=recurring_trip_id)
+    context = {"recurring_trip": recurring_trip}
+    
+    return render(request, "recurring_trip_detail.html", context)
+ 

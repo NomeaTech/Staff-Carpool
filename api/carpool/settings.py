@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'accounts',
     'django_extensions',
     'test_app.apps.TestAppConfig',
+    'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -139,6 +140,9 @@ LOGOUT_REDIRECT_URL = "/"
 AUTH_USER_MODEL = "accounts.User"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # PWA Stuff =============================================================================================
 STATICFILES_DIRS = [
