@@ -11,7 +11,10 @@ class CustomUserAdmin(UserAdmin):
     list_display = [
         "email",
         "username",
-        # "address",
+        "first_name",
+        "last_name",
     ]
-    # fieldsets = UserAdmin.fieldsets + ((None, {"fields": ("address",)}),)
-    # add_fieldsets = UserAdmin.add_fieldsets + ((None, {"fields": ("address",)}),)
+    fieldsets = UserAdmin.fieldsets + ((None, {"fields": ("address",)}),)
+    add_fieldsets = UserAdmin.add_fieldsets + ((None, {"fields": ("address",)}),)
+
+admin.site.register(User, CustomUserAdmin)

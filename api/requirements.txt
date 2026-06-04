@@ -1,8 +1,17 @@
 asgiref==3.11.1
 Django==6.0.5
+django-extensions==4.1
+django-pghistory==3.9.2
+django-pgtrigger==4.17.0
 django-pwa==2.0.1
+django-rest-auth==0.9.5
+django-translations==1.4.4
+djangorestframework==3.17.1
+dotenv==0.9.9
 gunicorn==26.0.0
 packaging==26.2
 pillow==12.2.0
 psycopg==3.3.4
+python-dotenv==1.2.2
+six==1.17.0
 sqlparse==0.5.5
