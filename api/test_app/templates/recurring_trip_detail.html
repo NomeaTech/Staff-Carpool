@@ -21,4 +21,14 @@
 <p>No trips are available.</p>
 {% endif %}
 
+<span>
+{% if is_driver %}
+<button>Delete Trip</button>
+{% endif %}
+
+{% if not is_passenger and not is_driver %}
+<button>Join Trip</button>
+{% endif %}
+</span>
+
 {% endblock %}

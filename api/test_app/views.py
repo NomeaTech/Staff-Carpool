@@ -24,7 +24,14 @@ def my_trips(request):
 @login_required
 def recurring_trip_detail(request, recurring_trip_id):
     recurring_trip = get_object_or_404(Recurring_Trip, pk=recurring_trip_id)
-    context = {"recurring_trip": recurring_trip}
+    is_driver = True if recurring_trip.driver.id == request.user.id else False
+    is_passenger = True if request.user in recurring_trip.passenger.all() else False
+
+    context = {
+        "recurring_trip": recurring_trip, 
+        "is_driver": is_driver, 
+        "is_passenger": is_passenger
+    }
     
     return render(request, "recurring_trip_detail.html", context)
  
