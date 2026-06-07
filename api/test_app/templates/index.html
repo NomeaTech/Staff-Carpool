@@ -9,11 +9,14 @@
 <p><a href="{% url 'my_trips' %}">My Trips</a></p>
 
 <form action="{% url 'logout' %}" method="post">
-
     {% csrf_token %}
     <button type="submit">Log Out</button>
 </form>
 
+<form action="{% url 'create_recurring_trip' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Create Recurring Trip</button>
+</form>
 
 {% if recurring_trip %}
 <h2>Public Trips</h2>

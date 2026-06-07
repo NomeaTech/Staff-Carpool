@@ -23,12 +23,29 @@
 
 <span>
 {% if is_driver %}
-<button>Delete Trip</button>
+<form action="{% url 'delete_trip' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" id="recurring_trip" type="text" name="recurring_trip" value="{{ recurring_trip.id }}">
+    <button type="submit">Delete Trip</button>
+</form>
 {% endif %}
 
 {% if not is_passenger and not is_driver %}
-<button>Join Trip</button>
+<form action="{% url 'join_trip' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" id="recurring_trip" type="text" name="recurring_trip" value="{{ recurring_trip.id }}">
+    <button type="submit">Join Trip</button>
+</form>
 {% endif %}
+
+{% if is_passenger and not is_driver %}
+<form action="{% url 'leave_trip' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" id="recurring_trip" type="text" name="recurring_trip" value="{{ recurring_trip.id }}">
+    <button type="submit">Leave Trip</button>
+</form>
+{% endif %}
+
 </span>
 
 {% endblock %}
