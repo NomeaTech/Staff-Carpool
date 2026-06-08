@@ -18,7 +18,13 @@ class RecurringTripForm(forms.ModelForm):
         fields = (
             # "start",
             # "destination",
-            # "leaving_at",
-            # "arriving_at",
             "private",
+            "max_passengers",
+            "leaving_at_weekday",
+            "leaving_at_hour",
+            "leaving_at_minute",
+            "arriving_at_weekday",
+            "arriving_at_hour",
+            "arriving_at_minute",
+            "note",
         )

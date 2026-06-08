@@ -25,6 +25,7 @@ class Recurring_Trip(models.Model):
     )
     
     private = models.BooleanField()
+    max_passengers = models.IntegerField()
     start = models.ForeignKey('test_app.Address', on_delete=models.CASCADE, related_name="start")
     destination = models.ForeignKey('test_app.Address', on_delete=models.CASCADE, related_name="destination")
     # leaving_at = models.DateTimeField("time car leaves")#, default=datetime.strptime("1, 00:00 (1900)","%-d, %H:%M (%Y)"))
@@ -40,10 +41,14 @@ class Recurring_Trip(models.Model):
         ("sunday","Sunday")
     )
 
-    #leaving_at
-    la_weekday = models.CharField(max_length=10, choices=WEEKDAY_CHOICES)
-    # la_time = models.
-    #
+    leaving_at_weekday = models.CharField(max_length=10, choices=WEEKDAY_CHOICES)
+    leaving_at_hour = models.IntegerField()
+    leaving_at_minute = models.IntegerField()
+
+    arriving_at_weekday = models.CharField(max_length=10, choices=WEEKDAY_CHOICES)
+    arriving_at_hour = models.IntegerField()
+    arriving_at_minute = models.IntegerField()
+
     note = models.TextField(blank=True, default="", help_text="Any kind of note for passengers")
 
     created_at = models.DateTimeField("date added", auto_now_add=True)

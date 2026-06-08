@@ -4,6 +4,7 @@ from .models import Recurring_Trip
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from .forms import AddressForm, RecurringTripForm
+import traceback
 
 @login_required
 def index(request):
@@ -29,15 +30,28 @@ def recurring_trip_detail(request, recurring_trip_id):
     recurring_trip = get_object_or_404(Recurring_Trip, pk=recurring_trip_id)
     is_driver = True if recurring_trip.driver.id == request.user.id else False
     is_passenger = True if request.user in recurring_trip.passenger.all() else False
-    leaving_at = recurring_trip.leaving_at.strftime("%A, %H:%M")
-    arriving_at = recurring_trip.leaving_at.strftime("%A, %H:%M")
+    # leaving_at = recurring_trip.leaving_at.strftime("%A, %H:%M")
+    # arriving_at = recurring_trip.leaving_at.strftime("%A, %H:%M")
+
+    l_weekday = recurring_trip.leaving_at_weekday
+    l_hour = recurring_trip.leaving_at_hour
+    l_minute = recurring_trip.leaving_at_minute
+
+    a_weekday = recurring_trip.arriving_at_weekday
+    a_hour = recurring_trip.arriving_at_hour
+    a_minute = recurring_trip.arriving_at_minute
+
+
+    leaving_at = f"{l_weekday.title()}, {str(l_hour).zfill(2)}:{str(l_minute).zfill(2)}"
+    arriving_at = f"{a_weekday.title()}, {str(a_hour).zfill(2)}:{str(a_minute).zfill(2)}"
 
     context = {
         "recurring_trip": recurring_trip, 
         "is_driver": is_driver, 
         "is_passenger": is_passenger,
         "leaving_at": leaving_at,
-        "arriving_at": arriving_at
+        "arriving_at": arriving_at,
+        "num_passengers": len(recurring_trip.passenger.all()),
     }
     
     return render(request, "recurring_trip_detail.html", context)
@@ -78,17 +92,38 @@ def trip_helper(request):
 @login_required
 def create_recurring_trip(request):    
     if request.method == "POST":
-        recurring_trip_form = RecurringTripForm(request.POST)
-        to_address_form = AddressForm(request.POST)
         from_address_form = AddressForm(request.POST)
-        if recurring_trip_form.is_valid():
-            data = recurring_trip_form.cleaned_data
-            recurring_trip_form.save(commit=False)
+        to_address_form = AddressForm(request.POST)
+        recurring_trip_form = RecurringTripForm(request.POST)
+        if recurring_trip_form.is_valid() and to_address_form.is_valid() and from_address_form.is_valid():
+            
+            success = True
 
-            context = {"data": data}
+            try:            
+                trip = recurring_trip_form.save(commit=False)
+                from_address = from_address_form.save()
+                to_address = to_address_form.save()
+                
+                trip.start = from_address
+                trip.destination = to_address
+
+                trip.driver = request.user
+
+                trip.save()
+            except Exception as e:
+                traceback.print_exc()
+                success = False
+
+            context = {"success": success}
+
             return render(request, "trip_created.html", context)
     else:
         recurring_trip_form = RecurringTripForm()
 
-    context = {"form": recurring_trip_form}
+    context = {
+        "from_address_form": from_address_form,
+        "to_address_form": to_address_form,
+        "recurring_trip_form": recurring_trip_form
+    }
+
     return render(request, "create_recurring_trip.html", context)
