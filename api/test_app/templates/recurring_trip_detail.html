@@ -16,7 +16,10 @@
 {% endfor %}
 <p>Start: {{ recurring_trip.start }}</p>
 <p>Destination: {{ recurring_trip.destination }}</p>
+<p>Leaving at: {{ leaving_at }}</p>
+<p>Arriving at: {{ arriving_at }}</p>
 <p>Created at: {{ recurring_trip.created_at }}</p>
+
 {% else %}
 <p>No trips are available.</p>
 {% endif %}

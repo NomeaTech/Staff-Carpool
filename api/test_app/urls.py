@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import my_trips, index, recurring_trip_detail, join_trip, delete_trip, leave_trip
+from .views import *
 
 urlpatterns = [
     path("", index, name="index"),
@@ -7,5 +7,6 @@ urlpatterns = [
     path("recurring-trip/join_trip", join_trip, name="join_trip"),
     path("recurring-trip/leave_trip", leave_trip, name="leave_trip"),
     path("recurring-trip/delete_trip", delete_trip, name="delete_trip"),
-    path("recurring-trip/<int:recurring_trip_id>/", recurring_trip_detail, name="recurring_trip_detail")
+    path("recurring-trip/<int:recurring_trip_id>/", recurring_trip_detail, name="recurring_trip_detail"),
+    path("create-recurring-trip/", create_recurring_trip, name="create_recurring_trip")
 ]
