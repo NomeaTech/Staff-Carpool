@@ -1,4 +1,5 @@
 asgiref==3.11.1
+DateTime==6.0
 Django==6.0.5
 django-crispy-forms==2.6
 django-extensions==4.1
@@ -14,5 +15,7 @@ packaging==26.2
 pillow==12.2.0
 psycopg==3.3.4
 python-dotenv==1.2.2
+pytz==2026.2
 six==1.17.0
 sqlparse==0.5.5
+zope.interface==8.5

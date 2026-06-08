@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Create Recurring Trip{% endblock %}
+
+{% block content %}
+
+<form action="/create-recurring-trip/" method="post">
+    {% csrf_token %}
+    <h3>From Address</h3>
+    {{ from_address_form.as_p }}
+    <h3>To Addres</h3>
+    {{ to_address_form.as_p }}
+    <h3>Other Settings</h3>
+    {{ recurring_trip_form.as_p }}
+    <!-- {{ form.as_p }} -->
+
+    <input type="submit" value="Submit">
+</form>
+
+{% endblock %}

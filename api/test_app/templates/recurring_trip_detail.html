@@ -7,18 +7,53 @@
 {% if recurring_trip %}
 <h2>Trip ID: {{ recurring_trip.id }}</h2>
 <p>Driver: {{ recurring_trip.driver }}</p>
+
+{% if num_passengers == 0 %}
+<p> No passengers yet </p>
+{% else %}
 <p>Passengers:</p>
 {% for p in recurring_trip.passenger.all %}
 <ul>
     <li>{{p}}</li>
 </ul>
-
 {% endfor %}
+{% endif %}
+
 <p>Start: {{ recurring_trip.start }}</p>
 <p>Destination: {{ recurring_trip.destination }}</p>
+<p>Leaving at: {{ leaving_at }}</p>
+<p>Arriving at: {{ arriving_at }}</p>
 <p>Created at: {{ recurring_trip.created_at }}</p>
+
 {% else %}
 <p>No trips are available.</p>
 {% endif %}
+
+<span>
+{% if is_driver %}
+<form action="{% url 'delete_trip' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" id="recurring_trip" type="text" name="recurring_trip" value="{{ recurring_trip.id }}">
+    <button type="submit">Delete Trip</button>
+</form>
+{% endif %}
+
+{% if not is_passenger and not is_driver %}
+<form action="{% url 'join_trip' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" id="recurring_trip" type="text" name="recurring_trip" value="{{ recurring_trip.id }}">
+    <button type="submit">Join Trip</button>
+</form>
+{% endif %}
+
+{% if is_passenger and not is_driver %}
+<form action="{% url 'leave_trip' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" id="recurring_trip" type="text" name="recurring_trip" value="{{ recurring_trip.id }}">
+    <button type="submit">Leave Trip</button>
+</form>
+{% endif %}
+
+</span>
 
 {% endblock %}
