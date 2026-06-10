@@ -9,7 +9,7 @@
 {% block content %}
 
 <div>
-  <div class="card bg-base-100 w-96 shadow-sm font-display prose prose-stone">
+  <div class="card bg-base-100 w-96 shadow-sm font-display">
       <div class="card-body">
         <div class="flex flex-nowrap mb-4 justify-between">
           <h2 class="card-title mb-0 mt-0">Login</h2>
@@ -43,8 +43,8 @@
             {{ form.username|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Username"}}
             {{ form.password|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Password"}}
             
-            <button type="submit" class="btn btn-sm btn-primary col-span-2">Log In</button> 
-            <a href="{% url 'signup' %}" class="btn btn-sm btn-secondary col-span-1 col-start-3">Sign up</a>  
+            <button type="submit" class="btn btn-md btn-primary col-span-2">Log In</button> 
+            <a href="{% url 'signup' %}" class="btn btn-md btn-secondary col-span-1 col-start-3">Sign up</a>  
             <a href="{% url 'password_reset' %}" class="btn btn-sm btn-ghost col-span-3">Password Reset</a>
           </div>
         </form>

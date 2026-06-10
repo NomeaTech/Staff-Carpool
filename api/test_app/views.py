@@ -8,6 +8,11 @@ import traceback
 
 @login_required
 def index(request):
+
+    return HttpResponseRedirect("/app/home/")
+
+@login_required
+def old_index(request):
     trip_list = Recurring_Trip.objects.order_by("-created_at")
     User = get_user_model()
     users = User.objects.all()

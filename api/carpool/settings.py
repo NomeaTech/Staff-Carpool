@@ -44,6 +44,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 INSTALLED_APPS = [
     # local
+    'home',
     'theme',
     'tailwind',
     'pwa',
@@ -148,8 +149,8 @@ STATIC_ROOT = os.getenv("STATIC_ROOT")
 
 TAILWIND_APP_NAME = "theme"
 
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "index"
 
 AUTH_USER_MODEL = "accounts.User"
 
