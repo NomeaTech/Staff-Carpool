@@ -26,13 +26,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-b5#5d$r5xiwkx@dn$crcifariwfxt)q$$&qb3it$$+30u6vn_6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG")
 
 ALLOWED_HOSTS = ['192.168.1.170', 'localhost', '127.0.0.1', 'https://ride.fentorweb.hu']
 
-CSRF_TRUSTED_ORIGINS = ['https://ride.fentorweb.hu']
+CSRF_TRUSTED_ORIGINS = ['https://ride.fentorweb.hu', 'https://localhost']
 
-CSRF_COOKIE_DOMAIN = 'fentorweb.hu'
+CSRF_COOKIE_DOMAIN = os.getenv("CSRF_COOKIE_DOMAIN")
 
 CORS_REPLACE_HTTPS_REFERER = True
 
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'accounts',
     'test_app.apps.TestAppConfig',
     # 3rd party
+    'widget_tweaks',
     'django_extensions',
     'crispy_forms',
     'crispy_tailwind',
