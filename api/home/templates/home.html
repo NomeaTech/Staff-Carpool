@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h3>Logged in user: {{user.username}}</h3>
+<hr>
+
+{% if recurring_trips %}
+    {% for recurring_trip in recurring_trips %}
+        <h2>Trip ID: {{ recurring_trip.id }}</h2>
+        <p>Driver: {{ recurring_trip.driver }}</p>
+        <p>Passengers:</p>
+        {% for p in recurring_trip.passenger.all %}
+        <ul>
+            <li>{{p}}</li>
+        </ul>
+        
+        {% endfor %}
+        <p>Start: {{ recurring_trip.start }}</p>
+        <p>Destination: {{ recurring_trip.destination }}</p>
+        <p>Created at: {{ recurring_trip.created_at }}</p>
+    {% endfor %}
+{% else %}
+<p>No trips are available.</p>
+{% endif %}
+
+{% endblock %}
