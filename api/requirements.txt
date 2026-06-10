@@ -17,6 +17,7 @@ django-pwa==2.0.1
 django-rest-auth==0.9.5
 django-tailwind==4.4.2
 django-translations==1.4.4
+django-widget-tweaks==1.5.1
 djangorestframework==3.17.1
 dotenv==0.9.9
 gunicorn==26.0.0
