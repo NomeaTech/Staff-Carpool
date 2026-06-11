@@ -1,10 +1,10 @@
-{% extends "base.html" %}
+{% extends "app.html" %}
 
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<h3>Logged in user: {{user.username}}</h3>
-<hr>
+
+<!-- <h3>Logged in user: {{user.username}}</h3> -->
 
 {% if recurring_trips %}
     {% for recurring_trip in recurring_trips %}
@@ -20,6 +20,34 @@
         <p>Start: {{ recurring_trip.start }}</p>
         <p>Destination: {{ recurring_trip.destination }}</p>
         <p>Created at: {{ recurring_trip.created_at }}</p>
+
+        <!-- Add animation to drop shadow -->
+        <a href="/recurring-trip/{{recurring_trip.id}}/">
+            <div class="card card-border bg-base-100 lg:w-150 md:w-120 w-90 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
+                <div class="card-body">
+                    <h2 class="card-title">{{ recurring_trip.driver}}'s Trip to<p class="text-secondary">NAME OF PLACE</p></h2>
+                
+                    <div class="flex gap-2">
+                        <div class="badge badge-info badge-sm">{{ recurring_trip.leaving_at_weekday.title }}</div>
+                        <div class="badge badge-info badge-sm">{{ recurring_trip.leaving_at_hour. }}</div>
+                    </div>
+
+                    {% if recurring_trip.note != "" %}
+                    <p>{{ recurring_trip.note }}</p>
+                    {% endif %}
+
+                    {% if recurring_trip.passenger.all.count != 0 %}
+                        <div class="flex gap-2">
+                        {% for p in recurring_trip.passenger.all %}
+                            <!-- <a href="/profile/{{p.id}}"><div class="badge badge-soft badge-primary badge-sm">{{p}}</div></a> -->
+                            <div class="badge badge-soft badge-primary badge-sm">{{p}}</div>    
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                    <p class="text-secondary">Trip in 2 days</p>
+                </div>
+            </div>
+        </a>
     {% endfor %}
 {% else %}
 <p>No trips are available.</p>

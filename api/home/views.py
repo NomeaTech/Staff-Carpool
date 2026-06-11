@@ -9,8 +9,17 @@ import traceback
 def home(request):
     user = request.user
     trip_list = user.recurring_trips.all()
-    context = {"recurring_trips": trip_list}
 
+    for recurring_trip in trip_list:
+        l_weekday = recurring_trip.leaving_at_weekday
+        l_hour = recurring_trip.leaving_at_hour
+        l_minute = recurring_trip.leaving_at_minute
+
+        a_weekday = recurring_trip.arriving_at_weekday
+        a_hour = recurring_trip.arriving_at_hour
+        a_minute = recurring_trip.arriving_at_minute
+
+    context = {"recurring_trips": trip_list}
     return render(request, "home.html", context)
 
 @login_required
