@@ -32,13 +32,13 @@ class Recurring_Trip(models.Model):
     # arriving_at = models.DateTimeField("time car arrives")#, default=datetime.strptime("1, 00:00 (1900)","%-d, %H:%M (%Y)"))
     
     WEEKDAY_CHOICES = (
-        ("monday", "Monday"),
-        ("tuesday","Tuesday"),
-        ("wednesday","Wednesday"),
-        ("thursday","Thursday"),
-        ("friday","Friday"),
-        ("saturday","Saturday"),
-        ("sunday","Sunday")
+        ("Monday", "monday"),
+        ("Tuesday","tuesday"),
+        ("Wednesday","wednesday"),
+        ("Thursday","thursday"),
+        ("Friday","friday"),
+        ("Saturday","saturday"),
+        ("Sunday","sunday")
     )
 
     leaving_at_weekday = models.CharField(max_length=10, choices=WEEKDAY_CHOICES)
@@ -50,6 +50,7 @@ class Recurring_Trip(models.Model):
     arriving_at_minute = models.IntegerField()
 
     note = models.TextField(blank=True, default="", help_text="Any kind of note for passengers")
+    destName = models.CharField(help_text="Destination name")
 
     created_at = models.DateTimeField("date added", auto_now_add=True)
 
