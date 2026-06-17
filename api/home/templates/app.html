@@ -1,7 +1,7 @@
 {% load static tailwind_tags %}
 
 <!DOCTYPE html>
-<html data-theme="light">
+<html data-theme="light" class="h-full overflow-hidden">
 {% load pwa %}
 {% progressive_web_app_meta %}
 
@@ -14,8 +14,8 @@
     {% tailwind_css %}
 </head>
 
-<body class="bg-base-200">
-    <div class="hidden navbar bg-base-100 lg:flex">
+<body class="flex bg-base-200 justify-content-center h-full">
+    <div class="hidden navbar fixed bg-base-100 lg:flex">
         <div class="navbar-start">
           <div class="dropdown">
             <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
@@ -46,13 +46,9 @@
         </div>
     </div>
 
-    <div class="container mx-auto">
-        <section class="flex items-center justify-center h-screen">
-            <main>
-                {% block content %}
-                {% endblock %}
-            </main>
-        </section>
+    <div class="flex justify-items-center mx-auto">
+        {% block content %}
+        {% endblock %}
     </div>
 
 <!-- dock for mobile view, navbar for desktop view -->

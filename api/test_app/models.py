@@ -50,6 +50,7 @@ class Recurring_Trip(models.Model):
     arriving_at_minute = models.IntegerField()
 
     note = models.TextField(blank=True, default="", help_text="Any kind of note for passengers")
+    destName = models.CharField(help_text="Destination name")
 
     created_at = models.DateTimeField("date added", auto_now_add=True)
 

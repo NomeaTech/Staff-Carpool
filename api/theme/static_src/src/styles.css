@@ -1,7 +1,18 @@
 @import "tailwindcss";
+@import 'tailwind-scrollbar-hide/v4';
 @plugin "daisyui" {
   themes: light --default, dark --prefersdark;
 }
+
+/* @layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+      display: none;
+  }
+  .no-scrollbar {
+      -ms-overflow-style: none; 
+      scrollbar-width: none;
+  }
+} */
 
 @plugin "daisyui/theme" {
   name: "light";
