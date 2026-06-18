@@ -3,7 +3,7 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<section class="grid grid-cols-1 xl:grid-cols-3 gap-10 pt-3 lg:pt-20 justify-center h-screen mx-auto">
+<section class="grid grid-cols-1 xl:grid-cols-3 gap-10 lg:pt-20 justify-center h-screen mx-auto">
         <!-- <h3>Logged in user: {{user.username}}</h3> -->
 
         <div class="hidden col-span-1 justify-self-end xl:block">
@@ -40,35 +40,14 @@
               </ul>
         </div>
 
-        <div class="mb-15 md:mb-0 lg:pb-2 pb-15 col-span-1 xl:px-0 justify-self-center overflow-scroll scrollbar-hide">
+        <div class="pt-3 mb-15 md:mb-0 lg:pb-2 pb-15 col-span-1 xl:px-0 justify-self-center overflow-scroll scrollbar-hide">
           {% if recurring_trips %}
               {% for recurring_trip in recurring_trips %}
-                  <!-- <h2>Trip ID: {{ recurring_trip.id }}</h2>
-                  <p>Driver: {{ recurring_trip.driver }}</p>
-                  <p>Passengers:</p>
-                  {% for p in recurring_trip.passenger.all %}
-                  <ul>
-                      <li>{{p}}</li>
-                  </ul>
-                  
-                  {% endfor %}
-                  <p>Start: {{ recurring_trip.start }}</p>
-                  <p>Destination: {{ recurring_trip.destination }}</p>
-                  <p>Created at: {{ recurring_trip.created_at }}</p> -->
-
+                
                 <a href="/recurring-trip/{{recurring_trip.id}}/">
                     <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
                         <div class="card-body">
                             <h2 class="card-title"><div>{{ recurring_trip.driver}}'s Trip to <span class="text-secondary inline">{{ recurring_trip.destName}} </span>on <span class="text-primary inline">{{ recurring_trip.leaving_at_weekday.title }} </span>at <span class="text-primary inline">{{ recurring_trip.leaving_at_hour }}:{{ recurring_trip.leaving_at_minute }}</span></div></h2>
-                        
-                            <!-- <div class="flex gap-2">
-                                <div class="badge badge-info badge-sm">{{ recurring_trip.leaving_at_weekday.title }}</div>
-                                <div class="badge badge-info badge-sm">{{ recurring_trip.leaving_at_hour. }}</div>
-                            </div> -->
-
-                            <!-- <div class="flex gap-2">
-                                <kbd class="kbd">{{ recurring_trip.leaving_at_weekday.title }}</kbd>
-                            </div> -->
 
                             {% if recurring_trip.note != "" %}
                             <p>{{ recurring_trip.note }}</p>
