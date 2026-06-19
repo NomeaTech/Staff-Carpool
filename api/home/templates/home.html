@@ -3,44 +3,34 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<section class="grid grid-cols-1 xl:grid-cols-3 gap-10 lg:pt-20 justify-center h-screen mx-auto">
+<section class="grid grid-cols-1 xl:grid-cols-3 gap-10 lg:pt-16 justify-center h-screen mx-auto">
         <!-- <h3>Logged in user: {{user.username}}</h3> -->
 
-        <div class="hidden col-span-1 justify-self-end xl:block">
+        <div class="hidden col-span-1 justify-self-end xl:block lg:mt-3">
             <ul class="list bg-base-100 rounded-box shadow-md">
   
                 <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Friends</li>
-                
-                <a href="/">
-                  <li class="list-row">
-                    <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/1@94.webp"/></div>
-                    <div class="flex items-center">
-                      <div>Jimmy Bean</div>
-                    </div>
-                  </li>
-                </a>
-                
-                <a href="/">
-                  <li class="list-row">
-                    <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/4@94.webp"/></div>
-                    <div class="flex items-center">
-                      <div>Bob</div>
-                    </div>
-                  </li>
-                </a>
+                  
+                {% for user in users %}
+                  <a href="/profile/{{ user.id }}">
+                    <li class="list-row">
+                      
+                      <div class="avatar">
+                        <div class="w-8 rounded-full">
+                          <img src="https://img.daisyui.com/images/profile/demo/batperson@192.webp" />
+                        </div>
+                      </div>
 
-                <a href="/">
-                  <li class="list-row">
-                    <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/3@94.webp"/></div>
-                    <div class="flex items-center">
-                      <div>Jeffrey Hartley</div>
-                    </div>
-                  </li>
-                </a>
-              </ul>
+                      <div class="flex items-center">
+                        <div>{{ user.first_name }} {{ user.last_name }}</div>
+                      </div>
+                    </li>
+                  </a>
+                {% endfor %}
+                
         </div>
 
-        <div class="pt-3 mb-15 md:mb-0 lg:pb-2 pb-15 col-span-1 xl:px-0 justify-self-center overflow-scroll scrollbar-hide">
+        <div class="lg:pt-3 mb-15 md:mb-0 lg:pb-2 pb-15 col-span-1 xl:px-0 justify-self-center overflow-scroll scrollbar-hide">
           {% if recurring_trips %}
               {% for recurring_trip in recurring_trips %}
                 
@@ -71,7 +61,7 @@
         <p>No trips are available.</p>
         {% endif %}
 
-        <div class="hidden col-span-1 justify-self-start xl:block">
+        <div class="hidden col-span-1 justify-self-start xl:block lg:mt-3">
             <ul class="list bg-base-100 rounded-box shadow-md">
                 
                 <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Some other list of things</li>
@@ -119,6 +109,7 @@
                 </li>
                 
                 </ul>
+              <a href="/create-recurring-trip/" class="btn btn-success w-full mt-5">Add Recurring Trip</a>
         </div>
 </section>
 

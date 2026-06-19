@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from test_app.models import Recurring_Trip
 from .forms import SearchForm
+from accounts.models import User
 import traceback
 
 @login_required
@@ -15,6 +16,9 @@ def app_index(request):
 def home(request):
     user = request.user
     trip_list = user.recurring_trips.all()
+    
+    # testing
+    users = User.objects.all()
 
     # for recurring_trip in trip_list:
     #     l_weekday = recurring_trip.leaving_at_weekday
@@ -25,7 +29,7 @@ def home(request):
     #     a_hour = recurring_trip.arriving_at_hour
     #     a_minute = recurring_trip.arriving_at_minute
 
-    context = {"recurring_trips": trip_list}
+    context = {"recurring_trips": trip_list, "users": users}
     return render(request, "home.html", context)
 
 @login_required

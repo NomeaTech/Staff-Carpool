@@ -1,59 +1,102 @@
-{% extends "base.html" %}
+{% extends "app.html" %}
 
 {% block title %}Home{% endblock %}
 
 {% block content %}
 
-{% if recurring_trip %}
-<h2>Trip ID: {{ recurring_trip.id }}</h2>
-<p>Driver: {{ recurring_trip.driver }}</p>
+<section class="place-content-center">
+    <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
+        <div class="card-body">
+            <h2 class="card-title"><div>{{ recurring_trip.driver}}'s Trip to <span class="text-secondary inline">{{ recurring_trip.destName}} </span>on <span class="text-primary inline">{{ recurring_trip.leaving_at_weekday.title }} </span></div></h2>
 
-{% if num_passengers == 0 %}
-<p> No passengers yet </p>
-{% else %}
-<p>Passengers:</p>
-{% for p in recurring_trip.passenger.all %}
-<ul>
-    <li>{{p}}</li>
-</ul>
-{% endfor %}
-{% endif %}
+            {% if recurring_trip.note != "" %}
+            <p>{{ recurring_trip.note }}</p>
+            {% endif %}
+            
+            {% if recurring_trip.passenger.all.count != 0 %}
+                    <div class="flex gap-2">
+                    {% for p in recurring_trip.passenger.all %}
+                        <!-- <a href="/profile/{{p.id}}"><div class="badge badge-soft badge-primary badge-sm">{{p}}</div></a> -->
+                        <a href="/profile/{{ p.id }}">
+                            <div class="badge badge-soft badge-primary badge-lg pl-0 pr-2">
+                                <div class="avatar">
+                                    <div class="w-8 rounded-full">
+                                        <img src="https://img.daisyui.com/images/profile/demo/batperson@192.webp" />
+                                    </div>
+                                </div>
+                                {{p}}
+                            </div>    
+                        </a>
+                    {% endfor %}
+                    </div>
+                {% endif %}   
 
-<p>Start: {{ recurring_trip.start }}</p>
-<p>Destination: {{ recurring_trip.destination }}</p>
-<p>Leaving at: {{ leaving_at }}</p>
-<p>Arriving at: {{ arriving_at }}</p>
-<p>Created at: {{ recurring_trip.created_at }}</p>
+            <div class="flex place-content-between">
+                <div class="w-full">
+                    <div tabindex="0" class="collapse bg-base-100 border-base-300 border mb-2">
+                        <div class="collapse-title font-semibold">From Address</div>
+                        <div class="collapse-content text-sm">
+                            {{ recurring_trip.start }}
+                        </div>
+                    </div>
+                    <div tabindex="0" class="collapse bg-base-100 border-base-300 border">
+                        <div class="collapse-title font-semibold">To Address</div>
+                        <div class="collapse-content text-sm">
+                            {{ recurring_trip.destination }}
+                        </div>
+                    </div>
+                </div>
 
-{% else %}
-<p>No trips are available.</p>
-{% endif %}
 
-<span>
-{% if is_driver %}
-<form action="{% url 'delete_trip' %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" id="recurring_trip" type="text" name="recurring_trip" value="{{ recurring_trip.id }}">
-    <button type="submit">Delete Trip</button>
-</form>
-{% endif %}
+                <ul class="timeline timeline-vertical justify-center px-5">
+                    <li>
+                    <div class="timeline-start">Leaving</div>
+                    <div class="timeline-middle">
+                    </div>
+                    <div class="timeline-end timeline-box">{{ leaving_at }}</div>
+                    <hr />
+                    </li>
+                    <li>
+                    <hr />
+                    <div class="timeline-start">Arriving</div>
+                    <div class="timeline-middle">
+                    </div>
+                    <div class="timeline-end timeline-box">{{ arriving_at }}</div>
+                    </li> 
+                </ul> 
+            </div>
 
-{% if not is_passenger and not is_driver %}
-<form action="{% url 'join_trip' %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" id="recurring_trip" type="text" name="recurring_trip" value="{{ recurring_trip.id }}">
-    <button type="submit">Join Trip</button>
-</form>
-{% endif %}
+            <div class="flex place-content-center">
+                <span>
+                {% if is_driver %}
+                <form action="{% url 'delete_trip' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" id="recurring_trip" type="text" name="recurring_trip" value="{{ recurring_trip.id }}">
+                    <button class="btn btn-soft btn-primary" type="submit">Delete Trip</button>
+                </form>
+                {% endif %}
 
-{% if is_passenger and not is_driver %}
-<form action="{% url 'leave_trip' %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" id="recurring_trip" type="text" name="recurring_trip" value="{{ recurring_trip.id }}">
-    <button type="submit">Leave Trip</button>
-</form>
-{% endif %}
+                {% if not is_passenger and not is_driver %}
+                <form action="{% url 'join_trip' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" id="recurring_trip" type="text" name="recurring_trip" value="{{ recurring_trip.id }}">
+                    <button class="btn btn-soft btn-secondary" type="submit">Join Trip</button>
+                </form>
+                {% endif %}
 
-</span>
+                {% if is_passenger and not is_driver %}
+                <form action="{% url 'leave_trip' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" id="recurring_trip" type="text" name="recurring_trip" value="{{ recurring_trip.id }}">
+                    <button class="btn btn-soft btn-accent" type="submit">Leave Trip</button>
+                </form>
+                {% endif %}
 
+                </span>
+            </div>
+
+            <!-- <p class="text-secondary">Created at: {{ recurring_trip.created_at }}</p> -->
+        </div>
+    </div>
+</section>
 {% endblock %}
