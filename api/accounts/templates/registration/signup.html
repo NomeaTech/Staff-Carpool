@@ -67,6 +67,9 @@
             </p>
             {{ form.password2|add_class:"input validator col-span-3 w-full"|append_attr:"placeholder:Confirm Password"|append_attr:"required"|append_attr:"type:password"|append_attr:"minlength:8"|append_attr:"pattern:(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"|append_attr:"title:Must be more than 8 characters, including number, lowercase letter, uppercase letter"}}
             
+            {% if form.errors %}
+              <div class="col-span-3" style="color:var(--color-error)">Error in account creation</div>
+            {% endif %}
 
             <button type="submit" class="btn btn-md btn-secondary col-span-3">Sign Up</button> 
             <!-- <a href="{% url 'signup' %}" class="btn btn-md btn-secondary col-span-1 col-start-3">Sign up</a>   -->

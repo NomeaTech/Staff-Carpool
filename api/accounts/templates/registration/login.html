@@ -40,9 +40,15 @@
           
           <div class="grid grid-cols-3 gap-4">
             {% csrf_token %}
-            {{ form.username|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Username"}}
-            {{ form.password|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Password"}}
+            {{ form.username|add_class:"input validator col-span-3 w-full"|append_attr:"placeholder:Username"|append_attr:"required"}}
+            {{ form.password|add_class:"input validator col-span-3 w-full"|append_attr:"placeholder:Password"|append_attr:"required"}}
             
+            {% if form.errors %}
+              <div class="col-span-3" style="color:var(--color-error)">Enter a valid username and password</div>
+            {% else %}
+              <div class="hidden validator-hint col-span-3">Enter a valid username and password</div>
+            {% endif %}
+
             <button type="submit" class="btn btn-md btn-primary col-span-2">Log In</button> 
             <a href="{% url 'signup' %}" class="btn btn-md btn-secondary col-span-1 col-start-3">Sign up</a>  
             <a href="{% url 'password_reset' %}" class="btn btn-sm btn-ghost col-span-3">Password Reset</a>

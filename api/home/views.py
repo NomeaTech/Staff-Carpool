@@ -6,6 +6,10 @@ from django.contrib.auth.decorators import login_required
 import traceback
 
 @login_required
+def app_index(request):
+    return HttpResponseRedirect("/apps/home/")
+
+@login_required
 def home(request):
     user = request.user
     trip_list = user.recurring_trips.all()
@@ -21,7 +25,3 @@ def home(request):
 
     context = {"recurring_trips": trip_list}
     return render(request, "home.html", context)
-
-@login_required
-def app_index(request):
-    return HttpResponseRedirect("/apps/home/")
