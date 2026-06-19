@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %}Create Recurring Trip{% endblock %}
+{% block content %}
+
+<div>
+    <div class="card bg-base-100 w-96 shadow-sm font-display">
+        <div class="card-body">
+            <div class="">
+                <h2 class="card-title mb-0 mt-0 mb-4">Create Recurring Trip</h2>
+                <div class="divider">From Address</div>
+                <form action="/create-recurring-trip/" method="post">
+                    <div class="grid grid-cols-3 gap-4">
+                        {% csrf_token %}
+                        {{ from_address_form.country|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Country"}}
+                        {{ from_address_form.city|add_class:"input col-span-3 w-full"|append_attr:"placeholder:City"}}
+                        {{ from_address_form.postcode|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Postcode"}}
+                        {{ from_address_form.street|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Street"}}
+                        {{ from_address_form.number|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Number"}}
+                        <div class="divider col-span-3">To Address</div>        
+                        {{ to_address_form.country|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Country"}}
+                        {{ to_address_form.city|add_class:"input col-span-3 w-full"|append_attr:"placeholder:City"}}
+                        {{ to_address_form.postcode|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Postcode"}}
+                        {{ to_address_form.street|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Street"}}
+                        {{ to_address_form.number|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Number"}}
+                        <div class="divider col-span-3">Other Settings</div>        
+                        {{ recurring_trip.max_passengers|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Max Passengers"}}
+                        {{ recurring_trip.leaving_at_weekday|add_class:"input select col-span-3 w-full"|append_attr:"placeholder:Number"}}
+                        
+                        {{ recurring_trip_form.private|add_class:"input col-span-3"}}
+
+                        <input class="btn btn-md btn-secondary col-span-3" type="submit" value="Create Recurring Trip">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

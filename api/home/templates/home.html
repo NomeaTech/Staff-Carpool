@@ -1,0 +1,116 @@
+{% extends "app.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="grid grid-cols-1 xl:grid-cols-3 gap-10 lg:pt-16 justify-center h-screen mx-auto">
+        <!-- <h3>Logged in user: {{user.username}}</h3> -->
+
+        <div class="hidden col-span-1 justify-self-end xl:block lg:mt-3">
+            <ul class="list bg-base-100 rounded-box shadow-md">
+  
+                <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Friends</li>
+                  
+                {% for user in users %}
+                  <a href="/profile/{{ user.id }}">
+                    <li class="list-row">
+                      
+                      <div class="avatar">
+                        <div class="w-8 rounded-full">
+                          <img src="https://img.daisyui.com/images/profile/demo/batperson@192.webp" />
+                        </div>
+                      </div>
+
+                      <div class="flex items-center">
+                        <div>{{ user.first_name }} {{ user.last_name }}</div>
+                      </div>
+                    </li>
+                  </a>
+                {% endfor %}
+                
+        </div>
+
+        <div class="lg:pt-3 mb-15 md:mb-0 lg:pb-2 pb-15 col-span-1 xl:px-0 justify-self-center overflow-scroll scrollbar-hide">
+          {% if recurring_trips %}
+              {% for recurring_trip in recurring_trips %}
+                
+                <a href="/recurring-trip/{{recurring_trip.id}}/">
+                    <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
+                        <div class="card-body">
+                            <h2 class="card-title"><div>{{ recurring_trip.driver}}'s Trip to <span class="text-secondary inline">{{ recurring_trip.destName}} </span>on <span class="text-primary inline">{{ recurring_trip.leaving_at_weekday.title }} </span>at <span class="text-primary inline">{{ recurring_trip.leaving_at_hour }}:{{ recurring_trip.leaving_at_minute }}</span></div></h2>
+
+                            {% if recurring_trip.note != "" %}
+                            <p>{{ recurring_trip.note }}</p>
+                            {% endif %}
+
+                            {% if recurring_trip.passenger.all.count != 0 %}
+                                <div class="flex gap-2">
+                                {% for p in recurring_trip.passenger.all %}
+                                    <!-- <a href="/profile/{{p.id}}"><div class="badge badge-soft badge-primary badge-sm">{{p}}</div></a> -->
+                                    <div class="badge badge-soft badge-primary badge-sm">{{p}}</div>    
+                                {% endfor %}
+                                </div>
+                            {% endif %}
+                            <p class="text-secondary">Trip in 2 days</p>
+                        </div>
+                    </div>
+                </a>
+              {% endfor %}
+        </div>
+        {% else %}
+        <p>No trips are available.</p>
+        {% endif %}
+
+        <div class="hidden col-span-1 justify-self-start xl:block lg:mt-3">
+            <ul class="list bg-base-100 rounded-box shadow-md">
+                
+                <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Some other list of things</li>
+                
+                <li class="list-row">
+                    <!-- <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/1@94.webp"/></div>
+                    <div>
+                    <div>Dio Lupa</div>
+                    <div class="text-xs uppercase font-semibold opacity-60">Remaining Reason</div>
+                    </div>
+                    <button class="btn btn-square btn-ghost">
+                    <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M6 3L20 12 6 21 6 3z"></path></g></svg>
+                    </button>
+                    <button class="btn btn-square btn-ghost">
+                    <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></g></svg>
+                    </button> -->
+                </li>
+                
+                <li class="list-row">
+                    <!-- <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/4@94.webp"/></div>
+                    <div>
+                    <div>Ellie Beilish</div>
+                    <div class="text-xs uppercase font-semibold opacity-60">Bears of a fever</div>
+                    </div>
+                    <button class="btn btn-square btn-ghost">
+                    <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M6 3L20 12 6 21 6 3z"></path></g></svg>
+                    </button>
+                    <button class="btn btn-square btn-ghost">
+                    <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></g></svg>
+                    </button> -->
+                </li>
+                
+                <li class="list-row">
+                    <!-- <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/3@94.webp"/></div>
+                    <div>
+                    <div>Sabrino Gardener</div>
+                    <div class="text-xs uppercase font-semibold opacity-60">Cappuccino</div>
+                    </div>
+                    <button class="btn btn-square btn-ghost">
+                    <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M6 3L20 12 6 21 6 3z"></path></g></svg>
+                    </button>
+                    <button class="btn btn-square btn-ghost">
+                    <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></g></svg>
+                    </button> -->
+                </li>
+                
+                </ul>
+              <a href="/create-recurring-trip/" class="btn btn-success w-full mt-5">Add Recurring Trip</a>
+        </div>
+</section>
+
+{% endblock %}

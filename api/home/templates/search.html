@@ -1,0 +1,68 @@
+{% extends "app.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %}Home{% endblock %}
+{% block content %}
+<!-- <section class="grid grid-cols-1 xl:grid-cols-3 gap-10 pt-3 lg:pt-20 justify-center h-screen mx-auto"> -->
+<section class="flex justify-content-center items-center flex-col pt-5 lg:pt-20 h-screen mx-auto">
+    <div class="flex justify-content-center items-center w-full">
+        <form class="w-full" action="/app/search/" method="post">
+            {% csrf_token %}
+            <label class="input w-full">
+                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <g
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
+                    stroke-width="2.5"
+                    fill="none"
+                    stroke="currentColor"
+                    >
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.3-4.3"></path>
+                    </g>
+                </svg>
+                {{ form.search_query|add_class:"grow"|append_attr:"type:search"|append_attr:"placeholder:Search" }}
+            </label>
+            
+            <input class="hidden" type="submit" value="Submit">
+        </form>
+    </div>
+    <div class="mb-15 md:mb-0 lg:pb-2 pb-15 pt-5 col-span-1 xl:px-0 justify-self-center overflow-scroll scrollbar-hide">
+        {% if searched and recurring_trips %}
+            {% for recurring_trip in recurring_trips %}
+                <a href="/recurring-trip/{{recurring_trip.id}}/">
+                    <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
+                        <div class="card-body">
+                            <h2 class="card-title"><div>{{ recurring_trip.driver}}'s Trip to <span class="text-secondary inline">{{ recurring_trip.destName}} </span>on <span class="text-primary inline">{{ recurring_trip.leaving_at_weekday.title }} </span>at <span class="text-primary inline">{{ recurring_trip.leaving_at_hour }}:{{ recurring_trip.leaving_at_minute }}</span></div></h2>
+
+                            {% if recurring_trip.note != "" %}
+                            <p>{{ recurring_trip.note }}</p>
+                            {% endif %}
+
+                            {% if recurring_trip.passenger.all.count != 0 %}
+                                <div class="flex gap-2">
+                                {% for p in recurring_trip.passenger.all %}
+                                    <!-- <a href="/profile/{{p.id}}"><div class="badge badge-soft badge-primary badge-sm">{{p}}</div></a> -->
+                                    <div class="badge badge-soft badge-primary badge-sm">{{p}}</div>    
+                                {% endfor %}
+                                </div>
+                            {% endif %}
+                            <p class="text-secondary">Trip in 2 days</p>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        {% elif searched %}
+        <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
+            <div class="card-body">
+                <h2 class="card-title">
+                    No results found
+                </h2>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

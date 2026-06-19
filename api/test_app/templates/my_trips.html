@@ -3,23 +3,26 @@
 {% block title %}My Trips{% endblock %}
 
 {% block content %}
-{% if user.is_authenticated %}
 <h3>Logged in user: {{user.username}}</h3>
 <hr>
 
 {% if recurring_trips %}
-<h2>My Trips</h2>
-    <ul>
-    {% for trip in recurring_trips %}
-        <li>Driver: <a href="/trips/{{ trip.id }}/"> {{ trip.driver }}</a> {{ trip.passenger.all.count }}</li>
-        {% for p in trip.passenger.all %}
-            <p>{{p}}</p>
+    {% for recurring_trip in recurring_trips %}
+        <h2>Trip ID: {{ recurring_trip.id }}</h2>
+        <p>Driver: {{ recurring_trip.driver }}</p>
+        <p>Passengers:</p>
+        {% for p in recurring_trip.passenger.all %}
+        <ul>
+            <li>{{p}}</li>
+        </ul>
+        
         {% endfor %}
+        <p>Start: {{ recurring_trip.start }}</p>
+        <p>Destination: {{ recurring_trip.destination }}</p>
+        <p>Created at: {{ recurring_trip.created_at }}</p>
     {% endfor %}
-    </ul>
 {% else %}
-    <p>No trips are available.</p>
+<p>No trips are available.</p>
 {% endif %}
 
-{% endif %}
 {% endblock %}

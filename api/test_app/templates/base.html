@@ -1,19 +1,28 @@
-{% load static %}
+{% load static tailwind_tags %}
 
 <!DOCTYPE html>
-<html>
+<html data-theme="light">
 {% load pwa %}
 {% progressive_web_app_meta %}
+
 <link rel="manifest" href="manifest.json">
 <head>
     <title>{% block title%}Campus Ride{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% tailwind_css %}
 </head>
-<body>
-    <h1><a href="/">Campus Ride</a></h1>
-    <hr>
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+<!-- <body class="bg-gray-50 text-black font-serif leading-normal tracking-normal"> -->
+<body class="bg-base-200">
+    <!-- <h1><a href="/">Campus Ride</a></h1> -->
+    <div class="container mx-auto">
+        <section class="flex items-center justify-center h-screen">    
+            <main>
+                {% block content %}
+                {% endblock %}
+            </main>
+        </section>
+    </div>
 </body>
 </html>
