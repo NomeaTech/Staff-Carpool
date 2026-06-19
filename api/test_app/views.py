@@ -47,8 +47,10 @@ def recurring_trip_detail(request, recurring_trip_id):
     a_minute = recurring_trip.arriving_at_minute
 
 
-    leaving_at = f"{l_weekday.title()}, {str(l_hour).zfill(2)}:{str(l_minute).zfill(2)}"
-    arriving_at = f"{a_weekday.title()}, {str(a_hour).zfill(2)}:{str(a_minute).zfill(2)}"
+    # leaving_at = f"{l_weekday.title()}, {str(l_hour).zfill(2)}:{str(l_minute).zfill(2)}"
+    
+    leaving_at = f"{str(l_hour).zfill(2)}:{str(l_minute).zfill(2)}"
+    arriving_at = f"{str(a_hour).zfill(2)}:{str(a_minute).zfill(2)}"
 
     context = {
         "recurring_trip": recurring_trip, 
@@ -117,12 +119,12 @@ def create_recurring_trip(request):
                 trip.save()
             except Exception as e:
                 traceback.print_exc()
-                success = False
-
-            context = {"success": success}
-
-            return render(request, "trip_created.html", context)
+                
+            return HttpResponseRedirect(f"/recurring-trip/{trip.id}")
+            # return render(request, "trip_created.html", context)
     else:
+        from_address_form = AddressForm()
+        to_address_form = AddressForm()
         recurring_trip_form = RecurringTripForm()
 
     context = {

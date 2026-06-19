@@ -26,5 +26,6 @@ class RecurringTripForm(forms.ModelForm):
             "arriving_at_weekday",
             "arriving_at_hour",
             "arriving_at_minute",
+            "destName",
             "note",
         )

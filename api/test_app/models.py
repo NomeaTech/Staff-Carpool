@@ -38,7 +38,9 @@ class Recurring_Trip(models.Model):
         ("Thursday","thursday"),
         ("Friday","friday"),
         ("Saturday","saturday"),
-        ("Sunday","sunday")
+        ("Sunday","sunday"),
+        ("Weekdays", "weekdays"),
+        ("Weekends", "weekends")
     )
 
     leaving_at_weekday = models.CharField(max_length=10, choices=WEEKDAY_CHOICES)
