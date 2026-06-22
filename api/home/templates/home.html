@@ -31,7 +31,7 @@
         </div>
 
         <div class="lg:pt-3 mb-15 md:mb-0 lg:pb-2 pb-15 col-span-1 xl:px-0 justify-self-center overflow-scroll scrollbar-hide">
-          {% if not recurring_trips %}
+          {% if recurring_trips %}
               {% for recurring_trip in recurring_trips %}
                 
                 <a href="/recurring-trip/{{recurring_trip.id}}/">
