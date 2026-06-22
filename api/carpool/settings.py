@@ -168,8 +168,8 @@ PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js', 'serviceworker.js'
 
 PWA_APP_NAME = 'Campus Ride'
 PWA_APP_DESCRIPTION = "Ride sharing app for LUT staff"
-PWA_APP_THEME_COLOR = "#EDFF22"
-PWA_APP_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_THEME_COLOR = "#FFFFFF"
+PWA_APP_BACKGROUND_COLOR = '#F8F8F8'
 PWA_APP_DISPLAY = 'standalone'
 PWA_APP_SCOPE = '/'
 PWA_APP_ORIENTATION = 'any'
