@@ -24,7 +24,8 @@ jobs:
           git pull origin testing
           source env/bin/activate
           pip install -r api/requirements.txt
-          python manage.py makemigrations test_app accounts
+          python manage.py tailwind install
+          python manage.py tailwind build
           python manage.py migrate --noinput
           python manage.py collectstatic --noinput
           sudo systemctl restart django_ride
