@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@plugin "tailwind-scrollbar-hide";
+
+@plugin "typography";
+
 @import 'tailwind-scrollbar-hide/v4';
 @plugin "daisyui" {
   themes: light --default, dark --prefersdark;

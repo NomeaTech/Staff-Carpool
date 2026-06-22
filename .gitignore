@@ -222,3 +222,6 @@ backup/
 test.py
 test.html
 start_dev.sh
+
+# Node
+node_modules/

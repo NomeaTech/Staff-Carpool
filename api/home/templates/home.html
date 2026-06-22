@@ -56,10 +56,17 @@
                     </div>
                 </a>
               {% endfor %}
+              {% else %}
+                <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
+                  <div class="card-body">
+                      <h2 class="card-title">
+                          No results found
+                      </h2>
+                  </div>
+                </div>
+              {% endif %}
         </div>
-        {% else %}
-        <p>No trips are available.</p>
-        {% endif %}
+        
 
         <div class="hidden col-span-1 justify-self-start xl:block lg:mt-3">
             <ul class="list bg-base-100 rounded-box shadow-md">
