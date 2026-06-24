@@ -3,7 +3,7 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<section class="grid grid-cols-1 xl:grid-cols-3 gap-10 lg:pt-16 justify-center h-screen mx-auto">
+<section class="grid grid-cols-1 xl:grid-cols-4 gap-10 lg:pt-16 justify-center h-screen mx-auto">
         <!-- <h3>Logged in user: {{user.username}}</h3> -->
 
         <div class="hidden col-span-1 justify-self-end xl:block lg:mt-3">
@@ -30,7 +30,7 @@
                 
         </div>
 
-        <div class="lg:pt-3 mb-15 md:mb-0 lg:pb-2 pb-15 col-span-1 xl:px-0 justify-self-center overflow-scroll scrollbar-hide">
+        <div class="lg:pt-3 mb-15 md:mb-0 lg:pb-2 pb-15 col-span-2 xl:px-0 justify-self-center overflow-scroll scrollbar-hide">
           {% if recurring_trips %}
               {% for recurring_trip in recurring_trips %}
                 
