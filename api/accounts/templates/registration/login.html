@@ -4,6 +4,7 @@
 {% load crispy_forms_tags %}
 {% load widget_tweaks %}
 {% load tailwind_tags %}
+{% load i18n %}
 
 {% block title %}Login{% endblock %}
 {% block content %}
@@ -12,7 +13,7 @@
   <div class="card bg-base-100 w-96 shadow-sm font-display">
       <div class="card-body">
         <div class="flex flex-nowrap mb-4 justify-between">
-          <h2 class="card-title mb-0 mt-0">Login</h2>
+          <h2 class="card-title mb-0 mt-0">{% trans "Login" %}</h2>
             <label class="swap swap-rotate">
               <!-- this hidden checkbox controls the state -->
               <input type="checkbox" class="theme-controller" value="dark" />
@@ -44,14 +45,14 @@
             {{ form.password|add_class:"input validator col-span-3 w-full"|append_attr:"placeholder:Password"|append_attr:"required"}}
             
             {% if form.errors %}
-              <div class="col-span-3" style="color:var(--color-error)">Enter a valid username and password</div>
+              <div class="col-span-3" style="color:var(--color-error)">{% trans "Enter a valid username and password" %}</div>
             {% else %}
-              <div class="hidden validator-hint col-span-3">Enter a valid username and password</div>
+              <div class="hidden validator-hint col-span-3">{% trans "Enter a valid username and password" %}</div>
             {% endif %}
 
-            <button type="submit" class="btn btn-md btn-primary col-span-2">Log In</button> 
-            <a href="{% url 'signup' %}" class="btn btn-md btn-secondary col-span-1 col-start-3">Sign up</a>  
-            <a href="{% url 'password_reset' %}" class="btn btn-sm btn-ghost col-span-3">Password Reset</a>
+            <button type="submit" class="btn btn-md btn-primary col-span-2 hover:">{% trans "Login" %}</button> 
+            <a href="{% url 'signup' %}" class="btn btn-md btn-secondary col-span-1 col-start-3">{% trans "Sign up" %}</a>  
+            <a href="{% url 'password_reset' %}" class="btn btn-sm btn-ghost col-span-3">{% trans "Password Reset" %}</a>
           </div>
         </form>
       </div>

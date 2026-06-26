@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from django.utils.translation import gettext_lazy as _
 
 load_dotenv()
 
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'crispy_forms',
     'crispy_tailwind',
+    'rosetta',
     # 1st party
     'django.contrib.admin',
     'django.contrib.auth',
@@ -134,13 +136,17 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+TIME_ZONE = 'Europe/Helsinki'
 USE_I18N = True
-
+USER_L10N = True
 USE_TZ = True
-
+LANGUAGES = [
+    ("en-us", _("English")),
+    ("fi", _("Finnish")),
+]
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
