@@ -38,11 +38,12 @@
             </label>
         </div>
         <form method="post">
-          
           <div class="grid grid-cols-3 gap-4">
             {% csrf_token %}
-            {{ form.username|add_class:"input validator col-span-3 w-full"|append_attr:"placeholder:Username"|append_attr:"required"}}
-            {{ form.password|add_class:"input validator col-span-3 w-full"|append_attr:"placeholder:Password"|append_attr:"required"}}
+            
+            {{ form.username|append_attr:"required"}}
+
+            {{ form.password|append_attr:"required"}}
             
             {% if form.errors %}
               <div class="col-span-3" style="color:var(--color-error)">{% trans "Enter a valid username and password" %}</div>

@@ -141,7 +141,7 @@ USE_I18N = True
 USER_L10N = True
 USE_TZ = True
 LANGUAGES = [
-    ("en-us", _("English")),
+("en-us", _("English")),
     ("fi", _("Finnish")),
 ]
 LOCALE_PATHS = [
