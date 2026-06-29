@@ -16,30 +16,31 @@
           <h2 class="card-title mb-0 mt-0">{% trans "Login" %}</h2>
           <span class="flex">
             <div>
-              <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+              <form class="flex" action="{% url 'set_language' %}" method="post">{% csrf_token %}
                 <input name="next" type="hidden" value="{{ redirect_to }}">
-                <div class="dropdown hover-dropdown" name="language">
+                <select class="select" name="language">
+                <!-- <div class="dropdown hover-dropdown" name="language"> -->
                   <div tabindex="0" role="button" class="btn m-1">{% translate "Language" %}</div>
                     <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
                       {% get_current_language as LANGUAGE_CODE %}
                       {% get_available_languages as LANGUAGES %}
                       {% get_language_info_list for LANGUAGES as languages %}
                       {% for language in languages %}
-                      <li value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
-                        <a>
-                          {{ language.name_local }} ({{ language.code }})
-                        </a>
-                      </li>
+                      <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                        {{ language.name_local }} ({{ language.code }})
+                      </option>
                       {% endfor %}
                     </ul>
                   </div>
+                <!-- </div> -->
+                </select>
                 <input type="submit" value="Go">
               </form>            
             </div>
 
             <label class="swap swap-rotate">
               <!-- this hidden checkbox controls the state -->
-              <input type="checkbox" class="theme-controller" value="dark" />
+              <input id="theme-switcher" type="checkbox" class="theme-controller" value="dark" />
             
               <!-- sun icon -->
               <svg
