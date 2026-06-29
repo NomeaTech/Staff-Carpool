@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-27 18:25+0200\n"
+"POT-Creation-Date: 2026-06-29 18:10+0200\n"
 "PO-Revision-Date: 2026-06-27 19:05+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,20 +28,24 @@ msgid "Password"
 msgstr ""
 
 #: accounts/templates/registration/login.html:16
-#: accounts/templates/registration/login.html:54
+#: accounts/templates/registration/login.html:75
 msgid "Login"
 msgstr "Kirjaudu"
 
-#: accounts/templates/registration/login.html:49
-#: accounts/templates/registration/login.html:51
+#: accounts/templates/registration/login.html:46
+msgid "Language"
+msgstr ""
+
+#: accounts/templates/registration/login.html:70
+#: accounts/templates/registration/login.html:72
 msgid "Enter a valid username and password"
 msgstr ""
 
-#: accounts/templates/registration/login.html:55
+#: accounts/templates/registration/login.html:76
 msgid "Sign up"
 msgstr ""
 
-#: accounts/templates/registration/login.html:56
+#: accounts/templates/registration/login.html:77
 msgid "Password Reset"
 msgstr ""
 
@@ -55,4 +59,56 @@ msgid ""
 "        We've emailed you instructions for setting your password.\n"
 "        You should receive the email shortly!\n"
 "    "
+msgstr ""
+
+#: accounts/templates/registration/password_change_form.html:6
+msgid "Password change"
+msgstr ""
+
+#: accounts/templates/registration/password_change_form.html:8
+msgid ""
+"\n"
+"        Please enter your old password, for security's sake, and then enter\n"
+"        your new password twice so we can verify you typed it in correctly.\n"
+"    "
+msgstr ""
+
+#: accounts/templates/registration/password_reset_complete.html:5
+msgid "Password reset complete"
+msgstr ""
+
+#: accounts/templates/registration/password_reset_complete.html:8
+msgctxt "Full sentence: You can login now on the Login page."
+msgid "You can login now on the"
+msgstr ""
+
+#: accounts/templates/registration/password_reset_complete.html:8
+#, fuzzy
+#| msgid "Login"
+msgctxt "Full sentence: You can login now on the Login page."
+msgid "Login page"
+msgstr "Kirjaudu"
+
+#: accounts/templates/registration/password_reset_confirm.html:5
+msgid "Set a new password"
+msgstr ""
+
+#: accounts/templates/registration/password_reset_confirm.html:9
+msgid " Submit new password "
+msgstr ""
+
+#: accounts/templates/registration/password_reset_form.html:5
+msgid "Forgot your password?"
+msgstr ""
+
+#: accounts/templates/registration/password_reset_form.html:7
+msgid ""
+"\n"
+"        Enter your email address below, and we'll email instructions\n"
+"        for setting a new one.\n"
+"    "
+msgstr ""
+
+#: accounts/templates/registration/password_reset_form.html:16
+msgid "Send instructions"
 msgstr ""
