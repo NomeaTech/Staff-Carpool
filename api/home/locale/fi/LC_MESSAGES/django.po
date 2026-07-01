@@ -1,0 +1,71 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-01 16:16+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: home/templates/app.html:11 home/templates/app.html:44
+msgid "Campus Carpool"
+msgstr ""
+
+#: home/templates/home.html:4
+msgid "Home"
+msgstr ""
+
+#: home/templates/home.html:13
+msgid "Friends"
+msgstr ""
+
+#: home/templates/home.html:41 home/templates/search.html:38
+#, python-format
+msgid ""
+"%(driver)s's Trip to <span class=\"text-secondary inline\">%(destName)s </"
+"span>on <span class=\"text-primary inline\">%(leaving_at_weekday)s </span>at "
+"<span class=\"text-primary inline\">%(leaving_at_hour)s:"
+"%(leaving_at_minute)s "
+msgstr ""
+
+#: home/templates/home.html:65
+msgid "No active trips found. Create your own"
+msgstr ""
+
+#: home/templates/home.html:65
+msgctxt "Create your own -here-"
+msgid "here"
+msgstr ""
+
+#: home/templates/home.html:65
+msgctxt "Create your own here, or look for a trip under Search"
+msgid ", or look for a trip under"
+msgstr ""
+
+#: home/templates/home.html:65
+msgctxt "Create your own here, or look for a trip under Search"
+msgid "Search"
+msgstr ""
+
+#: home/templates/home.html:122
+msgid "Add Recurring Trip"
+msgstr ""
+
+#: home/templates/search.html:6
+msgctxt "Page title"
+msgid "Search"
+msgstr ""
+
+#: home/templates/search.html:61
+msgid "No results found"
+msgstr ""
