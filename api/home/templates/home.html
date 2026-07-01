@@ -1,6 +1,7 @@
 {% extends "app.html" %}
+{% load i18n %}
 
-{% block title %}Home{% endblock %}
+{% block title %}{% trans "Home" %}{% endblock %}
 
 {% block content %}
 <section class="grid grid-cols-1 xl:grid-cols-4 gap-10 lg:pt-16 justify-center h-screen mx-auto">
@@ -9,7 +10,7 @@
         <div class="hidden col-span-1 justify-self-end xl:block lg:mt-3">
             <ul class="list bg-base-100 rounded-box shadow-md">
   
-                <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Friends</li>
+                <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{% trans "Friends" %}</li>
                   
                 {% for user in users %}
                   <a href="/profile/{{ user.id }}">
@@ -37,7 +38,7 @@
                 <a href="/recurring-trip/{{recurring_trip.id}}/">
                     <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
                         <div class="card-body">
-                            <h2 class="card-title"><div>{{ recurring_trip.driver}}'s Trip to <span class="text-secondary inline">{{ recurring_trip.destName}} </span>on <span class="text-primary inline">{{ recurring_trip.leaving_at_weekday.title }} </span>at <span class="text-primary inline">{{ recurring_trip.leaving_at_hour }}:{{ recurring_trip.leaving_at_minute }}</span></div></h2>
+                            <h2 class="card-title"><div>{% blocktranslate with driver=recurring_trip.driver destName=recurring_trip.destName leaving_at_weekday=recurring_trip.leaving_at_weekday|title leaving_at_hour=recurring_trip.leaving_at_hour leaving_at_minute=recurring_trip.leaving_at_minute %}{{ driver }}'s Trip to <span class="text-secondary inline">{{ destName }} </span>on <span class="text-primary inline">{{ leaving_at_weekday }} </span>at <span class="text-primary inline">{{ leaving_at_hour }}:{{ leaving_at_minute }} {% endblocktranslate %}</span></div></h2>
 
                             {% if recurring_trip.note != "" %}
                             <p>{{ recurring_trip.note }}</p>
@@ -61,7 +62,7 @@
                   <div class="card-body">
                       <h2 class="flex text-center card-title">
                           <span>
-                            No active trips found. Create your own <a class="link-primary inline" href="/create-recurring-trip/">here</a>, or look for a trip under <a class="link-accent inline" href="/app/search">Search</a>
+                            {% trans "No active trips found. Create your own" %} <a class="link-primary inline" href="/create-recurring-trip/">{% trans "here" context "Create your own -here-" %}</a>{% trans ", or look for a trip under" context "Create your own here, or look for a trip under Search" %} <a class="link-accent inline" href="/app/search">{% trans "Search" context "Create your own here, or look for a trip under Search" %}</a>
                           </span>
                       </h2>
                   </div>
@@ -118,7 +119,7 @@
                 </li>
                 
                 </ul>
-              <a href="/create-recurring-trip/" class="btn btn-success w-full mt-5">Add Recurring Trip</a>
+              <a href="/create-recurring-trip/" class="btn btn-success w-full mt-5">{% trans "Add Recurring Trip" %}</a>
         </div>
 </section>
 

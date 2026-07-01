@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-29 18:10+0200\n"
+"POT-Creation-Date: 2026-07-01 15:49+0200\n"
 "PO-Revision-Date: 2026-06-27 19:05+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,33 +19,59 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
-#: accounts/forms.py:46
+#: accounts/forms.py:14
+msgid "Required. Enter a valid email address."
+msgstr ""
+
+#: accounts/forms.py:17
+msgid "Email Address"
+msgstr ""
+
+#: accounts/forms.py:24 accounts/forms.py:105
 msgid "Username"
 msgstr "Käyttäjätunnus"
 
-#: accounts/forms.py:53
+#: accounts/forms.py:34
+msgid "First Name"
+msgstr ""
+
+#: accounts/forms.py:44
+msgid "Last Name"
+msgstr ""
+
+#: accounts/forms.py:53 accounts/forms.py:112
 msgid "Password"
 msgstr ""
 
+#: accounts/forms.py:57 accounts/forms.py:70
+msgid ""
+"Must be more than 8 characters, including number, lowercase letter, "
+"uppercase letter"
+msgstr ""
+
+#: accounts/forms.py:66
+msgid "Confirm Password"
+msgstr ""
+
 #: accounts/templates/registration/login.html:16
-#: accounts/templates/registration/login.html:75
+#: accounts/templates/registration/login.html:80
 msgid "Login"
 msgstr "Kirjaudu"
 
-#: accounts/templates/registration/login.html:46
+#: accounts/templates/registration/login.html:23
 msgid "Language"
 msgstr ""
 
-#: accounts/templates/registration/login.html:70
-#: accounts/templates/registration/login.html:72
+#: accounts/templates/registration/login.html:75
+#: accounts/templates/registration/login.html:77
 msgid "Enter a valid username and password"
 msgstr ""
 
-#: accounts/templates/registration/login.html:76
+#: accounts/templates/registration/login.html:81
 msgid "Sign up"
 msgstr ""
 
-#: accounts/templates/registration/login.html:77
+#: accounts/templates/registration/login.html:82
 msgid "Password Reset"
 msgstr ""
 
@@ -111,4 +137,55 @@ msgstr ""
 
 #: accounts/templates/registration/password_reset_form.html:16
 msgid "Send instructions"
+msgstr ""
+
+#: accounts/templates/registration/signup.html:23
+#: accounts/templates/registration/signup.html:77
+msgid "Sign Up"
+msgstr ""
+
+#: accounts/templates/registration/signup.html:52
+msgid "Enter valid email address"
+msgstr ""
+
+#: accounts/templates/registration/signup.html:54
+msgid "First name is required"
+msgstr ""
+
+#: accounts/templates/registration/signup.html:56
+msgid "Last name is required"
+msgstr ""
+
+#: accounts/templates/registration/signup.html:58
+msgid "Username is required"
+msgstr ""
+
+#: accounts/templates/registration/signup.html:61
+msgid ""
+"\n"
+"                Your password can't be a commonly used password.\n"
+"                Your password can't be too similar to your other personal "
+"information.\n"
+"                Your password can’t be entirely numeric.\n"
+"                Must be more than 8 characters, including\n"
+"                <br/>At least one number\n"
+"                <br/>At least one lowercase letter\n"
+"                <br/>At least one uppercase letter\n"
+"              "
+msgstr ""
+
+#: accounts/templates/registration/signup.html:74
+msgid "Error in account creation. Check that passwords match"
+msgstr ""
+
+#: accounts/templates/registration/signup.html:81
+msgctxt ""
+"Full sentence: By creating an account you agree to the Terms of Service and "
+"Privacy Policy."
+msgid ""
+"\n"
+"              <p class=\"col-span-3\">By creating an account you agree to "
+"the <a class=\"link link-primary\" href=\"/\">Terms of Service </a>and <a "
+"class=\"link link-secondary\" href=\"/\">Privacy Policy</a>.</p>\n"
+"            "
 msgstr ""

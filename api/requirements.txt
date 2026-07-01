@@ -15,6 +15,7 @@ django-pghistory==3.9.2
 django-pgtrigger==4.17.0
 django-pwa==2.0.1
 django-rest-auth==0.9.5
+django-rosetta==0.10.3
 django-tailwind==4.4.2
 django-translations==1.4.4
 django-widget-tweaks==1.5.1
@@ -29,6 +30,7 @@ MarkupSafe==3.0.3
 mdurl==0.1.2
 packaging==26.2
 pillow==12.2.0
+polib==1.2.0
 psycopg==3.3.4
 Pygments==2.20.0
 pytailwindcss==0.3.0

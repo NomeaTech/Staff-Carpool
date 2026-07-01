@@ -1,9 +1,77 @@
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AdminUserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AdminUserCreationForm, AuthenticationForm, UsernameField
 from .models import User
+from django.db import models
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
 class CustomUserCreationForm(AdminUserCreationForm):
+    def __init__(self, *args, **kwargs):
+        super(AdminUserCreationForm, self).__init__(*args, **kwargs)
+
+    email = forms.EmailField(
+        max_length=254,
+        required=True,
+        help_text=_('Required. Enter a valid email address.'),
+        widget=forms.EmailInput(attrs={
+            'class': 'input validator col-span-3 w-full',
+            'placeholder': _("Email Address"),
+        })
+    )
+
+    username = UsernameField(widget=forms.TextInput(
+        attrs={
+                'class': 'input validator col-span-3 w-full', 
+                'placeholder': _("Username"),
+            }
+        )
+    )
+
+    first_name = forms.CharField(
+        max_length=50,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'input validator col-span-3 w-full',
+                'placeholder': _("First Name"),
+            }
+        )
+    )
+
+    last_name = forms.CharField(
+        max_length=50,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'input validator col-span-3 w-full',
+                'placeholder': _("Last Name"),
+            }
+        )
+    )
+
+    password1 = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'input validator col-span-3 w-full',
+                'placeholder': _("Password"),
+                'type': 'password',
+                'minlength': 8,
+                'pattern': '(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}',
+                'title': _('Must be more than 8 characters, including number, lowercase letter, uppercase letter'),
+            }
+        )
+    )
+
+    password2 = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'input validator col-span-3 w-full',
+                'placeholder': _("Confirm Password"),
+                'type': 'password',
+                'minlength': 8,
+                'pattern': '(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}',
+                'title': _('Must be more than 8 characters, including number, lowercase letter, uppercase letter'),
+            }
+        )
+    )
+    
     class Meta:
         model = User
         fields = UserCreationForm.Meta.fields + (
@@ -26,15 +94,6 @@ class CustomUserChangeForm(UserChangeForm):
             "last_name",
         )
         # fields = UserChangeForm.Meta.fields
-
-# Source - https://stackoverflow.com/a/55369752
-# Posted by Nakul Narayanan, modified by community. See post 'Timeline' for change history
-# Retrieved 2026-06-27, License - CC BY-SA 4.0
-
-from django.contrib.auth.forms import AuthenticationForm, UsernameField
-
-from django import forms
-
 
 class UserLoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):

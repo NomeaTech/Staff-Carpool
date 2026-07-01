@@ -1,6 +1,4 @@
 @import "tailwindcss";
-@plugin "react";
-
 
 @plugin "tailwind-scrollbar-hide";
 

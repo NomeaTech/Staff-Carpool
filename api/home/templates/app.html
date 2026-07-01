@@ -4,10 +4,11 @@
 <html data-theme="light" class="h-full overflow-hidden">
 {% load pwa %}
 {% progressive_web_app_meta %}
+{% load i18n %}
 
 <link rel="manifest" href="manifest.json">
 <head>
-    <title>{% block title%}Campus Ride{% endblock %}</title>
+    <title>{% block title%}{% trans "Campus Carpool" %}{% endblock %}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -40,7 +41,7 @@
           </div>
         </div>
         <div class="navbar-center">
-          <a href="/app/home/" class="btn btn-ghost text-xl">Campus Carpool</a>
+          <a href="/app/home/" class="btn btn-ghost text-xl">{% trans "Campus Carpool" %}</a>
         </div>
         <div class="navbar-end">
           <a href="/app/search/" class="btn btn-ghost btn-circle">
