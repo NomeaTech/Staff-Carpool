@@ -6,10 +6,13 @@ from django.contrib.auth.decorators import login_required
 from .forms import AddressForm, RecurringTripForm
 import traceback
 
+def offline(request):
+    return render(request, "offline-new.html")
+
 @login_required
 def index(request):
-
     return HttpResponseRedirect("/app/home/")
+
 
 @login_required
 def old_index(request):
