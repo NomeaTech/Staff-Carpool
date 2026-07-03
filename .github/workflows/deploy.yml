@@ -23,6 +23,7 @@ jobs:
           cd ${{ secrets.PROJECT_PATH }}
           git pull origin testing
           source env/bin/activate
+          cd api
           pip install -r api/requirements.txt
           python manage.py tailwind install
           python manage.py tailwind build

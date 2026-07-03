@@ -4,6 +4,7 @@
 {% load crispy_forms_tags %}
 {% load widget_tweaks %}
 {% load tailwind_tags %}
+{% load i18n %}
 
 {% block title %}Sign Up{% endblock %}
 {% block content %}
@@ -19,7 +20,7 @@
   <div class="card bg-base-100 w-96 shadow-sm font-display">
       <div class="card-body">
         <div class="flex flex-nowrap mb-4 justify-between">
-          <h2 class="card-title mb-0 mt-0">Sign Up</h2>
+          <h2 class="card-title mb-0 mt-0">{% trans "Sign Up" %}</h2>
             <label class="swap swap-rotate">
               <!-- this hidden checkbox controls the state -->
               <input type="checkbox" class="theme-controller" value="dark" />
@@ -47,34 +48,39 @@
           
           <div class="grid grid-cols-3 gap-4">
             {% csrf_token %}
-            {{ form.email|add_class:"input validator col-span-3 w-full"|append_attr:"placeholder:Email Address"|append_attr:"type:email"|append_attr:"required"}}
-            <div class="hidden validator-hint col-span-3">Enter valid email address</div>
-            {{ form.first_name|add_class:"input validator col-span-3 w-full"|append_attr:"placeholder:First Name"|append_attr:"required"}}
-            <div class="hidden validator-hint col-span-3">First name is required</div>
-            {{ form.last_name|add_class:"input validator col-span-3 w-full"|append_attr:"placeholder:Last Name"|append_attr:"required"}}
-            <div class="hidden validator-hint col-span-3">Last name is required</div>
-            {{ form.username|add_class:"input validator col-span-3 w-full"|append_attr:"placeholder:Username"|append_attr:"required"}}
-            <div class="hidden validator-hint col-span-3">Username is required</div>
-            {{ form.password1|add_class:"input validator col-span-3 w-full"|append_attr:"placeholder:Password"|append_attr:"required"|append_attr:"type:password"|append_attr:"minlength:8"|append_attr:"pattern:(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"|append_attr:"title:Must be more than 8 characters, including number, lowercase letter, uppercase letter"}}
+            {{ form.email }}
+            <div class="hidden validator-hint col-span-3">{% trans "Enter valid email address" %}</div>
+            {{ form.first_name }}
+            <div class="hidden validator-hint col-span-3">{% trans "First name is required" %}</div>
+            {{ form.last_name }}
+            <div class="hidden validator-hint col-span-3">{% trans "Last name is required" %}</div>
+            {{ form.username }}
+            <div class="hidden validator-hint col-span-3">{% trans "Username is required" %}</div>
+            {{ form.password1 }}
             <p class="hidden validator-hint col-span-3">
-              Your password can't be a commonly used password.
-              Your password can't be too similar to your other personal information.
-              Your password can’t be entirely numeric.
-              Must be more than 8 characters, including
-              <br/>At least one number
-              <br/>At least one lowercase letter
-              <br/>At least one uppercase letter
+              {% blocktranslate %}
+                Your password can't be a commonly used password.
+                Your password can't be too similar to your other personal information.
+                Your password can’t be entirely numeric.
+                Must be more than 8 characters, including
+                <br/>At least one number
+                <br/>At least one lowercase letter
+                <br/>At least one uppercase letter
+              {% endblocktranslate %}
             </p>
-            {{ form.password2|add_class:"input validator col-span-3 w-full"|append_attr:"placeholder:Confirm Password"|append_attr:"required"|append_attr:"type:password"|append_attr:"minlength:8"|append_attr:"pattern:(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"|append_attr:"title:Must be more than 8 characters, including number, lowercase letter, uppercase letter"}}
+            {{ form.password2 }}
             
             {% if form.errors %}
-              <div class="col-span-3" style="color:var(--color-error)">Error in account creation</div>
+              <div class="col-span-3" style="color:var(--color-error)">{% trans "Error in account creation. Check that passwords match" %}</div>
             {% endif %}
 
-            <button type="submit" class="btn btn-md btn-secondary col-span-3">Sign Up</button> 
+            <button type="submit" class="btn btn-md btn-secondary col-span-3">{% trans "Sign Up" %}</button> 
             <!-- <a href="{% url 'signup' %}" class="btn btn-md btn-secondary col-span-1 col-start-3">Sign up</a>   -->
             <!-- <a href="{% url 'password_reset' %}" class="btn btn-sm btn-ghost col-span-3">Password Reset</a> -->
-            <p class="col-span-3">By creating an account you agree to the <a class="link link-primary" href="/">Terms of Service</a> and <a class="link link-secondary" href="/">Privacy Policy</a>.</p>
+            
+            {% blocktranslate context "Full sentence: By creating an account you agree to the Terms of Service and Privacy Policy." %}
+              <p class="col-span-3">By creating an account you agree to the <a class="link link-primary" href="/">Terms of Service </a>and <a class="link link-secondary" href="/">Privacy Policy</a>.</p>
+            {% endblocktranslate %}
           </div>
         </form>
       </div>

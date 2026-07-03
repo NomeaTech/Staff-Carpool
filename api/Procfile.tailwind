@@ -1,2 +1,2 @@
-django: python manage.py runserver
+django: python manage.py runserver localhost:8120
 tailwind: python manage.py tailwind start

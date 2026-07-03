@@ -1,8 +1,9 @@
 {% extends "app.html" %}
 
 {% load widget_tweaks %}
+{% load i18n %}
 
-{% block title %}Home{% endblock %}
+{% block title %}{% trans "Search" context "Page title" %}{% endblock %}
 {% block content %}
 <!-- <section class="grid grid-cols-1 xl:grid-cols-3 gap-10 pt-3 lg:pt-20 justify-center h-screen mx-auto"> -->
 <section class="flex justify-content-center items-center flex-col pt-5 lg:pt-20 h-screen mx-auto">
@@ -34,7 +35,7 @@
                 <a href="/recurring-trip/{{recurring_trip.id}}/">
                     <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
                         <div class="card-body">
-                            <h2 class="card-title"><div>{{ recurring_trip.driver}}'s Trip to <span class="text-secondary inline">{{ recurring_trip.destName}} </span>on <span class="text-primary inline">{{ recurring_trip.leaving_at_weekday.title }} </span>at <span class="text-primary inline">{{ recurring_trip.leaving_at_hour }}:{{ recurring_trip.leaving_at_minute }}</span></div></h2>
+                            <h2 class="card-title"><div>{% blocktranslate with driver=recurring_trip.driver destName=recurring_trip.destName leaving_at_weekday=recurring_trip.leaving_at_weekday|title leaving_at_hour=recurring_trip.leaving_at_hour leaving_at_minute=recurring_trip.leaving_at_minute %}{{ driver }}'s Trip to <span class="text-secondary inline">{{ destName }} </span>on <span class="text-primary inline">{{ leaving_at_weekday }} </span>at <span class="text-primary inline">{{ leaving_at_hour }}:{{ leaving_at_minute }} {% endblocktranslate %}</span></div></h2>
 
                             {% if recurring_trip.note != "" %}
                             <p>{{ recurring_trip.note }}</p>
@@ -57,7 +58,7 @@
         <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
             <div class="card-body">
                 <h2 class="card-title">
-                    No results found
+                    {% trans "No results found" %}
                 </h2>
             </div>
         </div>
