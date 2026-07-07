@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     # 3rd party
     'widget_tweaks',
     'django_extensions',
+    'django_geoaddress',
     'crispy_forms',
     'crispy_tailwind',
     'rosetta',
@@ -131,6 +132,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Geoaddress
+GEOADDRESS_PROVIDERS = {
+    'photon': {},
+    'geoapify': {
+        'api_key': os.getenv("GEOADDRESS_KEY"),
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
