@@ -170,6 +170,8 @@ LOGOUT_REDIRECT_URL = "index"
 
 AUTH_USER_MODEL = "accounts.User"
 
+AUTHENTICATION_BACKENDS = ['accounts.backends.EmailBackend']
+
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"

@@ -122,13 +122,24 @@ class UserLoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super(UserLoginForm, self).__init__(*args, **kwargs)
 
-    username = UsernameField(widget=forms.TextInput(
+    username = forms.EmailField(widget=forms.EmailInput(
         attrs={
                 'class': 'input validator col-span-3 w-full', 
-                'placeholder': _("Username")
+                'placeholder': _("Email"),
+                'autocomplete': 'email',
+                'name': 'email',
             }
         )
     )
+
+    # email = forms.EmailField(widget=forms.TextInput(
+    #     attrs={
+    #             'class': 'input validator col-span-3 w-full', 
+    #             'placeholder': _("Email")
+    #         }
+    #     )
+    # )
+    
     password = forms.CharField(widget=forms.PasswordInput(
         attrs={
             'class': 'input validator col-span-3 w-full',
