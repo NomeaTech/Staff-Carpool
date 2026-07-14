@@ -11,10 +11,11 @@
             <div class="">
                 <h2 class="card-title mb-0 mt-0 mb-4">Create Recurring Trip</h2>
                 <div class="divider">From Address</div>
-                <form action="/create-recurring-trip/" method="post">
+                <form action="/create-recurring-trip/" method="post">                    
                     <div class="grid grid-cols-3 gap-4">
                         {% csrf_token %}
                         {{ from_address_form.country|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Country"}}
+                        {{ recurring_trip.test|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Test" }}
                         {{ from_address_form.city|add_class:"input col-span-3 w-full"|append_attr:"placeholder:City"}}
                         {{ from_address_form.postcode|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Postcode"}}
                         {{ from_address_form.street|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Street"}}

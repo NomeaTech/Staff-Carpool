@@ -1,4 +1,5 @@
 from django.db import models
+from django_geoaddress.fields import GeoaddressField
 from django.conf import settings
 from datetime import datetime
 
@@ -26,6 +27,7 @@ class Recurring_Trip(models.Model):
     
     private = models.BooleanField()
     max_passengers = models.IntegerField()
+    test = GeoaddressField()
     start = models.ForeignKey('test_app.Address', on_delete=models.CASCADE, related_name="start")
     destination = models.ForeignKey('test_app.Address', on_delete=models.CASCADE, related_name="destination")
     # leaving_at = models.DateTimeField("time car leaves")#, default=datetime.strptime("1, 00:00 (1900)","%-d, %H:%M (%Y)"))

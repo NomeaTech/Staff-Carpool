@@ -15,18 +15,25 @@
   "devDependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
+    "@geoapify/geocoder-autocomplete": "^3.0.1",
+    "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/postcss": "^4.1.16",
     "@tailwindcss/typography": "^0.5.20",
     "cross-env": "^10.1.0",
     "daisyui": "^5.3.10",
-    "postcss": "^8.5.6",
+    "postcss": "^8.5.16",
     "postcss-cli": "^11.0.1",
+    "postcss-import": "^16.1.1",
     "postcss-nested": "^7.0.2",
     "postcss-simple-vars": "^7.0.1",
     "react": "^19.2.7",
     "rimraf": "^6.0.1",
     "tailwind-scrollbar-hide": "^4.0.0",
-    "tailwindcss": "^4.1.16",
+    "tailwindcss": "^4.3.2",
     "typography": "^0.16.24"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.5.2",
+    "postcss-loader": "^8.2.1"
   }
 }

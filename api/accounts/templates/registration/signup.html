@@ -44,42 +44,60 @@
               </svg>
             </label>
         </div>
+        <p class="text-base-content/50">{% trans "* = Mandatory" %}</p>
         <form method="post">
           
           <div class="grid grid-cols-3 gap-4">
             {% csrf_token %}
-            {{ form.email }}
-            <div class="hidden validator-hint col-span-3">{% trans "Enter valid email address" %}</div>
-            {{ form.first_name }}
-            <div class="hidden validator-hint col-span-3">{% trans "First name is required" %}</div>
-            {{ form.last_name }}
-            <div class="hidden validator-hint col-span-3">{% trans "Last name is required" %}</div>
-            {{ form.username }}
-            <div class="hidden validator-hint col-span-3">{% trans "Username is required" %}</div>
-            {{ form.password1 }}
-            <p class="hidden validator-hint col-span-3">
-              {% blocktranslate %}
-                Your password can't be a commonly used password.
-                Your password can't be too similar to your other personal information.
-                Your password can’t be entirely numeric.
-                Must be more than 8 characters, including
-                <br/>At least one number
-                <br/>At least one lowercase letter
-                <br/>At least one uppercase letter
-              {% endblocktranslate %}
-            </p>
+            <div class="col-span-3">
+              {{ form.email }}
+              <p class="hidden validator-hint ml-3">{% trans "Enter valid email address" %}</p>
+            </div>
+            
+            <div class="col-span-3">
+              {{ form.first_name }}
+              <p class="hidden validator-hint ml-3">{% trans "First name is required" %}</p>
+            </div>
+            <div class="col-span-3">
+              {{ form.last_name }}
+              <p class="hidden validator-hint ml-3">{% trans "Last name is required" %}</p>
+            </div>
+            <div class="col-span-3">
+              {{ form.username }}
+              <p class="hidden validator-hint ml-3">{% trans "Username is required" %}</p>
+            </div>
+            <div class="col-span-3">
+              {{ form.phone }}
+              <p class="hidden validator-hint ml-3">{% trans "Must be a 10 digit phone number" %}</p>
+            </div>
+            <div class="col-span-3">
+              {{ form.password1 }}
+              <p class="hidden validator-hint ml-3">
+                {% blocktranslate %}
+                  Your password can't be a commonly used password.
+                  Your password can't be too similar to your other personal information.
+                  Your password can't be entirely numeric.
+                  Must be more than 8 characters, including
+                  <br/>At least one number
+                  <br/>At least one lowercase letter
+                  <br/>At least one uppercase letter
+                {% endblocktranslate %}
+              </p>
+            </div>
             {{ form.password2 }}
             
             {% if form.errors %}
               <div class="col-span-3" style="color:var(--color-error)">{% trans "Error in account creation. Check that passwords match" %}</div>
             {% endif %}
 
+            {{ form.pfp }}
+
             <button type="submit" class="btn btn-md btn-secondary col-span-3">{% trans "Sign Up" %}</button> 
             <!-- <a href="{% url 'signup' %}" class="btn btn-md btn-secondary col-span-1 col-start-3">Sign up</a>   -->
             <!-- <a href="{% url 'password_reset' %}" class="btn btn-sm btn-ghost col-span-3">Password Reset</a> -->
             
-            {% blocktranslate context "Full sentence: By creating an account you agree to the Terms of Service and Privacy Policy." %}
-              <p class="col-span-3">By creating an account you agree to the <a class="link link-primary" href="/">Terms of Service </a>and <a class="link link-secondary" href="/">Privacy Policy</a>.</p>
+            {% blocktranslate context "Full sentence: By creating an account you agree to the Terms of Use and Privacy Policy." %}
+              <p class="col-span-3">By creating an account you agree to the <a class="link link-primary" href="/">Terms of Use </a>and <a class="link link-secondary" href="/">Privacy Policy</a>.</p>
             {% endblocktranslate %}
           </div>
         </form>

@@ -6,6 +6,7 @@ class User(AbstractUser):
     pfp = models.ImageField(upload_to='static/images/')
     address = models.ForeignKey('test_app.Address', on_delete=models.CASCADE, null=True, blank=True)
     recurring_trips = models.ManyToManyField('test_app.Recurring_Trip', blank=True)
+    phone = models.CharField()
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

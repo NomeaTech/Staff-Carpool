@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     # 3rd party
     'widget_tweaks',
     'django_extensions',
+    'django_geoaddress',
     'crispy_forms',
     'crispy_tailwind',
     'rosetta',
@@ -131,11 +132,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Geoaddress
+GEOADDRESS_PROVIDERS = {
+    'photon': {},
+    'geoapify': {
+        'api_key': os.getenv("GEOADDRESS_KEY"),
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 TIME_ZONE = 'Europe/Helsinki'
 USE_I18N = True
 USER_L10N = True
@@ -143,6 +151,7 @@ USE_TZ = True
 LANGUAGES = [
     ("en", _("English")),
     ("fi", _("Finnish")),
+    ("sv", _("Swedish")),
 ]
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),
@@ -160,6 +169,8 @@ LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "index"
 
 AUTH_USER_MODEL = "accounts.User"
+
+AUTHENTICATION_BACKENDS = ['accounts.backends.EmailBackend']
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 

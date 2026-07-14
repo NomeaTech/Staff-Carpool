@@ -19,11 +19,12 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("accounts/", include("accounts.urls")),  # new
+    path("accounts/", include("accounts.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
     path('app/', include('home.urls')),
     path('rosetta/', include('rosetta.urls')),
     path("i18n/", include("django.conf.urls.i18n")),
+    path('geoaddress/', include('django_geoaddress.urls')),
     path('', include('test_app.urls')),
     path('', include('pwa.urls')),
 ]
