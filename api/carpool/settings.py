@@ -143,7 +143,7 @@ GEOADDRESS_PROVIDERS = {
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 TIME_ZONE = 'Europe/Helsinki'
 USE_I18N = True
 USER_L10N = True
@@ -151,6 +151,7 @@ USE_TZ = True
 LANGUAGES = [
     ("en", _("English")),
     ("fi", _("Finnish")),
+    ("sv", _("Swedish")),
 ]
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),

@@ -13,8 +13,9 @@ class CustomUserCreationForm(AdminUserCreationForm):
         required=True,
         help_text=_('Required. Enter a valid email address.'),
         widget=forms.EmailInput(attrs={
-            'class': 'input validator col-span-3 w-full',
-            'placeholder': _("Email Address"),
+            'class': 'input validator w-full',
+            'placeholder': _("Email Address *"),
+            'pattern': '.*@(lab|lut)\.fi',
         })
     )
 
@@ -31,7 +32,7 @@ class CustomUserCreationForm(AdminUserCreationForm):
         widget=forms.TextInput(
             attrs={
                 'class': 'input validator col-span-3 w-full',
-                'placeholder': _("First Name"),
+                'placeholder': _("First Name *"),
             }
         )
     )
@@ -41,7 +42,20 @@ class CustomUserCreationForm(AdminUserCreationForm):
         widget=forms.TextInput(
             attrs={
                 'class': 'input validator col-span-3 w-full',
-                'placeholder': _("Last Name"),
+                'placeholder': _("Last Name *"),
+            }
+        )
+    )
+
+    phone = forms.CharField(
+        max_length=14,
+        min_length=10,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'input validator tabular-nums col-span-3 w-full',
+                'type': 'tel',
+                'placeholder': _("Phone"),
+                'pattern': '[0-9]*'
             }
         )
     )
@@ -50,7 +64,7 @@ class CustomUserCreationForm(AdminUserCreationForm):
         widget=forms.TextInput(
             attrs={
                 'class': 'input validator col-span-3 w-full',
-                'placeholder': _("Password"),
+                'placeholder': _("Password *"),
                 'type': 'password',
                 'minlength': 8,
                 'pattern': '(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}',
@@ -63,11 +77,20 @@ class CustomUserCreationForm(AdminUserCreationForm):
         widget=forms.TextInput(
             attrs={
                 'class': 'input validator col-span-3 w-full',
-                'placeholder': _("Confirm Password"),
+                'placeholder': _("Confirm Password *"),
                 'type': 'password',
                 'minlength': 8,
                 'pattern': '(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}',
-                'title': _('Must be more than 8 characters, including number, lowercase letter, uppercase letter'),
+                'title': _('Must be more than 8 characters, including number, lowercase letter, uppercase letter *'),
+            }
+        )
+    )
+
+    # Don't forget to implement the view for this otherwise file upload will not work :)
+    pfp = forms.FileField(
+        widget=forms.FileInput(
+            attrs={
+                'class': 'file-input file-input-info col-span-3 w-full',
             }
         )
     )
