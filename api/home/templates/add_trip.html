@@ -6,7 +6,7 @@
 {% block title %}Add Ride{% endblock %}
 {% block content %}
 
-<div class="justify-center h-screen mx-auto lg:pt-20 pt-5 pb-20 px-10 overflow-scroll scrollbar-hide">
+<div class="justify-center content-center h-screen mx-auto lg:pt-20 pt-5 pb-20 px-10 overflow-scroll scrollbar-hide">
     <div class="card bg-base-100 w-96 shadow-sm font-display">
         <div class="card-body">
             <div class="">
@@ -32,25 +32,138 @@
                         
                         {{ recurring_trip_form.private|add_class:"input col-span-3"}} -->
                         
-                        <div class="divider col-span-3">Type</div>
                         
-                        <fieldset class="fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4">
-                            <legend class="fieldset-legend">Login options</legend>
-                            <label class="label">
-                              <input type="checkbox" class="checkbox">
-                              Train
-                            </label>
-                            <label class="label">
-                              <input type="checkbox" class="checkbox">
-                              Bus
-                            </label>
-                          </fieldset>
-
+                        <div class="grid grid-cols-3 col-span-3">
+                            <div class="divider col-span-3">Ride Options</div>
+                            <div class="col-span-1">
+                                <fieldset class="fieldset rounded-field bg-base-100 border-base-300 border p-4 pb-3.5" required>
+                                    <legend class="fieldset-legend">{% trans "Type" %}</legend>
+                                    <label class="label">
+                                    <input type="radio" name="request-offer" class="radio radio-secondary">
+                                    {% trans "Offer" %}
+                                    </label>
+                                    <label class="label">
+                                    <input type="radio" name="request-offer" class="radio radio-secondary">
+                                    {% trans "Request" %}
+                                    </label>
+                                </fieldset>
+                            </div>
+                            <div class="col-span-2 ms-3">
+                                <fieldset class="fieldset rounded-field bg-base-100 border-base-300 border p-4">
+                                    <legend class="fieldset-legend">{% trans "Travel Options" %}</legend>
+                                    <div class="grid grid-cols-2 gap-1">
+                                        <label class="label">
+                                            <input type="checkbox" class="checkbox checkbox-error">
+                                            {% trans "Train" %}
+                                        </label>
+                                        <label class="label">
+                                            <input type="checkbox" class="checkbox checkbox-info">
+                                            {% trans "Bus" %}
+                                        </label>
+                                        <label class="label">
+                                            <input type="checkbox" class="checkbox checkbox-warning">
+                                            {% trans "Taxi" %}
+                                        </label>
+                                        <label class="label">
+                                            <input type="checkbox" class="checkbox">
+                                            {% trans "Other" %}
+                                        </label>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            
+                        </div>
+                            
                         <div class="divider col-span-3">Address</div>
-                        <input class="input col-span-3 w-full" placeholder="From">
-                        <input class="input col-span-3 w-full" placeholder="Via">
-                        <input class="input col-span-3 w-full" placeholder="To">
+                        <input class="input col-span-3 w-full" placeholder={% trans "From" %}>
+                        <!-- <input class="input col-span-3 w-full" placeholder={% trans "Via" %}> -->
+                        <input class="input col-span-3 w-full" placeholder={% trans "To" %}>
                         
+                        <div class="divider col-span-3">Schedule</div>
+                        <div class="grid grid-cols-2 col-span-3 gap-2">
+                            <div class="col-span-1">
+                                <fieldset class="fieldset justify-around rounded-field bg-base-100 border-base-300 border p-4" required>
+                                    <legend class="fieldset-legend">{% trans "Recurrance" %}</legend>
+                                    </label>
+                                    <label class="label">
+                                    <input type="radio" name="recurrance" class="radio radio-info">
+                                    {% trans "One-time" %}
+                                    </label>
+                                    <label class="label">
+                                    <input type="radio" name="recurrance" class="radio radio-info">
+                                    {% trans "Recurring" %}
+                                </fieldset>
+                            </div>
+                            <div class="col-span-1">
+                                <fieldset class="fieldset justify-around rounded-field bg-base-100 border-base-300 border p-4" required>
+                                    <legend class="fieldset-legend">{% trans "Return" %}</legend>
+                                    </label>
+                                    <label class="label">
+                                    <input type="radio" name="return" class="radio radio-error">
+                                    {% trans "One-way" %}
+                                    </label>
+                                    <label class="label">
+                                    <input type="radio" name="return" class="radio radio-error">
+                                    {% trans "Return" %}
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-10 w-full col-span-3 gap-2">
+                            <div class="col-span-6 w-full">
+                                <button popovertarget="cally-popover1" class="input input-border " id="cally1" type="button" style="anchor-name:--cally1">
+                                    Pick a date
+                                </button>
+                                <div popover id="cally-popover1" class="dropdown dropdown-top bg-base-100 rounded-box shadow-lg" style="position-anchor:--cally1">
+                                    <calendar-date class="cally" onchange="changeText(this.value)">
+                                        <svg aria-label="Previous" class="fill-current size-4" slot="previous" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.75 19.5 8.25 12l7.5-7.5"></path></svg>
+                                        <svg aria-label="Next" class="fill-current size-4" slot="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg>
+                                        <calendar-month></calendar-month>
+                                    </calendar-date>
+                                </div>
+                                <script>
+                                    function changeText(value) {
+                                        document.getElementById('cally1').innerText = value
+                                    }
+                                </script>
+                            </div>
+                            <div class="flex col-span-4 w-full align-items-center">    
+                                <select class="select col-span-2">
+                                    <option selected>00</option>
+                                    <option>01</option>
+                                    <option>02</option>
+                                    <option>03</option>
+                                    <option>04</option>
+                                    <option>05</option>
+                                    <option>06</option>
+                                    <option>07</option>
+                                    <option>08</option>
+                                    <option>09</option>
+                                    <option>10</option>
+                                    <option>11</option>
+                                    <option>12</option>
+                                    <option>13</option>
+                                    <option>14</option>
+                                    <option>15</option>
+                                    <option>16</option>
+                                    <option>17</option>
+                                    <option>18</option>
+                                    <option>19</option>
+                                    <option>20</option>
+                                    <option>21</option>
+                                    <option>22</option>
+                                    <option>23</option>
+                                </select>
+                                <p style="font-size: 20px" class="place-self-center">:</p>
+                                <select class="select col-span-2">
+                                    <option selected>00</option>
+                                    <option>10</option>
+                                    <option>20</option>
+                                    <option>30</option>
+                                    <option>40</option>
+                                    <option>50</option>
+                                </select>
+                            </div>
+                        </div>
                         <input class="btn btn-md btn-secondary col-span-3" type="submit" value="Add Ride">
                     </div>
                 </form>

@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<section class="place-content-center">
+<section class="justify-center content-center h-screen mx-auto lg:pt-20 pt-5 pb-20 px-10">
     <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
         <div class="card-body">
             <h2 class="card-title"><div>{{ recurring_trip.driver}}'s Trip to <span class="text-secondary inline">{{ recurring_trip.destName}} </span>on <span class="text-primary inline">{{ recurring_trip.leaving_at_weekday.title }} </span></div></h2>
@@ -18,7 +18,7 @@
                     {% for p in recurring_trip.passenger.all %}
                         <!-- <a href="/profile/{{p.id}}"><div class="badge badge-soft badge-primary badge-sm">{{p}}</div></a> -->
                         <a href="/profile/{{ p.id }}">
-                            <div class="badge badge-soft badge-primary badge-lg pl-0 pr-2">
+                            <div class="badge badge-soft badge-primary rounded-full badge-lg pl-0 pr-2">
                                 <div class="avatar">
                                     <div class="w-8 rounded-full">
                                         <img src="https://img.daisyui.com/images/profile/demo/batperson@192.webp" />
