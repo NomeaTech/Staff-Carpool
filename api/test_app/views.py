@@ -3,7 +3,6 @@ from django.http import HttpResponseRedirect
 from .models import Recurring_Trip
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from .forms import AddressForm, RecurringTripForm
 import traceback
 
 def offline(request):
@@ -98,42 +97,3 @@ def trip_helper(request):
     response = HttpResponseRedirect(f"/recurring-trip/{rt_id}/")
 
     return user, trip, response
-
-@login_required
-def create_recurring_trip(request):    
-    if request.method == "POST":
-        from_address_form = AddressForm(request.POST)
-        to_address_form = AddressForm(request.POST)
-        recurring_trip_form = RecurringTripForm(request.POST)
-        if recurring_trip_form.is_valid() and to_address_form.is_valid() and from_address_form.is_valid():
-            
-            success = True
-
-            try:            
-                trip = recurring_trip_form.save(commit=False)
-                from_address = from_address_form.save()
-                to_address = to_address_form.save()
-                
-                trip.start = from_address
-                trip.destination = to_address
-
-                trip.driver = request.user
-
-                trip.save()
-            except Exception as e:
-                traceback.print_exc()
-                
-            return HttpResponseRedirect(f"/recurring-trip/{trip.id}")
-            # return render(request, "trip_created.html", context)
-    else:
-        from_address_form = AddressForm()
-        to_address_form = AddressForm()
-        recurring_trip_form = RecurringTripForm()
-
-    context = {
-        "from_address_form": from_address_form,
-        "to_address_form": to_address_form,
-        "recurring_trip_form": recurring_trip_form
-    }
-
-    return render(request, "create_recurring_trip.html", context)

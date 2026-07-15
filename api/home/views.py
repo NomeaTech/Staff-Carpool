@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from test_app.models import Recurring_Trip
 from .forms import SearchForm
 from accounts.models import User
+from test_app.forms import AddressForm, RecurringTripForm
 import traceback
 
 @login_required
@@ -52,3 +53,42 @@ def search(request):
         context = {"form": search_form}
 
     return render(request, "search.html", context)
+
+@login_required
+def add_trip(request):    
+    if request.method == "POST":
+        from_address_form = AddressForm(request.POST)
+        to_address_form = AddressForm(request.POST)
+        recurring_trip_form = RecurringTripForm(request.POST)
+        if recurring_trip_form.is_valid() and to_address_form.is_valid() and from_address_form.is_valid():
+            
+            success = True
+
+            try:            
+                trip = recurring_trip_form.save(commit=False)
+                from_address = from_address_form.save()
+                to_address = to_address_form.save()
+                
+                trip.start = from_address
+                trip.destination = to_address
+
+                trip.driver = request.user
+
+                trip.save()
+            except Exception as e:
+                traceback.print_exc()
+                
+            return HttpResponseRedirect(f"/recurring-trip/{trip.id}")
+            # return render(request, "trip_created.html", context)
+    else:
+        from_address_form = AddressForm()
+        to_address_form = AddressForm()
+        recurring_trip_form = RecurringTripForm()
+
+    context = {
+        "from_address_form": from_address_form,
+        "to_address_form": to_address_form,
+        "recurring_trip_form": recurring_trip_form
+    }
+
+    return render(request, "add_trip.html", context)

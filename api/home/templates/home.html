@@ -48,7 +48,7 @@
                                 <div class="flex gap-2">
                                 {% for p in recurring_trip.passenger.all %}
                                     <!-- <a href="/profile/{{p.id}}"><div class="badge badge-soft badge-primary badge-sm">{{p}}</div></a> -->
-                                    <div class="badge badge-soft badge-primary badge-sm">{{p}}</div>    
+                                    <div class="badge badge-soft badge-primary badge-sm rounded-full">{{p}}</div>    
                                 {% endfor %}
                                 </div>
                             {% endif %}
@@ -119,7 +119,7 @@
                 </li>
                 
                 </ul>
-              <a href="/create-recurring-trip/" class="btn btn-success w-full mt-5">{% trans "Add Recurring Trip" %}</a>
+              <a href="/app/add/" class="btn btn-success w-full mt-5">{% trans "Add Recurring Trip" %}</a>
         </div>
 </section>
 

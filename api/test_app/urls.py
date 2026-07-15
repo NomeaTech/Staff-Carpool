@@ -9,5 +9,5 @@ urlpatterns = [
     path("recurring-trip/leave_trip", leave_trip, name="leave_trip"),
     path("recurring-trip/delete_trip", delete_trip, name="delete_trip"),
     path("recurring-trip/<int:recurring_trip_id>/", recurring_trip_detail, name="recurring_trip_detail"),
-    path("create-recurring-trip/", create_recurring_trip, name="create_recurring_trip"),
+    # path("create-recurring-trip/", create_recurring_trip, name="create_recurring_trip"),
 ]
