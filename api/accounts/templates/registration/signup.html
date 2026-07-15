@@ -62,34 +62,34 @@
               {{ form.last_name }}
               <p class="hidden validator-hint ml-3">{% trans "Last name is required" %}</p>
             </div>
-            <div class="col-span-3">
+            <!-- <div class="col-span-3">
               {{ form.username }}
               <p class="hidden validator-hint ml-3">{% trans "Username is required" %}</p>
-            </div>
-            <div class="col-span-3">
-              {{ form.phone }}
-              <p class="hidden validator-hint ml-3">{% trans "Must be a 10 digit phone number" %}</p>
-            </div>
+            </div> -->
             <div class="col-span-3">
               {{ form.password1 }}
               <p class="hidden validator-hint ml-3">
                 {% blocktranslate %}
-                  Your password can't be a commonly used password.
-                  Your password can't be too similar to your other personal information.
-                  Your password can't be entirely numeric.
-                  Must be more than 8 characters, including
-                  <br/>At least one number
-                  <br/>At least one lowercase letter
-                  <br/>At least one uppercase letter
+                Your password can't be a commonly used password.
+                Your password can't be too similar to your other personal information.
+                Your password can't be entirely numeric.
+                Must be more than 8 characters, including
+                <br/>At least one number
+                <br/>At least one lowercase letter
+                <br/>At least one uppercase letter
                 {% endblocktranslate %}
               </p>
             </div>
             {{ form.password2 }}
             
+            <div class="col-span-3">
+              {{ form.phone }}
+              <p class="hidden validator-hint ml-3">{% trans "Must be a 10 digit phone number" %}</p>
+            </div>
             {% if form.errors %}
-              <div class="col-span-3" style="color:var(--color-error)">{% trans "Error in account creation. Check that passwords match" %}</div>
+            <div class="col-span-3" style="color:var(--color-error)">{% trans "Error in account creation. Check that passwords match" %}</div>
             {% endif %}
-
+            
             {{ form.pfp }}
 
             <button type="submit" class="btn btn-md btn-secondary col-span-3">{% trans "Sign Up" %}</button> 
