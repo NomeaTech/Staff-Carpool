@@ -10,7 +10,6 @@ class CustomUserCreationForm(AdminUserCreationForm):
 
     email = forms.EmailField(
         max_length=254,
-        required=True,
         help_text=_('Required. Enter a valid email address.'),
         widget=forms.EmailInput(attrs={
             'class': 'input validator w-full',
@@ -19,9 +18,9 @@ class CustomUserCreationForm(AdminUserCreationForm):
         })
     )
 
-    username = UsernameField(widget=forms.TextInput(
+    username = UsernameField(required=False, widget=forms.TextInput(
         attrs={
-                'class': 'input validator col-span-3 w-full', 
+                'class': 'hidden input validator col-span-3 w-full', 
                 'placeholder': _("Username"),
             }
         )
@@ -48,6 +47,7 @@ class CustomUserCreationForm(AdminUserCreationForm):
     )
 
     phone = forms.CharField(
+        required=False,
         max_length=14,
         min_length=10,
         widget=forms.TextInput(
@@ -88,6 +88,7 @@ class CustomUserCreationForm(AdminUserCreationForm):
 
     # Don't forget to implement the view for this otherwise file upload will not work :)
     pfp = forms.FileField(
+        required=False,
         widget=forms.FileInput(
             attrs={
                 'class': 'file-input file-input-info col-span-3 w-full',
@@ -98,10 +99,13 @@ class CustomUserCreationForm(AdminUserCreationForm):
     class Meta:
         model = User
         fields = UserCreationForm.Meta.fields + (
-            "username",
             "email",
             "first_name",
             "last_name",
+            "password1",
+            "password2",
+            "phone",
+            "pfp",
         )
         
         # fields = UserCreationForm.Meta.fields + 
@@ -111,7 +115,6 @@ class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = User
         fields = (
-            "username",
             "email",
             "first_name",
             "last_name",

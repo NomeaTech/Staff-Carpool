@@ -46,7 +46,7 @@
         </div>
         <p class="text-base-content/50">{% trans "* = Mandatory" %}</p>
         <form method="post">
-          
+          {{ form.username }}
           <div class="grid grid-cols-3 gap-4">
             {% csrf_token %}
             <div class="col-span-3">
@@ -86,11 +86,16 @@
               {{ form.phone }}
               <p class="hidden validator-hint ml-3">{% trans "Must be a 10 digit phone number" %}</p>
             </div>
+
+            {{ form.pfp }}
+
             {% if form.errors %}
-            <div class="col-span-3" style="color:var(--color-error)">{% trans "Error in account creation. Check that passwords match" %}</div>
+              <div class="col-span-3" style="color:var(--color-error)">{% trans "Error in account creation. Check that passwords match" %}</div>
+              {% for error in form.errors %}
+                <p class="text-error">{{ error }}</p>
+              {% endfor %}
             {% endif %}
             
-            {{ form.pfp }}
 
             <button type="submit" class="btn btn-md btn-secondary col-span-3">{% trans "Sign Up" %}</button> 
             <!-- <a href="{% url 'signup' %}" class="btn btn-md btn-secondary col-span-1 col-start-3">Sign up</a>   -->
