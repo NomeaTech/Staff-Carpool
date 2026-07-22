@@ -81,9 +81,17 @@
                         
                         <script>
                             function getValue(radio) {
-                                console.log(radio.value);
-                                p = document.getElementById("test-para")
-                                p.innerHTML = radio.value;
+                                // console.log(radio.value);
+                                // p = document.getElementById("test-para")
+                                // p.innerHTML = radio.value;
+
+                                cal = document.getElementById('cally1')
+                                // console.log("Test");
+                                if (radio.value == "oneTime") {
+                                    cal.removeAttribute("hidden");
+                                } else if (radio.value == "recurring") {
+                                    cal.setAttribute("hidden", "");
+                                }
                             }
                         </script>
                         <div class="divider col-span-3">{% trans "Schedule" %}</div>
@@ -99,7 +107,7 @@
                                         <input type="radio" name="recurrance" class="recurrance radio radio-info" onchange="getValue(this)" value="recurring">
                                         {% trans "Recurring" %}
                                     </label>
-                                    <p id="test-para">Test</p>
+                                    <!-- <p id="test-para">Test</p> -->
                                 </fieldset>
                             </div>
                             <div class="col-span-1">
@@ -129,11 +137,18 @@
                                         <calendar-month></calendar-month>
                                     </calendar-date>
                                 </div>
-                                <script>
+                                <!-- <script>
                                     function changeText(value) {
                                         document.getElementById('cally1').innerText = value;
+                                        cal = document.getElementById('cally1')
+                                        console.log("Test");
+                                        if (value == "oneTime") {
+                                            cal.style.display = "block";
+                                        } else if (value == "recurring") {
+                                            cal.style.display = "none";
+                                        }
                                     }
-                                </script>
+                                </script> -->
                             </div>
                             <div class="col-span-4">
                                 <div class="divider" id="divider-time">{% trans "Time" %}</div>
