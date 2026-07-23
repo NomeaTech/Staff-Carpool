@@ -5,15 +5,17 @@
 {% load pwa %}
 {% progressive_web_app_meta %}
 {% load i18n %}
+{% load static %}
 
 <link rel="manifest" href="manifest.json">
 <head>
-    <title>{% block title%}{% trans "Campus Carpool" %}{% endblock %}</title>
+    <title>{% block title %}{% trans "Campus Carpool" %}{% endblock %}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta meta name="viewport" content= "width=device-width, user-scalable=no" />
-    <script type="module" src="https://unpkg.com/cally"></script>
+    <script type="module" src="https://unpkg.com/cally"></script>  
+    <script src="{% static "js/funcs.js" %}"></script>
     {% tailwind_css %}
 </head>
 
