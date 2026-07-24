@@ -2,8 +2,31 @@ function viaAdd() {
     // viaInput = document.getElementById("via-input");
     inputDiv = document.getElementById("div-via");
     inputDiv.removeAttribute("hidden", "");
-    inputDiv.insertAdjacentHTML('beforeend', '<input id="via-input" class="input w-full" placeholder="Via">');
 
+    id = Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9*Math.pow(10, 12)).toString(36)
+    // console.log(id)
+    inputDiv.insertAdjacentHTML(
+        'beforeend', 
+        `<div class="grid grid-cols-5 col-span-5 gap-4 div-via-input" id="${id}-div">
+            <input class="input w-full col-span-4" placeholder="Via">
+            <button id="${id}-button" data-idref="${id}" class="btn btn-error col-span-1 text-lg" onclick="viaRemove(this)" type="button">
+                -
+            </button>
+        </div>`
+    );
+
+}
+
+function viaRemove(element) {
+    console.log(`remove ${element.dataset.idref}`);
+    div = document.getElementById(`${element.dataset.idref}-div`);
+    div.remove()
+
+    vias = document.getElementsByClassName("div-via-input");
+    if (vias.length == 0) {
+        collectorDiv = document.getElementById("div-via");
+        collectorDiv.setAttribute("hidden", "");
+    }
 }
 
 function changeRecurrance(radio) {
