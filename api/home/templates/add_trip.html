@@ -14,36 +14,18 @@
                 <form action="/app/add/" name="addTripForm" method="post">                    
                     <div class="grid grid-cols-3 gap-4">
                         {% csrf_token %}
-                        <!-- {{ from_address_form.country|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Country"}}
-                        {{ recurring_trip.test|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Test" }}
-                        {{ from_address_form.city|add_class:"input col-span-3 w-full"|append_attr:"placeholder:City"}}
-                        {{ from_address_form.postcode|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Postcode"}}
-                        {{ from_address_form.street|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Street"}}
-                        {{ from_address_form.number|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Number"}}
-                        <div class="divider col-span-3">To Address</div>        
-                        {{ to_address_form.country|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Country"}}
-                        {{ to_address_form.city|add_class:"input col-span-3 w-full"|append_attr:"placeholder:City"}}
-                        {{ to_address_form.postcode|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Postcode"}}
-                        {{ to_address_form.street|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Street"}}
-                        {{ to_address_form.number|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Number"}}
-                        <div class="divider col-span-3">Other Settings</div>        
-                        {{ recurring_trip.max_passengers|add_class:"input col-span-3 w-full"|append_attr:"placeholder:Max Passengers"}}
-                        {{ recurring_trip.leaving_at_weekday|add_class:"input select col-span-3 w-full"|append_attr:"placeholder:Number"}}
-                        
-                        {{ recurring_trip_form.private|add_class:"input col-span-3"}} -->
-                        
-                        
+
                         <div class="grid grid-cols-3 col-span-3">
                             <div class="divider col-span-3">{% trans "Ride Options" %}</div>
                             <div class="col-span-1">
                                 <fieldset class="fieldset rounded-field bg-base-100 border-base-300 border p-4 pb-3.5" required>
                                     <legend class="fieldset-legend">{% trans "Car Ride" %}</legend>
                                     <label class="label">
-                                    <input type="radio" name="request-offer" class="radio radio-secondary">
+                                    <input type="checkbox" name="request-offer" class="checkbox checkbox-secondary">
                                     {% trans "Offer" %}
                                     </label>
                                     <label class="label">
-                                    <input type="radio" name="request-offer" class="radio radio-secondary">
+                                    <input type="checkbox" name="request-offer" class="checkbox checkbox-secondary">
                                     {% trans "Request" %}
                                     </label>
                                 </fieldset>
@@ -53,35 +35,46 @@
                                     <legend class="fieldset-legend">{% trans "Other Transport" %}</legend>
                                     <div class="grid grid-cols-2 gap-1">
                                         <label class="label">
-                                            <input type="checkbox" class="checkbox checkbox-error">
+                                            <input value="train" type="checkbox" class="checkbox checkbox-error">
                                             {% trans "Train" %}
                                         </label>
                                         <label class="label">
-                                            <input type="checkbox" class="checkbox checkbox-info">
+                                            <input value="bus" type="checkbox" class="checkbox checkbox-info">
                                             {% trans "Bus" %}
                                         </label>
                                         <label class="label">
-                                            <input type="checkbox" class="checkbox checkbox-warning">
+                                            <input value="taxi" type="checkbox" class="checkbox checkbox-warning">
                                             {% trans "Taxi" %}
                                         </label>
                                         <label class="label">
-                                            <input type="checkbox" class="checkbox">
+                                            <input value="other" type="checkbox" class="checkbox" onchange="enableOtherField(this)">
                                             {% trans "Other" %}
                                         </label>
                                     </div>
                                 </fieldset>
                             </div>
-                            
+                        </div>
+                        <div class="col-span-1">                        
+                            <label class="floating-label">
+                                <span>Maximum</span>
+                                <input type="number" id="max-passengers" min="1" max="100" class="input"/>
+                            </label>
+                        </div>
+                        <div class="col-span-2">                        
+                            <label class="floating-label">
+                                <span>Other</span>
+                                <input disabled id="other-field" name="other-field" class="input" placeholder="Other"/>
+                            </label>
                         </div>
                             
                         <div class="divider col-span-3">{% trans "Address" %}</div>
                         <div id="div-inputs" class="grid grid-cols-5 col-span-3 gap-4">
                             <input class="input col-span-5 w-full" placeholder={% trans "From" %}>
                             <!-- <input hidden id="via-input" class="input col-span-3 w-full" placeholder={% trans "Via" %}> -->
-                            <div hidden id="div-via" class="grid gap-4 col-span-5 w-full"></div>
+                            <div hidden id="div-via" class="grid grid-cols-5 gap-4 col-span-5 w-full"></div>
                             <input class="input col-span-4 w-full" placeholder={% trans "To" %}>
                             <button class="btn btn-success col-span-1" onclick="viaAdd()" type="button">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="2 2 20 20" stroke-width="2" stroke="currentColor" class="scale-120">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                 </svg>
                             </button>
@@ -800,6 +793,10 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-span-3 w-full">
+                            <div class="divider col-span-3 w-full">Note For Passengers</div>
+                            <textarea class="textarea w-full" placeholder=""></textarea>
                         </div>
                         <div class="tooltip col-span-3 w-full" data-tip="Complete all required elements">
                             <input class="btn btn-md btn-secondary w-full" type="submit" value="Add Ride" disabled="disabled">
