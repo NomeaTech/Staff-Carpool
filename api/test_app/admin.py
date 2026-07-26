@@ -3,4 +3,4 @@ from .models import *
 
 # admin.site.register(Profile)
 admin.site.register(Address)
-admin.site.register(Recurring_Trip)
+admin.site.register(Ride)

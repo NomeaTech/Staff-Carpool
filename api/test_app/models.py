@@ -13,7 +13,7 @@ class Address(models.Model):
     def __str__(self):
         return f"{self.country}, {self.city}, {self.postcode}, {self.street} {self.number}"
 
-class Recurring_Trip(models.Model):
+class Ride(models.Model):
     driver = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE, 

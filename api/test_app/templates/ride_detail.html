@@ -7,15 +7,15 @@
 <section class="justify-center content-center h-screen mx-auto lg:pt-20 pt-5 pb-20 px-10">
     <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
         <div class="card-body">
-            <h2 class="card-title"><div>{{ recurring_trip.driver}}'s Trip to <span class="text-secondary inline">{{ recurring_trip.destName}} </span>on <span class="text-primary inline">{{ recurring_trip.leaving_at_weekday.title }} </span></div></h2>
+            <h2 class="card-title"><div>{{ ride.driver}}'s Trip to <span class="text-secondary inline">{{ ride.destName}} </span>on <span class="text-primary inline">{{ ride.leaving_at_weekday.title }} </span></div></h2>
 
-            {% if recurring_trip.note != "" %}
-            <p>{{ recurring_trip.note }}</p>
+            {% if ride.note != "" %}
+            <p>{{ ride.note }}</p>
             {% endif %}
             
-            {% if recurring_trip.passenger.all.count != 0 %}
+            {% if ride.passenger.all.count != 0 %}
                     <div class="flex gap-2">
-                    {% for p in recurring_trip.passenger.all %}
+                    {% for p in ride.passenger.all %}
                         <!-- <a href="/profile/{{p.id}}"><div class="badge badge-soft badge-primary badge-sm">{{p}}</div></a> -->
                         <a href="/profile/{{ p.id }}">
                             <div class="badge badge-soft badge-primary rounded-full badge-lg pl-0 pr-2">
@@ -36,13 +36,13 @@
                     <div tabindex="0" class="collapse bg-base-100 border-base-300 border mb-2">
                         <div class="collapse-title font-semibold">From Address</div>
                         <div class="collapse-content text-sm">
-                            {{ recurring_trip.start }}
+                            {{ ride.start }}
                         </div>
                     </div>
                     <div tabindex="0" class="collapse bg-base-100 border-base-300 border">
                         <div class="collapse-title font-semibold">To Address</div>
                         <div class="collapse-content text-sm">
-                            {{ recurring_trip.destination }}
+                            {{ ride.destination }}
                         </div>
                     </div>
                 </div>
@@ -69,25 +69,25 @@
             <div class="flex place-content-center">
                 <span>
                 {% if is_driver %}
-                <form action="{% url 'delete_trip' %}" method="post">
+                <form action="{% url 'delete_ride' %}" method="post">
                     {% csrf_token %}
-                    <input type="hidden" id="recurring_trip" type="text" name="recurring_trip" value="{{ recurring_trip.id }}">
+                    <input type="hidden" id="ride" type="text" name="ride" value="{{ ride.id }}">
                     <button class="btn btn-soft btn-primary" type="submit">Delete Trip</button>
                 </form>
                 {% endif %}
 
                 {% if not is_passenger and not is_driver %}
-                <form action="{% url 'join_trip' %}" method="post">
+                <form action="{% url 'join_ride' %}" method="post">
                     {% csrf_token %}
-                    <input type="hidden" id="recurring_trip" type="text" name="recurring_trip" value="{{ recurring_trip.id }}">
+                    <input type="hidden" id="ride" type="text" name="ride" value="{{ ride.id }}">
                     <button class="btn btn-soft btn-secondary" type="submit">Join Trip</button>
                 </form>
                 {% endif %}
 
                 {% if is_passenger and not is_driver %}
-                <form action="{% url 'leave_trip' %}" method="post">
+                <form action="{% url 'leave_ride' %}" method="post">
                     {% csrf_token %}
-                    <input type="hidden" id="recurring_trip" type="text" name="recurring_trip" value="{{ recurring_trip.id }}">
+                    <input type="hidden" id="ride" type="text" name="ride" value="{{ ride.id }}">
                     <button class="btn btn-soft btn-accent" type="submit">Leave Trip</button>
                 </form>
                 {% endif %}
@@ -95,7 +95,7 @@
                 </span>
             </div>
 
-            <!-- <p class="text-secondary">Created at: {{ recurring_trip.created_at }}</p> -->
+            <!-- <p class="text-secondary">Created at: {{ ride.created_at }}</p> -->
         </div>
     </div>
 </section>

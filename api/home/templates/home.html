@@ -32,21 +32,21 @@
         </div>
 
         <div class="lg:pt-3 mb-15 md:mb-0 lg:pb-2 pb-15 col-span-2 xl:px-0 justify-self-center overflow-scroll scrollbar-hide">
-          {% if recurring_trips %}
-              {% for recurring_trip in recurring_trips %}
+          {% if rides %}
+              {% for ride in rides %}
                 
-                <a href="/recurring-trip/{{recurring_trip.id}}/">
+                <a href="/ride/{{ride.id}}/">
                     <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
                         <div class="card-body">
-                            <h2 class="card-title"><div>{% blocktranslate with driver=recurring_trip.driver destName=recurring_trip.destName leaving_at_weekday=recurring_trip.leaving_at_weekday|title leaving_at_hour=recurring_trip.leaving_at_hour leaving_at_minute=recurring_trip.leaving_at_minute %}{{ driver }}'s Trip to <span class="text-secondary inline">{{ destName }} </span>on <span class="text-primary inline">{{ leaving_at_weekday }} </span>at <span class="text-primary inline">{{ leaving_at_hour }}:{{ leaving_at_minute }} {% endblocktranslate %}</span></div></h2>
+                            <h2 class="card-title"><div>{% blocktranslate with driver=ride.driver destName=ride.destName leaving_at_weekday=ride.leaving_at_weekday|title leaving_at_hour=ride.leaving_at_hour leaving_at_minute=ride.leaving_at_minute %}{{ driver }}'s Trip to <span class="text-secondary inline">{{ destName }} </span>on <span class="text-primary inline">{{ leaving_at_weekday }} </span>at <span class="text-primary inline">{{ leaving_at_hour }}:{{ leaving_at_minute }} {% endblocktranslate %}</span></div></h2>
 
-                            {% if recurring_trip.note != "" %}
-                            <p>{{ recurring_trip.note }}</p>
+                            {% if ride.note != "" %}
+                            <p>{{ ride.note }}</p>
                             {% endif %}
 
-                            {% if recurring_trip.passenger.all.count != 0 %}
+                            {% if ride.passenger.all.count != 0 %}
                                 <div class="flex gap-2">
-                                {% for p in recurring_trip.passenger.all %}
+                                {% for p in ride.passenger.all %}
                                     <!-- <a href="/profile/{{p.id}}"><div class="badge badge-soft badge-primary badge-sm">{{p}}</div></a> -->
                                     <div class="badge badge-soft badge-primary badge-sm rounded-full">{{p}}</div>    
                                 {% endfor %}
@@ -62,7 +62,7 @@
                   <div class="card-body">
                       <h2 class="flex text-center card-title">
                           <span>
-                            {% trans "No active trips found. Create your own" %} <a class="link-primary inline" href="/create-recurring-trip/">{% trans "here" context "Create your own -here-" %}</a>{% trans ", or look for a trip under" context "Create your own here, or look for a trip under Search" %} <a class="link-accent inline" href="/app/search">{% trans "Search" context "Create your own here, or look for a trip under Search" %}</a>
+                            {% trans "No active rides found. Create your own" %} <a class="link-primary inline" href="/create-ride/">{% trans "here" context "Create your own -here-" %}</a>{% trans ", or look for a ride under" context "Create your own here, or look for a ride under Search" %} <a class="link-accent inline" href="/app/search">{% trans "Search" context "Create your own here, or look for a ride under Search" %}</a>
                           </span>
                       </h2>
                   </div>

@@ -39,7 +39,7 @@ msgid ""
 msgstr ""
 
 #: home/templates/home.html:65
-msgid "No active trips found. Create your own"
+msgid "No active rides found. Create your own"
 msgstr ""
 
 #: home/templates/home.html:65
@@ -48,12 +48,12 @@ msgid "here"
 msgstr ""
 
 #: home/templates/home.html:65
-msgctxt "Create your own here, or look for a trip under Search"
-msgid ", or look for a trip under"
+msgctxt "Create your own here, or look for a ride under Search"
+msgid ", or look for a ride under"
 msgstr ""
 
 #: home/templates/home.html:65
-msgctxt "Create your own here, or look for a trip under Search"
+msgctxt "Create your own here, or look for a ride under Search"
 msgid "Search"
 msgstr ""
 

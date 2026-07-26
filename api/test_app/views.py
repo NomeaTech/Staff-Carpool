@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
-from .models import Recurring_Trip
+from .models import Ride
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 import traceback
@@ -15,38 +15,38 @@ def index(request):
 
 @login_required
 def old_index(request):
-    trip_list = Recurring_Trip.objects.order_by("-created_at")
+    ride_list = Ride.objects.order_by("-created_at")
     User = get_user_model()
     users = User.objects.all()
     # template = loader.get_template("static/index.html")
-    context = {"recurring_trip": trip_list, "users": users}
+    context = {"ride": ride_list, "users": users}
 
     return render(request, "index.html", context)
 
 @login_required
-def my_trips(request):
+def my_rides(request):
     user = request.user
-    trip_list = user.recurring_trips.all()
-    context = {"recurring_trips": trip_list}
+    ride_list = user.rides.all()
+    context = {"rides": ride_list}
 
-    return render(request, "my_trips.html", context)
+    return render(request, "my_rides.html", context)
 
-# Everything to do with recurring trips should be moved to its own app
+# Everything to do with recurring rides should be moved to its own app
 @login_required
-def recurring_trip_detail(request, recurring_trip_id):
-    recurring_trip = get_object_or_404(Recurring_Trip, pk=recurring_trip_id)
-    is_driver = True if recurring_trip.driver.id == request.user.id else False
-    is_passenger = True if request.user in recurring_trip.passenger.all() else False
-    # leaving_at = recurring_trip.leaving_at.strftime("%A, %H:%M")
-    # arriving_at = recurring_trip.leaving_at.strftime("%A, %H:%M")
+def ride_detail(request, ride_id):
+    ride = get_object_or_404(Ride, pk=ride_id)
+    is_driver = True if ride.driver.id == request.user.id else False
+    is_passenger = True if request.user in ride.passenger.all() else False
+    # leaving_at = ride.leaving_at.strftime("%A, %H:%M")
+    # arriving_at = ride.leaving_at.strftime("%A, %H:%M")
 
-    l_weekday = recurring_trip.leaving_at_weekday
-    l_hour = recurring_trip.leaving_at_hour
-    l_minute = recurring_trip.leaving_at_minute
+    l_weekday = ride.leaving_at_weekday
+    l_hour = ride.leaving_at_hour
+    l_minute = ride.leaving_at_minute
 
-    a_weekday = recurring_trip.arriving_at_weekday
-    a_hour = recurring_trip.arriving_at_hour
-    a_minute = recurring_trip.arriving_at_minute
+    a_weekday = ride.arriving_at_weekday
+    a_hour = ride.arriving_at_hour
+    a_minute = ride.arriving_at_minute
 
 
     # leaving_at = f"{l_weekday.title()}, {str(l_hour).zfill(2)}:{str(l_minute).zfill(2)}"
@@ -55,45 +55,45 @@ def recurring_trip_detail(request, recurring_trip_id):
     arriving_at = f"{str(a_hour).zfill(2)}:{str(a_minute).zfill(2)}"
 
     context = {
-        "recurring_trip": recurring_trip, 
+        "ride": ride, 
         "is_driver": is_driver, 
         "is_passenger": is_passenger,
         "leaving_at": leaving_at,
         "arriving_at": arriving_at,
-        "num_passengers": len(recurring_trip.passenger.all()),
+        "num_passengers": len(ride.passenger.all()),
     }
     
-    return render(request, "recurring_trip_detail.html", context)
+    return render(request, "ride_detail.html", context)
 
 @login_required
-def join_trip(request):
-    user, trip, response = trip_helper(request)
-    trip.passenger.add(user)
+def join_ride(request):
+    user, ride, response = ride_helper(request)
+    ride.passenger.add(user)
 
     return response
 
 @login_required
-def leave_trip(request):
-    user, trip, response = trip_helper(request)
-    trip.passenger.remove(user)
+def leave_ride(request):
+    user, ride, response = ride_helper(request)
+    ride.passenger.remove(user)
 
     return response
 
 @login_required
-def delete_trip(request):
-    user, trip, response = trip_helper(request)
+def delete_ride(request):
+    user, ride, response = ride_helper(request)
 
-    if trip.driver.id == user.id:
-        trip.delete()
+    if ride.driver.id == user.id:
+        ride.delete()
         return HttpResponseRedirect("/")
     else:
         return HttpResponseRedirect("/")
 
-def trip_helper(request):
+def ride_helper(request):
     post_data = request.POST
-    rt_id = post_data.get("recurring_trip")
-    trip = get_object_or_404(Recurring_Trip, pk=rt_id)
+    rt_id = post_data.get("ride")
+    ride = get_object_or_404(Ride, pk=rt_id)
     user = request.user
-    response = HttpResponseRedirect(f"/recurring-trip/{rt_id}/")
+    response = HttpResponseRedirect(f"/recurring-ride/{rt_id}/")
 
-    return user, trip, response
+    return user, ride, response

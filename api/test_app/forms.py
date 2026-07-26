@@ -1,5 +1,5 @@
 from django import forms
-from .models import Address, Recurring_Trip
+from .models import Address, Ride
 
 class AddressForm(forms.ModelForm):
     class Meta:
@@ -12,9 +12,9 @@ class AddressForm(forms.ModelForm):
             "number"
         )
 
-class RecurringTripForm(forms.ModelForm):
+class RideForm(forms.ModelForm):
     class Meta:
-        model = Recurring_Trip
+        model = Ride
         fields = (
             # "start",
             # "destination",

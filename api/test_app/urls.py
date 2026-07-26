@@ -4,10 +4,9 @@ from .views import *
 urlpatterns = [
     path("", index, name="index"),
     path("offline/", offline, name="offline"),
-    path("my-trips/", my_trips, name="my_trips"),
-    path("recurring-trip/join_trip", join_trip, name="join_trip"),
-    path("recurring-trip/leave_trip", leave_trip, name="leave_trip"),
-    path("recurring-trip/delete_trip", delete_trip, name="delete_trip"),
-    path("recurring-trip/<int:recurring_trip_id>/", recurring_trip_detail, name="recurring_trip_detail"),
-    # path("create-recurring-trip/", create_recurring_trip, name="create_recurring_trip"),
+    path("my-rides/", my_rides, name="my_rides"),
+    path("ride/join_ride", join_ride, name="join_ride"),
+    path("ride/leave_ride", leave_ride, name="leave_ride"),
+    path("ride/delete_ride", delete_ride, name="delete_ride"),
+    path("ride/<int:ride_id>/", ride_detail, name="ride_detail"),
 ]

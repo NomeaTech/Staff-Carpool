@@ -9,7 +9,7 @@ class User(AbstractUser):
 
     pfp = models.ImageField(upload_to='static/images/', blank=True, null=True)
     address = models.ForeignKey('test_app.Address', on_delete=models.CASCADE, null=True, blank=True)
-    recurring_trips = models.ManyToManyField('test_app.Recurring_Trip', blank=True)
+    rides = models.ManyToManyField('test_app.Ride', blank=True)
     phone = models.CharField(blank=True, null=True)
 
     def __str__(self):
