@@ -28,6 +28,8 @@ class RideForm(forms.ModelForm):
             "vias",
             "destination",
             "dest_name",
+            "one_time",
+            "one_way",
             "leaving_at_date",
             "leaving_at_time",
             "arriving_at_date",

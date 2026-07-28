@@ -4,7 +4,6 @@ function viaAdd() {
     inputDiv.removeAttribute("hidden", "");
 
     id = Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9*Math.pow(10, 12)).toString(36)
-    // console.log(id)
     inputDiv.insertAdjacentHTML(
         'beforeend', 
         `<div class="grid grid-cols-5 col-span-5 gap-4 div-via-input" id="${id}-div">
@@ -17,7 +16,6 @@ function viaAdd() {
 }
 
 function viaRemove(element) {
-    console.log(`remove ${element.dataset.idref}`);
     div = document.getElementById(`${element.dataset.idref}-div`);
     div.remove()
 
@@ -29,14 +27,18 @@ function viaRemove(element) {
 }
 
 function enableOtherField(checkbox) {
-    console.log("Func triggered");
-    other = document.getElementById('other-field');
-    console.log(checkbox.checked);
+    console.log("This is a test1234")
+    otherDiv = document.getElementById('other_div')
+    other = document.getElementById('id_other_field');
     if (checkbox.checked) {
         other.removeAttribute("disabled");
+        otherDiv.removeAttribute("hidden");
     } else {
         other.setAttribute("disabled", "");
+        otherDiv.setAttribute("hidden", "");
     }
+
+
 }
 
 function changeRecurrance(radio) {

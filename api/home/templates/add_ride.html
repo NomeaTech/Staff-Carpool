@@ -6,7 +6,8 @@
 {% block title %}Add Ride{% endblock %}
 {% block content %}
 
-<div onload="test()" class="justify-center content-center h-screen mx-auto lg:pt-20 pt-5 pb-20 px-10 overflow-scroll scrollbar-hide">
+<div class="justify-center content-center h-screen mx-auto lg:pt-20 pt-5 pb-20 px-10 overflow-scroll scrollbar-hide">
+    <!-- {{ ride_form.as_p }} -->
     <div class="card bg-base-100 w-96 shadow-sm font-display">
         <div class="card-body">
             <div class="">
@@ -14,18 +15,18 @@
                 <form action="/app/add/" name="addTripForm" method="post">                    
                     <div class="grid grid-cols-3 gap-4">
                         {% csrf_token %}
-
+                        
                         <div class="grid grid-cols-3 col-span-3">
                             <div class="divider col-span-3">{% trans "Ride Options" %}</div>
                             <div class="col-span-1">
                                 <fieldset class="fieldset rounded-field bg-base-100 border-base-300 border p-4 pb-3.5" required>
                                     <legend class="fieldset-legend">{% trans "Car Ride" %}</legend>
                                     <label class="label">
-                                    <input type="checkbox" name="request-offer" class="checkbox checkbox-secondary">
+                                    <input id="id_offer" type="checkbox" name="offer" class="checkbox checkbox-secondary">
                                     {% trans "Offer" %}
                                     </label>
                                     <label class="label">
-                                    <input type="checkbox" name="request-offer" class="checkbox checkbox-secondary">
+                                    <input id="id_request" type="checkbox" name="request" class="checkbox checkbox-secondary">
                                     {% trans "Request" %}
                                     </label>
                                 </fieldset>
@@ -35,49 +36,54 @@
                                     <legend class="fieldset-legend">{% trans "Other Transport" %}</legend>
                                     <div class="grid grid-cols-2 gap-1">
                                         <label class="label">
-                                            <input value="train" type="checkbox" class="checkbox checkbox-error">
+                                            <input id="id_train" name="train" value="train" type="checkbox" class="checkbox checkbox-error">
                                             {% trans "Train" %}
                                         </label>
                                         <label class="label">
-                                            <input value="bus" type="checkbox" class="checkbox checkbox-info">
+                                            <input id="id_bus" name="bus" value="bus" type="checkbox" class="checkbox checkbox-info">
                                             {% trans "Bus" %}
                                         </label>
                                         <label class="label">
-                                            <input value="taxi" type="checkbox" class="checkbox checkbox-warning">
+                                            <input id="id_taxi" name="taxi" value="taxi" type="checkbox" class="checkbox checkbox-warning">
                                             {% trans "Taxi" %}
                                         </label>
                                         <label class="label">
-                                            <input value="other" type="checkbox" class="checkbox" onchange="enableOtherField(this)">
+                                            <input id="id_other" name="other" value="other" type="checkbox" class="checkbox" onchange="enableOtherField(this)">
                                             {% trans "Other" %}
                                         </label>
                                     </div>
                                 </fieldset>
                             </div>
                         </div>
-                        <div class="col-span-1">                        
+                        <div id="other_div" hidden class="col-span-3">                        
                             <label class="floating-label">
-                                <span>Maximum</span>
-                                <input type="number" id="max-passengers" min="1" max="100" class="input"/>
+                                <span>{% trans "Other" %}</span>
+                                <input disabled id="id_other_field" name="other_field" class="input" placeholder="{% trans "Other" %}"/>
                             </label>
                         </div>
-                        <div class="col-span-2">                        
+                        <div class="col-span-3">                        
                             <label class="floating-label">
-                                <span>Other</span>
-                                <input disabled id="other-field" name="other-field" class="input" placeholder="Other"/>
+                                <span>{% trans "Maximum passengers" %}</span>
+                                <input id="id_max_passengers" name="max_passengers" placeholder="{% trans "Maximum passengers" %} type="number" id="max-passengers" min="1" max="100" class="input"/>
                             </label>
                         </div>
                             
                         <div class="divider col-span-3">{% trans "Address" %}</div>
                         <div id="div-inputs" class="grid grid-cols-5 col-span-3 gap-4">
-                            <input class="input col-span-5 w-full" placeholder={% trans "From" %}>
+                            <input id="id_from" name="from" class="input col-span-5 w-full" placeholder="{% trans "From" %}">
                             <!-- <input hidden id="via-input" class="input col-span-3 w-full" placeholder={% trans "Via" %}> -->
                             <div hidden id="div-via" class="grid grid-cols-5 gap-4 col-span-5 w-full"></div>
-                            <input class="input col-span-4 w-full" placeholder={% trans "To" %}>
+                            <input id="id_to" name="to" class="input col-span-4 w-full" placeholder="{% trans "To" %}">
                             <button class="btn btn-success col-span-1" onclick="viaAdd()" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="2 2 20 20" stroke-width="2" stroke="currentColor" class="scale-120">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                 </svg>
                             </button>
+                            <div class="col-span-5">
+                                <div class="tooltip w-full" data-tip="A descriptive name for your final destination">
+                                    <input id="id_place_name" name="place_name" class="input w-full" placeholder="{% trans "Place Name" %}"">
+                                </div>
+                            </div>
                         </div>
                         <div class="divider col-span-3">{% trans "Schedule" %}</div>
                         <div class="grid grid-cols-2 col-span-3 gap-2">
@@ -85,11 +91,11 @@
                                 <fieldset class="fieldset justify-around rounded-field bg-base-100 border-base-300 border p-4" required>
                                     <legend class="fieldset-legend">{% trans "Recurrance" %}</legend>
                                     <label class="label">
-                                        <input type="radio" name="recurrance" class="radio radio-info" onchange="changeRecurrance(this)" value="oneTime" checked>
+                                        <input id="id_one_time" type="radio" name="one_time" class="radio radio-info" onchange="changeRecurrance(this)" value="oneTime" checked>
                                         {% trans "One-time" %}
                                     </label>
                                     <label class="label">
-                                        <input type="radio" name="recurrance" class="recurrance radio radio-info" onchange="changeRecurrance(this)" value="recurring">
+                                        <input id="id_one_time" type="radio" name="one_time" class="recurrance radio radio-info" onchange="changeRecurrance(this)" value="recurring">
                                         {% trans "Recurring" %}
                                     </label>
                                 </fieldset>
@@ -99,18 +105,13 @@
                                     <legend class="fieldset-legend">{% trans "Return" %}</legend>
                                     </label>
                                     <label class="label">
-                                    <input type="radio" name="return" class="radio radio-error" onchange="changeReturn(this)" value="oneWay" checked>
+                                    <input id="id_one_way" type="radio" name="one_way" class="radio radio-error" onchange="changeReturn(this)" value="oneWay" checked>
                                     {% trans "One-way" %}
                                     </label>
                                     <label class="label">
-                                    <input type="radio" name="return" class="return radio radio-error" onchange="changeReturn(this)" value="twoWay">
+                                    <input id="id_one_way" type="radio" name="one_way" class="return radio radio-error" onchange="changeReturn(this)" value="twoWay">
                                     {% trans "Return" %}
                                 </fieldset>
-                            </div>
-                        </div>
-                        <div class="col-span-3">
-                            <div class="tooltip" data-tip="A descriptive name for your final destination">
-                                <input class="input" placeholder="Place Name">
                             </div>
                         </div>
                         <div class="grid grid-cols-10 w-full col-span-3 gap-2">
@@ -800,8 +801,8 @@
                             </div>
                         </div>
                         <div class="col-span-3 w-full">
-                            <div class="divider col-span-3 w-full">Note For Passengers</div>
-                            <textarea class="textarea w-full" placeholder=""></textarea>
+                            <div class="divider col-span-3 w-full">{% trans "Note For Passengers" %}</div>
+                            <textarea id="id_note" name="note" class="textarea w-full" placeholder=""></textarea>
                         </div>
                         <div class="tooltip col-span-3 w-full" data-tip="Complete all required elements">
                             <input class="btn btn-md btn-secondary w-full" type="submit" value="Add Ride" disabled="disabled">

@@ -57,38 +57,35 @@ def search(request):
 @login_required
 def add_ride(request):    
     if request.method == "POST":
-        from_address_form = AddressForm(request.POST)
-        to_address_form = AddressForm(request.POST)
+        # from_address_form = AddressForm(request.POST)
+        # to_address_form = AddressForm(request.POST)
         ride_form = RideForm(request.POST)
-        if ride_form.is_valid() and to_address_form.is_valid() and from_address_form.is_valid():
-            
-            success = True
-
+        if ride_form.is_valid():
             try:            
                 ride = ride_form.save(commit=False)
-                from_address = from_address_form.save()
-                to_address = to_address_form.save()
+                # from_address = from_address_form.save()
+                # to_address = to_address_form.save()
                 
-                ride.start = from_address
-                ride.destination = to_address
+                # ride.start = from_address
+                # ride.destination = to_address
 
                 ride.driver = request.user
-
                 ride.save()
+                # Also save ride to driver's rides
             except Exception as e:
                 traceback.print_exc()
                 
             return HttpResponseRedirect(f"/ride/{ride.id}")
             # return render(request, "ride_created.html", context)
     else:
-        from_address_form = AddressForm()
-        to_address_form = AddressForm()
+        # from_address_form = AddressForm()
+        # to_address_form = AddressForm()
         ride_form = RideForm()
 
     context = {
-        "from_address_form": from_address_form,
-        "to_address_form": to_address_form,
-        "Ride_form": ride_form
+        # "from_address_form": from_address_form,
+        # "to_address_form": to_address_form,
+        "ride_form": ride_form
     }
 
     return render(request, "add_ride.html", context)
