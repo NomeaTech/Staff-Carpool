@@ -61,33 +61,34 @@ def search(request):
 def add_ride(request):    
 
     if request.method == "POST":
+        logger.debug("add_ride post triggered 1234")
         # from_address_form = AddressForm(request.POST)
         # to_address_form = AddressForm(request.POST)
         logger.debug(request.POST)
 
         ride_form = RideForm(request.POST)
-        # if ride_form.is_valid():
-        try:
-            ride = ride_form.save(commit=False)
-            # from_address = from_address_form.save()
-            # to_address = to_address_form.save()
-            
-            # ride.start = from_address
-            # ride.destination = to_address
+        if ride_form.is_valid():
+            try:
+                ride = ride_form.save(commit=False)
+                # from_address = from_address_form.save()
+                # to_address = to_address_form.save()
+                
+                # ride.start = from_address
+                # ride.destination = to_address
 
-            # collect vias
+                # collect vias
 
-            for key, value in request.iteritems():
-                if key.startswith("via_input_"):
-                    ride.vias.append(value)
+                for key, value in request.POST.items():
+                    if key.startswith("via_input_"):
+                        ride.vias.append(value)
 
-            ride.driver = request.user
-            ride.save()
-            # Also save ride to driver's rides
-        except Exception as e:
-            traceback.print_exc()
-
-        return HttpResponseRedirect(f"/ride/{ride.id}")
+                ride.driver = request.user
+                ride.save()
+                # Also save ride to driver's rides
+            except Exception as e:
+                traceback.print_exc()
+        return render(request, "add_ride.html", {"ride_form": ride_form})
+        # return HttpResponseRedirect(f"/ride/{ride.id}")
             # return render(request, "ride_created.html", context)
     else:
         # from_address_form = AddressForm()

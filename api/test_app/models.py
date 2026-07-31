@@ -18,7 +18,7 @@ class Address(models.Model):
     # address = models.CharField(max_length=100)
 
 class Ride(models.Model):
-    test = GeoaddressField()
+    # test = GeoaddressField()
 
     driver = models.ForeignKey(
         settings.AUTH_USER_MODEL, 

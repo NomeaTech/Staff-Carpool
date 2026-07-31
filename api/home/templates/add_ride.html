@@ -72,10 +72,10 @@
                             
                         <div class="divider col-span-3">{% trans "Address" %}</div>
                         <div id="div-inputs" class="grid grid-cols-5 col-span-3 gap-4">
-                            <input id="id_from" name="from" class="input col-span-5 w-full" placeholder="{% trans "From" %}">
+                            <input id="id_start" name="start" class="input col-span-5 w-full" placeholder="{% trans "From" %}">
                             <!-- <input hidden id="via-input" class="input col-span-3 w-full" placeholder={% trans "Via" %}> -->
                             <div hidden id="div-via" class="grid grid-cols-5 gap-4 col-span-5 w-full"></div>
-                            <input id="id_to" name="to" class="input col-span-4 w-full" placeholder="{% trans "To" %}">
+                            <input id="id_destination" name="destination" class="input col-span-4 w-full" placeholder="{% trans "To" %}">
                             <button class="btn btn-success col-span-1" onclick="viaAdd()" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="2 2 20 20" stroke-width="2" stroke="currentColor" class="scale-120">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -83,7 +83,7 @@
                             </button>
                             <div class="col-span-5">
                                 <div class="tooltip w-full" data-tip="A descriptive name for your final destination">
-                                    <input id="id_place_name" name="place_name" class="input w-full" placeholder="{% trans "Place Name" %}"">
+                                    <input id="id_dest_name" name="dest_name" class="input w-full" placeholder="{% trans "Place Name" %}"">
                                 </div>
                             </div>
                         </div>
@@ -809,11 +809,9 @@
                         <div class="tooltip col-span-3 w-full" data-tip="Complete all required elements">
                             <input class="btn btn-md btn-secondary w-full" type="submit" value="Add Ride">
                         </div>
-                        {% if ride_form.errors %}
-                            {% for error in errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        {% endif %}
+                        {% for error in ride_form.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
                     </div>
                 </form>
             </div>
