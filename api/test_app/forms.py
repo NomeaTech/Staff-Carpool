@@ -1,5 +1,6 @@
 from django import forms
 from .models import Address, Ride
+from django.forms import modelformset_factory
 
 class AddressForm(forms.ModelForm):
     class Meta:
@@ -11,6 +12,15 @@ class AddressForm(forms.ModelForm):
             "street",
             "number"
         )
+
+# class AddressCharForm(forms.ModelForm):
+#     class Meta:
+#         model = AddressChar
+#         fields = ("address")
+
+# AddressFormSet = modelformset_factory(
+#     AddressChar, fields=("address"),
+# )
 
 class RideForm(forms.ModelForm):
     class Meta:

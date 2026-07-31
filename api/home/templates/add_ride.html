@@ -6,13 +6,15 @@
 {% block title %}Add Ride{% endblock %}
 {% block content %}
 
+
 <div class="justify-center content-center h-screen mx-auto lg:pt-20 pt-5 pb-20 px-10 overflow-scroll scrollbar-hide">
+    <!-- {{ ride_form }} -->
     <!-- {{ ride_form.as_p }} -->
     <div class="card bg-base-100 w-96 shadow-sm font-display">
         <div class="card-body">
             <div class="">
                 <h2 class="card-title mb-0 mt-0 mb-4">{% trans "Add Ride" %}</h2>
-                <form action="/app/add/" name="addTripForm" method="post">                    
+                <form action="/app/add/" name="RideForm" method="post">                    
                     <div class="grid grid-cols-3 gap-4">
                         {% csrf_token %}
                         
@@ -64,7 +66,7 @@
                         <div class="col-span-3">                        
                             <label class="floating-label">
                                 <span>{% trans "Maximum passengers" %}</span>
-                                <input id="id_max_passengers" name="max_passengers" placeholder="{% trans "Maximum passengers" %} type="number" id="max-passengers" min="1" max="100" class="input"/>
+                                <input id="id_max_passengers" name="max_passengers" placeholder="{% trans "Maximum passengers" %}" type="number" id="max-passengers" min="1" max="100" class="input"/>
                             </label>
                         </div>
                             
@@ -805,8 +807,13 @@
                             <textarea id="id_note" name="note" class="textarea w-full" placeholder=""></textarea>
                         </div>
                         <div class="tooltip col-span-3 w-full" data-tip="Complete all required elements">
-                            <input class="btn btn-md btn-secondary w-full" type="submit" value="Add Ride" disabled="disabled">
+                            <input class="btn btn-md btn-secondary w-full" type="submit" value="Add Ride">
                         </div>
+                        {% if ride_form.errors %}
+                            {% for error in errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
                     </div>
                 </form>
             </div>

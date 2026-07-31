@@ -14,6 +14,9 @@ class Address(models.Model):
     def __str__(self):
         return f"{self.country}, {self.city}, {self.postcode}, {self.street} {self.number}"
 
+# class AddressChar(models.Model):
+    # address = models.CharField(max_length=100)
+
 class Ride(models.Model):
     test = GeoaddressField()
 
