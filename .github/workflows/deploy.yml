@@ -29,5 +29,7 @@ jobs:
           python manage.py tailwind build
           python manage.py migrate --noinput
           python manage.py collectstatic --noinput
-          sudo systemctl restart django_ride
+          sudo systemctl stop django_ride
+          sleep 2
+          sudo systemctl start django_ride
         EOF
