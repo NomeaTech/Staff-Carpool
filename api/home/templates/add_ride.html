@@ -121,594 +121,92 @@
                             <div class="divider col-span-4" id="divider-time">{% trans "Time" %}</div>
                             
                             <div hidden id="div-recurring" class="grid grid-cols-10 w-full col-span-10 gap-2 ">
-                                <fieldset id="div-monday" class="grid grid-cols-10 w-full col-span-10 gap-2 fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4">
-                                    <div class="col-span-5 w-full place-content-center">
-                                        <label class="label">
-                                            <input type="checkbox" checked="checked" class="checkbox" />
-                                            Monday
-                                        </label>
-                                    </div>
-                                    <div id="time-selectors" class="col-span-5">                                
-                                        <div class="div-departure flex w-full align-items-center">    
-                                            <select id="departure-select-hour" class="select select-lg col-span-2">
-                                                <option selected>00</option>
-                                                <option>01</option>
-                                                <option>02</option>
-                                                <option>03</option>
-                                                <option>04</option>
-                                                <option>05</option>
-                                                <option>06</option>
-                                                <option>07</option>
-                                                <option>08</option>
-                                                <option>09</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                                <option>13</option>
-                                                <option>14</option>
-                                                <option>15</option>
-                                                <option>16</option>
-                                                <option>17</option>
-                                                <option>18</option>
-                                                <option>19</option>
-                                                <option>20</option>
-                                                <option>21</option>
-                                                <option>22</option>
-                                                <option>23</option>
-                                            </select>
-                                            <p style="font-size: 20px" class="place-self-center">:</p>
-                                            <select id="select-minute" class="select select-lg col-span-2">
-                                                <option selected>00</option>
-                                                <option>10</option>
-                                                <option>20</option>
-                                                <option>30</option>
-                                                <option>40</option>
-                                                <option>50</option>
-                                            </select>
+                            {% for day in day_list %}
+                                    <fieldset id="div-{{ day.1 }}" class="grid grid-cols-10 w-full col-span-10 gap-2 fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4">
+                                        <div class="col-span-5 w-full place-content-center">
+                                            <label class="label">
+                                                <input type="checkbox" class="checkbox" />
+                                                {{ day.0 }}
+                                            </label>
                                         </div>
-                                        <div hidden class="div-return flex w-full align-items-center">    
-                                            <select id="departure-select-hour" class="select select-xs col-span-2">
-                                                <option selected>00</option>
-                                                <option>01</option>
-                                                <option>02</option>
-                                                <option>03</option>
-                                                <option>04</option>
-                                                <option>05</option>
-                                                <option>06</option>
-                                                <option>07</option>
-                                                <option>08</option>
-                                                <option>09</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                                <option>13</option>
-                                                <option>14</option>
-                                                <option>15</option>
-                                                <option>16</option>
-                                                <option>17</option>
-                                                <option>18</option>
-                                                <option>19</option>
-                                                <option>20</option>
-                                                <option>21</option>
-                                                <option>22</option>
-                                                <option>23</option>
-                                            </select>
-                                            <p style="font-size: 20px" class="place-self-center">:</p>
-                                            <select id="select-minute" class="select select-xs col-span-2">
-                                                <option selected>00</option>
-                                                <option>10</option>
-                                                <option>20</option>
-                                                <option>30</option>
-                                                <option>40</option>
-                                                <option>50</option>
-                                            </select>
+                                        <div id="time-selectors" class="col-span-5">                                
+                                            <div class="div-departure flex w-full align-items-center">    
+                                                <select id="departure-select-hour" class="select select-lg col-span-2">
+                                                    <option selected>00</option>
+                                                    <option>01</option>
+                                                    <option>02</option>
+                                                    <option>03</option>
+                                                    <option>04</option>
+                                                    <option>05</option>
+                                                    <option>06</option>
+                                                    <option>07</option>
+                                                    <option>08</option>
+                                                    <option>09</option>
+                                                    <option>10</option>
+                                                    <option>11</option>
+                                                    <option>12</option>
+                                                    <option>13</option>
+                                                    <option>14</option>
+                                                    <option>15</option>
+                                                    <option>16</option>
+                                                    <option>17</option>
+                                                    <option>18</option>
+                                                    <option>19</option>
+                                                    <option>20</option>
+                                                    <option>21</option>
+                                                    <option>22</option>
+                                                    <option>23</option>
+                                                </select>
+                                                <p style="font-size: 20px" class="place-self-center">:</p>
+                                                <select id="select-minute" class="select select-lg col-span-2">
+                                                    <option selected>00</option>
+                                                    <option>10</option>
+                                                    <option>20</option>
+                                                    <option>30</option>
+                                                    <option>40</option>
+                                                    <option>50</option>
+                                                </select>
+                                            </div>
+                                            <div hidden class="div-return flex w-full align-items-center">    
+                                                <select id="departure-select-hour" class="select select-xs col-span-2">
+                                                    <option selected>00</option>
+                                                    <option>01</option>
+                                                    <option>02</option>
+                                                    <option>03</option>
+                                                    <option>04</option>
+                                                    <option>05</option>
+                                                    <option>06</option>
+                                                    <option>07</option>
+                                                    <option>08</option>
+                                                    <option>09</option>
+                                                    <option>10</option>
+                                                    <option>11</option>
+                                                    <option>12</option>
+                                                    <option>13</option>
+                                                    <option>14</option>
+                                                    <option>15</option>
+                                                    <option>16</option>
+                                                    <option>17</option>
+                                                    <option>18</option>
+                                                    <option>19</option>
+                                                    <option>20</option>
+                                                    <option>21</option>
+                                                    <option>22</option>
+                                                    <option>23</option>
+                                                </select>
+                                                <p style="font-size: 20px" class="place-self-center">:</p>
+                                                <select id="select-minute" class="select select-xs col-span-2">
+                                                    <option selected>00</option>
+                                                    <option>10</option>
+                                                    <option>20</option>
+                                                    <option>30</option>
+                                                    <option>40</option>
+                                                    <option>50</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                </fieldset>
-                                <fieldset id="div-tuesday" class="grid grid-cols-10 w-full col-span-10 gap-2 fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4">
-                                    <div class="col-span-5 w-full place-content-center">
-                                        <label class="label">
-                                            <input type="checkbox" checked="checked" class="checkbox" />
-                                            Tuesday
-                                        </label>
-                                    </div>
-                                    <div id="time-selectors" class="col-span-5">                                
-                                        <div class="div-departure flex w-full align-items-center">    
-                                            <select id="departure-select-hour" class="select select-lg col-span-2">
-                                                <option selected>00</option>
-                                                <option>01</option>
-                                                <option>02</option>
-                                                <option>03</option>
-                                                <option>04</option>
-                                                <option>05</option>
-                                                <option>06</option>
-                                                <option>07</option>
-                                                <option>08</option>
-                                                <option>09</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                                <option>13</option>
-                                                <option>14</option>
-                                                <option>15</option>
-                                                <option>16</option>
-                                                <option>17</option>
-                                                <option>18</option>
-                                                <option>19</option>
-                                                <option>20</option>
-                                                <option>21</option>
-                                                <option>22</option>
-                                                <option>23</option>
-                                            </select>
-                                            <p style="font-size: 20px" class="place-self-center">:</p>
-                                            <select id="select-minute" class="select select-lg col-span-2">
-                                                <option selected>00</option>
-                                                <option>10</option>
-                                                <option>20</option>
-                                                <option>30</option>
-                                                <option>40</option>
-                                                <option>50</option>
-                                            </select>
-                                        </div>
-                                        <div hidden class="div-return flex w-full align-items-center">    
-                                            <select id="departure-select-hour" class="select select-xs col-span-2">
-                                                <option selected>00</option>
-                                                <option>01</option>
-                                                <option>02</option>
-                                                <option>03</option>
-                                                <option>04</option>
-                                                <option>05</option>
-                                                <option>06</option>
-                                                <option>07</option>
-                                                <option>08</option>
-                                                <option>09</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                                <option>13</option>
-                                                <option>14</option>
-                                                <option>15</option>
-                                                <option>16</option>
-                                                <option>17</option>
-                                                <option>18</option>
-                                                <option>19</option>
-                                                <option>20</option>
-                                                <option>21</option>
-                                                <option>22</option>
-                                                <option>23</option>
-                                            </select>
-                                            <p style="font-size: 20px" class="place-self-center">:</p>
-                                            <select id="select-minute" class="select select-xs col-span-2">
-                                                <option selected>00</option>
-                                                <option>10</option>
-                                                <option>20</option>
-                                                <option>30</option>
-                                                <option>40</option>
-                                                <option>50</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                                <fieldset id="div-wednesday" class="grid grid-cols-10 w-full col-span-10 gap-2 fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4">
-                                    <div class="col-span-5 w-full place-content-center">
-                                        <label class="label">
-                                            <input type="checkbox" checked="checked" class="checkbox" />
-                                            Wednesday
-                                        </label>
-                                    </div>
-                                    <div id="time-selectors" class="col-span-5">                                
-                                        <div class="div-departure flex w-full align-items-center">    
-                                            <select id="departure-select-hour" class="select select-lg col-span-2">
-                                                <option selected>00</option>
-                                                <option>01</option>
-                                                <option>02</option>
-                                                <option>03</option>
-                                                <option>04</option>
-                                                <option>05</option>
-                                                <option>06</option>
-                                                <option>07</option>
-                                                <option>08</option>
-                                                <option>09</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                                <option>13</option>
-                                                <option>14</option>
-                                                <option>15</option>
-                                                <option>16</option>
-                                                <option>17</option>
-                                                <option>18</option>
-                                                <option>19</option>
-                                                <option>20</option>
-                                                <option>21</option>
-                                                <option>22</option>
-                                                <option>23</option>
-                                            </select>
-                                            <p style="font-size: 20px" class="place-self-center">:</p>
-                                            <select id="select-minute" class="select select-lg col-span-2">
-                                                <option selected>00</option>
-                                                <option>10</option>
-                                                <option>20</option>
-                                                <option>30</option>
-                                                <option>40</option>
-                                                <option>50</option>
-                                            </select>
-                                        </div>
-                                        <div hidden class="div-return flex w-full align-items-center">    
-                                            <select id="departure-select-hour" class="select select-xs col-span-2">
-                                                <option selected>00</option>
-                                                <option>01</option>
-                                                <option>02</option>
-                                                <option>03</option>
-                                                <option>04</option>
-                                                <option>05</option>
-                                                <option>06</option>
-                                                <option>07</option>
-                                                <option>08</option>
-                                                <option>09</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                                <option>13</option>
-                                                <option>14</option>
-                                                <option>15</option>
-                                                <option>16</option>
-                                                <option>17</option>
-                                                <option>18</option>
-                                                <option>19</option>
-                                                <option>20</option>
-                                                <option>21</option>
-                                                <option>22</option>
-                                                <option>23</option>
-                                            </select>
-                                            <p style="font-size: 20px" class="place-self-center">:</p>
-                                            <select id="select-minute" class="select select-xs col-span-2">
-                                                <option selected>00</option>
-                                                <option>10</option>
-                                                <option>20</option>
-                                                <option>30</option>
-                                                <option>40</option>
-                                                <option>50</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                                <fieldset id="div-thursday" class="grid grid-cols-10 w-full col-span-10 gap-2 fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4">
-                                    <div class="col-span-5 w-full place-content-center">
-                                        <label class="label">
-                                            <input type="checkbox" checked="checked" class="checkbox" />
-                                            Thursday
-                                        </label>
-                                    </div>
-                                    <div id="time-selectors" class="col-span-5">                                
-                                        <div class="div-departure flex w-full align-items-center">    
-                                            <select id="departure-select-hour" class="select select-lg col-span-2">
-                                                <option selected>00</option>
-                                                <option>01</option>
-                                                <option>02</option>
-                                                <option>03</option>
-                                                <option>04</option>
-                                                <option>05</option>
-                                                <option>06</option>
-                                                <option>07</option>
-                                                <option>08</option>
-                                                <option>09</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                                <option>13</option>
-                                                <option>14</option>
-                                                <option>15</option>
-                                                <option>16</option>
-                                                <option>17</option>
-                                                <option>18</option>
-                                                <option>19</option>
-                                                <option>20</option>
-                                                <option>21</option>
-                                                <option>22</option>
-                                                <option>23</option>
-                                            </select>
-                                            <p style="font-size: 20px" class="place-self-center">:</p>
-                                            <select id="select-minute" class="select select-lg col-span-2">
-                                                <option selected>00</option>
-                                                <option>10</option>
-                                                <option>20</option>
-                                                <option>30</option>
-                                                <option>40</option>
-                                                <option>50</option>
-                                            </select>
-                                        </div>
-                                        <div hidden class="div-return flex w-full align-items-center">    
-                                            <select id="departure-select-hour" class="select select-xs col-span-2">
-                                                <option selected>00</option>
-                                                <option>01</option>
-                                                <option>02</option>
-                                                <option>03</option>
-                                                <option>04</option>
-                                                <option>05</option>
-                                                <option>06</option>
-                                                <option>07</option>
-                                                <option>08</option>
-                                                <option>09</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                                <option>13</option>
-                                                <option>14</option>
-                                                <option>15</option>
-                                                <option>16</option>
-                                                <option>17</option>
-                                                <option>18</option>
-                                                <option>19</option>
-                                                <option>20</option>
-                                                <option>21</option>
-                                                <option>22</option>
-                                                <option>23</option>
-                                            </select>
-                                            <p style="font-size: 20px" class="place-self-center">:</p>
-                                            <select id="select-minute" class="select select-xs col-span-2">
-                                                <option selected>00</option>
-                                                <option>10</option>
-                                                <option>20</option>
-                                                <option>30</option>
-                                                <option>40</option>
-                                                <option>50</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                                <fieldset id="div-friday" class="grid grid-cols-10 w-full col-span-10 gap-2 fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4">
-                                    <div class="col-span-5 w-full place-content-center">
-                                        <label class="label">
-                                            <input type="checkbox" checked="checked" class="checkbox" />
-                                            Friday
-                                        </label>
-                                    </div>
-                                    <div id="time-selectors" class="col-span-5">                                
-                                        <div class="div-departure flex w-full align-items-center">    
-                                            <select id="departure-select-hour" class="select select-lg col-span-2">
-                                                <option selected>00</option>
-                                                <option>01</option>
-                                                <option>02</option>
-                                                <option>03</option>
-                                                <option>04</option>
-                                                <option>05</option>
-                                                <option>06</option>
-                                                <option>07</option>
-                                                <option>08</option>
-                                                <option>09</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                                <option>13</option>
-                                                <option>14</option>
-                                                <option>15</option>
-                                                <option>16</option>
-                                                <option>17</option>
-                                                <option>18</option>
-                                                <option>19</option>
-                                                <option>20</option>
-                                                <option>21</option>
-                                                <option>22</option>
-                                                <option>23</option>
-                                            </select>
-                                            <p style="font-size: 20px" class="place-self-center">:</p>
-                                            <select id="select-minute" class="select select-lg col-span-2">
-                                                <option selected>00</option>
-                                                <option>10</option>
-                                                <option>20</option>
-                                                <option>30</option>
-                                                <option>40</option>
-                                                <option>50</option>
-                                            </select>
-                                        </div>
-                                        <div hidden class="div-return flex w-full align-items-center">    
-                                            <select id="departure-select-hour" class="select select-xs col-span-2">
-                                                <option selected>00</option>
-                                                <option>01</option>
-                                                <option>02</option>
-                                                <option>03</option>
-                                                <option>04</option>
-                                                <option>05</option>
-                                                <option>06</option>
-                                                <option>07</option>
-                                                <option>08</option>
-                                                <option>09</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                                <option>13</option>
-                                                <option>14</option>
-                                                <option>15</option>
-                                                <option>16</option>
-                                                <option>17</option>
-                                                <option>18</option>
-                                                <option>19</option>
-                                                <option>20</option>
-                                                <option>21</option>
-                                                <option>22</option>
-                                                <option>23</option>
-                                            </select>
-                                            <p style="font-size: 20px" class="place-self-center">:</p>
-                                            <select id="select-minute" class="select select-xs col-span-2">
-                                                <option selected>00</option>
-                                                <option>10</option>
-                                                <option>20</option>
-                                                <option>30</option>
-                                                <option>40</option>
-                                                <option>50</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                                <fieldset id="div-saturday" class="grid grid-cols-10 w-full col-span-10 gap-2 fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4">
-                                    <div class="col-span-5 w-full place-content-center">
-                                        <label class="label">
-                                            <input type="checkbox" checked="checked" class="checkbox" />
-                                            Saturday
-                                        </label>
-                                    </div>
-                                    <div id="time-selectors" class="col-span-5">                                
-                                        <div class="div-departure flex w-full align-items-center">    
-                                            <select id="departure-select-hour" class="select select-lg col-span-2">
-                                                <option selected>00</option>
-                                                <option>01</option>
-                                                <option>02</option>
-                                                <option>03</option>
-                                                <option>04</option>
-                                                <option>05</option>
-                                                <option>06</option>
-                                                <option>07</option>
-                                                <option>08</option>
-                                                <option>09</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                                <option>13</option>
-                                                <option>14</option>
-                                                <option>15</option>
-                                                <option>16</option>
-                                                <option>17</option>
-                                                <option>18</option>
-                                                <option>19</option>
-                                                <option>20</option>
-                                                <option>21</option>
-                                                <option>22</option>
-                                                <option>23</option>
-                                            </select>
-                                            <p style="font-size: 20px" class="place-self-center">:</p>
-                                            <select id="select-minute" class="select select-lg col-span-2">
-                                                <option selected>00</option>
-                                                <option>10</option>
-                                                <option>20</option>
-                                                <option>30</option>
-                                                <option>40</option>
-                                                <option>50</option>
-                                            </select>
-                                        </div>
-                                        <div hidden class="div-return flex w-full align-items-center">    
-                                            <select id="departure-select-hour" class="select select-xs col-span-2">
-                                                <option selected>00</option>
-                                                <option>01</option>
-                                                <option>02</option>
-                                                <option>03</option>
-                                                <option>04</option>
-                                                <option>05</option>
-                                                <option>06</option>
-                                                <option>07</option>
-                                                <option>08</option>
-                                                <option>09</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                                <option>13</option>
-                                                <option>14</option>
-                                                <option>15</option>
-                                                <option>16</option>
-                                                <option>17</option>
-                                                <option>18</option>
-                                                <option>19</option>
-                                                <option>20</option>
-                                                <option>21</option>
-                                                <option>22</option>
-                                                <option>23</option>
-                                            </select>
-                                            <p style="font-size: 20px" class="place-self-center">:</p>
-                                            <select id="select-minute" class="select select-xs col-span-2">
-                                                <option selected>00</option>
-                                                <option>10</option>
-                                                <option>20</option>
-                                                <option>30</option>
-                                                <option>40</option>
-                                                <option>50</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                                <fieldset id="div-sunday" class="grid grid-cols-10 w-full col-span-10 gap-2 fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4">
-                                    <div class="col-span-5 w-full place-content-center">
-                                        <label class="label">
-                                            <input type="checkbox" checked="checked" class="checkbox" />
-                                            Sunday
-                                        </label>
-                                    </div>
-                                    <div id="time-selectors" class="col-span-5">                                
-                                        <div class="div-departure flex w-full align-items-center">    
-                                            <select id="departure-select-hour" class="select select-lg col-span-2">
-                                                <option selected>00</option>
-                                                <option>01</option>
-                                                <option>02</option>
-                                                <option>03</option>
-                                                <option>04</option>
-                                                <option>05</option>
-                                                <option>06</option>
-                                                <option>07</option>
-                                                <option>08</option>
-                                                <option>09</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                                <option>13</option>
-                                                <option>14</option>
-                                                <option>15</option>
-                                                <option>16</option>
-                                                <option>17</option>
-                                                <option>18</option>
-                                                <option>19</option>
-                                                <option>20</option>
-                                                <option>21</option>
-                                                <option>22</option>
-                                                <option>23</option>
-                                            </select>
-                                            <p style="font-size: 20px" class="place-self-center">:</p>
-                                            <select id="select-minute" class="select select-lg col-span-2">
-                                                <option selected>00</option>
-                                                <option>10</option>
-                                                <option>20</option>
-                                                <option>30</option>
-                                                <option>40</option>
-                                                <option>50</option>
-                                            </select>
-                                        </div>
-                                        <div hidden class="div-return flex w-full align-items-center">    
-                                            <select id="departure-select-hour" class="select select-xs col-span-2">
-                                                <option selected>00</option>
-                                                <option>01</option>
-                                                <option>02</option>
-                                                <option>03</option>
-                                                <option>04</option>
-                                                <option>05</option>
-                                                <option>06</option>
-                                                <option>07</option>
-                                                <option>08</option>
-                                                <option>09</option>
-                                                <option>10</option>
-                                                <option>11</option>
-                                                <option>12</option>
-                                                <option>13</option>
-                                                <option>14</option>
-                                                <option>15</option>
-                                                <option>16</option>
-                                                <option>17</option>
-                                                <option>18</option>
-                                                <option>19</option>
-                                                <option>20</option>
-                                                <option>21</option>
-                                                <option>22</option>
-                                                <option>23</option>
-                                            </select>
-                                            <p style="font-size: 20px" class="place-self-center">:</p>
-                                            <select id="select-minute" class="select select-xs col-span-2">
-                                                <option selected>00</option>
-                                                <option>10</option>
-                                                <option>20</option>
-                                                <option>30</option>
-                                                <option>40</option>
-                                                <option>50</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </fieldset>
+                                    </fieldset>
+                            {% endfor %}
                             </div>
                             
                             <div id="div-one-time" class="grid grid-cols-10 w-full col-span-10 gap-2 transition-all transition-discrete">

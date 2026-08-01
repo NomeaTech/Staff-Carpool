@@ -9,6 +9,7 @@ from accounts.models import User
 from test_app.forms import AddressForm, RideForm
 import traceback
 import logging
+from django.utils.translation import gettext_lazy as _
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +61,16 @@ def search(request):
 @login_required
 def add_ride(request):    
 
+    day_list = [
+        (_("Mon."), "monday"),
+        (_("Tue."), "tuesday"),
+        (_("Wed."), "wednesday"),
+        (_("Thu."), "thursday"),
+        (_("Fri."), "friday"),
+        (_("Sat."), "saturday"),
+        (_("Sun."), "sunday")
+    ]
+
     if request.method == "POST":
         logger.debug("add_ride post triggered 1234")
         # from_address_form = AddressForm(request.POST)
@@ -87,18 +98,24 @@ def add_ride(request):
                 # Also save ride to driver's rides
             except Exception as e:
                 traceback.print_exc()
-        return render(request, "add_ride.html", {"ride_form": ride_form})
-        # return HttpResponseRedirect(f"/ride/{ride.id}")
-            # return render(request, "ride_created.html", context)
+            # return HttpResponseRedirect(f"/ride/{ride.id}")
+            return HttpResponseRedirect("/app/home")
+
+        else:
+            context = {
+                "ride_form": ride_form,
+                "day_list": day_list,
+            }
+
+            return render(request, "add_ride.html", context)
     else:
         # from_address_form = AddressForm()
         # to_address_form = AddressForm()
         ride_form = RideForm()
 
     context = {
-        # "from_address_form": from_address_form,
-        # "to_address_form": to_address_form,
-        "ride_form": ride_form
+        "ride_form": ride_form,
+        "day_list": day_list,
     }
 
     return render(request, "add_ride.html", context)
