@@ -59,13 +59,11 @@ class Ride(models.Model):
     one_time = models.BooleanField(default=True)
     one_way = models.BooleanField(default=True)
 
-    leaving_at_date = models.CharField(blank=True)
-    leaving_at_time = models.CharField(blank=True)
+    leaving_at_date_time = models.CharField(blank=True)
     # leaving_at_hour = models.IntegerField(blank=True)
     # leaving_at_minute = models.IntegerField(blank=True)
 
-    arriving_at_date = models.CharField(blank=True)
-    arriving_at_time = models.CharField(blank=True)
+    returning_at_date_time = models.CharField(blank=True)
     # arriving_at_hour = models.IntegerField(blank=True)
     # arriving_at_minute = models.IntegerField(blank=True)
 
@@ -73,31 +71,31 @@ class Ride(models.Model):
 
     monday_check = models.BooleanField(default=False)
     monday_leaving_at_time = models.CharField(blank=True)
-    monday_arriving_at_time = models.CharField(blank=True)
+    monday_returning_at_time = models.CharField(blank=True)
 
     tuesday_check = models.BooleanField(default=False)
     tuesday_leaving_at_time = models.CharField(blank=True)
-    tuesday_arriving_at_time = models.CharField(blank=True)
+    tuesday_returning_at_time = models.CharField(blank=True)
 
     wednesday_check = models.BooleanField(default=False)
     wednesday_leaving_at_time = models.CharField(blank=True)
-    wednesday_arriving_at_time = models.CharField(blank=True)
+    wednesday_returning_at_time = models.CharField(blank=True)
 
     thursday_check = models.BooleanField(default=False)
     thursday_leaving_at_time = models.CharField(blank=True)
-    thursday_arriving_at_time = models.CharField(blank=True)
+    thursday_returning_at_time = models.CharField(blank=True)
 
     friday_check = models.BooleanField(default=False)
     friday_leaving_at_time = models.CharField(blank=True)
-    friday_arriving_at_time = models.CharField(blank=True)
+    friday_returning_at_time = models.CharField(blank=True)
 
     saturday_check = models.BooleanField(default=False)
     saturday_leaving_at_time = models.CharField(blank=True)
-    saturday_arriving_at_time = models.CharField(blank=True)
+    saturday_returning_at_time = models.CharField(blank=True)
 
     sunday_check = models.BooleanField(default=False)
     sunday_leaving_at_time = models.CharField(blank=True)
-    sunday_arriving_at_time = models.CharField(blank=True)
+    sunday_returning_at_time = models.CharField(blank=True)
 
     note = models.TextField(blank=True, default="", help_text="Any kind of note for passengers")
     private = models.CharField(default=False)
