@@ -82,7 +82,7 @@ function switchTimes(times, radio) {
             inputs[0].classList.add("select-lg")
             inputs[0].classList.remove("select-xs")
             
-        } else if (radio.value == "twoWay") {
+        } else if (radio.value == "twoWay" && inputs[0].id != "id_returning_at_date_time") {
             inputs[0].classList.add("select-xs")
             inputs[0].classList.remove("select-lg")
         }

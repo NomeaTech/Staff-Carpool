@@ -66,7 +66,7 @@
                         <div class="col-span-3">                        
                             <label class="floating-label">
                                 <span>{% trans "Maximum passengers" %}</span>
-                                <input id="id_max_passengers" name="max_passengers" placeholder="{% trans "Maximum passengers" %}" type="number" id="max-passengers" min="1" max="100" class="input"/>
+                                <input id="id_max_passengers" name="max_passengers" placeholder="{% trans "Maximum passengers" %}" type="number" pattern="\d*" id="max-passengers" min="1" max="100" class="input"/>
                             </label>
                         </div>
                             
@@ -134,16 +134,30 @@
                                                 <input id="id_{{ day.1 }}_leaving_at_time" name="{{ day.1 }}_leaving_at_time" type="time" class="select select-lg col-span-5">
                                             </div>
                                             <div hidden class="div-return flex w-full align-items-center">    
-                                                <input id="id_{{ day.1 }}_arriving_at_time" name="{{ day.1 }}_arriving_at_time" type="time" class="select select-sm col-span-5">
+                                                <input id="id_{{ day.1 }}_returning_at_time" name="{{ day.1 }}_returning_at_time" type="time" class="select select-sm col-span-5">
                                             </div>
                                         </div>
                                     </fieldset>
                             {% endfor %}
                             </div>
                             
-                            <div id="div-one-time" class="grid grid-cols-10 w-full col-span-10 gap-2 transition-all transition-discrete">
-                                <div class="col-span-10 w-full">
-                                    <input class="input input-border input-lg" id="cally1" type="datetime-local" placeholder="{% trans "Date and time" %}">
+                            <div id="div-one-time" class="w-full col-span-10 gap-2 transition-all transition-discrete">
+                                <div class="w-full">
+                                    <fieldset class="grid gap-4 w-full fieldset justify-around rounded-field bg-base-100 border-base-300 border p-4" required>
+                                        <legend class="w-full fieldset-legend">{% trans "Date and time" %}</legend>
+                                        <label class="w-full label">
+                                            <label class="w-full floating-label col-span-">
+                                                <span>{% trans "Leaving at" %}</span>
+                                                <input class="input input-border input-lg" id="id_leaving_at_date_time" name="leaving_at_date_time" type="datetime-local">
+                                            </label>
+                                        </label>
+                                        <label hidden class="div-return w-full label">
+                                            <label class="w-full floating-label col-span-">
+                                                <span>{% trans "Returning at" %}</span>
+                                                <input class="input input-border input-lg" id="id_returning_at_date_time" name="returning_at_date_time" type="datetime-local">
+                                            </label>
+                                        </label>
+                                    </fieldset>
                                 </div>
                             </div>
                         </div>
