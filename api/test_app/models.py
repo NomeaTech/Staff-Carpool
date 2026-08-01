@@ -71,26 +71,33 @@ class Ride(models.Model):
 
     # Recurring days
 
-    mo_leaving_at_time = models.CharField(blank=True)
-    mo_arriving_at_time = models.CharField(blank=True)
-    
-    tu_leaving_at_time = models.CharField(blank=True)
-    tu_arriving_at_time = models.CharField(blank=True)
-    
-    we_leaving_at_time = models.CharField(blank=True)
-    we_arriving_at_time = models.CharField(blank=True)
-    
-    th_leaving_at_time = models.CharField(blank=True)
-    th_arriving_at_time = models.CharField(blank=True)
-    
-    fr_leaving_at_time = models.CharField(blank=True)
-    fr_arriving_at_time = models.CharField(blank=True)
-    
-    sa_leaving_at_time = models.CharField(blank=True)
-    sa_arriving_at_time = models.CharField(blank=True)
-    
-    su_leaving_at_time = models.CharField(blank=True)
-    su_arriving_at_time = models.CharField(blank=True)
+    monday_check = models.BooleanField(default=False)
+    monday_leaving_at_time = models.CharField(blank=True)
+    monday_arriving_at_time = models.CharField(blank=True)
+
+    tuesday_check = models.BooleanField(default=False)
+    tuesday_leaving_at_time = models.CharField(blank=True)
+    tuesday_arriving_at_time = models.CharField(blank=True)
+
+    wednesday_check = models.BooleanField(default=False)
+    wednesday_leaving_at_time = models.CharField(blank=True)
+    wednesday_arriving_at_time = models.CharField(blank=True)
+
+    thursday_check = models.BooleanField(default=False)
+    thursday_leaving_at_time = models.CharField(blank=True)
+    thursday_arriving_at_time = models.CharField(blank=True)
+
+    friday_check = models.BooleanField(default=False)
+    friday_leaving_at_time = models.CharField(blank=True)
+    friday_arriving_at_time = models.CharField(blank=True)
+
+    saturday_check = models.BooleanField(default=False)
+    saturday_leaving_at_time = models.CharField(blank=True)
+    saturday_arriving_at_time = models.CharField(blank=True)
+
+    sunday_check = models.BooleanField(default=False)
+    sunday_leaving_at_time = models.CharField(blank=True)
+    sunday_arriving_at_time = models.CharField(blank=True)
 
     note = models.TextField(blank=True, default="", help_text="Any kind of note for passengers")
     private = models.CharField(default=False)

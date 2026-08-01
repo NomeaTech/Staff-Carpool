@@ -71,22 +71,20 @@ function changeReturn(radio) {
         }
     }
 
-    for (const item of departureTimes) {
-        selects = item.getElementsByTagName('SELECT');
+    switchTimes(departureTimes, radio);
+    switchTimes(returnTimes, radio);
+}
+
+function switchTimes(times, radio) {
+    for (const item of times) {
+        inputs = item.getElementsByTagName('INPUT');
         if (radio.value == "oneWay") {
-            selects[0].classList.add("select-lg")
-            selects[0].classList.remove("select-xs")
-            
-            selects[1].classList.add("select-lg")
-            selects[1].classList.remove("select-xs")
+            inputs[0].classList.add("select-lg")
+            inputs[0].classList.remove("select-xs")
             
         } else if (radio.value == "twoWay") {
-            selects[0].classList.add("select-xs")
-            selects[0].classList.remove("select-lg")
-            
-            selects[1].classList.add("select-xs")
-            selects[1].classList.remove("select-lg")
+            inputs[0].classList.add("select-xs")
+            inputs[0].classList.remove("select-lg")
         }
     }
-    // times.forEach(timeIter(radio));
 }
