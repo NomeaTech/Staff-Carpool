@@ -37,32 +37,38 @@
             <li><a>Sidebar Item 1</a></li>
             <li><a>Sidebar Item 2</a></li>
           </div>
-          <form class="grid grid-cols-3 w-1/1 gap-3" action="{% url 'set_language' %}" method="post">
-            {% csrf_token %}
-            <input name="next" type="hidden" value="{{ redirect_to }}">
-            <select class="select col-span-2" name="language">
-            <!-- <div class="dropdown hover-dropdown" name="language"> -->
-              <div tabindex="0" role="button" class="btn m-1">{% translate "Language" %}</div>
-                <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                  {% get_current_language as LANGUAGE_CODE %}
-                  {% get_available_languages as LANGUAGES %}
-                  {% get_language_info_list for LANGUAGES as languages %}
-                  {% for language in languages %}
-                  <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
-                    {{ language.name_local.title }} ({{ language.code.upper }})
-                    <!-- {{ language.code.upper }} -->
-                  </option>
-                  {% endfor %}
-                </ul>
-              </div>
-            <!-- </div> -->
-            </select>
-            <input class="btn btn-info col-span-1" type="submit" value="Go">
-          </form>            
+          <div class="grid grid-cols-3 w-full gap-3">
+            <form class="grid grid-cols-3 w-full gap-3 col-span-3 w-full" action="{% url 'set_language' %}" method="post">
+              {% csrf_token %}
+              <input name="next" type="hidden" value="{{ redirect_to }}">
+              <select class="select col-span-2" name="language">
+              <!-- <div class="dropdown hover-dropdown" name="language"> -->
+                <div tabindex="0" role="button" class="btn m-1">{% translate "Language" %}</div>
+                  <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% get_language_info_list for LANGUAGES as languages %}
+                    {% for language in languages %}
+                    <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                      {{ language.name_local.title }} ({{ language.code.upper }})
+                      <!-- {{ language.code.upper }} -->
+                    </option>
+                    {% endfor %}
+                  </ul>
+                </div>
+              <!-- </div> -->
+              </select>
+              <input class="btn btn-info col-span-1" type="submit" value="Go">
+            </form>
+            <form class="col-span-3" action="{% url 'logout' %}" method="post">
+              {% csrf_token %}
+              <button class="btn btn-warning w-full" type="submit">Log Out</button>
+            </form>
+          </div>          
         </div>
       </div>
     </div>
-    <div class="hidden navbar fixed bg-base-100 lg:flex">
+    <div class="z-5 hidden navbar fixed bg-base-100 lg:flex">
         <div class="navbar-start">            
           <label for="my-drawer-5" class="btn btn-ghost btn-circle">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /> </svg>

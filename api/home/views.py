@@ -1,13 +1,17 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
-from test_app.models import Recurring_Trip
+from test_app.models import Ride
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from test_app.models import Recurring_Trip
+from test_app.models import Ride
 from .forms import SearchForm
 from accounts.models import User
-from test_app.forms import AddressForm, RecurringTripForm
+from test_app.forms import AddressForm, RideForm
 import traceback
+import logging
+from django.utils.translation import gettext_lazy as _
+
+logger = logging.getLogger(__name__)
 
 @login_required
 def app_index(request):
@@ -16,21 +20,21 @@ def app_index(request):
 @login_required
 def home(request):
     user = request.user
-    trip_list = user.recurring_trips.all()
+    ride_list = user.rides.all()
     
     # testing
     users = User.objects.all()
 
-    # for recurring_trip in trip_list:
-    #     l_weekday = recurring_trip.leaving_at_weekday
-    #     l_hour = recurring_trip.leaving_at_hour
-    #     l_minute = recurring_trip.leaving_at_minute
+    # for ride in ride_list:
+    #     l_weekday = ride.leaving_at_weekday
+    #     l_hour = ride.leaving_at_hour
+    #     l_minute = ride.leaving_at_minute
 
-    #     a_weekday = recurring_trip.arriving_at_weekday
-    #     a_hour = recurring_trip.arriving_at_hour
-    #     a_minute = recurring_trip.arriving_at_minute
+    #     a_weekday = ride.arriving_at_weekday
+    #     a_hour = ride.arriving_at_hour
+    #     a_minute = ride.arriving_at_minute
 
-    context = {"recurring_trips": trip_list, "users": users}
+    context = {"rides": ride_list, "users": users}
     return render(request, "home.html", context)
 
 @login_required
@@ -47,48 +51,71 @@ def search(request):
             # Simple search implementation for now. 
             # Will expand later to make search less tedious
             
-            trips = Recurring_Trip.objects.filter(destName__contains=query)
-            context = {"form": search_form, "recurring_trips": trips, "search_query": query, "searched": True}
+            rides = Ride.objects.filter(destName__contains=query)
+            context = {"form": search_form, "rides": rides, "search_query": query, "searched": True}
     else:
         context = {"form": search_form}
 
     return render(request, "search.html", context)
 
 @login_required
-def add_trip(request):    
+def add_ride(request):    
+
+    day_list = [
+        (_("Mon."), "monday"),
+        (_("Tue."), "tuesday"),
+        (_("Wed."), "wednesday"),
+        (_("Thu."), "thursday"),
+        (_("Fri."), "friday"),
+        (_("Sat."), "saturday"),
+        (_("Sun."), "sunday")
+    ]
+
     if request.method == "POST":
-        from_address_form = AddressForm(request.POST)
-        to_address_form = AddressForm(request.POST)
-        recurring_trip_form = RecurringTripForm(request.POST)
-        if recurring_trip_form.is_valid() and to_address_form.is_valid() and from_address_form.is_valid():
-            
-            success = True
+        logger.debug("add_ride post triggered 1234")
+        # from_address_form = AddressForm(request.POST)
+        # to_address_form = AddressForm(request.POST)
+        logger.debug(request.POST)
 
-            try:            
-                trip = recurring_trip_form.save(commit=False)
-                from_address = from_address_form.save()
-                to_address = to_address_form.save()
+        ride_form = RideForm(request.POST)
+        if ride_form.is_valid():
+            try:
+                ride = ride_form.save(commit=False)
+                # from_address = from_address_form.save()
+                # to_address = to_address_form.save()
                 
-                trip.start = from_address
-                trip.destination = to_address
+                # ride.start = from_address
+                # ride.destination = to_address
 
-                trip.driver = request.user
+                # collect vias
 
-                trip.save()
+                for key, value in request.POST.items():
+                    if key.startswith("via_input_"):
+                        ride.vias.append(value)
+
+                ride.driver = request.user
+                ride.save()
+                # Also save ride to driver's rides
             except Exception as e:
                 traceback.print_exc()
-                
-            return HttpResponseRedirect(f"/recurring-trip/{trip.id}")
-            # return render(request, "trip_created.html", context)
+            # return HttpResponseRedirect(f"/ride/{ride.id}")
+            return HttpResponseRedirect("/app/home")
+
+        else:
+            context = {
+                "ride_form": ride_form,
+                "day_list": day_list,
+            }
+
+            return render(request, "add_ride.html", context)
     else:
-        from_address_form = AddressForm()
-        to_address_form = AddressForm()
-        recurring_trip_form = RecurringTripForm()
+        # from_address_form = AddressForm()
+        # to_address_form = AddressForm()
+        ride_form = RideForm()
 
     context = {
-        "from_address_form": from_address_form,
-        "to_address_form": to_address_form,
-        "recurring_trip_form": recurring_trip_form
+        "ride_form": ride_form,
+        "day_list": day_list,
     }
 
-    return render(request, "add_trip.html", context)
+    return render(request, "add_ride.html", context)

@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views
-from .views import SignUpView
+from .views import SignUpView, LogoutView
 from .forms import UserLoginForm
 
 urlpatterns = [
@@ -12,5 +12,7 @@ urlpatterns = [
             authentication_form=UserLoginForm
             ),
         name='login'
-    )
+    ),
+    path("logout", LogoutView, name="logout"),
+
 ]
