@@ -8,8 +8,44 @@
 
 
 <div class="justify-center content-center h-screen mx-auto lg:pt-20 pt-5 pb-20 overflow-scroll scrollbar-hide">
-    <!-- {{ ride_form }} -->
-    <!-- {{ ride_form.as_p }} -->
+    <script>
+        // Set form to same state after reload
+        window.onload = function() {
+            recurranceRadio = document.getElementsByClassName("recurrance");
+            returnRadio = document.getElementsByClassName("return");
+            for (var i = 0; i < 2; i++) {
+                if (recurranceRadio[i].checked == true) {
+                    changeRecurrance(recurranceRadio[i])
+                }
+                if (returnRadio[i].checked == true) {
+                    changeReturn(returnRadio[i])
+                }
+            }
+
+            vias_values = JSON.parse(localStorage['vias_values'])
+
+            if (vias_values) {
+                for (const via of vias_values) {
+                    viaAdd(via);
+                }
+            }
+        };
+
+        window.onbeforeunload = function(event) { 
+            div_via = document.getElementById("div-via");
+            vias = div_via.getElementsByTagName("INPUT");
+            vias_values = []
+            
+            for (const via of vias) {
+                vias_values.push(via.value);
+            }
+
+            localStorage['vias_values'] = JSON.stringify(vias_values);
+            console.log(localStorage['vias_values']);
+            // return confirm();
+        };
+    </script>
+    
     <div class="card bg-base-100 w-96 shadow-sm font-display">
         <div class="card-body">
             <div class="">
@@ -93,7 +129,7 @@
                                 <fieldset class="fieldset justify-around rounded-field bg-base-100 border-base-300 border p-4" required>
                                     <legend class="fieldset-legend">{% trans "Recurrance" %}</legend>
                                     <label class="label">
-                                        <input id="id_one_time" type="radio" name="one_time" class="radio radio-info" onchange="changeRecurrance(this)" value="oneTime" checked>
+                                        <input id="id_one_time" type="radio" name="one_time" class="recurrance radio radio-info" onchange="changeRecurrance(this)" value="oneTime" checked>
                                         {% trans "One-time" %}
                                     </label>
                                     <label class="label">
@@ -107,7 +143,7 @@
                                     <legend class="fieldset-legend">{% trans "Return" %}</legend>
                                     </label>
                                     <label class="label">
-                                    <input id="id_one_way" type="radio" name="one_way" class="radio radio-error" onchange="changeReturn(this)" value="oneWay" checked>
+                                    <input id="id_one_way" type="radio" name="one_way" class="return radio radio-error" onchange="changeReturn(this)" value="oneWay" checked>
                                     {% trans "One-way" %}
                                     </label>
                                     <label class="label">
