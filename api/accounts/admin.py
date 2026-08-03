@@ -14,7 +14,7 @@ class CustomUserAdmin(UserAdmin):
         "first_name",
         "last_name",
     ]
-    fieldsets = UserAdmin.fieldsets + ((None, {"fields": ("address", "rides",)}),)
-    add_fieldsets = UserAdmin.add_fieldsets + ((None, {"fields": ("address", "rides",)}),)
+    fieldsets = UserAdmin.fieldsets + ((None, {"fields": ("address", "rides", "pfp", "phone")}),)
+    add_fieldsets = UserAdmin.add_fieldsets + ((None, {"fields": ("address", "rides", "pfp", "phone")}),)
 
 admin.site.register(User, CustomUserAdmin)
