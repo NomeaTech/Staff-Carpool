@@ -15,7 +15,16 @@
     {% tailwind_css %}
 </head>
 <!-- <body class="bg-gray-50 text-black font-serif leading-normal tracking-normal"> -->
-<body class="bg-base-200" onload="loadTheme()">
+<body class="bg-base-200">
+    <script>
+        theme = localStorage["theme"];
+        document.documentElement.setAttribute("data-theme", theme);
+        
+        switcher = document.getElementById("theme-switcher")
+        if (theme == "dark") {
+            switcher.checked = true;
+        }
+    </script>
     <!-- <h1><a href="/">Campus Ride</a></h1> -->
     <div class="container mx-auto">
         <section class="flex items-center justify-center h-screen">    
