@@ -8,8 +8,54 @@
 
 
 <div class="justify-center content-center h-screen mx-auto lg:pt-20 pt-5 pb-20 overflow-scroll scrollbar-hide">
-    <!-- {{ ride_form }} -->
-    <!-- {{ ride_form.as_p }} -->
+    <script>
+        // Set form to same state after reload
+        window.onload = function() {
+            recurranceRadio = document.getElementsByClassName("recurrance");
+            returnRadio = document.getElementsByClassName("return");
+            for (var i = 0; i < 2; i++) {
+                if (recurranceRadio[i].checked == true) {
+                    changeRecurrance(recurranceRadio[i]);
+                }
+                if (returnRadio[i].checked == true) {
+                    changeReturn(returnRadio[i]);
+                }
+            }
+            
+            new_form = document.getElementById("new-form")
+            if (new_form.checked) {
+                console.log("if happened");
+                localStorage.removeItem('vias_values');
+                console.log(new_form.checked);
+                new_form.checked = false
+                console.log(new_form.checked);
+            } else {
+                vias_values = JSON.parse(localStorage['vias_values']);
+                if (vias_values) {
+                    for (const via of vias_values) {
+                        viaAdd(via);
+                    }
+                }
+            }
+        };
+
+        window.onbeforeunload = function(event) { 
+            div_via = document.getElementById("div-via");
+            vias = div_via.getElementsByTagName("INPUT");
+            vias_values = []
+            
+            for (const via of vias) {
+                vias_values.push(via.value);
+            }
+
+            localStorage['vias_values'] = JSON.stringify(vias_values);
+            console.log(localStorage['vias_values']);
+            // return confirm();
+        };
+    </script>
+    
+    <input hidden id="new-form" type="checkbox" checked>
+
     <div class="card bg-base-100 w-96 shadow-sm font-display">
         <div class="card-body">
             <div class="">
@@ -66,16 +112,16 @@
                         <div class="col-span-3">                        
                             <label class="floating-label">
                                 <span>{% trans "Maximum passengers" %}</span>
-                                <input id="id_max_passengers" name="max_passengers" placeholder="{% trans "Maximum passengers" %}" type="number" pattern="\d*" id="max-passengers" min="1" max="100" class="input"/>
+                                <input required id="id_max_passengers" name="max_passengers" placeholder="{% trans "Maximum passengers" %}" type="number" pattern="\d*" id="max-passengers" min="1" max="100" class="input"/>
                             </label>
                         </div>
                             
                         <div class="divider col-span-3">{% trans "Address" %}</div>
                         <div id="div-inputs" class="grid grid-cols-5 col-span-3 gap-4">
-                            <input id="id_start" name="start" class="input col-span-5 w-full" placeholder="{% trans "From" %}">
+                            <input required id="id_start" name="start" class="input col-span-5 w-full" placeholder="{% trans "From" %}">
                             <!-- <input hidden id="via-input" class="input col-span-3 w-full" placeholder={% trans "Via" %}> -->
                             <div hidden id="div-via" class="grid grid-cols-5 gap-4 col-span-5 w-full"></div>
-                            <input id="id_destination" name="destination" class="input col-span-4 w-full" placeholder="{% trans "To" %}">
+                            <input required id="id_destination" name="destination" class="input col-span-4 w-full" placeholder="{% trans "To" %}">
                             <button class="btn btn-success col-span-1" onclick="viaAdd()" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="2 2 20 20" stroke-width="2" stroke="currentColor" class="scale-120">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -83,7 +129,7 @@
                             </button>
                             <div class="col-span-5">
                                 <div class="tooltip w-full" data-tip="A descriptive name for your final destination">
-                                    <input id="id_dest_name" name="dest_name" class="input w-full" placeholder="{% trans "Place Name" %}"">
+                                    <input required id="id_dest_name" name="dest_name" class="input w-full" placeholder="{% trans "Place Name" %}"">
                                 </div>
                             </div>
                         </div>
@@ -93,7 +139,7 @@
                                 <fieldset class="fieldset justify-around rounded-field bg-base-100 border-base-300 border p-4" required>
                                     <legend class="fieldset-legend">{% trans "Recurrance" %}</legend>
                                     <label class="label">
-                                        <input id="id_one_time" type="radio" name="one_time" class="radio radio-info" onchange="changeRecurrance(this)" value="oneTime" checked>
+                                        <input id="id_one_time" type="radio" name="one_time" class="recurrance radio radio-info" onchange="changeRecurrance(this)" value="oneTime" checked>
                                         {% trans "One-time" %}
                                     </label>
                                     <label class="label">
@@ -107,7 +153,7 @@
                                     <legend class="fieldset-legend">{% trans "Return" %}</legend>
                                     </label>
                                     <label class="label">
-                                    <input id="id_one_way" type="radio" name="one_way" class="radio radio-error" onchange="changeReturn(this)" value="oneWay" checked>
+                                    <input id="id_one_way" type="radio" name="one_way" class="return radio radio-error" onchange="changeReturn(this)" value="oneWay" checked>
                                     {% trans "One-way" %}
                                     </label>
                                     <label class="label">
