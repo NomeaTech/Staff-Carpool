@@ -96,3 +96,8 @@ def ride_helper(request):
     response = HttpResponseRedirect(f"/recurring-ride/{rt_id}/")
 
     return user, ride, response
+
+# @login_required
+# def get_user_pfp(request):
+#     user = request.user
+

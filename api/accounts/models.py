@@ -7,7 +7,7 @@ class User(AbstractUser):
     username = models.CharField(null=True, blank=True)
     email = models.EmailField(unique=True)
 
-    pfp = models.ImageField(upload_to='static/images/', blank=True, null=True)
+    pfp = models.ImageField(upload_to='static/images/user_images/', blank=True, null=True)
     address = models.ForeignKey('test_app.Address', on_delete=models.CASCADE, null=True, blank=True)
     rides = models.ManyToManyField('test_app.Ride', blank=True)
     phone = models.CharField(blank=True, null=True)

@@ -162,6 +162,8 @@ LOCALE_PATHS = [
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.getenv("STATIC_ROOT")
+USER_IMAGES_URL = '/user_images/'
+USER_IMAGES_ROOT = os.path.join(STATIC_ROOT, '/images/user_images/')
 
 TAILWIND_APP_NAME = "theme"
 

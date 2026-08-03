@@ -82,3 +82,28 @@ function switchTimes(times, radio) {
         }
     }
 }
+
+function updateTheme(checked) {
+    console.log("update theme happened");
+    console.log(checked);
+
+    localStorage.setItem("theme", "dark");
+    document.documentElement.setAttribute('data-theme', 'dark');
+
+    if (checked) {
+        localStorage.setItem("theme", "dark");
+        document.documentElement.setAttribute('data-theme', 'dark');
+    } else
+        localStorage.setItem("theme", "light");
+        document.documentElement.setAttribute('data-theme', 'light');
+}
+
+function loadTheme() {
+    theme = localStorage["theme"];
+    document.documentElement.setAttribute("data-theme", theme);
+    
+    switcher = document.getElementById("theme-switcher")
+    if (theme == "dark") {
+        switcher.checked = true;
+    }
+}
