@@ -24,11 +24,8 @@
             
             new_form = document.getElementById("new-form")
             if (new_form.checked) {
-                console.log("if happened");
                 localStorage.removeItem('vias_values');
-                console.log(new_form.checked);
                 new_form.checked = false
-                console.log(new_form.checked);
             } else {
                 vias_values = JSON.parse(localStorage['vias_values']);
                 if (vias_values) {
@@ -49,7 +46,6 @@
             }
 
             localStorage['vias_values'] = JSON.stringify(vias_values);
-            console.log(localStorage['vias_values']);
             // return confirm();
         };
     </script>
@@ -194,7 +190,7 @@
                                         <label class="w-full label">
                                             <label class="w-full floating-label col-span-">
                                                 <span>{% trans "Leaving at" %}</span>
-                                                <input class="input input-border input-lg" id="id_leaving_at_date_time" name="leaving_at_date_time" type="datetime-local">
+                                                <input class="input input-border input-lg" id="id_leaving_at_date_time" name="leaving_at_date_time" type="datetime-local" onchange="updateMinDateTime(this.value)">
                                             </label>
                                         </label>
                                         <label hidden class="div-return w-full label">
@@ -207,8 +203,17 @@
                                 </div>
                             </div>
                         </div>
+                        <script>
+                            //Do not let to select START TIME  in the PAST
+                            let today = new Date();
+                            // let past = new Date(today.setDate(today.getDate() - 3)).toISOString().slice(0, 16);
+                            today = new Date().toISOString().slice(0, 16);
+                            leaving_at = document.getElementById("id_leaving_at_date_time");
+                            returning_at = document.getElementById("id_returning_at_date_time");
+                            leaving_at.min = today;
+                        </script>
                         <div class="col-span-3 w-full">
-                            <div class="divider col-span-3 w-full">{% trans "Note For Passengers" %}</div>
+                            <div class="divider col-span-3 w-full">{% trans "Note for passengers" %}</div>
                             <textarea id="id_note" name="note" class="textarea w-full" placeholder=""></textarea>
                         </div>
                         <div class="tooltip col-span-3 w-full" data-tip="Complete all required elements">

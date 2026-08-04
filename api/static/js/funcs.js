@@ -84,9 +84,6 @@ function switchTimes(times, radio) {
 }
 
 function updateTheme(checked) {
-    console.log("update theme happened");
-    console.log(checked);
-
     localStorage.setItem("theme", "dark");
     document.documentElement.setAttribute('data-theme', 'dark');
 
@@ -106,4 +103,9 @@ function loadTheme() {
     if (theme == "dark") {
         switcher.checked = true;
     }
+}
+
+function updateMinDateTime(value) {
+    returning_at = document.getElementById("id_returning_at_date_time");
+    returning_at.min = value;
 }
