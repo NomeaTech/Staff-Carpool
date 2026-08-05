@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+/* @plugin "jquery"; */
+
 
 @plugin "tailwind-scrollbar-hide";
 

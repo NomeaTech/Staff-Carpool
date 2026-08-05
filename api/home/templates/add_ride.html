@@ -8,6 +8,13 @@
 
 
 <div class="justify-center content-center h-screen mx-auto lg:pt-20 pt-5 pb-20 overflow-scroll scrollbar-hide">
+    <!-- <div id="container">This will change to Hello World!</div>
+    
+    <script>
+    $(document).ready(function(){
+      $("#container").text("Hello World");
+    }); -->
+    </script>
     <script>
         // Set form to same state after reload
         window.onload = function() {
@@ -49,7 +56,6 @@
             // return confirm();
         };
     </script>
-    
     <input hidden id="new-form" type="checkbox" checked>
 
     <div class="card bg-base-100 w-96 shadow-sm font-display">
@@ -66,11 +72,11 @@
                                 <fieldset class="fieldset rounded-field bg-base-100 border-base-300 border p-4 pb-3.5" required>
                                     <legend class="fieldset-legend">{% trans "Car Ride" %}</legend>
                                     <label class="label">
-                                    <input id="id_offer" type="checkbox" name="offer" class="checkbox checkbox-secondary">
+                                    <input required id="id_offer" type="checkbox" name="offer" class="options checkbox checkbox-secondary">
                                     {% trans "Offer" %}
                                     </label>
                                     <label class="label">
-                                    <input id="id_request" type="checkbox" name="request" class="checkbox checkbox-secondary">
+                                    <input required id="id_request" type="checkbox" name="request" class="options checkbox checkbox-secondary">
                                     {% trans "Request" %}
                                     </label>
                                 </fieldset>
@@ -80,19 +86,19 @@
                                     <legend class="fieldset-legend">{% trans "Other Transport" %}</legend>
                                     <div class="grid grid-cols-2 gap-1">
                                         <label class="label">
-                                            <input id="id_train" name="train" value="train" type="checkbox" class="checkbox checkbox-error">
+                                            <input required id="id_train" name="train" value="train" type="checkbox" class="options checkbox checkbox-error">
                                             {% trans "Train" %}
                                         </label>
                                         <label class="label">
-                                            <input id="id_bus" name="bus" value="bus" type="checkbox" class="checkbox checkbox-info">
+                                            <input required id="id_bus" name="bus" value="bus" type="checkbox" class="options checkbox checkbox-info">
                                             {% trans "Bus" %}
                                         </label>
                                         <label class="label">
-                                            <input id="id_taxi" name="taxi" value="taxi" type="checkbox" class="checkbox checkbox-warning">
+                                            <input required id="id_taxi" name="taxi" value="taxi" type="checkbox" class="options checkbox checkbox-warning">
                                             {% trans "Taxi" %}
                                         </label>
                                         <label class="label">
-                                            <input id="id_other" name="other" value="other" type="checkbox" class="checkbox" onchange="enableOtherField(this)">
+                                            <input required id="id_other" name="other" value="other" type="checkbox" class="options checkbox" onchange="enableOtherField(this)">
                                             {% trans "Other" %}
                                         </label>
                                     </div>
@@ -164,22 +170,22 @@
                             
                             <div hidden id="div-recurring" class="grid grid-cols-10 w-full col-span-10 gap-2 ">
                             {% for day in day_list %}
-                                    <fieldset id="div-{{ day.1 }}" class="grid grid-cols-10 w-full col-span-10 gap-2 fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4">
-                                        <div class="col-span-5 w-full place-content-center">
-                                            <label class="label text-xl">
-                                                <input id="id_{{ day.1 }}_check" name="{{ day.1 }}_check" type="checkbox" class="checkbox"/>
-                                                {{ day.0 }}
-                                            </label>
+                                <fieldset id="div-{{ day.1 }}" class="grid grid-cols-10 w-full col-span-10 gap-2 fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4">
+                                    <div class="col-span-5 w-full place-content-center">
+                                        <label class="label text-xl">
+                                            <input id="id_{{ day.1 }}_check" name="{{ day.1 }}_check" type="checkbox" class="checkbox"/>
+                                            {{ day.0 }}
+                                        </label>
+                                    </div>
+                                    <div id="time-selectors" class="col-span-5">                                
+                                        <div class="div-departure flex w-full align-items-center">    
+                                            <input id="id_{{ day.1 }}_leaving_at_time" name="{{ day.1 }}_leaving_at_time" type="time" class="select select-lg col-span-5">
                                         </div>
-                                        <div id="time-selectors" class="col-span-5">                                
-                                            <div class="div-departure flex w-full align-items-center">    
-                                                <input id="id_{{ day.1 }}_leaving_at_time" name="{{ day.1 }}_leaving_at_time" type="time" class="select select-lg col-span-5">
-                                            </div>
-                                            <div hidden class="div-return flex w-full align-items-center">    
-                                                <input id="id_{{ day.1 }}_returning_at_time" name="{{ day.1 }}_returning_at_time" type="time" class="select select-sm col-span-5">
-                                            </div>
+                                        <div hidden class="div-return flex w-full align-items-center">    
+                                            <input id="id_{{ day.1 }}_returning_at_time" name="{{ day.1 }}_returning_at_time" type="time" class="select select-sm col-span-5">
                                         </div>
-                                    </fieldset>
+                                    </div>
+                                </fieldset>
                             {% endfor %}
                             </div>
                             
@@ -209,7 +215,6 @@
                             // let past = new Date(today.setDate(today.getDate() - 3)).toISOString().slice(0, 16);
                             today = new Date().toISOString().slice(0, 16);
                             leaving_at = document.getElementById("id_leaving_at_date_time");
-                            returning_at = document.getElementById("id_returning_at_date_time");
                             leaving_at.min = today;
                         </script>
                         <div class="col-span-3 w-full">

@@ -14,10 +14,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta meta name="viewport" content= "width=device-width, user-scalable=no" />
-    <!-- <script type="module" src="https://code.jquery.com/jquery-4.0.0.module.min.js"></script> -->
+    <script src="{% static "js/jquery-4.0.0.js" %}"></script>
+    <script src="{% static "js/funcs.js" %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.8/dist/js.cookie.min.js"></script>
     <script type="module" src="https://unpkg.com/cally"></script>  
-    <script src="{% static "js/funcs.js" %}"></script>
     {% tailwind_css %}
 </head>
 
@@ -33,7 +33,7 @@
         }
       }
     </script>
-    <div class="drawer">
+    <div class="drawer drawer-end">
       <input id="my-drawer-5" type="checkbox" class="drawer-toggle"/>
       <div class="drawer-content">    
         <div class="flex justify-items-center mx-auto">
@@ -50,7 +50,7 @@
           <div>
             <label class="swap swap-rotate">
               <!-- this hidden checkbox controls the state -->
-              <input id="theme-switcher" type="checkbox" class="theme-controller" value="dark" onchange="updateTheme(this.checked)" />
+              <input id="theme-switcher" type="checkbox" class="theme-controller" value="dark" hidden onchange="updateTheme(this.checked)" />
             
               <!-- sun icon -->
               <svg
@@ -106,12 +106,23 @@
     </div>
     <div class="z-5 hidden navbar fixed bg-base-100 lg:flex">
         <div class="navbar-start">            
-          <label for="my-drawer-5" class="btn btn-ghost btn-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /> </svg>
-          </label>
+          <span class="">
+            <a href="/app/home/" class="btn btn-ghost text-xl px-2">
+              <svg width="40px" aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 71.83 71.83" enable-background="new 0 0 71.83 71.83" xml:space="preserve">
+                <title>LUT Kyyti</title>
+                <path fill="#ED174D" d="M9.77,28.5l34.38,37.16l0,0l6.61-6.21l-4.53-4.83l7.36-6.92L47.43,41l-7.33,6.92L15.92,21.8
+                C12,17.17,9.48,12.1,14.29,5.15L9.52,0C3.84,5.45,0.21,18.16,9.77,28.5"></path>
+                <path fill="#23B900" d="M11.81,60.75l-5.12,4.82c5.43,5.69,18,9.3,28.22-0.31l3-2.79l-6.16-6.66l-3.46,3.25
+                c-4.58,3.93-9.6,6.48-16.45,1.69"></path>
+                <path fill="#FF8621" d="M25.66,17.45L6.94,35.05c-10.3,9.68-7.49,22.7-2.15,28.5l5.09-4.79c-4.4-7.32-1.52-12.23,2.73-16.59
+                l19.21-18.06L25.66,17.45z"></path>
+              </svg>
+              <h1 class="text-justify leading-none text-2xl">{% trans "LUT Kyyti" %}</h1>
+            </a>
+          </span>
         </div>
         <div class="navbar-center">
-          <a href="/app/home/" class="btn btn-ghost text-xl">{% trans "Campus Carpool" %}</a>
+          
         </div>
         <div class="navbar-end">
           <a href="/app/search/" class="btn btn-ghost btn-circle">
@@ -122,6 +133,9 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
           </a>
+          <label for="my-drawer-5" class="btn btn-ghost btn-circle">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /> </svg>
+          </label>
           <!-- <button class="btn btn-ghost btn-circle">
             <div class="indicator">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /> </svg>

@@ -32,9 +32,11 @@ function enableOtherField(checkbox) {
     if (checkbox.checked) {
         other.removeAttribute("disabled");
         otherDiv.removeAttribute("hidden");
+        other.setAttribute("required", "");
     } else {
         other.setAttribute("disabled", "");
         otherDiv.setAttribute("hidden", "");
+        other.removeAttribute("required");
     }
 
 
@@ -109,3 +111,28 @@ function updateMinDateTime(value) {
     returning_at = document.getElementById("id_returning_at_date_time");
     returning_at.min = value;
 }
+
+// $(function(){
+//     $('.options').change(function(){
+//         console.log(this);
+//         var requiredCheckboxes = $('.options :checkbox[required]');
+//         requiredCheckboxes.change(function(){
+//             if(this.is(':checked')) {
+//                 requiredCheckboxes.removeAttr('required');
+//             } else {
+//                 requiredCheckboxes.attr('required', 'required');
+//             }
+//         });
+//     });
+// });
+
+$(function(){
+    var requiredCheckboxes = $('.options');
+    requiredCheckboxes.change(function(){
+        if(requiredCheckboxes.is(':checked')) {
+            requiredCheckboxes.removeAttr('required');
+        } else {
+            requiredCheckboxes.attr('required', '');
+        }
+    });
+});
