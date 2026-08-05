@@ -94,6 +94,7 @@ def add_ride(request):
                         ride.vias.append(value)
 
                 ride.driver = request.user
+                request.user.rides.add(ride)
                 ride.save()
                 # Also save ride to driver's rides
             except Exception as e:

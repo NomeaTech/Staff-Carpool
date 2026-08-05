@@ -68,6 +68,7 @@ def ride_detail(request, ride_id):
 def join_ride(request):
     user, ride, response = ride_helper(request)
     ride.passenger.add(user)
+    user.rides.add(ride)
 
     return response
 
@@ -75,6 +76,7 @@ def join_ride(request):
 def leave_ride(request):
     user, ride, response = ride_helper(request)
     ride.passenger.remove(user)
+    user.rides.remove(ride)
 
     return response
 
@@ -96,8 +98,3 @@ def ride_helper(request):
     response = HttpResponseRedirect(f"/recurring-ride/{rt_id}/")
 
     return user, ride, response
-
-# @login_required
-# def get_user_pfp(request):
-#     user = request.user
-
