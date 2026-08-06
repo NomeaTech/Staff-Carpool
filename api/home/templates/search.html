@@ -10,23 +10,43 @@
     <div class="flex justify-content-center items-center w-full">
         <form class="w-full" action="/app/search/" method="post">
             {% csrf_token %}
-            <label class="input w-full">
-                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <g
-                    stroke-linejoin="round"
-                    stroke-linecap="round"
-                    stroke-width="2.5"
-                    fill="none"
-                    stroke="currentColor"
-                    >
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.3-4.3"></path>
-                    </g>
-                </svg>
-                {{ form.search_query|add_class:"grow"|append_attr:"type:search"|append_attr:"placeholder:Search" }}
-            </label>
             
-            <input class="hidden" type="submit" value="Submit">
+            <div class="card bg-base-100 shadow-sm">
+                <div class="card-body">
+                    <div class="grid lg:grid-cols-7 grid-cols-3 gap-4">
+                        <fieldset class="fieldset col-span-3 rounded-field bg-base-100 border-base-300 rounded-box border p-4 w-full h-full place-content-center">
+                            <legend class="fieldset-legend">{% trans "Ride type" %}</legend>
+                            <div class="flex flex-wrap place-content-center gap-4">
+                                <div class="badge shadow-md py-5 px-2">
+                                    <label class="label">
+                                        <input type="checkbox" class="checkbox before:delay-0 before:duration-100" />
+                                        {% trans "Offer" %}
+                                    </label>
+                                </div>
+                                <div class="badge shadow-md py-5 px-2">
+                                    <label class="label">
+                                        <input type="checkbox" class="checkbox before:delay-0 before:duration-100" />
+                                        {% trans "Request" %}
+                                    </label>
+                                </div>
+                                <div class="badge shadow-md py-5 px-2">
+                                    <label class="label">
+                                        <input type="checkbox" class="checkbox before:delay-0 before:duration-100" />
+                                        {% trans "Other" %}
+                                    </label>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <div class="grid gap-4 col-span-3 h-full">
+                            <input type="search" name="search_query" placeholder="{% trans "From" %}" class="input w-full h-full" id="id_search_query">
+                            <input type="search" name="search_query" placeholder="{% trans "To" %}" class="input w-full h-full" id="id_search_query">
+                            <input type="date" placeholder="{% trans "Date" %}" class="input w-full h-full">
+                        </div>
+                        <input class="btn btn-primary col-span-3 lg:col-span-1 lg:h-full" type="submit" value="{% trans "Search Trip" %}">
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
     <div class="mb-15 md:mb-0 lg:pb-2 pb-15 pt-5 col-span-1 xl:px-0 justify-self-center overflow-scroll scrollbar-hide">
@@ -35,7 +55,7 @@
                 <a href="/ride/{{ride.id}}/">
                     <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
                         <div class="card-body">
-                            <h2 class="card-title"><div>{% blocktranslate with driver=ride.driver destName=ride.destName leaving_at_weekday=ride.leaving_at_weekday|title leaving_at_hour=ride.leaving_at_hour leaving_at_minute=ride.leaving_at_minute %}{{ driver }}'s Trip to <span class="text-secondary inline">{{ destName }} </span>on <span class="text-primary inline">{{ leaving_at_weekday }} </span>at <span class="text-primary inline">{{ leaving_at_hour }}:{{ leaving_at_minute }} {% endblocktranslate %}</span></div></h2>
+                            <h2 class="card-title"><div></span></div></h2>
 
                             {% if ride.note != "" %}
                             <p>{{ ride.note }}</p>

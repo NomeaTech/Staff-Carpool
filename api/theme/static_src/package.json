@@ -31,7 +31,8 @@
     "rimraf": "^6.0.1",
     "tailwind-scrollbar-hide": "^4.0.0",
     "tailwindcss": "^4.3.2",
-    "typography": "^0.16.24"
+    "typography": "^0.16.24",
+    "vanilla-calendar-pro": "^3.1.0"
   },
   "dependencies": {
     "autoprefixer": "^10.5.2",
