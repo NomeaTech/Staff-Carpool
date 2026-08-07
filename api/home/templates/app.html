@@ -184,7 +184,6 @@
 
         <label class="avatar btn btn-ghost btn-circle shrink" for="my-drawer-5">
           <div class="w-8 rounded-full">
-            <source srcset="/{{ user.pfp }}" type="image/jpg">
             <img src="/{{ user.pfp }}" onerror="this.onerror=null; this.src='{% static "images/pfp_not_found.jpg" %}'" alt="User profile picture"/>
           </div>
         </label>

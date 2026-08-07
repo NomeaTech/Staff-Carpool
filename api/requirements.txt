@@ -13,6 +13,7 @@ django-boosted==1.0.1
 django-browser-reload==1.21.0
 django-crispy-forms==2.6
 django-extensions==4.1
+django-filter==26.1
 django-geoaddress==1.0.2
 django-pghistory==3.9.2
 django-pgtrigger==4.17.0
@@ -24,6 +25,7 @@ django-tailwind==4.4.2
 django-translations==1.4.4
 django-virtualqueryset==1.0.1
 django-widget-tweaks==1.5.1
+django_boost==3.2.3
 djangorestframework==3.17.1
 dotenv==0.9.9
 geoaddress==1.0.2

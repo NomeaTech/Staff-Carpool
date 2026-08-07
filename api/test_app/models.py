@@ -3,6 +3,9 @@ from django_geoaddress.fields import GeoaddressField
 from django.conf import settings
 from datetime import datetime
 from django.contrib.postgres.fields import ArrayField
+from django.utils.translation import gettext as _
+from itertools import compress
+import logging
 
 class Address(models.Model):
     country = models.CharField(max_length=200)
@@ -28,7 +31,9 @@ class Ride(models.Model):
 
     passenger = models.ManyToManyField(
         settings.AUTH_USER_MODEL, 
-        related_name="passenger"
+        related_name="passenger",
+        blank=True,
+        null=True
     )
     
     # Car Ride
@@ -101,26 +106,52 @@ class Ride(models.Model):
     private = models.CharField(default=False)
 
     created_at = models.DateTimeField("date added", auto_now_add=True)
-    
-    # private = models.BooleanField()
-    # start = models.ForeignKey('test_app.Address', on_delete=models.CASCADE, related_name="start")
-    # destination = models.ForeignKey('test_app.Address', on_delete=models.CASCADE, related_name="destination")
-    # leaving_at = models.DateTimeField("time car leaves")#, default=datetime.strptime("1, 00:00 (1900)","%-d, %H:%M (%Y)"))
-    # arriving_at = models.DateTimeField("time car arrives")#, default=datetime.strptime("1, 00:00 (1900)","%-d, %H:%M (%Y)"))
-    
-    # WEEKDAY_CHOICES = (
-    #     ("Monday", "monday"),
-    #     ("Tuesday","tuesday"),
-    #     ("Wednesday","wednesday"),
-    #     ("Thursday","thursday"),
-    #     ("Friday","friday"),
-    #     ("Saturday","saturday"),
-    #     ("Sunday","sunday"),
-    # )
 
     def __str__(self):
-        passengers = ", ".join([ str(p) for p in self.passenger.all() ])
+        passengers = ""
+        if len(self.passenger.all()) > 0:
+            passengers = ", ".join([ str(p) for p in self.passenger.all() ])
         return f"Driver: {self.driver}, Passengers: {passengers}"
+
+    def schedule(self):
+        schedule_string = ""
+        if self.one_time:
+            if self.one_way:
+
+                schedule_string = self.leaving_at_date_time
+            else:
+                schedule_string = f"{self.leaving_at_date_time}\n{self.returning_at_date_time}"
+        else:
+            day_filter = [
+                self.monday_check, 
+                self.tuesday_check, 
+                self.wednesday_check, 
+                self.thursday_check, 
+                self.friday_check, 
+                self.saturday_check, 
+                self.sunday_check
+            ]
+
+            days = [
+                _("Mon"), 
+                _("Tue"), 
+                _("Wed"), 
+                _("Thu"), 
+                _("Fri"), 
+                _("Sat"), 
+                _("Sun")
+            ]
+
+            schedule_string = ", ".join(compress(days, day_filter))
+            # schedule_string = day_filter.join(", ")
+
+        return schedule_string
+
+    def sign(self):
+        if self.one_way:
+            return "→"
+        else:
+            return "⇄"
 
 def to_string(self):
     l = ""

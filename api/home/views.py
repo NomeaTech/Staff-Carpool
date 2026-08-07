@@ -46,13 +46,21 @@ def search(request):
         
         if search_form.is_valid():
             form_clean = search_form.cleaned_data
-            query = form_clean["search_query"]
+            start = form_clean["start"]
+            destination = form_clean["destination"]
             
             # Simple search implementation for now. 
             # Will expand later to make search less tedious
             
-            rides = Ride.objects.filter(destName__contains=query)
-            context = {"form": search_form, "rides": rides, "search_query": query, "searched": True}
+            rides = Ride.objects.filter(dest_name__contains=destination)
+
+            if not rides:
+                rides = Ride.objects
+
+            
+            context = {"form": search_form, "rides": rides, "start": start, "searched": True}
+        else:
+            context = {"form": search_form}
     else:
         context = {"form": search_form}
 
