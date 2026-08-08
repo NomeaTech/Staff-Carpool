@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_tailwind',
     'rosetta',
+    'django_filters',
     # 1st party
     'django.contrib.admin',
     'django.contrib.auth',

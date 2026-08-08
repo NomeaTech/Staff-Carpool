@@ -17,7 +17,8 @@
     <script src="{% static "js/jquery-4.0.0.js" %}"></script>
     <script src="{% static "js/funcs.js" %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.8/dist/js.cookie.min.js"></script>
-    <script type="module" src="https://unpkg.com/cally"></script>  
+    <!-- <script type="module" src="https://unpkg.com/cally"></script>   -->
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-calendar-pro/index.js" defer></script>
     {% tailwind_css %}
 </head>
 
@@ -79,7 +80,6 @@
               <input name="next" type="hidden" value="{{ redirect_to }}">
               <select class="select col-span-2" name="language">
               <!-- <div class="dropdown hover-dropdown" name="language"> -->
-                <div tabindex="0" role="button" class="btn m-1">{% translate "Language" %}</div>
                   <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
                     {% get_current_language as LANGUAGE_CODE %}
                     {% get_available_languages as LANGUAGES %}
@@ -91,7 +91,6 @@
                     </option>
                     {% endfor %}
                   </ul>
-                </div>
               <!-- </div> -->
               </select>
               <input class="btn btn-info col-span-1" type="submit" value="Go">
@@ -185,7 +184,6 @@
 
         <label class="avatar btn btn-ghost btn-circle shrink" for="my-drawer-5">
           <div class="w-8 rounded-full">
-            <source srcset="/{{ user.pfp }}" type="image/jpg">
             <img src="/{{ user.pfp }}" onerror="this.onerror=null; this.src='{% static "images/pfp_not_found.jpg" %}'" alt="User profile picture"/>
           </div>
         </label>

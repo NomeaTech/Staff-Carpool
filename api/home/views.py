@@ -46,13 +46,29 @@ def search(request):
         
         if search_form.is_valid():
             form_clean = search_form.cleaned_data
-            query = form_clean["search_query"]
+            start = form_clean["start"]
+            destination = form_clean["destination"]
+            offer_ride = form_clean["offer"]
+            request_ride = form_clean["request"]
+            other_ride = form_clean["other"]
             
             # Simple search implementation for now. 
             # Will expand later to make search less tedious
             
-            rides = Ride.objects.filter(destName__contains=query)
-            context = {"form": search_form, "rides": rides, "search_query": query, "searched": True}
+            found = True
+
+            # Switch to trigram_similar at some point
+            if start or destination or offer_ride or request_ride or other_ride:
+                rides = Ride.objects.filter(dest_name__icontains=destination)
+            else:
+                rides = Ride.objects.all()
+
+            if not rides:
+                found = False
+            
+            context = {"form": search_form, "rides": rides, "start": start, "searched": True, "found": found}
+        else:
+            context = {"form": search_form}
     else:
         context = {"form": search_form}
 
