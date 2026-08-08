@@ -1,11 +1,12 @@
 from django.db import models
 from django_geoaddress.fields import GeoaddressField
 from django.conf import settings
-from datetime import datetime
 from django.contrib.postgres.fields import ArrayField
 from django.utils.translation import gettext as _
 from itertools import compress
-import logging
+from dateutil import parser
+from datetime import datetime
+
 
 class Address(models.Model):
     country = models.CharField(max_length=200)
@@ -113,14 +114,24 @@ class Ride(models.Model):
             passengers = ", ".join([ str(p) for p in self.passenger.all() ])
         return f"Driver: {self.driver}, Passengers: {passengers}"
 
+    # Very janky TEMPORARY system please someone replace it with a better one
     def schedule(self):
         schedule_string = ""
         if self.one_time:
-            if self.one_way:
+            l_date = parser.parse(self.leaving_at_date_time)
+            l_date_datetime = datetime.strptime(str(l_date), "%Y-%m-%d %H:%M:%S")
+            l_date_formatted = datetime.strftime(l_date_datetime, "%d.%m.%Y  %H:%M")
 
-                schedule_string = self.leaving_at_date_time
+            r_date = parser.parse(self.leaving_at_date_time)
+            r_date_datetime = datetime.strptime(str(r_date), "%Y-%m-%d %H:%M:%S")
+            r_date_formatted = datetime.strftime(r_date_datetime, "%d.%m.%Y  %H:%M")
+
+            if self.one_way:
+                
+                schedule_string = l_date_formatted
             else:
-                schedule_string = f"{self.leaving_at_date_time}\n{self.returning_at_date_time}"
+                
+                schedule_string = f"{l_date_formatted}\n{r_date_formatted}"
         else:
             day_filter = [
                 self.monday_check, 

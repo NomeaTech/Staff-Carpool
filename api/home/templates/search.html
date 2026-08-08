@@ -13,46 +13,41 @@
         
         <div class="card bg-base-100 shadow-sm lg:w-200 z-10 justify-center">
             <div class="card-body">
-                <div class="grid lg:grid-cols-8 grid-cols-3 gap-4">
-                    <fieldset class="fieldset lg:col-span-3 col-span-3 rounded-field bg-base-100 border-base-300 rounded-box border p-4 w-full h-full place-content-center">
-                        <legend class="fieldset-legend">{% trans "Ride type" %}</legend>
-                        <div class="flex flex-wrap place-content-center gap-4">
-                            <div class="badge shadow-md py-5 px-2">
-                                <label class="label">
-                                    <input name="offer" type="checkbox" class="checkbox before:delay-0 before:duration-100" />
-                                    {% trans "Offer" %}
-                                </label>
-                            </div>
-                            <div class="badge shadow-md py-5 px-2">
-                                <label class="label">
-                                    <input name="request" type="checkbox" class="checkbox before:delay-0 before:duration-100" />
-                                    {% trans "Request" %}
-                                </label>
-                            </div>
-                            <div class="badge shadow-md py-5 px-2">
-                                <label class="label">
-                                    <input name="other" type="checkbox" class="checkbox before:delay-0 before:duration-100" />
-                                    {% trans "Other" %}
-                                </label>
-                            </div>
-                        </div>
-                    </fieldset>
-
-                    <div class="grid gap-4 lg:col-span-4 col-span-3 h-full">
-                        <input type="search" name="start" placeholder="{% trans "From" %}" class="input w-full" id="id_search_query">
-                        <input type="search" name="destination" placeholder="{% trans "To" %}" class="input w-full" id="id_search_query">
-                        <input type="datetime-local" placeholder="{% trans "Date" %}" class="input w-full">
+                <div class="flex flex-wrap place-content-center gap-4">
+                    <div class="badge shadow-md py-5 px-2">
+                        <label class="label">
+                            <input name="offer" type="checkbox" class="checkbox before:delay-0 before:duration-100" />
+                            {% trans "Offer car ride" %}
+                        </label>
                     </div>
-                    <input class="btn btn-primary col-span-3 lg:col-span-1 lg:h-full w-full" type="submit" value="{% trans "Search" %}">
-                    {% for error in form.errors %}
-                        <p>{{error}}</p>
-                    {% endfor %}
+                    <div class="badge shadow-md py-5 px-2">
+                        <label class="label">
+                            <input name="request" type="checkbox" class="checkbox before:delay-0 before:duration-100" />
+                            {% trans "Request car ride" %}
+                        </label>
+                    </div>
+                    <div class="badge shadow-md py-5 px-2">
+                        <label class="label">
+                            <input name="other" type="checkbox" class="checkbox before:delay-0 before:duration-100" />
+                            {% trans "Train, bus, taxi, other" %}
+                        </label>
+                    </div>
                 </div>
+                <div class="grid md:grid-cols-7 grid-cols-2 gap-4 h-full">
+                    <input type="search" name="start" placeholder="{% trans "From" %}" class="input col-span-2 w-full" id="id_search_query">
+                    <input type="search" name="destination" placeholder="{% trans "To" %}" class="input col-span-2 w-full" id="id_search_query">
+                    <input type="datetime-local" placeholder="{% trans "Date" %}" class="input col-span-2 w-full">
+                    <input class="btn btn-primary md:col-span-1 col-span-2" type="submit" value="{% trans "Search" %}">
+                </div>
+                    
+                {% for error in form.errors %}
+                    <p>{{error}}</p>
+                {% endfor %}
             </div>
         </div>
     </form>
     <div class="flex flex-wrap lg:w-200 mb-15 md:mb-0 lg:pb-2 pb-15 pt-5 col-span-1 xl:px-0 justify-center overflow-scroll scrollbar-hide">
-        {% if searched and rides.count > 0 %}
+        {% if searched and found %}
             {% for ride in rides %}
                 <a href="/ride/{{ride.id}}/">
                     <div class="card card-border w-80 h-80 md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 hover:scale-102 drop-shadow-md">
