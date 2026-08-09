@@ -1,0 +1,23 @@
+{% load i18n %}
+
+<a href="/ride/{{ride.id}}/">
+    <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
+        <div class="card-body">
+            <h2 class="card-title"><div>{% blocktranslate with driver=ride.driver dest_name=ride.dest_name leaving_at_weekday=ride.leaving_at_weekday|title leaving_at_hour=ride.leaving_at_hour leaving_at_minute=ride.leaving_at_minute %}{{ driver }}'s Trip to <span class="text-secondary inline">{{ dest_name }} </span>on <span class="text-primary inline">{{ leaving_at_weekday }} </span>at <span class="text-primary inline">{{ leaving_at_hour }}:{{ leaving_at_minute }} {% endblocktranslate %}</span></div></h2>
+
+            {% if ride.note != "" %}
+            <p>{{ ride.note }}</p>
+            {% endif %}
+
+            {% if ride.passenger.all.count != 0 %}
+                <div class="flex gap-2">
+                {% for p in ride.passenger.all %}
+                    <!-- <a href="/profile/{{p.id}}"><div class="badge badge-soft badge-primary badge-sm">{{p}}</div></a> -->
+                    <div class="badge badge-soft badge-primary badge-sm rounded-full">{{p}}</div>    
+                {% endfor %}
+                </div>
+            {% endif %}
+            <p class="text-secondary">Trip in 2 days</p>
+        </div>
+    </div>
+</a>
