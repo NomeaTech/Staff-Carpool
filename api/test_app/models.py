@@ -1,10 +1,12 @@
 from django.db import models
+
 from django_geoaddress.fields import GeoaddressField
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.utils.translation import gettext as _
 from itertools import compress
 from dateutil import parser
+from dateutil.parser import ParserError
 from datetime import datetime
 
 
@@ -109,22 +111,23 @@ class Ride(models.Model):
     created_at = models.DateTimeField("date added", auto_now_add=True)
 
     def __str__(self):
-        passengers = ""
-        if len(self.passenger.all()) > 0:
-            passengers = ", ".join([ str(p) for p in self.passenger.all() ])
-        return f"Driver: {self.driver}, Passengers: {passengers}"
+        return f"From: {self.start}, Passengers: {self.dest_name}"
 
     # Very janky TEMPORARY system please someone replace it with a better one
     def schedule(self):
         schedule_string = ""
         if self.one_time:
-            l_date = parser.parse(self.leaving_at_date_time)
-            l_date_datetime = datetime.strptime(str(l_date), "%Y-%m-%d %H:%M:%S")
-            l_date_formatted = datetime.strftime(l_date_datetime, "%d.%m.%Y  %H:%M")
+            try:
+                l_date = parser.parse(self.leaving_at_date_time)
+                l_date_datetime = datetime.strptime(str(l_date), "%Y-%m-%d %H:%M:%S")
+                l_date_formatted = datetime.strftime(l_date_datetime, "%d.%m.%Y  %H:%M")
 
-            r_date = parser.parse(self.leaving_at_date_time)
-            r_date_datetime = datetime.strptime(str(r_date), "%Y-%m-%d %H:%M:%S")
-            r_date_formatted = datetime.strftime(r_date_datetime, "%d.%m.%Y  %H:%M")
+                r_date = parser.parse(self.leaving_at_date_time)
+                r_date_datetime = datetime.strptime(str(r_date), "%Y-%m-%d %H:%M:%S")
+                r_date_formatted = datetime.strftime(r_date_datetime, "%d.%m.%Y  %H:%M")
+            except ParserError:
+                l_date_formatted = ""
+                r_date_formatted = ""
 
             if self.one_way:
                 

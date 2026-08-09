@@ -20,7 +20,9 @@ def app_index(request):
 @login_required
 def home(request):
     user = request.user
-    ride_list = user.rides.all()
+
+    rides_created = Ride.objects.filter(driver=user.pk)
+    rides_registered = Ride.objects.filter(passenger=user.pk)
     
     # testing
     users = User.objects.all()
@@ -34,7 +36,7 @@ def home(request):
     #     a_hour = ride.arriving_at_hour
     #     a_minute = ride.arriving_at_minute
 
-    context = {"rides": ride_list, "users": users}
+    context = {"rides_created": rides_created, "rides_registered": rides_registered, "users": users}
     return render(request, "home.html", context)
 
 @login_required
@@ -109,10 +111,11 @@ def add_ride(request):
                     if key.startswith("via_input_"):
                         ride.vias.append(value)
 
+                ride.one_time = True if request.POST["one_time"] == "oneTime" else False
+                ride.one_way = True if request.POST["one_way"] == "oneWay" else False
+
                 ride.driver = request.user
-                request.user.rides.add(ride)
                 ride.save()
-                # Also save ride to driver's rides
             except Exception as e:
                 traceback.print_exc()
             # return HttpResponseRedirect(f"/ride/{ride.id}")
