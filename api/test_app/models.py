@@ -118,13 +118,16 @@ class Ride(models.Model):
         schedule_string = ""
         if self.one_time:
             try:
+                parse_format = "%Y-%m-%d %H:%M:%S"
+                display_format = "%d.%m  %H:%M"
+
                 l_date = parser.parse(self.leaving_at_date_time)
-                l_date_datetime = datetime.strptime(str(l_date), "%Y-%m-%d %H:%M:%S")
-                l_date_formatted = datetime.strftime(l_date_datetime, "%d.%m.%Y  %H:%M")
+                l_date_datetime = datetime.strptime(str(l_date), parse_format)
+                l_date_formatted = datetime.strftime(l_date_datetime, display_format)
 
                 r_date = parser.parse(self.leaving_at_date_time)
-                r_date_datetime = datetime.strptime(str(r_date), "%Y-%m-%d %H:%M:%S")
-                r_date_formatted = datetime.strftime(r_date_datetime, "%d.%m.%Y  %H:%M")
+                r_date_datetime = datetime.strptime(str(r_date), parse_format)
+                r_date_formatted = datetime.strftime(r_date_datetime, display_format)
             except ParserError:
                 l_date_formatted = ""
                 r_date_formatted = ""
@@ -134,7 +137,7 @@ class Ride(models.Model):
                 schedule_string = l_date_formatted
             else:
                 
-                schedule_string = f"{l_date_formatted}\n{r_date_formatted}"
+                schedule_string = r_date_formatted
         else:
             day_filter = [
                 self.monday_check, 
