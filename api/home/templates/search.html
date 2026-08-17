@@ -7,13 +7,13 @@
 {% block title %}{% trans "Search" context "Page title" %}{% endblock %}
 {% block content %}
 <!-- <section class="grid grid-cols-1 xl:grid-cols-3 gap-10 pt-3 lg:pt-20 justify-center h-screen mx-auto"> -->
-<section class="flex flex-col pt-5 lg:pt-20 h-screen mx-auto">
-    <form class="flex w-full justify-center" action="/app/search/" method="post">
+<section class="flex flex-col pt-5 lg:pt-15 h-screen mx-auto">
+    <form class="flex absolute lg:top-20 top-5 inset-x-0 w-full justify-center" action="/app/search/" method="post">
         {% csrf_token %}
         
-        <div class="card bg-base-100 shadow-sm lg:w-200 z-10 justify-center">
+        <div class="card border-solid border-2 border-primary bg-base-100 shadow-sm lg:w-200 z-10 justify-center">
             <div class="card-body">
-                <div class="flex flex-wrap place-content-center gap-4">
+                <div class="flex flex-wrap pb-4 place-content-center gap-4">
                     <div class="badge shadow-md py-5 px-2">
                         <label class="label">
                             <input name="offer" type="checkbox" class="checkbox before:delay-0 before:duration-100" />
@@ -46,11 +46,11 @@
             </div>
         </div>
     </form>
-    <div class="flex flex-wrap lg:w-200 mb-15 md:mb-0 lg:pb-2 pb-15 pt-5 col-span-1 xl:px-0 justify-center overflow-scroll scrollbar-hide">
+    <div class="flex flex-wrap 2xl:w-380 xl:w-300 md:w-200 mb-15 md:mb-0 lg:pb-2 pb-15 pt-50 col-span-1 xl:px-0 justify-center overflow-scroll scrollbar-hide">
         {% if searched and found %}
             {% for ride in rides %}
                 <a href="/ride/{{ride.id}}/">
-                    <div class="card card-border w-80 h-80 md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 hover:scale-102 drop-shadow-md">
+                    <div class="card w-80 h-80 md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 hover:scale-102 drop-shadow-md">
                         <div class="card-body">
                             <div class="flex place-content-between w-full">
                                 <div class="flex flex-wrap place-content-between items-center h-22 w-22">

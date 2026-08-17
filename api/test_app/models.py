@@ -111,7 +111,7 @@ class Ride(models.Model):
     created_at = models.DateTimeField("date added", auto_now_add=True)
 
     def __str__(self):
-        return f"From: {self.start}, Passengers: {self.dest_name}"
+        return f"From: {self.start}, Destination: {self.dest_name}"
 
     # Very janky TEMPORARY system please someone replace it with a better one
     def schedule(self):
