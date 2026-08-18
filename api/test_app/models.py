@@ -119,7 +119,7 @@ class Ride(models.Model):
         if self.one_time:
             try:
                 parse_format = "%Y-%m-%d %H:%M:%S"
-                display_format = "%d.%m  %H:%M"
+                display_format = "%d.%m  <b>%H:%M</b>"
 
                 l_date = parser.parse(self.leaving_at_date_time)
                 l_date_datetime = datetime.strptime(str(l_date), parse_format)
