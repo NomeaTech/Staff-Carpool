@@ -114,29 +114,32 @@ class Ride(models.Model):
         return f"From: {self.start}, Destination: {self.dest_name}"
 
     # Very janky TEMPORARY system please someone replace it with a better one
+    def parse_date(self, display_format):
+        try:
+            parse_format = "%Y-%m-%d %H:%M:%S"
+
+            l_date = parser.parse(self.leaving_at_date_time)
+            l_date_datetime = datetime.strptime(str(l_date), parse_format)
+            l_date_formatted = datetime.strftime(l_date_datetime, display_format)
+
+            r_date = parser.parse(self.leaving_at_date_time)
+            r_date_datetime = datetime.strptime(str(r_date), parse_format)
+            r_date_formatted = datetime.strftime(r_date_datetime, display_format)
+        except ParserError:
+            l_date_formatted = ""
+            r_date_formatted = ""
+
+        return l_date_formatted, r_date_formatted
+    
     def schedule(self):
         schedule_string = ""
         if self.one_time:
-            try:
-                parse_format = "%Y-%m-%d %H:%M:%S"
-                display_format = "%d.%m  <b>%H:%M</b>"
-
-                l_date = parser.parse(self.leaving_at_date_time)
-                l_date_datetime = datetime.strptime(str(l_date), parse_format)
-                l_date_formatted = datetime.strftime(l_date_datetime, display_format)
-
-                r_date = parser.parse(self.leaving_at_date_time)
-                r_date_datetime = datetime.strptime(str(r_date), parse_format)
-                r_date_formatted = datetime.strftime(r_date_datetime, display_format)
-            except ParserError:
-                l_date_formatted = ""
-                r_date_formatted = ""
+            
+            l_date_formatted, r_date_formatted = self.parse_date("%d.%m  <b>%H:%M</b>")
 
             if self.one_way:
-                
                 schedule_string = l_date_formatted
-            else:
-                
+            else:      
                 schedule_string = r_date_formatted
         else:
             day_filter = [
@@ -160,9 +163,22 @@ class Ride(models.Model):
             ]
 
             schedule_string = ", ".join(compress(days, day_filter))
-            # schedule_string = day_filter.join(", ")
 
         return schedule_string
+
+    def schedule_long(self):
+            if self.one_time:
+
+                l_date_formatted, r_date_formatted = self.parse_date("%Y.%d.%m  <b>%H:%M</b>")
+                
+                if self.one_way:
+                    schedule_string = l_date_formatted
+                else:      
+                    schedule_string = f"<p>{r_date_formatted}</p> {self.sign()} <p>{l_date_formatted}</p>"
+            else:
+                schedule_string = ""
+    
+            return schedule_string
 
     def sign(self):
         if self.one_way:

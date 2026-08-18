@@ -69,9 +69,7 @@
                                 </div>
                                 <div class="grid grid-cols-2 gap-1 justify-items-end w-35">
                                     <div class="col-span-2 badge badge-soft badge-info rounded-full badge-lg">
-                                        {% autoescape off %}
-                                            {{ ride.schedule }}
-                                        {% endautoescape %}
+                                        {{ ride.schedule | safe }}
                                     </div>
                                     <div class="flex col-span-2 gap-1 justify-end">
                                         {% if ride.request %}
