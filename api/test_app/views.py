@@ -36,30 +36,20 @@ def ride_detail(request, ride_id):
     ride = get_object_or_404(Ride, pk=ride_id)
     is_driver = True if ride.driver.id == request.user.id else False
     is_passenger = True if request.user in ride.passenger.all() else False
-    # leaving_at = ride.leaving_at.strftime("%A, %H:%M")
-    # arriving_at = ride.leaving_at.strftime("%A, %H:%M")
-
-    l_weekday = ride.leaving_at_weekday
-    l_hour = ride.leaving_at_hour
-    l_minute = ride.leaving_at_minute
-
-    a_weekday = ride.arriving_at_weekday
-    a_hour = ride.arriving_at_hour
-    a_minute = ride.arriving_at_minute
-
 
     # leaving_at = f"{l_weekday.title()}, {str(l_hour).zfill(2)}:{str(l_minute).zfill(2)}"
     
-    leaving_at = f"{str(l_hour).zfill(2)}:{str(l_minute).zfill(2)}"
-    arriving_at = f"{str(a_hour).zfill(2)}:{str(a_minute).zfill(2)}"
+    # leaving_at = f"{str(l_hour).zfill(2)}:{str(l_minute).zfill(2)}"
+    # arriving_at = f"{str(a_hour).zfill(2)}:{str(a_minute).zfill(2)}"
 
     context = {
         "ride": ride, 
         "is_driver": is_driver, 
         "is_passenger": is_passenger,
-        "leaving_at": leaving_at,
-        "arriving_at": arriving_at,
+        # "leaving_at": leaving_at,
+        # "arriving_at": arriving_at,
         "num_passengers": len(ride.passenger.all()),
+        "vias": ", ".join(ride.vias)
     }
     
     return render(request, "ride_detail.html", context)

@@ -8,7 +8,7 @@ from itertools import compress
 from dateutil import parser
 from dateutil.parser import ParserError
 from datetime import datetime
-
+from django.utils import formats
 
 class Address(models.Model):
     country = models.CharField(max_length=200)
@@ -111,30 +111,39 @@ class Ride(models.Model):
     created_at = models.DateTimeField("date added", auto_now_add=True)
 
     def __str__(self):
-        return f"From: {self.start}, Passengers: {self.dest_name}"
+        return f"From: {self.start}, Destination: {self.dest_name}"
+
+    def get_created_at(self):
+        return formats.date_format(self.created_at, "Y.m.d")
 
     # Very janky TEMPORARY system please someone replace it with a better one
+    def parse_date(self, display_format):
+        try:
+            parse_format = "%Y-%m-%d %H:%M:%S"
+
+            l_date = parser.parse(self.leaving_at_date_time)
+            l_date_datetime = datetime.strptime(str(l_date), parse_format)
+            l_date_formatted = datetime.strftime(l_date_datetime, display_format)
+
+            r_date = parser.parse(self.leaving_at_date_time)
+            r_date_datetime = datetime.strptime(str(r_date), parse_format)
+            r_date_formatted = datetime.strftime(r_date_datetime, display_format)
+        except ParserError:
+            l_date_formatted = ""
+            r_date_formatted = ""
+
+        return l_date_formatted, r_date_formatted
+    
     def schedule(self):
         schedule_string = ""
         if self.one_time:
-            try:
-                l_date = parser.parse(self.leaving_at_date_time)
-                l_date_datetime = datetime.strptime(str(l_date), "%Y-%m-%d %H:%M:%S")
-                l_date_formatted = datetime.strftime(l_date_datetime, "%d.%m.%Y  %H:%M")
-
-                r_date = parser.parse(self.leaving_at_date_time)
-                r_date_datetime = datetime.strptime(str(r_date), "%Y-%m-%d %H:%M:%S")
-                r_date_formatted = datetime.strftime(r_date_datetime, "%d.%m.%Y  %H:%M")
-            except ParserError:
-                l_date_formatted = ""
-                r_date_formatted = ""
+            
+            l_date_formatted, r_date_formatted = self.parse_date("%d.%m  <b>%H:%M</b>")
 
             if self.one_way:
-                
                 schedule_string = l_date_formatted
-            else:
-                
-                schedule_string = f"{l_date_formatted}\n{r_date_formatted}"
+            else:      
+                schedule_string = r_date_formatted
         else:
             day_filter = [
                 self.monday_check, 
@@ -157,9 +166,85 @@ class Ride(models.Model):
             ]
 
             schedule_string = ", ".join(compress(days, day_filter))
-            # schedule_string = day_filter.join(", ")
 
         return schedule_string
+
+    def schedule_long(self):
+            if self.one_time:
+
+                l_date_formatted, r_date_formatted = self.parse_date("%Y.%d.%m  <b>%H:%M</b>")
+                
+                if self.one_way:
+                    schedule_string = l_date_formatted
+                else:      
+                    schedule_string = f"<p>{r_date_formatted}</p> {self.sign()} <p>{l_date_formatted}</p>"
+            else:
+                schedule_string = ""
+    
+            return schedule_string
+
+    def weekly_schedule(self):
+        day_filter = [
+            self.monday_check, 
+            self.tuesday_check, 
+            self.wednesday_check, 
+            self.thursday_check, 
+            self.friday_check, 
+            self.saturday_check, 
+            self.sunday_check
+        ]
+
+        days = [
+            _("Monday"), 
+            _("Tuesday"), 
+            _("Wednesday"), 
+            _("Thursday"), 
+            _("Friday"), 
+            _("Saturday"), 
+            _("Sunday")
+        ]
+
+        # Datastructures are for suckers and losers
+
+        schedule_array = [
+            (
+                days[0], 
+                self.monday_leaving_at_time, 
+                self.monday_leaving_at_time
+            ),
+            (
+                days[1], 
+                self.tuesday_leaving_at_time, 
+                self.tuesday_leaving_at_time
+            ),
+            (
+                days[2], 
+                self.wednesday_leaving_at_time, 
+                self.wednesday_leaving_at_time
+            ),
+            (
+                days[3], 
+                self.thursday_leaving_at_time, 
+                self.thursday_leaving_at_time
+            ),
+            (
+                days[4], 
+                self.friday_leaving_at_time, 
+                self.friday_leaving_at_time
+            ),
+            (
+                days[5], 
+                self.saturday_leaving_at_time, 
+                self.saturday_leaving_at_time
+            ),
+            (
+                days[6], 
+                self.sunday_leaving_at_time, 
+                self.sunday_leaving_at_time
+            ),
+        ]
+
+        return compress(schedule_array, day_filter)
 
     def sign(self):
         if self.one_way:

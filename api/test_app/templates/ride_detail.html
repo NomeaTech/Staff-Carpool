@@ -1,101 +1,110 @@
 {% extends "app.html" %}
 
+{% load static %}
+
 {% block title %}Home{% endblock %}
 
 {% block content %}
 
-<section class="justify-center content-center h-screen mx-auto lg:pt-20 pt-5 pb-20 px-10">
-    <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
+<section class="justify-center content-center h-screen mx-auto lg:pt-20 pt-5 pb-20 px-0 mx-0 w-200 overflow-y-auto">
+    <div class="card card-border md:mb-5 mb-0 md:gap-5 m-2 bg-base-100 drop-shadow-md">
         <div class="card-body">
-            <h2 class="card-title"><div>{{ ride.driver}}'s Trip to <span class="text-secondary inline">{{ ride.destName}} </span>on <span class="text-primary inline">{{ ride.leaving_at_weekday.title }} </span></div></h2>
-
-            {% if ride.note != "" %}
-            <p>{{ ride.note }}</p>
-            {% endif %}
-            
-            {% if ride.passenger.all.count != 0 %}
-                    <div class="flex gap-2">
-                    {% for p in ride.passenger.all %}
-                        <!-- <a href="/profile/{{p.id}}"><div class="badge badge-soft badge-primary badge-sm">{{p}}</div></a> -->
-                        <a href="/profile/{{ p.id }}">
-                            <div class="badge badge-soft badge-primary rounded-full badge-lg pl-0 pr-2">
-                                <div class="avatar">
-                                    <div class="w-8 rounded-full">
-                                        <img src="https://img.daisyui.com/images/profile/demo/batperson@192.webp" />
-                                    </div>
-                                </div>
-                                {{p}}
-                            </div>    
-                        </a>
-                    {% endfor %}
+            <div class="flex gap-4 place-content-between">    
+                <div class="grid gap-2 justify-items-center pe-4">
+                    <div class="overflow-x-auto overflow-y-hidden w-full">
+                        <h2 class="card-title text-3xl">{{ ride.start }} {{ ride.sign }} {{ ride.dest_name }}</h2>
                     </div>
-                {% endif %}   
-
-            <div class="flex place-content-between">
-                <div class="w-full">
-                    <div tabindex="0" class="collapse bg-base-100 border-base-300 border mb-2">
-                        <div class="collapse-title font-semibold">From Address</div>
-                        <div class="collapse-content text-sm">
-                            {{ ride.start }}
+                    {% if ride.schedule_long %}
+                        <div class="badge badge-soft badge-info rounded-full badge-3xl">
+                            {{ ride.schedule_long | safe}}
                         </div>
-                    </div>
-                    <div tabindex="0" class="collapse bg-base-100 border-base-300 border">
-                        <div class="collapse-title font-semibold">To Address</div>
-                        <div class="collapse-content text-sm">
-                            {{ ride.destination }}
-                        </div>
-                    </div>
+                    {% endif %}
+                    {% if ride.vias %}
+                        <h3 class="text-lg">
+                            <b>Via</b>
+                            {{ vias }}
+                        </h3>
+                    {% endif %}
                 </div>
 
-
-                <ul class="timeline timeline-vertical justify-center px-5">
-                    <li>
-                    <div class="timeline-start">Leaving</div>
-                    <div class="timeline-middle">
-                    </div>
-                    <div class="timeline-end timeline-box">{{ leaving_at }}</div>
-                    <hr />
-                    </li>
-                    <li>
-                    <hr />
-                    <div class="timeline-start">Arriving</div>
-                    <div class="timeline-middle">
-                    </div>
-                    <div class="timeline-end timeline-box">{{ arriving_at }}</div>
-                    </li> 
-                </ul> 
-            </div>
-
-            <div class="flex place-content-center">
-                <span>
-                {% if is_driver %}
-                <form action="{% url 'delete_ride' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" id="ride" type="text" name="ride" value="{{ ride.id }}">
-                    <button class="btn btn-soft btn-primary" type="submit">Delete Trip</button>
-                </form>
-                {% endif %}
-
-                {% if not is_passenger and not is_driver %}
-                <form action="{% url 'join_ride' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" id="ride" type="text" name="ride" value="{{ ride.id }}">
-                    <button class="btn btn-soft btn-secondary" type="submit">Join Trip</button>
-                </form>
-                {% endif %}
-
-                {% if is_passenger and not is_driver %}
-                <form action="{% url 'leave_ride' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" id="ride" type="text" name="ride" value="{{ ride.id }}">
-                    <button class="btn btn-soft btn-accent" type="submit">Leave Trip</button>
-                </form>
-                {% endif %}
-
+                
+                <div class="flex place-content-center">
+                    <span>
+                        {% if is_driver %}
+                        <form class="h-full" action="{% url 'delete_ride' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" id="ride" type="text" name="ride" value="{{ ride.id }}">
+                        <button class="btn btn-soft btn-primary h-full" type="submit">Delete Trip</button>
+                    </form>
+                    {% endif %}
+    
+                    {% if not is_passenger and not is_driver %}
+                    <form action="{% url 'join_ride' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" id="ride" type="text" name="ride" value="{{ ride.id }}">
+                        <button class="btn btn-soft btn-secondary" type="submit">Join Trip</button>
+                    </form>
+                    {% endif %}
+                    
+                    {% if is_passenger and not is_driver %}
+                    <form action="{% url 'leave_ride' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" id="ride" type="text" name="ride" value="{{ ride.id }}">
+                        <button class="btn btn-soft btn-accent" type="submit">Leave Trip</button>
+                    </form>
+                    {% endif %}
+    
                 </span>
             </div>
+        </div>
+        <div class="divider mt-3"></div>
+        <div class="flex flex-wrap">
+          
+          {% if ride.note != "" %}
+            <div class="chat chat-start pb-4">
+              <div class="chat-bubble">
+                <!-- {{ ride.note }} -->
+                {% lorem 20 w %}
+              </div>
+            </div>
+          {% endif %}
 
-            <!-- <p class="text-secondary">Created at: {{ ride.created_at }}</p> -->
+          {% if not ride.one_time %}
+            <div class="flex flex-wrap gap-5 text-sm justify-center items-center">
+              {% for day in ride.weekly_schedule %}
+                <div class="join join-vertical min-w-30">
+                  <div class="join-item badge badge-primary badge-lg w-full">{{ day.0 }}</div>
+                  <div class="join-item badge badge-primary badge-outline badge-sm w-full">
+                    {{ day.1 }}
+                    
+                    {% if not ride.one_time %}
+                      {{ ride.sign }}
+                      {{ day.2 }}
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div> 
+        <div class="divider mb-3"></div>
+
+        <div class="flex flex-wrap gap-4 place-content-between items-center">
+            <a href="/profile/{{ ride.driver.id }}">
+                <div class="badge badge-soft badge-primary rounded-full badge-lg pl-0 pr-2">
+                    <label class="avatar">
+                        <div class="w-8 rounded-full">
+                        <img src="/{{ ride.driver.pfp }}" onerror="this.onerror=null; this.src='{% static "images/pfp_not_found.jpg" %}'" alt="Profile picture"/>
+                        </div>
+                    </label>
+            
+                    {{ ride.driver }}
+                </div>
+            </a>
+            
+            <div class="badge badge-soft">
+                Published: {{ ride.get_created_at }}
+            </div>
         </div>
     </div>
 </section>
