@@ -85,6 +85,6 @@ def ride_helper(request):
     rt_id = post_data.get("ride")
     ride = get_object_or_404(Ride, pk=rt_id)
     user = request.user
-    response = HttpResponseRedirect(f"/recurring-ride/{rt_id}/")
+    response = HttpResponseRedirect(f"/ride/{rt_id}/")
 
     return user, ride, response
