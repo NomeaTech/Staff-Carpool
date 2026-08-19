@@ -6,8 +6,8 @@
 
 {% block content %}
 
-<section class="justify-center content-center h-screen mx-auto lg:pt-20 pt-5 pb-20 px-10 w-200">
-    <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 drop-shadow-md">
+<section class="justify-center content-center h-screen mx-auto lg:pt-20 pt-5 pb-20 px-0 mx-0 w-200 overflow-y-auto">
+    <div class="card card-border md:mb-5 mb-0 md:gap-5 m-2 bg-base-100 drop-shadow-md">
         <div class="card-body">
             <div class="flex gap-4 place-content-between">    
                 <div class="grid gap-2 justify-items-center pe-4">
@@ -58,14 +58,38 @@
             </div>
         </div>
         <div class="divider mt-3"></div>
-        {% if ride.note != "" %}
-        <div class="chat chat-end">
-            <div class="chat-bubble">
-                {{ ride.note }}
+        <div class="flex flex-wrap">
+          
+          {% if ride.note != "" %}
+            <div class="chat chat-start pb-4">
+              <div class="chat-bubble">
+                <!-- {{ ride.note }} -->
+                {% lorem 20 w %}
+              </div>
             </div>
-        </div>
-        {% endif %}
-        <div class="flex place-content-between items-center">
+          {% endif %}
+
+          {% if not ride.one_time %}
+            <div class="flex flex-wrap gap-5 text-sm justify-center items-center">
+              {% for day in ride.weekly_schedule %}
+                <div class="join join-vertical min-w-30">
+                  <div class="join-item badge badge-primary badge-lg w-full">{{ day.0 }}</div>
+                  <div class="join-item badge badge-primary badge-outline badge-sm w-full">
+                    {{ day.1 }}
+                    
+                    {% if not ride.one_time %}
+                      {{ ride.sign }}
+                      {{ day.2 }}
+                    {% endif %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div> 
+        <div class="divider mb-3"></div>
+
+        <div class="flex flex-wrap gap-4 place-content-between items-center">
             <a href="/profile/{{ ride.driver.id }}">
                 <div class="badge badge-soft badge-primary rounded-full badge-lg pl-0 pr-2">
                     <label class="avatar">
@@ -77,8 +101,10 @@
                     {{ ride.driver }}
                 </div>
             </a>
-
-            <h4>Published: {{ ride.created_at }}</h4>
+            
+            <div class="badge badge-soft">
+                Published: {{ ride.get_created_at }}
+            </div>
         </div>
     </div>
 </section>
