@@ -42,8 +42,8 @@
           </span>
         </div>
         <form method="post">
+          {% csrf_token %}
           <div class="grid grid-cols-3 gap-4">
-            {% csrf_token %}
             
             {{ form.username|append_attr:"required"}}
 
