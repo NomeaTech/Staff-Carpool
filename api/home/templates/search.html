@@ -7,8 +7,8 @@
 {% block title %}{% trans "Search" context "Page title" %}{% endblock %}
 {% block content %}
 <!-- <section class="grid grid-cols-1 xl:grid-cols-3 gap-10 pt-3 lg:pt-20 justify-center h-screen mx-auto"> -->
-<section class="flex flex-col pt-5 lg:pt-15 h-screen mx-auto">
-    <form class="flex absolute lg:top-20 top-5 inset-x-0 w-full justify-center" action="/app/search/" method="post">
+<section class="flex flex-col pt-5 lg:pt-15 h-screen mx-auto overflow-scroll scrollbar-hide">
+    <form class="flex lg:absolute lg:top-20 top-5 inset-x-0 justify-center mx-2" action="/app/search/" method="post">
         {% csrf_token %}
         
         <div class="card border-solid border-2 border-primary bg-base-100 shadow-sm lg:w-200 z-10 justify-center">
@@ -46,7 +46,7 @@
             </div>
         </div>
     </form>
-    <div class="flex flex-wrap 2xl:w-380 xl:w-300 md:w-200 mb-15 md:mb-0 lg:pb-2 pb-15 pt-50 col-span-1 xl:px-0 justify-center overflow-scroll scrollbar-hide">
+    <div class="flex flex-wrap 2xl:w-380 xl:w-300 md:w-200 mb-15 md:mb-0 lg:pb-2 pb-15 pt-5 lg:pt-55 col-span-1 xl:px-0 justify-center">
         {% if searched and found %}
             {% for ride in rides %}
                 <a href="/ride/{{ride.id}}/">
