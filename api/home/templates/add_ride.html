@@ -63,8 +63,8 @@
             <div class="">
                 <h2 class="card-title mb-0 mt-0 mb-4">{% trans "Add Ride" %}</h2>
                 <form action="/app/add/" name="RideForm" method="post">                    
+                    {% csrf_token %}
                     <div class="grid grid-cols-3 gap-4">
-                        {% csrf_token %}
                         
                         <div class="grid grid-cols-3 col-span-3">
                             <div class="divider col-span-3">{% trans "Ride Options" %}</div>

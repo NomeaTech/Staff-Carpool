@@ -46,9 +46,9 @@
         </div>
         <p class="text-base-content/50">{% trans "* = Mandatory" %}</p>
         <form method="post">
+          {% csrf_token %}
           {{ form.username }}
           <div class="grid grid-cols-3 gap-4">
-            {% csrf_token %}
             <div class="col-span-3">
               {{ form.email }}
               <p class="hidden validator-hint ml-3">{% trans "Enter valid email address" %}</p>
