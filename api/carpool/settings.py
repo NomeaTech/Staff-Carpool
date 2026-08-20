@@ -29,19 +29,31 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = ['192.168.1.170', 'localhost', '127.0.0.1', 'https://ride.fentorweb.hu']
+ALLOWED_HOSTS = ['localhost', 'ride.fentorweb.hu', 'static.cloudflareinsights.com']
 
-CSRF_TRUSTED_ORIGINS = ['https://ride.fentorweb.hu', 'http://localhost']
+CSRF_TRUSTED_ORIGINS = ['https://ride.fentorweb.hu', 'http://localhost:8120', 'https://static.cloudflareinsights.com']
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
+SECURE_SSL_REDIRECT = True
+
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SECURE = True
+
 CSRF_COOKIE_DOMAIN = os.getenv("CSRF_COOKIE_DOMAIN")
 
-CORS_REPLACE_HTTPS_REFERER = True
+# CORS_REPLACE_HTTPS_REFERER = True
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = False
+
+CORS_ORIGIN_WHITELIST = (
+  'http://localhost:8120',
+  'https://ride.fentorweb.hu',
+  'https://static.cloudflareinsights.com',
+)
 
 # Application definition
 
@@ -54,6 +66,7 @@ INSTALLED_APPS = [
     'accounts',
     'test_app.apps.TestAppConfig',
     # 3rd party
+    'corsheaders',
     'widget_tweaks',
     'django_extensions',
     'django_geoaddress',
@@ -79,6 +92,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'carpool.urls'
