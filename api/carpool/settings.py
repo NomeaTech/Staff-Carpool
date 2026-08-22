@@ -49,12 +49,6 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_ALL_ORIGINS = False
 
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:8120',
-    'https://ride.fentorweb.hu',
-    'https://static.cloudflareinsights.com',
-)
-
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8120',
     'https://ride.fentorweb.hu',
