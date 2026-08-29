@@ -3,7 +3,7 @@
 {% load widget_tweaks %}
 {% load i18n %}
 
-{% block title %}Add Ride{% endblock %}
+{% block title %}Add ride{% endblock %}
 {% block content %}
 
 
@@ -58,21 +58,21 @@
     </script>
     <input hidden id="new-form" type="checkbox" checked>
 
-    <div class="card bg-base-100 w-96 shadow-sm font-display">
+    <div class="card bg-base-100 w-96 shadow-sm font-display m-2">
         <div class="card-body">
             <div class="">
-                <h2 class="card-title mb-0 mt-0 mb-4">{% trans "Add Ride" %}</h2>
+                <h2 class="card-title mb-0 mt-0 mb-4">{% trans "Add ride" %}</h2>
                 <form action="/app/add/" name="RideForm" method="post">                    
                     {% csrf_token %}
                     <div class="grid grid-cols-3 gap-4">
                         
                         <div class="grid grid-cols-3 col-span-3">
-                            <div class="divider col-span-3">{% trans "Ride Options" %}</div>
+                            <div class="divider col-span-3">{% trans "Ride options" %}</div>
                             <div class="col-span-1">
                                 <fieldset class="fieldset rounded-field bg-base-100 border-base-300 border p-4 pb-3.5" required>
-                                    <legend class="fieldset-legend">{% trans "Car Ride" %}</legend>
+                                    <legend class="fieldset-legend">{% trans "Car ride" %}</legend>
                                     <label class="label">
-                                    <input required id="id_offer" type="checkbox" name="offer" class="options checkbox checkbox-secondary">
+                                    <input required id="id_offer" type="checkbox" name="offer" class="options checkbox checkbox-success" onchange="enableMaxPassengerField(this)">
                                     {% trans "Offer" %}
                                     </label>
                                     <label class="label">
@@ -83,7 +83,7 @@
                             </div>
                             <div class="col-span-2 ms-3">
                                 <fieldset class="fieldset rounded-field bg-base-100 border-base-300 border p-4">
-                                    <legend class="fieldset-legend">{% trans "Other Transport" %}</legend>
+                                    <legend class="fieldset-legend">{% trans "Other transport" %}</legend>
                                     <div class="grid grid-cols-2 gap-1">
                                         <label class="label">
                                             <input required id="id_train" name="train" value="train" type="checkbox" class="options checkbox checkbox-error">
@@ -108,30 +108,38 @@
                         <div id="other_div" hidden class="col-span-3">                        
                             <label class="floating-label">
                                 <span>{% trans "Other" %}</span>
-                                <input disabled id="id_other_field" name="other_field" class="input" placeholder="{% trans "Other" %}"/>
+                                <input disabled id="id_other_field" name="other_field" class="input" maxlength="300" placeholder="{% trans "Other" %}"/>
                             </label>
                         </div>
-                        <div class="col-span-3">                        
+                        <div hidden class="col-span-3" id="id_max_passengers_div">                        
                             <label class="floating-label">
                                 <span>{% trans "Maximum passengers" %}</span>
-                                <input required id="id_max_passengers" name="max_passengers" placeholder="{% trans "Maximum passengers" %}" type="number" pattern="\d*" id="max-passengers" min="1" max="100" class="input"/>
+                                <input disabled required id="id_max_passengers" name="max_passengers" placeholder="{% trans "Maximum passengers" %}" type="number" pattern="\d*" id="max-passengers" min="1" max="100" class="input"/>
                             </label>
                         </div>
                             
                         <div class="divider col-span-3">{% trans "Address" %}</div>
                         <div id="div-inputs" class="grid grid-cols-5 col-span-3 gap-4">
-                            <input required id="id_start" name="start" class="input col-span-5 w-full" placeholder="{% trans "From" %}">
-                            <!-- <input hidden id="via-input" class="input col-span-3 w-full" placeholder={% trans "Via" %}> -->
+                            <label class="floating-label col-span-5 w-full">
+                                <span>{% trans "From" %}</span>
+                                <input required id="id_start" name="start" class="input w-full" placeholder="{% trans "From" %}">
+                            </label>
                             <div hidden id="div-via" class="grid grid-cols-5 gap-4 col-span-5 w-full"></div>
-                            <input required id="id_destination" name="destination" class="input col-span-4 w-full" placeholder="{% trans "To" %}">
-                            <button class="btn btn-success col-span-1" onclick="viaAdd()" type="button">
+                            <label class="floating-label col-span-4 w-full">
+                                <span>{% trans "To" %}</span>
+                                <input required id="id_destination" name="destination" class="input w-full" placeholder="{% trans "To" %}">
+                            </label>
+                            <button id="add_via" class="btn btn-success col-span-1" onclick="viaAdd()" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="2 2 20 20" stroke-width="2" stroke="currentColor" class="scale-120">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                 </svg>
                             </button>
                             <div class="col-span-5">
                                 <div class="tooltip w-full" data-tip="A descriptive name for your final destination">
-                                    <input required id="id_dest_name" name="dest_name" class="input w-full" placeholder="{% trans "Place Name" %}"">
+                                    <label class="floating-label w-full">
+                                        <span>{% trans "From" %}</span>        
+                                        <input required id="id_dest_name" name="dest_name" class="input w-full pointer-events-none" placeholder="{% trans "Place name" %}"">
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -177,12 +185,12 @@
                                             {{ day.0 }}
                                         </label>
                                     </div>
-                                    <div id="time-selectors" class="col-span-5">                                
+                                    <div id="time-selectors" class="col-span-5 grid gap-2">                                
                                         <div class="div-departure flex w-full align-items-center">    
-                                            <input id="id_{{ day.1 }}_leaving_at_time" name="{{ day.1 }}_leaving_at_time" type="time" class="select select-lg col-span-5">
+                                            <input id="id_{{ day.1 }}_leaving_at_time" name="{{ day.1 }}_leaving_at_time" type="time" class="select col-span-5">
                                         </div>
                                         <div hidden class="div-return flex w-full align-items-center">    
-                                            <input id="id_{{ day.1 }}_returning_at_time" name="{{ day.1 }}_returning_at_time" type="time" class="select select-sm col-span-5">
+                                            <input id="id_{{ day.1 }}_returning_at_time" name="{{ day.1 }}_returning_at_time" type="time" class="select col-span-5">
                                         </div>
                                     </div>
                                 </fieldset>
@@ -222,7 +230,7 @@
                             <textarea id="id_note" name="note" class="textarea w-full" placeholder=""></textarea>
                         </div>
                         <div class="tooltip col-span-3 w-full" data-tip="Complete all required elements">
-                            <input class="btn btn-md btn-secondary w-full" type="submit" value="Add Ride">
+                            <input class="btn btn-md btn-secondary w-full" type="submit" value="{% trans "Add ride" %}">
                         </div>
                         {% for error in ride_form.errors %}
                             <p>{{ error }}</p>

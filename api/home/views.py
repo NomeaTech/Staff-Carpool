@@ -80,13 +80,13 @@ def search(request):
 def add_ride(request):    
 
     day_list = [
-        (_("Mon."), "monday"),
-        (_("Tue."), "tuesday"),
-        (_("Wed."), "wednesday"),
-        (_("Thu."), "thursday"),
-        (_("Fri."), "friday"),
-        (_("Sat."), "saturday"),
-        (_("Sun."), "sunday")
+        (_("Mon"), "monday"),
+        (_("Tue"), "tuesday"),
+        (_("Wed"), "wednesday"),
+        (_("Thu"), "thursday"),
+        (_("Fri"), "friday"),
+        (_("Sat"), "saturday"),
+        (_("Sun"), "sunday")
     ]
 
     if request.method == "POST":

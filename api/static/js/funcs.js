@@ -13,6 +13,13 @@ function viaAdd(via_value = "") {
             </button>
         </div>`
     );
+
+    count = $("#div-via").children().length;
+    console.log(count);
+    if (count >= 8) {
+        $("#add_via").prop("disabled", true);
+        console.log("more than 1 via");
+    }
 }
 
 function viaRemove(element) {
@@ -23,6 +30,11 @@ function viaRemove(element) {
     if (vias.length == 0) {
         collectorDiv = document.getElementById("div-via");
         collectorDiv.setAttribute("hidden", "");
+    }
+
+    count = $("#div-via").length
+    if (count < 8) {
+        $("#add_via").prop("disabled", false);
     }
 }
 
@@ -75,12 +87,12 @@ function switchTimes(times, radio) {
     for (const item of times) {
         inputs = item.getElementsByTagName('INPUT');
         if (radio.value == "oneWay") {
-            inputs[0].classList.add("select-lg")
-            inputs[0].classList.remove("select-xs")
+            // inputs[0].classList.add("select-lg")
+            // inputs[0].classList.remove("select-xs")
             
         } else if (radio.value == "twoWay" && inputs[0].id != "id_returning_at_date_time") {
-            inputs[0].classList.add("select-xs")
-            inputs[0].classList.remove("select-lg")
+            // inputs[0].classList.add("select-xs")
+            // inputs[0].classList.remove("select-lg")
         }
     }
 }
@@ -136,3 +148,17 @@ $(function(){
         }
     });
 });
+
+function enableMaxPassengerField(checkbox) {
+    otherDiv = document.getElementById('id_max_passengers_div')
+    other = document.getElementById('id_max_passengers');
+    if (checkbox.checked) {
+        other.removeAttribute("disabled");
+        otherDiv.removeAttribute("hidden");
+        other.setAttribute("required", "");
+    } else {
+        other.setAttribute("disabled", "");
+        otherDiv.setAttribute("hidden", "");
+        other.removeAttribute("required");
+    }
+}
