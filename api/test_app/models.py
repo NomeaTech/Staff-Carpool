@@ -136,14 +136,18 @@ class Ride(models.Model):
     
     def schedule(self):
         schedule_string = ""
+        template = '''<div class="col-span-2 badge badge-soft badge-info rounded-full badge-lg">
+            {0}
+        </div>
+        '''
         if self.one_time:
             
             l_date_formatted, r_date_formatted = self.parse_date("%d.%m  <b>%H:%M</b>")
 
             if self.one_way:
-                schedule_string = l_date_formatted
+                schedule_string = template.format(l_date_formatted)
             else:      
-                schedule_string = r_date_formatted
+                schedule_string = template.format(r_date_formatted)
         else:
             day_filter = [
                 self.monday_check, 
@@ -165,7 +169,28 @@ class Ride(models.Model):
                 _("Sun")
             ]
 
-            schedule_string = ", ".join(compress(days, day_filter))
+
+
+            if all(day_filter):
+                schedule_string = template.format(_("Everyday"))
+            elif all(day_filter[:5]) and not any(day_filter[5:7]):
+                schedule_string = template.format(_("Weekdays"))
+            elif all(day_filter[5:7]) and not any(day_filter[:5]):
+                schedule_string = template.format(_("Weekends"))
+            else:
+                days = compress(days, day_filter)
+                joint_string = ", ".join(days)
+                # schedule_string = "".join([template.format(day) for day in days])
+                args = "rounded-full"
+
+                if 2 < sum(day_filter) < 4:
+                    args = "h-20"
+                elif sum(day_filter) > 3:
+                    args = "h-20"
+                    
+                schedule_string = f'''<div class="col-span-2 badge badge-soft badge-info badge-lg {args}">
+                        {joint_string}
+                    </div>'''
 
         return schedule_string
 

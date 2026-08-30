@@ -59,11 +59,18 @@ def search(request):
             
             found = True
 
-            # Switch to trigram_similar at some point
-            if start or destination or offer_ride or request_ride or other_ride:
-                rides = Ride.objects.filter(dest_name__icontains=destination)
-            else:
-                rides = Ride.objects.all()
+            rides = Ride.objects.all()
+
+            if start:
+                rides = rides.filter(start__icontains=start)
+            if destination:
+                rides = rides.filter(dest_name__icontains=destination)
+            if offer_ride:
+                rides = rides.filter(offer=offer_ride)
+            if request_ride:
+                rides = rides.filter(request=request_ride)
+            if other_ride:
+                rides = rides.filter(other=other_ride)
 
             if not rides:
                 found = False
@@ -106,11 +113,13 @@ def add_ride(request):
                 # ride.destination = to_address
 
                 # collect vias
+                vias = []
 
                 for key, value in request.POST.items():
                     if key.startswith("via_input_"):
-                        ride.vias.append(value)
+                        vias.append(value)
 
+                ride.vias = vias[:8]
                 ride.one_time = True if request.POST["one_time"] == "oneTime" else False
                 ride.one_way = True if request.POST["one_way"] == "oneWay" else False
 
