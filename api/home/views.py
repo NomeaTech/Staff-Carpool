@@ -106,11 +106,13 @@ def add_ride(request):
                 # ride.destination = to_address
 
                 # collect vias
+                vias = []
 
                 for key, value in request.POST.items():
                     if key.startswith("via_input_"):
-                        ride.vias.append(value)
+                        vias.append(value)
 
+                ride.vias = vias[:8]
                 ride.one_time = True if request.POST["one_time"] == "oneTime" else False
                 ride.one_way = True if request.POST["one_way"] == "oneWay" else False
 

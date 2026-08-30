@@ -1,5 +1,9 @@
 function viaAdd(via_value = "") {
-    // viaInput = document.getElementById("via-input");
+    count = $("#div-via").children().length;
+    if (count > 7) {
+        return
+    }
+
     inputDiv = document.getElementById("div-via");
     inputDiv.removeAttribute("hidden", "");
 
@@ -14,11 +18,8 @@ function viaAdd(via_value = "") {
         </div>`
     );
 
-    count = $("#div-via").children().length;
-    console.log(count);
-    if (count >= 8) {
+    if (count >= 7) {
         $("#add_via").prop("disabled", true);
-        console.log("more than 1 via");
     }
 }
 
