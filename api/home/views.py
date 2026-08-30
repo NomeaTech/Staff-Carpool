@@ -59,11 +59,18 @@ def search(request):
             
             found = True
 
-            # Switch to trigram_similar at some point
-            if start or destination or offer_ride or request_ride or other_ride:
-                rides = Ride.objects.filter(dest_name__icontains=destination)
-            else:
-                rides = Ride.objects.all()
+            rides = Ride.objects.all()
+
+            if start:
+                rides = rides.filter(start__icontains=start)
+            if destination:
+                rides = rides.filter(dest_name__icontains=destination)
+            if offer_ride:
+                rides = rides.filter(offer=offer_ride)
+            if request_ride:
+                rides = rides.filter(request=request_ride)
+            if other_ride:
+                rides = rides.filter(other=other_ride)
 
             if not rides:
                 found = False
