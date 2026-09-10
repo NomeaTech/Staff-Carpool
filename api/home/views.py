@@ -14,8 +14,8 @@ from django.utils.translation import gettext_lazy as _
 logger = logging.getLogger(__name__)
 
 @login_required
-def app_index(request):
-    return HttpResponseRedirect("/apps/home/")
+def index(request):
+    return HttpResponseRedirect("/app/home/")
 
 @login_required
 def home(request):

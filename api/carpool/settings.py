@@ -170,7 +170,6 @@ USE_TZ = True
 LANGUAGES = [
     ("en", _("English")),
     ("fi", _("Finnish")),
-    ("sv", _("Swedish")),
 ]
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),
@@ -210,9 +209,9 @@ PWA_APP_DESCRIPTION = "Ride sharing app for LUT staff"
 PWA_APP_THEME_COLOR = "#FFFFFF"
 PWA_APP_BACKGROUND_COLOR = '#F8F8F8'
 PWA_APP_DISPLAY = 'standalone'
-PWA_APP_SCOPE = '/'
-PWA_APP_ORIENTATION = 'any'
-PWA_APP_START_URL = '/'
+PWA_APP_SCOPE = '/app/'
+PWA_APP_ORIENTATION = 'portrait'
+PWA_APP_START_URL = '/app/home'
 PWA_APP_STATUS_BAR_COLOR = 'default'
 PWA_APP_ICONS = [
     {

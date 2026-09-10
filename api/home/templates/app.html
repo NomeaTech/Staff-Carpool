@@ -86,7 +86,7 @@
                     {% get_language_info_list for LANGUAGES as languages %}
                     {% for language in languages %}
                     <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
-                      {{ language.name_local.title }} ({{ language.code.upper }})
+                      {{ language.code.upper }}
                       <!-- {{ language.code.upper }} -->
                     </option>
                     {% endfor %}
@@ -99,7 +99,7 @@
               {% csrf_token %}
               <button class="btn btn-warning w-full" type="submit">Log Out</button>
             </form>
-            <p class="col-span-3">Version: 0.8.0</p>
+            <p class="col-span-3">Version: 0.8.1</p>
           </div>          
         </div>
       </div>
