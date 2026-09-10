@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'tailwind',
     'pwa',
     'accounts',
+    'landing',
     'test_app.apps.TestAppConfig',
     # 3rd party
     'corsheaders',
