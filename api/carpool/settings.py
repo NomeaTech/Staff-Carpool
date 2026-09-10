@@ -185,6 +185,7 @@ USER_IMAGES_ROOT = os.path.join(STATIC_ROOT, '/images/user_images/')
 
 TAILWIND_APP_NAME = "theme"
 
+LOGIN_URL = "app/accounts/login"
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "index"
 
