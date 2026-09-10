@@ -26,5 +26,6 @@ urlpatterns = [
     path("i18n/", include("django.conf.urls.i18n")),
     path('geoaddress/', include('django_geoaddress.urls')),
     path('', include('test_app.urls')),
+    path('landing/', include('landing.urls')),
     path('', include('pwa.urls')),
 ]
