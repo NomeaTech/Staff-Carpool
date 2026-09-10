@@ -2,7 +2,7 @@
 {% load i18n %}
 
 <!DOCTYPE html>
-<html data-theme="light">
+<html data-theme="light" class="scroll-smooth scroll-p-30">
     <head>
         <title>{% block title %}Campus Ride{% endblock %}</title>
         <meta charset="UTF-8">
@@ -11,13 +11,16 @@
         <script src="{% static "js/funcs.js" %}"></script>
         {% tailwind_css %}
     </head>
-    <div class="z-5 fixed max-lg:collapse bg-base-100 lg:mb-48 shadow-sm w-full rounded-md">
+    <div class="z-5 fixed max-xl:collapse bg-base-200 lg:mb-48 shadow-sm w-full rounded-md">
       <input id="navbar-1-toggle" class="peer hidden" type="checkbox" />
-      <label for="navbar-1-toggle" class="fixed inset-0 hidden max-lg:peer-checked:block"></label>
+      <label for="navbar-1-toggle" class="fixed inset-0 hidden max-xl:peer-checked:block"></label>
       <div class="collapse-title navbar">
-        <div class="navbar-start">
+        <div class="navbar-start w-80">
+          <label for="navbar-1-toggle" class="btn btn-ghost xl:hidden">
+            <svg aria-label="Menu" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
+          </label>
           <span class="">
-            <a href="/app/home/" class="btn btn-ghost text-xl px-2">
+            <a href="{% url "home" %}" class="btn btn-ghost text-xl px-2">
               <svg width="40px" aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 71.83 71.83" enable-background="new 0 0 71.83 71.83" xml:space="preserve">
                 <title>LUT Kyyti</title>
                 <path fill="#ED174D" d="M9.77,28.5l34.38,37.16l0,0l6.61-6.21l-4.53-4.83l7.36-6.92L47.43,41l-7.33,6.92L15.92,21.8
@@ -31,42 +34,69 @@
             </a>
           </span>
         </div>
-        <div class="navbar-center hidden lg:flex">
+      
+        <div class="navbar-end hidden xl:flex w-full">
           <ul class="menu menu-horizontal px-1">
-            <li><a href="{% url 'how-it-works' %}">How it works</a></li>
+            <li><a href="#how-it-works">{% trans "How it works" %}</a></li>
             <div class="divider divider-horizontal"></div>
-            <li><a href="{% url 'impact' %}">Impact</a></li>
+            <li><a href="#impact">{% trans "Impact" %}</a></li>
             <div class="divider divider-horizontal"></div>
-            <li><a href="{% url 'faq' %}">FAQ</a></li>
+            <li><a href="#faq">{% trans "FAQ" %}</a></li>
             <div class="divider divider-horizontal"></div>
-            <li><a href="{% url 'contact' %}">Contact</a></li>
+            <li><a href="#contact">{% trans "Contact" %}</a></li>
           </ul>
-        </div>
-        <div class="navbar-end">
           <div class="flex gap-4">
             <input type="text" placeholder="{% trans "Find a ride" %}" class="input w-64 lg:w-auto" />
-            <a href="{% url 'signup' %}" class="btn btn-primary">Join</a>
+            <a href="{% url 'login' %}" class="btn btn-primary">{% trans "Log in / Join" %}</a>
             <form class="w-full" action="{% url 'set_language' %}" method="post">
               {% csrf_token %}
               <input name="next" type="hidden" value="{{ redirect_to }}">
               <select class="select col-span-2" name="language">
-              <!-- <div class="dropdown hover-dropdown" name="language"> -->
-                  <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                    {% get_current_language as LANGUAGE_CODE %}
-                    {% get_available_languages as LANGUAGES %}
-                    {% get_language_info_list for LANGUAGES as languages %}
-                    {% for language in languages %}
-                    <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
-                      {{ language.name_local.title }} ({{ language.code.upper }})
-                      <!-- {{ language.code.upper }} -->
-                    </option>
-                    {% endfor %}
-                  </ul>
-              <!-- </div> -->
+                <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                  {% get_current_language as LANGUAGE_CODE %}
+                  {% get_available_languages as LANGUAGES %}
+                  {% get_language_info_list for LANGUAGES as languages %}
+                  {% for language in languages %}
+                  <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                    {{ language.code.upper }}
+                  </option>
+                  {% endfor %}
+                </ul>
               </select>
-              <!-- <input class="btn btn-info col-span-1" type="submit" value="Go"> -->
             </form>
           </div>
+        </div>
+      </div>
+    
+      <div class="collapse-content xl:hidden z-1">
+        <ul class="menu menu-horizontal px-1">
+          <li><a href="#how-it-works">{% trans "How it works" %}</a></li>
+          <div class="divider divider-horizontal mx-0"></div>
+          <li><a href="#impact">{% trans "Impact" %}</a></li>
+          <div class="divider divider-horizontal mx-0"></div>
+          <li><a href="#faq">{% trans "FAQ" %}</a></li>
+          <div class="divider divider-horizontal mx-0"></div>
+          <li><a href="#contact">{% trans "Contact" %}</a></li>
+        </ul>
+        <div class="flex flex-wrap gap-4">
+          <input type="text" placeholder="{% trans "Find a ride" %}" class="input w-64 lg:w-auto" />
+          <a href="{% url 'login' %}" class="btn btn-primary">{% trans "Log in / Join" %}</a>
+          <form class="" action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}
+            <input name="next" type="hidden" value="{{ redirect_to }}">
+            <select class="select col-span-2" name="language">
+              <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as LANGUAGES %}
+                {% get_language_info_list for LANGUAGES as languages %}
+                {% for language in languages %}
+                <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                  {{ language.code.upper }}
+                </option>
+                {% endfor %}
+              </ul>
+            </select>
+          </form>
         </div>
       </div>
     </div>
@@ -74,22 +104,24 @@
     <body class="bg-base-200">
       <main class="flex justify-center">
           <div class="card bg-base-100 shadow-sm my-30 xl:mx-40 mx-4 xl:w-300">
-            <div class="card-body rounded-4xl w-full px-30 py-20">
-              <div class="grid lg:grid-cols-2 gap-4 w-full pb-20">
-                <div class="grid gap-8 w-120 place-content-center">
+            <div class="card-body rounded-4xl w-full xl:px-30 px-10 py-20">
+              <div class="grid md:grid-cols-2 gap-4 w-full pb-20">
+                <div class="grid gap-8 place-content-center">
                   <h1 class="text-5xl font-bold">{% trans "Share your commute with LUT Kyyti" %}</h1>
                   <h2 class="text-lg" style="color: rgb(122, 122, 122);">{% trans "Find or offer rides between campus and home with other LUT/LAB community members." %}</h2>
                   <div class="join justify-self-center">
-                    <a class="btn btn-primary join-item rounded-l-full">{% trans "Get started" %}</a>
-                    <a class="btn btn-secondary join-item rounded-r-full">{% trans "Learn more" %}</a>
+                    <a href="{% url "signup" %}" class="btn btn-primary join-item rounded-l-full">{% trans "Get started" %}</a>
+                    <a href="#faq" class="btn btn-secondary join-item rounded-r-full">{% trans "Learn more" %}</a>
                   </div>
                 </div>
-                <img class="w-130" src="{% static "images/temp_landing1.jpg" %}">
+                <div>
+                  <img src="{% static "images/temp_landing1.jpg" %}">
+                </div>
               </div>
-              <div class="grid lg:grid-cols-2 gap-4 w-full">
-                <img class="w-130" src="{% static "images/posting_example.png" %}">
-                <div class="grid gap-8 w-120 place-content-center">
-                  <h1 class="text-5xl font-bold">{% trans "How it works" %}</h1>
+              <div id="how-it-works" class="grid md:grid-cols-2 gap-4 w-full">
+                <img class="xl:w-130" src="{% static "images/posting_example.png" %}">
+                <div class="grid gap-8 place-content-center">
+                  <h1 class="text-4xl font-bold">{% trans "How it works" %}</h1>
                   <ul role="list" class="list-disc">
                     <li class="text-lg" style="color: rgb(122, 122, 122);">{% trans "Create your LUT Kyyti profile" %}</li>
                     <li class="text-lg" style="color: rgb(122, 122, 122);">{% trans "Search for rides, offer a ride, or post a ride request" %}</li>
@@ -99,8 +131,8 @@
                 </div>
               </div>
               <div class="divider"></div>
-              <div>
-                <h1 class="text-5xl font-bold pb-15">{% trans "Impact" %}</h1>
+              <div id="impact">
+                <h1 class="text-4xl font-bold pb-15">{% trans "Impact" %}</h1>
                 <div class="grid md:grid-cols-3 gap-10">
                   <div class="grid justify-items-center">
                     <div class="bg-neutral-content mask mask-squircle w-15 h-15">
@@ -141,14 +173,14 @@
                   </div>
                 </div>
                 <div class="grid gap-4 justify-items-center pt-15">
-                  <h1 class="text-center text-xl mx-30" style="color: rgb(122, 122, 122);">{% trans "LUT Kyyti is a LUT University-funded initiative that helps its community reduce commute-related emissions by sharing rides." %}</h1>
+                  <h1 class="text-center text-xl xl:mx-30" style="color: rgb(122, 122, 122);">{% trans "LUT Kyyti is a LUT University-funded initiative that helps its community reduce commute-related emissions by sharing rides." %}</h1>
                   <a class="btn btn-wide btn-success rounded-full">See the sustainability impact</a>
                 </div>
               </div>
               <div class="divider"></div>
-              <div>
-                <h1 class="text-5xl font-bold pb-15">{% trans "FAQ" %}</h1>
-                <div class="grid gap-7 md:grid-cols-2 mx-20">
+              <div id="faq">
+                <h1 class="text-4xl font-bold pb-15">{% trans "FAQ" %}</h1>
+                <div class="grid gap-7 md:grid-cols-2 xl:mx-20">
                   <div class="grid gap-7">
                     <div>
                       <h1 class="text-xl font-bold pb-2" style="color: rgb(122, 122, 122);">{% trans "Who can use LUT Kyyti?" %}</h1>
@@ -192,9 +224,9 @@
               </div>
               <div class="divider"></div>
               <h1 class="text-center text-3xl" style="color: rgb(122, 122, 122);">{% trans "Help our university reach its climate goals by reducing commute emissions" %}</h1>
-              <div class="grid gap-5 justify-items-center">
+              <div id="contact" class="grid gap-5 justify-items-center">
                 <h1 class="text-center text-5xl pt-20 pb-5" style="color: rgb(60, 60, 60);">{% trans "Get in touch" %}</h1>
-                <p class="text-lg" style="color: rgb(122, 122, 122);">{% trans "Questions, feedback, or ideas for improving LUT Kyyti? Contact us!" %}</p>
+                <!-- <p class="text-lg" style="color: rgb(122, 122, 122);">{% trans "Questions, feedback, or ideas for improving LUT Kyyti? Contact us!" %}</p> -->
                 <a class="btn btn-wide btn-soft btn-secondary rounded-full">{% trans "Contact" %}</a>
               </div>
             </div>
@@ -203,14 +235,13 @@
     </body>
     <footer class="footer footer-horizontal footer-center bg-neutral text-neutral-content rounded p-10">
       <nav class="grid grid-flow-col gap-4">
-        <a class="link link-hover">About us</a>
-        <a class="link link-hover">Contact</a>
         <a class="link link-hover">Privacy policy</a>
+        <!-- <div class="divider border-base-200"></div> -->
         <a class="link link-hover">Terms of use</a>
       </nav>
       <aside>
-        <p>Copyright © {{ current_year }} - LUT University</p>
-        <p>All text is temporary</p>
+        <!-- <p>Copyright © {{ current_year }} - LUT University</p> -->
+        <p>LUT Kyyti is operated by LUT University.</p>
       </aside>
     </footer>
 </html>

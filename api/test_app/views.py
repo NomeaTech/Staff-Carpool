@@ -8,10 +8,6 @@ def offline(request):
     return render(request, "offline-new.html")
 
 @login_required
-def index(request):
-    return HttpResponseRedirect("/app/home/")
-
-@login_required
 def old_index(request):
     ride_list = Ride.objects.order_by("-created_at")
     User = get_user_model()
