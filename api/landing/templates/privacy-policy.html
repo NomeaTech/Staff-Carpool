@@ -1,0 +1,25 @@
+{% extends "landing.html" %}
+
+{% load static tailwind_tags %}
+{% load i18n %}
+
+{% block title %}{% trans "Privacy Policy" %}{% endblock %}
+
+{% block content %}
+<h1 class="text-4xl font-bold pb-10">{% trans "Privacy Policy" %}</h1>
+<div class="text-lg">
+    <p class="indent-10">
+        The Privacy Policy explains how LUT Kyyti collects, uses, stores, and protects personal data when you use the service. It also describes your rights regarding your personal data in accordance with the General Data Protection Regulation (GDPR).
+    </p>
+    <br>
+    <p>
+        The current version of the Privacy Policy can be viewed or downloaded below.
+    </p>
+    <br>
+    <a class="link link-primary link-hover" href="{% static "documents/lut_kyyti_privacy_policy.pdf" %}">{% trans "LUT Kyyti Privacy Policy (PDF)" %}</a>
+    <p>
+        <br>
+        <i>Last updated: July 2026</i>
+    </p>
+</div>
+{% endblock %}
