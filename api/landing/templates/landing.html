@@ -1,0 +1,127 @@
+{% load static tailwind_tags %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html data-theme="light" class="scroll-smooth scroll-p-30 h-full">
+    <head>
+        <title>{% block title %}LUT Kyyti{% endblock %}</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <!-- <script src="{% static "js/funcs.js" %}"></script> -->
+        {% tailwind_css %}
+    </head>
+    <div class="z-5 fixed max-xl:collapse lg:mb-48 bg-base-100 shadow-sm w-full rounded-md">
+      <input id="navbar-1-toggle" class="peer hidden" type="checkbox" />
+      <label for="navbar-1-toggle" class="fixed inset-0 hidden max-xl:peer-checked:block"></label>
+      <div class="collapse-title navbar">
+        <div class="navbar-start w-80">
+          <label for="navbar-1-toggle" class="btn btn-ghost xl:hidden">
+            <svg aria-label="Menu" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
+          </label>
+          <span class="">
+            <a href="/" class="btn btn-ghost text-xl px-2">
+              <svg width="40px" aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 71.83 71.83" enable-background="new 0 0 71.83 71.83" xml:space="preserve">
+                <title>LUT Kyyti</title>
+                <path fill="#ED174D" d="M9.77,28.5l34.38,37.16l0,0l6.61-6.21l-4.53-4.83l7.36-6.92L47.43,41l-7.33,6.92L15.92,21.8
+                C12,17.17,9.48,12.1,14.29,5.15L9.52,0C3.84,5.45,0.21,18.16,9.77,28.5"></path>
+                <path fill="#23B900" d="M11.81,60.75l-5.12,4.82c5.43,5.69,18,9.3,28.22-0.31l3-2.79l-6.16-6.66l-3.46,3.25
+                c-4.58,3.93-9.6,6.48-16.45,1.69"></path>
+                <path fill="#FF8621" d="M25.66,17.45L6.94,35.05c-10.3,9.68-7.49,22.7-2.15,28.5l5.09-4.79c-4.4-7.32-1.52-12.23,2.73-16.59
+                l19.21-18.06L25.66,17.45z"></path>
+              </svg>
+              <h1 class="text-justify leading-none text-2xl">{% trans "LUT Kyyti" %}</h1>
+            </a>
+          </span>
+        </div>
+      
+        <div class="navbar-end hidden xl:flex w-full">
+          <ul class="menu menu-horizontal px-1">
+            <li><a href="#how-it-works">{% trans "How it works" %}</a></li>
+            <div class="divider divider-horizontal"></div>
+            <li><a href="#impact">{% trans "Impact" %}</a></li>
+            <div class="divider divider-horizontal"></div>
+            <li><a href="#faq">{% trans "FAQ" %}</a></li>
+            <div class="divider divider-horizontal"></div>
+            <li><a href="#contact">{% trans "Contact" %}</a></li>
+          </ul>
+          <div class="flex gap-4">
+            <input type="text" placeholder="{% trans "Find a ride" %}" class="input w-64 lg:w-auto" />
+            <a href="{% url 'login' %}" class="btn btn-primary">{% trans "Log in / Join" %}</a>
+            <form class="w-full" action="{% url 'set_language' %}" method="post">
+              {% csrf_token %}
+              <input name="next" type="hidden" value="{{ redirect_to }}">
+              <select class="select col-span-2" name="language">
+                <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                  {% get_current_language as LANGUAGE_CODE %}
+                  {% get_available_languages as LANGUAGES %}
+                  {% get_language_info_list for LANGUAGES as languages %}
+                  {% for language in languages %}
+                  <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                    {{ language.code.upper }}
+                  </option>
+                  {% endfor %}
+                </ul>
+              </select>
+            </form>
+          </div>
+        </div>
+      </div>
+    
+      <div class="collapse-content xl:hidden z-1">
+        <ul class="menu menu-horizontal px-1">
+          <li><a href="#how-it-works">{% trans "How it works" %}</a></li>
+          <div class="divider divider-horizontal mx-0"></div>
+          <li><a href="#impact">{% trans "Impact" %}</a></li>
+          <div class="divider divider-horizontal mx-0"></div>
+          <li><a href="#faq">{% trans "FAQ" %}</a></li>
+          <div class="divider divider-horizontal mx-0"></div>
+          <li><a href="#contact">{% trans "Contact" %}</a></li>
+        </ul>
+        <div class="flex flex-wrap gap-4">
+          <input type="text" placeholder="{% trans "Find a ride" %}" class="input w-64 lg:w-auto" />
+          <a href="{% url 'login' %}" class="btn btn-primary">{% trans "Log in / Join" %}</a>
+          <form class="" action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}
+            <input name="next" type="hidden" value="{{ redirect_to }}">
+            <select class="select col-span-2" name="language">
+              <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as LANGUAGES %}
+                {% get_language_info_list for LANGUAGES as languages %}
+                {% for language in languages %}
+                <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                  {{ language.code.upper }}
+                </option>
+                {% endfor %}
+              </ul>
+            </select>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <body class="bg-base-200">
+      <div class="h-full">
+        <main class="grid min-h-screen justify-items-center">
+          <div class="card bg-base-100 shadow-sm my-30 xl:mx-40 mx-4 xl:w-300">
+            <div class="card-body rounded-4xl w-full xl:px-30 px-10 py-20">
+              {% block content %}
+              {% endblock %}
+            </div>
+          </div>
+          <!-- <div class="grow h-full"></div> -->
+        </main>
+      </div>
+      <!-- <p>Copyright © {{ current_year }} - LUT University</p> -->
+      <footer class="footer footer-horizontal footer-center bg-neutral text-neutral-content rounded p-10">
+        <nav class="grid grid-flow-col gap-4">
+          <a href="{% url "privacy-policy" %}" class="link link-hover">Privacy policy</a>
+          <a href="{% url "terms-of-use" %}" class="link link-hover">Terms of use</a>
+        </nav>
+        <aside>
+          <p>LUT Kyyti is operated by LUT University.</p>
+        </aside>
+      </footer>
+    </body>
+</html>

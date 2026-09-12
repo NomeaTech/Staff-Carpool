@@ -1,0 +1,27 @@
+{% extends "landing.html" %}
+
+{% load static tailwind_tags %}
+{% load i18n %}
+
+{% block title %}{% trans "Terms of Use" %}{% endblock %}
+
+{% block content %}
+<h1 class="text-4xl font-bold pb-10">{% trans "Terms of Use" %}</h1>
+<div class="text-lg">
+    <p class="indent-10">
+        The Terms of Use describe the conditions for using the LUT Kyyti ride-sharing service. They explain the rights and responsibilities of users, acceptable use of the service, and the responsibilities of LUT University in providing the platform.
+    </p>
+    <br>
+    <p>
+        By creating an account or using LUT Kyyti, users agree to comply with these Terms of Use.
+    </p>
+    <br>
+    <p>
+        The current version of the Terms of Use can be viewed or downloaded below.
+    </p>
+    <br>
+    <a class="link link-primary link-hover" href="{% static "documents/lut_kyyti_terms_of_use.pdf" %}">{% trans "LUT Kyyti Terms of Use (PDF)" %}</a>
+    <br>
+    <i>Last updated: July 2026</i>
+</div>
+{% endblock %}
