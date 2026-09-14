@@ -187,7 +187,7 @@ TAILWIND_APP_NAME = "theme"
 
 LOGIN_URL = "/app/accounts/login"
 LOGIN_REDIRECT_URL = "home"
-LOGOUT_REDIRECT_URL = "index"
+LOGOUT_REDIRECT_URL = "landing"
 
 AUTH_USER_MODEL = "accounts.User"
 
