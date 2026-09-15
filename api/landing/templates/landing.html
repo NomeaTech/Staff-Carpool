@@ -11,11 +11,11 @@
         <!-- <script src="{% static "js/funcs.js" %}"></script> -->
         {% tailwind_css %}
     </head>
-    <div class="z-5 fixed max-xl:collapse lg:mb-48 bg-base-100 shadow-sm w-full rounded-md">
+    <div class="z-5 fixed max-xl:collapse lg:mb-48 bg-base-100 shadow-sm w-full rounded-md xl:flex xl:justify-center">
       <input id="navbar-1-toggle" class="peer hidden" type="checkbox" />
       <label for="navbar-1-toggle" class="fixed inset-0 hidden max-xl:peer-checked:block"></label>
-      <div class="collapse-title navbar">
-        <div class="navbar-start w-80">
+      <div class="collapse-title navbar place-content-between xl:w-300">
+        <div class="navbar-start w-fit">
           <label for="navbar-1-toggle" class="btn btn-ghost xl:hidden">
             <svg aria-label="Menu" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
           </label>
@@ -34,19 +34,24 @@
             </a>
           </span>
         </div>
-      
-        <div class="navbar-end hidden xl:flex w-full">
+
+        <div class="navbar-center hidden xl:flex">
           <ul class="menu menu-horizontal px-1">
-            <li><a href="#how-it-works">{% trans "How it works" %}</a></li>
+            <!-- <li><a href="how-it-works">{% trans "How it works" %}</a></li>
+            <div class="divider divider-horizontal"></div> -->
+            <li><a href="impact">{% trans "Impact" %}</a></li>
             <div class="divider divider-horizontal"></div>
-            <li><a href="#impact">{% trans "Impact" %}</a></li>
+            <li><a href="faq">{% trans "FAQ" %}</a></li>
             <div class="divider divider-horizontal"></div>
-            <li><a href="#faq">{% trans "FAQ" %}</a></li>
+            <li><a href="safety">{% trans "Safety" %}</a></li>
             <div class="divider divider-horizontal"></div>
-            <li><a href="#contact">{% trans "Contact" %}</a></li>
+            <li><a href="contact">{% trans "Contact" %}</a></li>
           </ul>
+        </div>
+      
+        <div class="navbar-end hidden sm:flex w-fit">
           <div class="flex gap-4">
-            <input type="text" placeholder="{% trans "Find a ride" %}" class="input w-64 lg:w-auto" />
+            <!-- <input type="text" placeholder="{% trans "Find a ride" %}" class="input w-64 lg:w-auto" /> -->
             <a href="{% url 'login' %}" class="btn btn-primary">{% trans "Log in / Join" %}</a>
             <form class="w-full" action="{% url 'set_language' %}" method="post">
               {% csrf_token %}
@@ -70,33 +75,37 @@
     
       <div class="collapse-content xl:hidden z-1">
         <ul class="menu menu-horizontal px-1">
-          <li><a href="#how-it-works">{% trans "How it works" %}</a></li>
-          <div class="divider divider-horizontal mx-0"></div>
-          <li><a href="#impact">{% trans "Impact" %}</a></li>
-          <div class="divider divider-horizontal mx-0"></div>
-          <li><a href="#faq">{% trans "FAQ" %}</a></li>
-          <div class="divider divider-horizontal mx-0"></div>
-          <li><a href="#contact">{% trans "Contact" %}</a></li>
+          <!-- <li><a href="#how-it-works">{% trans "How it works" %}</a></li>
+          <div class="divider divider-horizontal mx-0"></div> -->
+          <li><a href="impact">{% trans "Impact" %}</a></li>
+          <div class="divider divider-horizontal"></div>
+          <li><a href="faq">{% trans "FAQ" %}</a></li>
+          <div class="divider divider-horizontal"></div>
+          <li><a href="safety">{% trans "Safety" %}</a></li>
+          <div class="divider divider-horizontal"></div>
+          <li><a href="contact">{% trans "Contact" %}</a></li>
         </ul>
         <div class="flex flex-wrap gap-4">
-          <input type="text" placeholder="{% trans "Find a ride" %}" class="input w-64 lg:w-auto" />
-          <a href="{% url 'login' %}" class="btn btn-primary">{% trans "Log in / Join" %}</a>
-          <form class="" action="{% url 'set_language' %}" method="post">
-            {% csrf_token %}
-            <input name="next" type="hidden" value="{{ redirect_to }}">
-            <select class="select col-span-2" name="language">
-              <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                {% get_current_language as LANGUAGE_CODE %}
-                {% get_available_languages as LANGUAGES %}
-                {% get_language_info_list for LANGUAGES as languages %}
-                {% for language in languages %}
-                <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
-                  {{ language.code.upper }}
-                </option>
-                {% endfor %}
-              </ul>
-            </select>
-          </form>
+          <!-- <input type="text" placeholder="{% trans "Find a ride" %}" class="input w-64 lg:w-auto" /> -->
+          <div class="sm:hidden flex gap-4">
+            <a href="{% url 'login' %}" class="btn btn-primary">{% trans "Log in / Join" %}</a>
+            <form class="" action="{% url 'set_language' %}" method="post">
+              {% csrf_token %}
+              <input name="next" type="hidden" value="{{ redirect_to }}">
+              <select class="select col-span-2" name="language">
+                <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                  {% get_current_language as LANGUAGE_CODE %}
+                  {% get_available_languages as LANGUAGES %}
+                  {% get_language_info_list for LANGUAGES as languages %}
+                  {% for language in languages %}
+                  <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                    {{ language.code.upper }}
+                  </option>
+                  {% endfor %}
+                </ul>
+              </select>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -104,17 +113,18 @@
     <body class="bg-base-200">
       <div class="h-full">
         <main class="grid min-h-screen justify-items-center">
-          <div class="card bg-base-100 shadow-sm my-30 xl:mx-40 mx-4 xl:w-300">
-            <div class="card-body rounded-4xl w-full xl:px-30 px-10 py-20">
+          <div class="{% block cardClass %}card h-fit shrink bg-base-100 shadow-sm my-30 mx-4 xl:w-300{% endblock %}">
+            <div class="{% block cardBodyClass %}card-body rounded-4xl w-full xl:px-30 px-10 py-20{% endblock %}">
               {% block content %}
               {% endblock %}
             </div>
           </div>
+          <div class="h-full"></div>
           <!-- <div class="grow h-full"></div> -->
         </main>
       </div>
       <!-- <p>Copyright © {{ current_year }} - LUT University</p> -->
-      <footer class="footer footer-horizontal footer-center bg-neutral text-neutral-content rounded p-10">
+      <footer class="footer footer-horizontal footer-center bg-neutral text-neutral-content rounded p-5 gap-4">
         <nav class="grid grid-flow-col gap-4">
           <a href="{% url "privacy-policy" %}" class="link link-hover">Privacy policy</a>
           <a href="{% url "terms-of-use" %}" class="link link-hover">Terms of use</a>
