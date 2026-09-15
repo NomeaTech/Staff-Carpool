@@ -1,13 +1,27 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
+from .forms import ContactForm
 
 def landing(request):
     current_year = datetime.now().year
     return render(request, "index.html", {"current_year": current_year})
 
 def contact(request):
-    return render(request, "contact.html")
+    if request.method == "POST":
+        contact_form = ContactForm(request.POST)
+        if contact_form.is_valid():
+            try:
+                pass
+            except:
+                pass
+        else:
+            context = {"form": contact_form}
+            return render(request, "contact.html", context)
+    else:
+        contact_form = ContactForm()
+        context = {"form": contact_form}
+        return render(request, "contact.html", context)
 
 def faq(request):
     return render(request, "faq.html")

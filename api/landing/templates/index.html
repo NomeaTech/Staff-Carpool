@@ -128,6 +128,6 @@
 <div id="contact" class="pt-20 grid gap-5 justify-items-center">
     <!-- <h1 class="text-center text-5xl pt-20 pb-5" style="color: rgb(60, 60, 60);">{% trans "Get in touch" %}</h1> -->
     <p class="text-lg" style="color: rgb(122, 122, 122);">{% trans "Questions, feedback, or ideas for improving LUT Kyyti? Contact us!" %}</p>
-    <a class="btn btn-wide btn-soft btn-secondary rounded-full">{% trans "Contact" %}</a>
+    <a href="{% url "contact" %}" class="btn btn-wide btn-soft btn-secondary rounded-full">{% trans "Contact" %}</a>
 </div>
 {% endblock %}

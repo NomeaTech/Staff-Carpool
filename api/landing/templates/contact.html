@@ -1,0 +1,34 @@
+{% extends "landing.html" %}
+
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block title %}{% trans "Contact" %}{% endblock %}
+
+{% block cardClass %}card h-fit shrink bg-base-100 shadow-sm my-30 mx-4{% endblock %}
+{% block cardBodyClass %}card-body rounded-4xl w-full xl:px-10 px-5 max-w-100{% endblock %}
+
+{% block content %}
+<h1 class="card-title text-5xl pb-1 text-end justify-center">{% trans "Contact" %}</h1>
+<div class="grid justify-items-center">
+    <p class="pb-5">Have a question, suggestion, or problem to report? Send us a message using the form below</p>
+    <form class="grid gap-4 justify-items-center w-full" action="/contact" name="ContactForm" method="post">
+        {% csrf_token %}
+        <label class="floating-label w-full">
+            <span>{% trans "Name *" %}</span>
+            <input id="id_name" name="name" class="input w-full" placeholder="{% trans "Name *" %}"/>
+        </label>
+        <label class="floating-label w-full">
+            <span>{% trans "Email *" %}</span>
+            <input id="id_email" name="email" class="input w-full" placeholder="{% trans "Email *" %}"/>
+        </label>
+        <fieldset class="fieldset w-full">
+            <!-- <legend class="fieldset-legend">Message *</legend> -->
+            <textarea id="id_message" name="message" class="textarea h-24 w-full" placeholder="Message *"></textarea>
+            <!-- <div class="label">Optional</div> -->
+        </fieldset>
+        {{ form.turnstile }}
+        <button class="btn btn-success btn-outline w-full">{% trans "Send" %}</button>
+    </form>
+</div>
+{% endblock %}

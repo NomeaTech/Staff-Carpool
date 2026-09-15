@@ -26,6 +26,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
 
+TURNSTILE_SITEKEY = os.getenv("TURNSTILE_SITEKEY")
+
+TURNSTILE_SECRET = os.getenv("TURNSTILE_SECRET")
+
+TURNSTILE_DEFAULT_CONFIG = {
+    # 'onload': 'name_of_js_function',
+    # 'render': 'explicit',
+    'theme': 'light',  # do not use data- prefix
+    # 'size': 'compact',  # do not use data- prefix
+}
+
+TURNSTILE_PROXIES = {
+   'http': 'http://127.0.0.1:8120',
+}
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
@@ -76,6 +91,7 @@ INSTALLED_APPS = [
     'crispy_tailwind',
     'rosetta',
     'django_filters',
+    "turnstile",
     # 1st party
     'django.contrib.admin',
     'django.contrib.auth',

@@ -37,8 +37,8 @@
 
         <div class="navbar-center hidden xl:flex">
           <ul class="menu menu-horizontal px-1">
-            <li><a href="how-it-works">{% trans "How it works" %}</a></li>
-            <div class="divider divider-horizontal"></div>
+            <!-- <li><a href="how-it-works">{% trans "How it works" %}</a></li>
+            <div class="divider divider-horizontal"></div> -->
             <li><a href="impact">{% trans "Impact" %}</a></li>
             <div class="divider divider-horizontal"></div>
             <li><a href="faq">{% trans "FAQ" %}</a></li>
@@ -75,13 +75,15 @@
     
       <div class="collapse-content xl:hidden z-1">
         <ul class="menu menu-horizontal px-1">
-          <li><a href="#how-it-works">{% trans "How it works" %}</a></li>
-          <div class="divider divider-horizontal mx-0"></div>
-          <li><a href="#impact">{% trans "Impact" %}</a></li>
-          <div class="divider divider-horizontal mx-0"></div>
-          <li><a href="#faq">{% trans "FAQ" %}</a></li>
-          <div class="divider divider-horizontal mx-0"></div>
-          <li><a href="#contact">{% trans "Contact" %}</a></li>
+          <!-- <li><a href="#how-it-works">{% trans "How it works" %}</a></li>
+          <div class="divider divider-horizontal mx-0"></div> -->
+          <li><a href="impact">{% trans "Impact" %}</a></li>
+          <div class="divider divider-horizontal"></div>
+          <li><a href="faq">{% trans "FAQ" %}</a></li>
+          <div class="divider divider-horizontal"></div>
+          <li><a href="safety">{% trans "Safety" %}</a></li>
+          <div class="divider divider-horizontal"></div>
+          <li><a href="contact">{% trans "Contact" %}</a></li>
         </ul>
         <div class="flex flex-wrap gap-4">
           <!-- <input type="text" placeholder="{% trans "Find a ride" %}" class="input w-64 lg:w-auto" /> -->
@@ -111,12 +113,13 @@
     <body class="bg-base-200">
       <div class="h-full">
         <main class="grid min-h-screen justify-items-center">
-          <div class="card bg-base-100 shadow-sm my-30 mx-4 xl:w-300">
-            <div class="card-body rounded-4xl w-full xl:px-30 px-10 py-20">
+          <div class="{% block cardClass %}card h-fit shrink bg-base-100 shadow-sm my-30 mx-4 xl:w-300{% endblock %}">
+            <div class="{% block cardBodyClass %}card-body rounded-4xl w-full xl:px-30 px-10 py-20{% endblock %}">
               {% block content %}
               {% endblock %}
             </div>
           </div>
+          <div class="h-full"></div>
           <!-- <div class="grow h-full"></div> -->
         </main>
       </div>

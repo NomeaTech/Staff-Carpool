@@ -97,11 +97,6 @@ def add_ride(request):
     ]
 
     if request.method == "POST":
-        logger.debug("add_ride post triggered 1234")
-        # from_address_form = AddressForm(request.POST)
-        # to_address_form = AddressForm(request.POST)
-        logger.debug(request.POST)
-
         ride_form = RideForm(request.POST)
         if ride_form.is_valid():
             try:
