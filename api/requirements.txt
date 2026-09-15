@@ -28,6 +28,7 @@ django-rest-auth==0.9.5
 django-rosetta==0.10.3
 django-tailwind==4.4.2
 django-translations==1.4.4
+django-turnstile==0.1.3
 django-virtualqueryset==1.0.1
 django-widget-tweaks==1.5.1
 django_boost==3.2.3

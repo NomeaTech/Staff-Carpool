@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-TURNSTILE_SITEKEY = os.getenv("TURNSTILE_SITEKEY")
+TURNSTILE_SITEKEY = "0x4AAAAAAE2oNzI8rEvw5G_l"
 
 TURNSTILE_SECRET = os.getenv("TURNSTILE_SECRET")
 
