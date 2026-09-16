@@ -113,8 +113,8 @@
     <body class="bg-base-200">
       <div class="h-full">
         <main class="grid min-h-screen justify-items-center">
-          <div class="{% block cardClass %}card h-fit shrink bg-base-100 shadow-sm my-30 mx-4 xl:w-300{% endblock %}">
-            <div class="{% block cardBodyClass %}card-body rounded-4xl w-full xl:px-30 px-10 py-20{% endblock %}">
+          <div class="{% block cardClass %}card h-fit shrink bg-base-100 shadow-sm my-30 mx-4 max-w-300{% endblock %}">
+            <div class="{% block cardBodyClass %}card-body rounded-4xl w-full lg:px-30 px-10 py-20{% endblock %}">
               {% block content %}
               {% endblock %}
             </div>
