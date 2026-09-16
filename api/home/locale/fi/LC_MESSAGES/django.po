@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-01 16:16+0200\n"
+"POT-Creation-Date: 2026-09-16 12:44+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,8 +17,133 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-#: home/templates/app.html:11 home/templates/app.html:44
+
+#: home/templates/add_ride.html:58 home/templates/add_ride.html:227
+msgid "Add ride"
+msgstr ""
+
+#: home/templates/add_ride.html:64
+msgid "Ride options"
+msgstr ""
+
+#: home/templates/add_ride.html:67
+msgid "Car ride"
+msgstr ""
+
+#: home/templates/add_ride.html:70
+msgid "Offer"
+msgstr ""
+
+#: home/templates/add_ride.html:74
+msgid "Request"
+msgstr ""
+
+#: home/templates/add_ride.html:80
+msgid "Other transport"
+msgstr ""
+
+#: home/templates/add_ride.html:84
+msgid "Train"
+msgstr ""
+
+#: home/templates/add_ride.html:88
+msgid "Bus"
+msgstr ""
+
+#: home/templates/add_ride.html:92
+msgid "Taxi"
+msgstr ""
+
+#: home/templates/add_ride.html:96 home/templates/add_ride.html:104
+#: home/templates/add_ride.html:105
+msgid "Other"
+msgstr ""
+
+#: home/templates/add_ride.html:110 home/templates/add_ride.html:111
+msgid "Maximum passengers"
+msgstr ""
+
+#: home/templates/add_ride.html:115
+msgid "Address"
+msgstr ""
+
+#: home/templates/add_ride.html:118 home/templates/add_ride.html:119
+#: home/templates/add_ride.html:134 home/templates/search.html:37
+msgid "From"
+msgstr ""
+
+#: home/templates/add_ride.html:123 home/templates/add_ride.html:124
+#: home/templates/search.html:38
+msgid "To"
+msgstr ""
+
+#: home/templates/add_ride.html:135
+msgid "Place name"
+msgstr ""
+
+#: home/templates/add_ride.html:140
+msgid "Schedule"
+msgstr ""
+
+#: home/templates/add_ride.html:144
+msgid "Recurrance"
+msgstr ""
+
+#: home/templates/add_ride.html:147
+msgid "One-time"
+msgstr ""
+
+#: home/templates/add_ride.html:151
+msgid "Recurring"
+msgstr ""
+
+#: home/templates/add_ride.html:157 home/templates/add_ride.html:165
+msgid "Return"
+msgstr ""
+
+#: home/templates/add_ride.html:161
+msgid "One-way"
+msgstr ""
+
+#: home/templates/add_ride.html:170 home/templates/search.html:39
+msgid "Date"
+msgstr ""
+
+#: home/templates/add_ride.html:171
+msgid "Time"
+msgstr ""
+
+#: home/templates/add_ride.html:197
+msgid "Date and time"
+msgstr ""
+
+#: home/templates/add_ride.html:200
+msgid "Leaving at"
+msgstr ""
+
+#: home/templates/add_ride.html:206
+msgid "Returning at"
+msgstr ""
+
+#: home/templates/add_ride.html:223
+msgid "Note for passengers"
+msgstr ""
+
+#: home/templates/app.html:12
 msgid "Campus Carpool"
+msgstr ""
+
+#: home/templates/app.html:120
+msgid "LUT Kyyti"
+msgstr ""
+
+#: home/templates/c_card.html:6
+#, python-format
+msgid ""
+"%(driver)s's Trip to <span class=\"text-secondary inline\">%(dest_name)s </"
+"span>on <span class=\"text-primary inline\">%(leaving_at_weekday)s </span>at "
+"<span class=\"text-primary inline\">%(leaving_at_hour)s:"
+"%(leaving_at_minute)s "
 msgstr ""
 
 #: home/templates/home.html:4
@@ -29,43 +154,78 @@ msgstr ""
 msgid "Friends"
 msgstr ""
 
-#: home/templates/home.html:41 home/templates/search.html:38
-#, python-format
-msgid ""
-"%(driver)s's Trip to <span class=\"text-secondary inline\">%(destName)s </"
-"span>on <span class=\"text-primary inline\">%(leaving_at_weekday)s </span>at "
-"<span class=\"text-primary inline\">%(leaving_at_hour)s:"
-"%(leaving_at_minute)s "
-msgstr ""
-
-#: home/templates/home.html:65
+#: home/templates/home.html:58
 msgid "No active rides found. Create your own"
 msgstr ""
 
-#: home/templates/home.html:65
+#: home/templates/home.html:58
 msgctxt "Create your own -here-"
 msgid "here"
 msgstr ""
 
-#: home/templates/home.html:65
+#: home/templates/home.html:58
 msgctxt "Create your own here, or look for a ride under Search"
 msgid ", or look for a ride under"
 msgstr ""
 
-#: home/templates/home.html:65
+#: home/templates/home.html:58
 msgctxt "Create your own here, or look for a ride under Search"
 msgid "Search"
 msgstr ""
 
-#: home/templates/home.html:122
+#: home/templates/home.html:115
 msgid "Add Recurring Trip"
 msgstr ""
 
-#: home/templates/search.html:6
+#: home/templates/search.html:7
 msgctxt "Page title"
 msgid "Search"
 msgstr ""
 
-#: home/templates/search.html:61
+#: home/templates/search.html:20
+msgid "Offer car ride"
+msgstr ""
+
+#: home/templates/search.html:26
+msgid "Request car ride"
+msgstr ""
+
+#: home/templates/search.html:32
+msgid "Train, bus, taxi, other"
+msgstr ""
+
+#: home/templates/search.html:40
+msgid "Search"
+msgstr ""
+
+#: home/templates/search.html:108
 msgid "No results found"
+msgstr ""
+
+#: home/views.py:90
+msgid "Mon"
+msgstr ""
+
+#: home/views.py:91
+msgid "Tue"
+msgstr ""
+
+#: home/views.py:92
+msgid "Wed"
+msgstr ""
+
+#: home/views.py:93
+msgid "Thu"
+msgstr ""
+
+#: home/views.py:94
+msgid "Fri"
+msgstr ""
+
+#: home/views.py:95
+msgid "Sat"
+msgstr ""
+
+#: home/views.py:96
+msgid "Sun"
 msgstr ""
