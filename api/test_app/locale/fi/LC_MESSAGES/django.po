@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-03 12:29+0100\n"
+"POT-Creation-Date: 2026-09-16 12:44+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,103 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: test_app/models.py:163
+msgid "Mon"
+msgstr ""
+
+#: test_app/models.py:164
+msgid "Tue"
+msgstr ""
+
+#: test_app/models.py:165
+msgid "Wed"
+msgstr ""
+
+#: test_app/models.py:166
+msgid "Thu"
+msgstr ""
+
+#: test_app/models.py:167
+msgid "Fri"
+msgstr ""
+
+#: test_app/models.py:168
+msgid "Sat"
+msgstr ""
+
+#: test_app/models.py:169
+msgid "Sun"
+msgstr ""
+
+#: test_app/models.py:175
+msgid "Everyday"
+msgstr ""
+
+#: test_app/models.py:177
+msgid "Weekdays"
+msgstr ""
+
+#: test_app/models.py:179
+msgid "Weekends"
+msgstr ""
+
+#: test_app/models.py:223
+msgid "Monday"
+msgstr ""
+
+#: test_app/models.py:224
+msgid "Tuesday"
+msgstr ""
+
+#: test_app/models.py:225
+msgid "Wednesday"
+msgstr ""
+
+#: test_app/models.py:226
+msgid "Thursday"
+msgstr ""
+
+#: test_app/models.py:227
+msgid "Friday"
+msgstr ""
+
+#: test_app/models.py:228
+msgid "Saturday"
+msgstr ""
+
+#: test_app/models.py:229
+msgid "Sunday"
+msgstr ""
+
 #: test_app/templates/offline-new.html:17
 msgid "You are offline"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:93
+msgid "Ride Options"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:101
+msgid "Car"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:111
+msgid "Request"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:121
+msgid "Train"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:131
+msgid "Bus"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:141
+msgid "Taxi"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:151
+msgid "Other"
 msgstr ""
