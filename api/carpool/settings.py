@@ -44,9 +44,9 @@ TURNSTILE_PROXIES = {
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = ['localhost', 'ride.fentorweb.hu', 'static.cloudflareinsights.com']
+ALLOWED_HOSTS = ['localhost', 'kyyti.net', 'static.cloudflareinsights.com']
 
-CSRF_TRUSTED_ORIGINS = ['https://ride.fentorweb.hu', 'http://localhost:8120', 'https://static.cloudflareinsights.com']
+CSRF_TRUSTED_ORIGINS = ['https://kyyti.net', 'http://localhost:8120', 'https://static.cloudflareinsights.com']
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
@@ -66,7 +66,7 @@ CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8120',
-    'https://ride.fentorweb.hu',
+    'https://kyyti.net',
     'https://static.cloudflareinsights.com',
 ]
 
