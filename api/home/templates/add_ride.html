@@ -114,9 +114,11 @@
                             
                         <div class="divider col-span-3">{% trans "Address" %}</div>
                         <div id="div-inputs" class="grid grid-cols-5 col-span-3 gap-4">
-                            <label class="floating-label col-span-5 w-full">
+                            <label class="floating-label col-span-5 w-full relative">
                                 <span>{% trans "From" %}</span>
-                                <input required id="id_start" name="start" class="input w-full" placeholder="{% trans "From" %}">
+                                <input autocomplete="off" required id="id_start" name="start" class="input w-full digitrans_autocomplete" placeholder="{% trans "From" %}" data-digitrans-debounce="400" data-digitrans-size="7">
+                                <ul class="digitrans-suggestions hidden absolute left-0 right-0 mt-1 z-50 bg-base-100 shadow rounded overflow-auto" style="max-height:240px; list-style:none; margin:0; padding:0;"></ul>
+                                <input type="hidden" id="id_start_feature_json" name="start_feature" value="">
                             </label>
                             <div hidden id="div-via" class="grid grid-cols-5 gap-4 col-span-5 w-full"></div>
                             <label class="floating-label col-span-4 w-full">
