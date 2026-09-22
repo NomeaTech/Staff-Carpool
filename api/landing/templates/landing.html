@@ -8,7 +8,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <!-- <script src="{% static "js/funcs.js" %}"></script> -->
+        <script src="{% static "js/jquery-4.0.0.js" %}"></script>
+        <script src="{% static "js/funcs.js" %}"></script>
         {% tailwind_css %}
     </head>
     <div class="z-5 fixed max-xl:collapse lg:mb-48 bg-base-100 shadow-sm w-full rounded-md xl:flex xl:justify-center">
@@ -53,10 +54,10 @@
           <div class="flex gap-4">
             <!-- <input type="text" placeholder="{% trans "Find a ride" %}" class="input w-64 lg:w-auto" /> -->
             <a href="{% url 'login' %}" class="btn btn-primary">{% trans "Log in / Join" %}</a>
-            <form class="w-full" action="{% url 'set_language' %}" method="post">
+            <form id="id_lang_form" class="w-full" action="{% url 'set_language' %}" method="post">
               {% csrf_token %}
               <input name="next" type="hidden" value="{{ redirect_to }}">
-              <select class="select col-span-2" name="language">
+              <select id="id_language" class="select col-span-2" name="language">
                 <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
                   {% get_current_language as LANGUAGE_CODE %}
                   {% get_available_languages as LANGUAGES %}

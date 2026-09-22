@@ -163,3 +163,207 @@ function enableMaxPassengerField(checkbox) {
         other.removeAttribute("required");
     }
 }
+
+$(function() {
+    $('#id_language').on('change', function() {
+        $("#id_lang_form").submit();
+    });
+});
+
+// Digitransit reverse-geocoding autocomplete (attach to inputs by class)
+(function() {
+    function ensureDatalist(input) {
+        var listId = 'digitrans_autocomplete_list';
+        var dl = document.getElementById(listId);
+        if (!dl) {
+            dl = document.createElement('datalist');
+            dl.id = listId;
+            if (input && input.parentNode) input.parentNode.appendChild(dl);
+            else document.body.appendChild(dl);
+        }
+        input.setAttribute('list', listId);
+        return dl;
+    }
+    // helper to attach behavior to a single input element
+    function attachAutocompleteTo(input) {
+        if (!input || input._digitransAttached) return;
+        input._digitransAttached = true;
+
+        // create a dropdown container unique to this input
+        var wrapper = document.createElement('div');
+        wrapper.className = 'digitrans-autocomplete-wrapper';
+        wrapper.style.position = 'relative';
+
+        // ensure input's parent is positioned so absolute dropdown aligns
+        var parent = input.parentNode;
+        if (parent && window.getComputedStyle(parent).position === 'static') {
+            parent.style.position = 'relative';
+        }
+
+        var dropdown = document.createElement('ul');
+        dropdown.className = 'digitrans-suggestions hidden absolute left-0 right-0 mt-1 z-50 bg-base-100 shadow rounded overflow-auto';
+        dropdown.style.maxHeight = '240px';
+        dropdown.style.listStyle = 'none';
+        dropdown.style.margin = '0';
+        dropdown.style.padding = '0';
+        dropdown.style.cursor = 'pointer';
+
+        // insert dropdown after input
+        if (input.nextSibling) parent.insertBefore(dropdown, input.nextSibling);
+        else parent.appendChild(dropdown);
+
+        var timer = null;
+        var lastXhr = null;
+        var selectedIndex = -1;
+        var lastFeatures = [];
+        // hidden input for storing selected feature JSON
+        var featureInputId = (input.id || input.name || 'digitrans') + '_feature_json';
+        var featureInputName = (input.name || input.id || 'digitrans') + '_feature';
+        var hiddenFeatureInput = document.getElementById(featureInputId);
+        if (!hiddenFeatureInput) {
+            hiddenFeatureInput = document.createElement('input');
+            hiddenFeatureInput.type = 'hidden';
+            hiddenFeatureInput.id = featureInputId;
+            hiddenFeatureInput.name = featureInputName;
+            if (input.nextSibling) parent.insertBefore(hiddenFeatureInput, input.nextSibling.nextSibling);
+            else parent.appendChild(hiddenFeatureInput);
+        }
+
+        function clearSuggestions() {
+            dropdown.innerHTML = '';
+            dropdown.classList.add('hidden');
+            selectedIndex = -1;
+        }
+
+        function renderSuggestions(features) {
+            dropdown.innerHTML = '';
+            if (!features || features.length === 0) {
+                clearSuggestions();
+                return;
+            }
+
+            lastFeatures = features;
+
+            features.forEach(function(f, idx) {
+                var props = f.properties || {};
+                var label = props.label || props.name || f.text || '';
+                if (!label) return;
+                var li = document.createElement('li');
+                li.className = 'digitrans-suggestion px-3 py-2 hover:bg-base-200';
+                li.setAttribute('data-index', idx);
+                li.textContent = label;
+                li.addEventListener('mousedown', function(e) {
+                    // mousedown so it fires before blur
+                    e.preventDefault();
+                    input.value = label;
+                    // store feature JSON
+                    try {
+                        var feat = lastFeatures[idx] || null;
+                        hiddenFeatureInput.value = feat ? JSON.stringify(feat) : '';
+                    } catch (err) {
+                        console.error('Failed to serialize feature', err);
+                        hiddenFeatureInput.value = '';
+                    }
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                    clearSuggestions();
+                });
+                dropdown.appendChild(li);
+            });
+            dropdown.classList.remove('hidden');
+        }
+
+        input.addEventListener('input', function() {
+            var q = this.value.trim();
+            if (timer) clearTimeout(timer);
+            if (q.length < 3) {
+                clearSuggestions();
+                if (lastXhr && lastXhr.readyState !== 4) lastXhr.abort();
+                return;
+            }
+
+            timer = setTimeout(function() {
+                if (lastXhr && lastXhr.readyState !== 4) lastXhr.abort();
+                lastXhr = $.ajax({
+                    url: input.dataset.digitransProxyUrl || '/app/digitrans/autocomplete/',
+                    method: 'GET',
+                    data: {
+                        text: q,
+                        size: input.dataset.digitransSize || 7
+                    },
+                    dataType: 'json',
+                    success: function(resp) {
+                        try {
+                            var features = resp && resp.features ? resp.features : [];
+                            renderSuggestions(features);
+                        } catch (e) {
+                            console.error('Digitransit parse error', e);
+                            clearSuggestions();
+                        }
+                    },
+                    error: function(xhr, status, err) {
+                        if (status !== 'abort') console.error('Digitransit proxy request failed', status, err);
+                        clearSuggestions();
+                    }
+                });
+            }, parseInt(input.dataset.digitransDebounce || 1000, 10));
+        });
+
+        input.addEventListener('keydown', function(e) {
+            var items = dropdown.querySelectorAll('.digitrans-suggestion');
+            if (!items || items.length === 0) return;
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+                items.forEach(function(it, i) { it.classList.toggle('bg-base-200', i === selectedIndex); });
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectedIndex = Math.max(selectedIndex - 1, 0);
+                items.forEach(function(it, i) { it.classList.toggle('bg-base-200', i === selectedIndex); });
+            } else if (e.key === 'Enter') {
+                if (selectedIndex >= 0 && items[selectedIndex]) {
+                        e.preventDefault();
+                        var label = items[selectedIndex].textContent;
+                        input.value = label;
+                        // set hidden feature input from lastFeatures[selectedIndex]
+                        try {
+                            var feat = lastFeatures[selectedIndex] || null;
+                            hiddenFeatureInput.value = feat ? JSON.stringify(feat) : '';
+                        } catch (err) {
+                            console.error('Failed to serialize feature', err);
+                            hiddenFeatureInput.value = '';
+                        }
+                        input.dispatchEvent(new Event('change', { bubbles: true }));
+                        clearSuggestions();
+                    }
+            } else if (e.key === 'Escape') {
+                clearSuggestions();
+            }
+        });
+
+        // hide on blur (allow click by delaying)
+        input.addEventListener('blur', function() {
+            setTimeout(clearSuggestions, 150);
+        });
+    }
+
+    // attach to current inputs
+    var inputs = document.querySelectorAll('.digitrans_autocomplete');
+    inputs.forEach(function(i) { attachAutocompleteTo(i); });
+
+    // observe for dynamically added inputs (e.g., added by other scripts)
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(m) {
+            m.addedNodes && m.addedNodes.forEach(function(node) {
+                if (!node) return;
+                if (node.nodeType === 1) {
+                    if (node.classList && node.classList.contains('digitrans_autocomplete')) attachAutocompleteTo(node);
+                    // also check descendants
+                    var descendants = node.querySelectorAll && node.querySelectorAll('.digitrans_autocomplete');
+                    if (descendants && descendants.length) descendants.forEach(function(d) { attachAutocompleteTo(d); });
+                }
+            });
+        });
+    });
+    observer.observe(document.documentElement || document.body, { childList: true, subtree: true });
+})();
+

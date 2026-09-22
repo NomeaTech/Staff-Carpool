@@ -10,6 +10,10 @@ from test_app.forms import AddressForm, RideForm
 import traceback
 import logging
 from django.utils.translation import gettext_lazy as _
+from django.http import JsonResponse, HttpResponseBadRequest
+from django.conf import settings
+import os
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -143,3 +147,22 @@ def add_ride(request):
     }
 
     return render(request, "add_ride.html", context)
+
+
+@login_required
+def digitrans_autocomplete_proxy(request):
+    q = request.GET.get('text', '').strip()
+    if not q:
+        return JsonResponse({'features': []})
+
+    size = request.GET.get('size', '7')
+
+    key = os.getenv("DIGITRANS_SUBSCRIPTION_KEY")
+    headers = {'Digitransit-subscription-key': key} if key else {}
+
+    try:
+        resp = requests.get('https://api.digitransit.fi/geocoding/v1/autocomplete', params={'text': q, 'size': size}, headers=headers, timeout=5)
+        return JsonResponse(resp.json(), safe=False)
+    except requests.RequestException as e:
+        logger.exception('Digitransit proxy request failed')
+        return JsonResponse({'features': []}, status=502)
