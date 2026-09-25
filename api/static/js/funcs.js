@@ -10,8 +10,10 @@ function viaAdd(via_value = "") {
     id = Date.now().toString(36) + Math.floor(Math.pow(10, 12) + Math.random() * 9*Math.pow(10, 12)).toString(36)
     inputDiv.insertAdjacentHTML(
         'beforeend', 
-        `<div class="grid grid-cols-5 col-span-5 gap-4 div-via-input" id="${id}-div">
-            <input id="id_via_input${id}" name="via_input_${id}" class="input w-full col-span-4" placeholder="Via" value=${via_value}>
+        `<div class="grid grid-cols-5 col-span-5 gap-4 div-via-input w-full" id="${id}-div">
+            <div class="col-span-4 w-full">
+                <input id="id_via_input${id}" name="via_input_${id}" class="digitrans_autocomplete input" placeholder="Via" value=${via_value}>
+            </div>
             <button id="${id}-button" data-idref="${id}" class="btn btn-error col-span-1" onclick="viaRemove(this)" type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor" stroke="currentColor" class="scale-120"><!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M96 320C96 302.3 110.3 288 128 288L512 288C529.7 288 544 302.3 544 320C544 337.7 529.7 352 512 352L128 352C110.3 352 96 337.7 96 320z"/></svg>
             </button>
@@ -217,8 +219,8 @@ $(function() {
         var selectedIndex = -1;
         var lastFeatures = [];
         // hidden input for storing selected feature JSON
-        var featureInputId = (input.id || input.name || 'digitrans') + '_feature_json';
-        var featureInputName = (input.name || input.id || 'digitrans') + '_feature';
+        var featureInputId = 'feature_json_' + input.id;
+        var featureInputName = 'feature_' + input.id;
         var hiddenFeatureInput = document.getElementById(featureInputId);
         if (!hiddenFeatureInput) {
             hiddenFeatureInput = document.createElement('input');
@@ -305,7 +307,7 @@ $(function() {
                         clearSuggestions();
                     }
                 });
-            }, parseInt(input.dataset.digitransDebounce || 1000, 10));
+            }, parseInt(input.dataset.digitransDebounce || 250, 10));
         });
 
         input.addEventListener('keydown', function(e) {
