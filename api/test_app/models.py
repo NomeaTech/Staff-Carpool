@@ -1,6 +1,4 @@
 from django.db import models
-
-from django_geoaddress.fields import GeoaddressField
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.utils.translation import gettext as _
@@ -24,7 +22,6 @@ class Address(models.Model):
     # address = models.CharField(max_length=100)
 
 class Ride(models.Model):
-    # test = GeoaddressField()
 
     driver = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
@@ -50,7 +47,7 @@ class Ride(models.Model):
     other = models.BooleanField(default=False)
     
     other_field = models.CharField(blank=True, null=True)
-    max_passengers = models.IntegerField()
+    max_passengers = models.IntegerField(blank=True, null=True)
 
     # Address
     start = models.CharField()
@@ -118,20 +115,22 @@ class Ride(models.Model):
 
     # Very janky TEMPORARY system please someone replace it with a better one
     def parse_date(self, display_format):
-        try:
-            parse_format = "%Y-%m-%d %H:%M:%S"
+        parse_format = "%Y-%m-%d %H:%M:%S"
 
+        try:
             l_date = parser.parse(self.leaving_at_date_time)
             l_date_datetime = datetime.strptime(str(l_date), parse_format)
             l_date_formatted = datetime.strftime(l_date_datetime, display_format)
+        except ParserError:
+            l_date_formatted = ""
 
-            r_date = parser.parse(self.leaving_at_date_time)
+        try:
+            r_date = parser.parse(self.returning_at_date_time)
             r_date_datetime = datetime.strptime(str(r_date), parse_format)
             r_date_formatted = datetime.strftime(r_date_datetime, display_format)
         except ParserError:
-            l_date_formatted = ""
             r_date_formatted = ""
-
+        
         return l_date_formatted, r_date_formatted
     
     def schedule(self):
@@ -146,8 +145,9 @@ class Ride(models.Model):
 
             if self.one_way:
                 schedule_string = template.format(l_date_formatted)
+                # schedule_string = "test"
             else:      
-                schedule_string = template.format(r_date_formatted)
+                schedule_string = template.format(l_date_formatted) + template.format(r_date_formatted)
         else:
             day_filter = [
                 self.monday_check, 

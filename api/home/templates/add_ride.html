@@ -66,7 +66,7 @@
                                 <fieldset class="fieldset rounded-field bg-base-100 border-base-300 border p-4 pb-3.5" required>
                                     <legend class="fieldset-legend">{% trans "Car ride" %}</legend>
                                     <label class="label">
-                                    <input required id="id_offer" type="checkbox" name="offer" class="options checkbox checkbox-success" onchange="enableMaxPassengerField(this)">
+                                    <input required id="id_offer" type="checkbox" name="offer" class="options checkbox checkbox-primary" onchange="enableMaxPassengerField(this)">
                                     {% trans "Offer" %}
                                     </label>
                                     <label class="label">
@@ -108,7 +108,7 @@
                         <div hidden class="col-span-3" id="id_max_passengers_div">                        
                             <label class="floating-label">
                                 <span>{% trans "Maximum passengers" %}</span>
-                                <input disabled required id="id_max_passengers" name="max_passengers" placeholder="{% trans "Maximum passengers" %}" type="number" pattern="\d*" id="max-passengers" min="1" max="100" class="input"/>
+                                <input disabled id="id_max_passengers" name="max_passengers" placeholder="{% trans "Maximum passengers" %}" type="number" pattern="\d*" id="max-passengers" min="1" max="100" class="input"/>
                             </label>
                         </div>
                             

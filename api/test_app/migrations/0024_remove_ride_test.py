@@ -9,9 +9,4 @@ class Migration(migrations.Migration):
         ('test_app', '0023_rename_destname_ride_dest_name_and_more'),
     ]
 
-    operations = [
-        migrations.RemoveField(
-            model_name='ride',
-            name='test',
-        ),
-    ]
+    operations = []

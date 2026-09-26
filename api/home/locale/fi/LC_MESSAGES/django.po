@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-16 12:44+0300\n"
+"POT-Creation-Date: 2026-09-25 13:44+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -133,7 +133,7 @@ msgstr ""
 msgid "Campus Carpool"
 msgstr ""
 
-#: home/templates/app.html:120
+#: home/templates/app.html:116
 msgid "LUT Kyyti"
 msgstr ""
 
@@ -202,30 +202,30 @@ msgstr ""
 msgid "No results found"
 msgstr ""
 
-#: home/views.py:90
+#: home/views.py:94
 msgid "Mon"
 msgstr ""
 
-#: home/views.py:91
+#: home/views.py:95
 msgid "Tue"
 msgstr ""
 
-#: home/views.py:92
+#: home/views.py:96
 msgid "Wed"
 msgstr ""
 
-#: home/views.py:93
+#: home/views.py:97
 msgid "Thu"
 msgstr ""
 
-#: home/views.py:94
+#: home/views.py:98
 msgid "Fri"
 msgstr ""
 
-#: home/views.py:95
+#: home/views.py:99
 msgid "Sat"
 msgstr ""
 
-#: home/views.py:96
+#: home/views.py:100
 msgid "Sun"
 msgstr ""
