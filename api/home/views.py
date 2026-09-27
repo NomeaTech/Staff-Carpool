@@ -152,6 +152,7 @@ def add_ride(request):
     context = {
         "ride_form": ride_form,
         "day_list": day_list,
+        "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),
     }
 
     return render(request, "add_ride.html", context)
