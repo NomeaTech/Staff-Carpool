@@ -1,0 +1,22 @@
+#map {
+    height: 100%;
+}
+
+gmp-place-autocomplete {
+    border-radius: var(--radius-field);
+    color-scheme: light;
+    border: 2px solid #D1D1D1;
+}
+
+gmp-place-autocomplete:focus {
+    border: 2px solid black
+}
+
+.input:focus {
+    outline: none;
+}
+
+.focus-ring {
+    display: none;
+    border: 5px solid yellow
+}

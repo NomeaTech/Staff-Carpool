@@ -14,6 +14,7 @@ class CustomUserCreationForm(AdminUserCreationForm):
         widget=forms.EmailInput(attrs={
             'class': 'input validator w-full',
             'placeholder': _("Email Address *"),
+            'autocomplete': 'email',
             'pattern': '.*@(lab|lut)\.fi',
         })
     )
@@ -65,6 +66,7 @@ class CustomUserCreationForm(AdminUserCreationForm):
             attrs={
                 'class': 'input validator col-span-3 w-full',
                 'placeholder': _("Password *"),
+                'autocomplete': 'new-password',
                 'type': 'password',
                 'minlength': 8,
                 'pattern': '(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}',
@@ -78,6 +80,7 @@ class CustomUserCreationForm(AdminUserCreationForm):
             attrs={
                 'class': 'input validator col-span-3 w-full',
                 'placeholder': _("Confirm Password *"),
+                'autocomplete': 'new-password',
                 'type': 'password',
                 'minlength': 8,
                 'pattern': '(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}',

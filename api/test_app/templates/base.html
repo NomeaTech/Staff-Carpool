@@ -20,9 +20,11 @@
         theme = localStorage["theme"];
         document.documentElement.setAttribute("data-theme", theme);
         
-        switcher = document.getElementById("theme-switcher")
-        if (theme == "dark") {
-            switcher.checked = true;
+        window.onload = function() {
+            switcher = document.getElementById("theme-switcher")
+            if (theme == "dark") {
+                switcher.checked = true;
+            }
         }
     </script>
     <!-- <h1><a href="/">Campus Ride</a></h1> -->

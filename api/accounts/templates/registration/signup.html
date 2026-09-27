@@ -23,7 +23,7 @@
           <h2 class="card-title mb-0 mt-0">{% trans "Sign Up" %}</h2>
             <label class="swap swap-rotate">
               <!-- this hidden checkbox controls the state -->
-              <input type="checkbox" class="theme-controller" value="dark" />
+              <input hidden type="checkbox" class="theme-controller" value="dark" onchange="updateTheme(this.checked)" />
             
               <!-- sun icon -->
               <svg
@@ -101,14 +101,17 @@
             <!-- <a href="{% url 'signup' %}" class="btn btn-md btn-secondary col-span-1 col-start-3">Sign up</a>   -->
             <!-- <a href="{% url 'password_reset' %}" class="btn btn-sm btn-ghost col-span-3">Password Reset</a> -->
             
-            {% blocktranslate context "Full sentence: By creating an account you agree to the Terms of Use and Privacy Policy." %}
-              <p class="col-span-3">By creating an account you agree to the <a class="link link-primary" href="/">Terms of Use </a>and <a class="link link-secondary" href="/">Privacy Policy</a>.</p>
-            {% endblocktranslate %}
+            <div class="col-span-3">
+              {% blocktranslate context "Full sentence: By creating an account you agree to the Terms of Use and Privacy Policy." %}
+                <p>By creating an account you agree to the <a class="link link-primary" href="/terms-of-use">Terms of Use</a> and <a class="link link-secondary" href="/privacy-policy">Privacy Policy</a>.</p>
+              {% endblocktranslate %}
+              <br>
+              <p class="col-span-3">{% trans "Already have a LUT Kyyti account?" %} <a class="link link-primary" href="{% url "login" %}">{% trans "Login" %}</a></p>
+            </div>
           </div>
         </form>
       </div>
     </div>
-  <!-- <input type="checkbox" value="dark" class="toggle theme-controller" /> -->
 
 </div>
 {% endblock %}
