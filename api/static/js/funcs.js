@@ -174,7 +174,7 @@ $(function() {
 
 async function autocomplete_init(div_id, id, placeholder) {
     const dest_div = document.getElementById(div_id);
-    console.log(dest_div);
+    // console.log(dest_div);
 
     // Request needed libraries.
     const { PlaceAutocompleteElement } =
@@ -210,7 +210,6 @@ async function autocomplete_init(div_id, id, placeholder) {
 }
 
 function stylingWorkaround() {
-    console.log("This is working");
     const attachShadow = Element.prototype.attachShadow;
 
     Element.prototype.attachShadow = function (init) {
