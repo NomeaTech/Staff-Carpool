@@ -50,14 +50,21 @@ class Ride(models.Model):
     max_passengers = models.IntegerField(blank=True, null=True)
 
     # Address
-    start = models.CharField()
+    start = models.CharField(blank=True, null=True)
+    start_json = models.JSONField()
     vias = ArrayField(
         models.CharField(blank=True),
         blank=True,
         null=True,
     )
-    destination = models.CharField()
-    dest_name = models.CharField(help_text="Destination name")
+    vias_json = ArrayField(
+        models.JSONField(blank=True),
+        blank=True,
+        null=True,
+    )
+    destination = models.CharField(blank=True, null=True)
+    destination_json = models.JSONField()
+    dest_name = models.CharField(help_text="Destination name", blank=True, null=True)
 
     # Schedule
 
@@ -108,7 +115,10 @@ class Ride(models.Model):
     created_at = models.DateTimeField("date added", auto_now_add=True)
 
     def __str__(self):
-        return f"From: {self.start}, Destination: {self.dest_name}"
+        if self.start_json and self.destination_json:
+            return f"From: {self.start_json["displayName"]}, Destination: {self.destination_json["displayName"]}"
+        else:
+            return f"From: {self.start}, Destination: {self.destination}"
 
     def get_created_at(self):
         return formats.date_format(self.created_at, "Y.m.d")

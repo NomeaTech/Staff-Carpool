@@ -15,8 +15,3 @@ gmp-place-autocomplete:focus {
 .input:focus {
     outline: none;
 }
-
-.focus-ring {
-    display: none;
-    border: 5px solid yellow
-}

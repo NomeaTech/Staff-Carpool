@@ -32,15 +32,6 @@ def home(request):
     # testing
     users = User.objects.all()
 
-    # for ride in ride_list:
-    #     l_weekday = ride.leaving_at_weekday
-    #     l_hour = ride.leaving_at_hour
-    #     l_minute = ride.leaving_at_minute
-
-    #     a_weekday = ride.arriving_at_weekday
-    #     a_hour = ride.arriving_at_hour
-    #     a_minute = ride.arriving_at_minute
-
     context = {"rides_created": rides_created, "rides_registered": rides_registered, "users": users}
     return render(request, "home.html", context)
 
@@ -87,11 +78,11 @@ def search(request):
             if not rides:
                 found = False
             
-            context = {"form": search_form, "rides": rides, "start": start, "searched": True, "found": found}
+            context = {"form": search_form, "rides": rides, "start": start, "searched": True, "found": found, "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),}
         else:
-            context = {"form": search_form}
+            context = {"form": search_form, "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),}
     else:
-        context = {"form": search_form}
+        context = {"form": search_form, "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),}
 
     return render(request, "search.html", context)
 
@@ -121,12 +112,20 @@ def add_ride(request):
 
                 # collect vias
                 vias = []
+                vias_json = []
 
                 for key, value in request.POST.items():
                     if key.startswith("via_input_"):
                         vias.append(value)
 
                 ride.vias = vias[:8]
+
+                for key, value in request.POST.items():
+                    if key.startswith("id_via_"):
+                        vias_json.append(value)
+
+                ride.vias_json = vias[:8]
+
                 ride.one_time = True if request.POST["one_time"] == "oneTime" else False
                 ride.one_way = True if request.POST["one_way"] == "oneWay" else False
 
@@ -141,6 +140,7 @@ def add_ride(request):
             context = {
                 "ride_form": ride_form,
                 "day_list": day_list,
+                "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),
             }
 
             return render(request, "add_ride.html", context)

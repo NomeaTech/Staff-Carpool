@@ -6,7 +6,20 @@
 
 {% block title %}{% trans "Search" context "Page title" %}{% endblock %}
 {% block content %}
-<!-- <section class="grid grid-cols-1 xl:grid-cols-3 gap-10 pt-3 lg:pt-20 justify-center h-screen mx-auto"> -->
+
+<script>
+    (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+        key: "{{ GOOGLE_MAPS_API_KEY }}"
+    });
+    
+    window.onload = function() {
+        stylingWorkaround();
+
+        autocomplete_init("div-autocomplete-start", "start", "From");
+        autocomplete_init("div-autocomplete-destination", "destination", "To");
+    };
+</script>
+
 <section class="flex flex-col pt-5 lg:pt-15 h-screen mx-auto overflow-scroll scrollbar-hide">
     <form class="flex lg:absolute lg:top-20 top-5 inset-x-0 justify-center mx-2" action="/app/search/" method="post">
         {% csrf_token %}
@@ -34,8 +47,10 @@
                     </div>
                 </div>
                 <div class="grid md:grid-cols-7 grid-cols-2 gap-4 h-full">
-                    <input type="search" name="start" placeholder="{% trans "From" %}" class="input col-span-2 w-full" id="id_search_query">
-                    <input type="search" name="destination" placeholder="{% trans "To" %}" class="input col-span-2 w-full" id="id_search_query">
+                    <div id="div-autocomplete-start" class="col-span-2 w-full skeleton rounded-field"></div>
+                    <div id="div-autocomplete-destination" class="col-span-2 w-full skeleton rounded-field"></div>
+                    <!-- <input type="search" name="start" placeholder="{% trans "From" %}" class="input col-span-2 w-full" id="id_search_query">
+                    <input type="search" name="destination" placeholder="{% trans "To" %}" class="input col-span-2 w-full" id="id_search_query"> -->
                     <input type="datetime-local" placeholder="{% trans "Date" %}" class="input col-span-2 w-full">
                     <input class="btn btn-primary md:col-span-1 col-span-2" type="submit" value="{% trans "Search" %}">
                 </div>
