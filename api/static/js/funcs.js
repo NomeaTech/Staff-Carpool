@@ -11,7 +11,7 @@ function viaAdd(via_value = "") {
     inputDiv.insertAdjacentHTML(
         'beforeend', 
         `<div class="grid grid-cols-5 col-span-5 gap-4 div-via-input w-full" id="${id}-div">
-            <div id="div-autocomplete-via-${id}" class="col-span-4 skeleton h-12 w-full"></div>
+            <div id="div-autocomplete-via-${id}" class="col-span-4 skeleton rounded-field h-12 w-full"></div>
             <button id="${id}-button" data-idref="${id}" class="btn btn-error col-span-1" onclick="viaRemove(this)" type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor" stroke="currentColor" class="scale-120"><!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M96 320C96 302.3 110.3 288 128 288L512 288C529.7 288 544 302.3 544 320C544 337.7 529.7 352 512 352L128 352C110.3 352 96 337.7 96 320z"/></svg>
             </button>

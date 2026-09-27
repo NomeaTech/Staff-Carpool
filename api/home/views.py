@@ -104,12 +104,6 @@ def add_ride(request):
         if ride_form.is_valid():
             try:
                 ride = ride_form.save(commit=False)
-                # from_address = from_address_form.save()
-                # to_address = to_address_form.save()
-                
-                # ride.start = from_address
-                # ride.destination = to_address
-
                 # collect vias
                 vias = []
                 vias_json = []
@@ -121,7 +115,7 @@ def add_ride(request):
                 ride.vias = vias[:8]
 
                 for key, value in request.POST.items():
-                    if key.startswith("id_via_"):
+                    if key.startswith("via_") and value:
                         vias_json.append(value)
 
                 ride.vias_json = vias[:8]
