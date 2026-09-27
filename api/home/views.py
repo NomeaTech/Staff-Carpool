@@ -11,9 +11,10 @@ import traceback
 import logging
 from django.utils.translation import gettext_lazy as _
 from django.http import JsonResponse, HttpResponseBadRequest
-from django.conf import settings
+from django.db.models import Q
 import os
 import requests
+from django.views.decorators.cache import never_cache, cache_control
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +45,7 @@ def home(request):
     return render(request, "home.html", context)
 
 @login_required
+@never_cache
 def search(request):
     search_form = SearchForm
 
@@ -74,7 +76,13 @@ def search(request):
             if request_ride:
                 rides = rides.filter(request=request_ride)
             if other_ride:
-                rides = rides.filter(other=other_ride)
+                rides = rides.filter(
+                    Q(other=True) | 
+                    Q(train=True) | 
+                    Q(bus=True) | 
+                    Q(taxi=True)
+                )
+                # rides = rides.filter(other=other_ride)
 
             if not rides:
                 found = False

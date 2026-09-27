@@ -23,7 +23,7 @@
           <span class="">
             <a href="/" class="btn btn-ghost text-xl px-2">
               <svg width="40px" aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 71.83 71.83" enable-background="new 0 0 71.83 71.83" xml:space="preserve">
-                <title>LUT Kyyti</title>
+                <title>{% trans "LUT Kyyti" %}</title>
                 <path fill="#ED174D" d="M9.77,28.5l34.38,37.16l0,0l6.61-6.21l-4.53-4.83l7.36-6.92L47.43,41l-7.33,6.92L15.92,21.8
                 C12,17.17,9.48,12.1,14.29,5.15L9.52,0C3.84,5.45,0.21,18.16,9.77,28.5"></path>
                 <path fill="#23B900" d="M11.81,60.75l-5.12,4.82c5.43,5.69,18,9.3,28.22-0.31l3-2.79l-6.16-6.66l-3.46,3.25
@@ -127,11 +127,11 @@
       <!-- <p>Copyright © {{ current_year }} - LUT University</p> -->
       <footer class="footer footer-horizontal footer-center bg-neutral text-neutral-content rounded p-5 gap-4">
         <nav class="grid grid-flow-col gap-4">
-          <a href="{% url "privacy-policy" %}" class="link link-hover">Privacy policy</a>
-          <a href="{% url "terms-of-use" %}" class="link link-hover">Terms of use</a>
+          <a href="{% url "privacy-policy" %}" class="link link-hover">{% trans "Privacy policy" %}</a>
+          <a href="{% url "terms-of-use" %}" class="link link-hover">{% trans "Terms of use" %}</a>
         </nav>
         <aside>
-          <p>LUT Kyyti is operated by LUT University.</p>
+          <p>{% trans "LUT Kyyti is operated by LUT University." %}</p>
         </aside>
       </footer>
     </body>

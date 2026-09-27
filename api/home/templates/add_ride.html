@@ -35,6 +35,11 @@
                     }
                 }
             }
+
+            stylingWorkaround();
+
+            autocomplete_init("div-autocomplete-start", "start", "From");
+            autocomplete_init("div-autocomplete-destination", "destination", "To");
         };
 
         window.onbeforeunload = function(event) { 
@@ -66,7 +71,7 @@
                                 <fieldset class="fieldset rounded-field bg-base-100 border-base-300 border p-4 pb-3.5" required>
                                     <legend class="fieldset-legend">{% trans "Car ride" %}</legend>
                                     <label class="label">
-                                    <input required id="id_offer" type="checkbox" name="offer" class="options checkbox checkbox-success" onchange="enableMaxPassengerField(this)">
+                                    <input required id="id_offer" type="checkbox" name="offer" class="options checkbox checkbox-primary" onchange="enableMaxPassengerField(this)">
                                     {% trans "Offer" %}
                                     </label>
                                     <label class="label">
@@ -108,23 +113,23 @@
                         <div hidden class="col-span-3" id="id_max_passengers_div">                        
                             <label class="floating-label">
                                 <span>{% trans "Maximum passengers" %}</span>
-                                <input disabled required id="id_max_passengers" name="max_passengers" placeholder="{% trans "Maximum passengers" %}" type="number" pattern="\d*" id="max-passengers" min="1" max="100" class="input"/>
+                                <input disabled id="id_max_passengers" name="max_passengers" placeholder="{% trans "Maximum passengers" %}" type="number" pattern="\d*" id="max-passengers" min="1" max="100" class="input"/>
                             </label>
                         </div>
                             
                         <div class="divider col-span-3">{% trans "Address" %}</div>
                         <div id="div-inputs" class="grid grid-cols-5 col-span-3 gap-4">
-                            <label class="floating-label col-span-5 w-full relative">
+                            <div id="div-autocomplete-start" class="col-span-5 skeleton h-12 w-full rounded-field"></div>
+                            <!-- <label class="floating-label col-span-5 w-full relative">
                                 <span>{% trans "From" %}</span>
-                                <input autocomplete="off" required id="id_start" name="start" class="input w-full digitrans_autocomplete" placeholder="{% trans "From" %}" data-digitrans-debounce="400" data-digitrans-size="7">
-                                <ul class="digitrans-suggestions hidden absolute left-0 right-0 mt-1 z-50 bg-base-100 shadow rounded overflow-auto" style="max-height:240px; list-style:none; margin:0; padding:0;"></ul>
-                                <input type="hidden" id="id_start_feature_json" name="start_feature" value="">
-                            </label>
+                                <input autocomplete="off" required id="id_start" name="start" class="input w-full digitrans_autocomplete" placeholder="{% trans "From" %}" data-digitrans-debounce="250" data-digitrans-size="7">
+                            </label> -->
                             <div hidden id="div-via" class="grid grid-cols-5 gap-4 col-span-5 w-full"></div>
-                            <label class="floating-label col-span-4 w-full">
+                            <!-- <label class="floating-label col-span-4 w-full">
                                 <span>{% trans "To" %}</span>
-                                <input required id="id_destination" name="destination" class="input w-full" placeholder="{% trans "To" %}">
-                            </label>
+                                <input required id="id_destination" name="destination" class="input w-full digitrans_autocomplete" placeholder="{% trans "To" %}">
+                            </label> -->
+                            <div id="div-autocomplete-destination" class="col-span-4 skeleton h-12 w-full rounded-field"></div>
                             <button id="add_via" class="btn btn-success col-span-1" onclick="viaAdd()" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="2 2 20 20" stroke-width="2" stroke="currentColor" class="scale-120">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
