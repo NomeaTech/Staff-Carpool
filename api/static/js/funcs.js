@@ -193,6 +193,7 @@ async function autocomplete_init(div_id, id, placeholder) {
     // Add the gmp-select listener, and display the results.
     placeAutocomplete.includedRegionCodes = ['fi'];
     placeAutocomplete.setAttribute("placeholder", placeholder)
+
     placeAutocomplete.addEventListener(
         'gmp-select',
         async ({ placePrediction }) => {
@@ -200,7 +201,6 @@ async function autocomplete_init(div_id, id, placeholder) {
             await place.fetchFields({
                 fields: ['displayName', 'formattedAddress', 'location'],
             });
-            // selectedPlaceTitle.textContent = 'Selected Place:';
             selectedPlaceInfo.value = JSON.stringify(
                 place.toJSON(),
                 /* replacer */ null,

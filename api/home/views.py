@@ -15,7 +15,7 @@ from django.db.models import Q
 import os
 import requests
 from django.views.decorators.cache import never_cache, cache_control
-
+import json
 from django.contrib.gis.geos import Point
 
 logger = logging.getLogger(__name__)
@@ -123,11 +123,11 @@ def add_ride(request):
 
                 ride.vias_json = vias[:8]
 
-                sl = request.POST["start_json"]["location"]
-                ride.start_location = Point(float(sl["lat"]), float(sl["lng"]), srid=4326)
+                sl = json.loads(request.POST["start_json"])["location"]
+                ride.start_location = Point(sl["lng"], sl["lat"], srid=4326)
 
-                dl = request.POST["destination_json"]["location"]
-                ride.destination_location = Point(dl["lat"], dl["lng"], srid=4326)
+                dl = json.loads(request.POST["destination_json"])["location"]
+                ride.destination_location = Point(dl["lng"], dl["lat"], srid=4326)
 
                 ride.one_time = True if request.POST["one_time"] == "oneTime" else False
                 ride.one_way = True if request.POST["one_way"] == "oneWay" else False
@@ -135,9 +135,15 @@ def add_ride(request):
                 ride.driver = request.user
                 ride.save()
             except Exception as e:
-                traceback.print_exc()
-            # return HttpResponseRedirect(f"/ride/{ride.id}")
-            return HttpResponseRedirect("/app/home")
+                context = {
+                    "ride_form": ride_form,
+                    "day_list": day_list,
+                    "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),
+                }
+                
+                return render(request, "add_ride.html", context)
+            return HttpResponseRedirect(f"/ride/{ride.id}")
+            # return HttpResponseRedirect("/app/home")
 
         else:
             context = {
