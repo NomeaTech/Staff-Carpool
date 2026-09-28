@@ -16,6 +16,8 @@ import os
 import requests
 from django.views.decorators.cache import never_cache, cache_control
 
+from django.contrib.gis.geos import Point
+
 logger = logging.getLogger(__name__)
 
 @login_required
@@ -114,11 +116,18 @@ def add_ride(request):
 
                 ride.vias = vias[:8]
 
+
                 for key, value in request.POST.items():
                     if key.startswith("via_") and value:
                         vias_json.append(value)
 
                 ride.vias_json = vias[:8]
+
+                sl = request.POST["start_json"]["location"]
+                ride.start_location = Point(float(sl["lat"]), float(sl["lng"]), srid=4326)
+
+                dl = request.POST["destination_json"]["location"]
+                ride.destination_location = Point(dl["lat"], dl["lng"], srid=4326)
 
                 ride.one_time = True if request.POST["one_time"] == "oneTime" else False
                 ride.one_way = True if request.POST["one_way"] == "oneWay" else False
