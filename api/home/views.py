@@ -17,6 +17,8 @@ import requests
 from django.views.decorators.cache import never_cache, cache_control
 import json
 from django.contrib.gis.geos import Point
+from django.contrib.gis.measure import D
+from django.contrib.gis.db.models.functions import Distance
 
 logger = logging.getLogger(__name__)
 
@@ -47,8 +49,8 @@ def search(request):
         
         if search_form.is_valid():
             form_clean = search_form.cleaned_data
-            start = form_clean["start"]
-            destination = form_clean["destination"]
+            start_json = form_clean["start_json"]
+            destination_json = form_clean["destination_json"]
             offer_ride = form_clean["offer"]
             request_ride = form_clean["request"]
             other_ride = form_clean["other"]
@@ -60,10 +62,19 @@ def search(request):
 
             rides = Ride.objects.all()
 
-            if start:
-                rides = rides.filter(start__icontains=start)
-            if destination:
-                rides = rides.filter(dest_name__icontains=destination)
+            
+            
+
+            if start_json:
+                sl = start_json["location"]
+                start_location = Point(sl["lng"], sl["lat"], srid=4326)
+
+                rides = rides.filter(start_location__distance_lte=(start_location, D(km=30))).annotate(dist=Distance("start_location", start_location)).order_by("dist")
+            if destination_json:
+                dl = destination_json["location"]
+                destination_location = Point(dl["lng"], dl["lat"], srid=4326)
+                
+                rides = rides.filter(destination_location__distance_lte=(destination_location, D(km=30))).annotate(dist=Distance("destination_location", destination_location)).order_by("dist")
             if offer_ride:
                 rides = rides.filter(offer=offer_ride)
             if request_ride:
@@ -80,7 +91,7 @@ def search(request):
             if not rides:
                 found = False
             
-            context = {"form": search_form, "rides": rides, "start": start, "searched": True, "found": found, "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),}
+            context = {"form": search_form, "rides": rides, "searched": True, "found": found, "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),}
         else:
             context = {"form": search_form, "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),}
     else:
@@ -115,7 +126,6 @@ def add_ride(request):
                         vias.append(value)
 
                 ride.vias = vias[:8]
-
 
                 for key, value in request.POST.items():
                     if key.startswith("via_") and value:

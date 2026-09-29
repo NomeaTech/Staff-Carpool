@@ -2,7 +2,9 @@ from django import forms
 
 class SearchForm(forms.Form):
     start = forms.CharField(required=False)
+    start_json = forms.JSONField(required=False)
     destination = forms.CharField(required=False)
+    destination_json = forms.JSONField(required=False)
     date = forms.CharField(required=False)
 
     offer = forms.BooleanField(required=False)
