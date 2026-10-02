@@ -33,6 +33,7 @@ django-widget-tweaks==1.5.1
 django_boost==3.2.3
 djangorestframework==3.17.1
 dotenv==0.9.9
+geoaddress==1.0.2
 gunicorn==26.0.0
 h11==0.16.0
 honcho==2.0.0
