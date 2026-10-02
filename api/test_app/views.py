@@ -44,7 +44,7 @@ def ride_detail(request, ride_id):
         # "leaving_at": leaving_at,
         # "arriving_at": arriving_at,
         "num_passengers": len(ride.passenger.all()),
-        "vias": ", ".join(ride.vias)
+        "vias": ride.via_points.all(),
     }
     
     return render(request, "ride_detail.html", context)

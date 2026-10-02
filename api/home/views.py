@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
-from test_app.models import Ride
+from test_app.models import Ride, Via
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from test_app.models import Ride
@@ -11,7 +11,9 @@ import traceback
 import logging
 from django.utils.translation import gettext_lazy as _
 from django.http import JsonResponse, HttpResponseBadRequest
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef, Subquery
+from django.db.models.functions import Least
+from django.db import transaction
 import os
 import requests
 from django.views.decorators.cache import never_cache, cache_control
@@ -74,7 +76,26 @@ def search(request):
                 dl = destination_json["location"]
                 destination_location = Point(dl["lng"], dl["lat"], srid=4326)
                 
-                rides = rides.filter(destination_location__distance_lte=(destination_location, D(km=30))).annotate(dist=Distance("destination_location", destination_location)).order_by("dist")
+                # Match rides that end near the destination or pass by it on a via
+                vias_near = Via.objects.filter(
+                    ride=OuterRef("pk"),
+                    location__distance_lte=(destination_location, D(km=30)),
+                )
+                closest_via = Via.objects.filter(
+                    ride=OuterRef("pk")
+                ).annotate(
+                    d=Distance("location", destination_location)
+                ).order_by("d").values("d")[:1]
+
+                rides = rides.filter(
+                    Q(destination_location__distance_lte=(destination_location, D(km=30))) |
+                    Exists(vias_near)
+                ).annotate(
+                    dist=Least(
+                        Distance("destination_location", destination_location),
+                        Subquery(closest_via),
+                    )
+                ).order_by("dist")
             if offer_ride:
                 rides = rides.filter(offer=offer_ride)
             if request_ride:
@@ -117,21 +138,12 @@ def add_ride(request):
         if ride_form.is_valid():
             try:
                 ride = ride_form.save(commit=False)
-                # collect vias
-                vias = []
+
+                # collect vias, in the order they appear on the form
                 vias_json = []
-
                 for key, value in request.POST.items():
-                    if key.startswith("via_input_"):
-                        vias.append(value)
-
-                ride.vias = vias[:8]
-
-                for key, value in request.POST.items():
-                    if key.startswith("via_") and value:
-                        vias_json.append(value)
-
-                ride.vias_json = vias[:8]
+                    if key.startswith("via_") and key.endswith("_json") and value:
+                        vias_json.append(json.loads(value))
 
                 sl = json.loads(request.POST["start_json"])["location"]
                 ride.start_location = Point(sl["lng"], sl["lat"], srid=4326)
@@ -143,7 +155,17 @@ def add_ride(request):
                 ride.one_way = True if request.POST["one_way"] == "oneWay" else False
 
                 ride.driver = request.user
-                ride.save()
+
+                with transaction.atomic():
+                    ride.save()
+                    for order, via_json in enumerate(vias_json[:8]):
+                        vl = via_json["location"]
+                        Via.objects.create(
+                            ride=ride,
+                            order=order,
+                            via_json=via_json,
+                            location=Point(vl["lng"], vl["lat"], srid=4326),
+                        )
             except Exception as e:
                 context = {
                     "ride_form": ride_form,

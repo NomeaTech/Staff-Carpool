@@ -172,16 +172,61 @@ $(function() {
     });
 });
 
-async function autocomplete_init(div_id, id, placeholder) {
+function debounce(func, delay) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
+// If required_hint is given, the form cannot be submitted until a place
+// has been selected from the suggestions, and the hint is shown under the input.
+async function autocomplete_init(div_id, id, placeholder, required_hint = null) {
     const dest_div = document.getElementById(div_id);
     // console.log(dest_div);
 
     // Request needed libraries.
-    const { PlaceAutocompleteElement } =
+    const { AutocompleteSessionToken, AutocompleteSuggestion } =
         await google.maps.importLibrary('places');
-    // Create the input HTML element, and append it.
-    const placeAutocomplete = new PlaceAutocompleteElement();
-    dest_div.appendChild(placeAutocomplete);
+
+    // The PlaceAutocompleteElement widget queries the API on every keystroke,
+    // so we use our own input and only query once the user stops typing.
+    dest_div.style.position = "relative";
+    // The placeholder skeleton is no longer needed, and a fixed height on the
+    // container would cut off the validator hint, so move it to the input.
+    const inputHeight = dest_div.classList.contains("h-12") ? "h-12" : "";
+    dest_div.classList.remove("skeleton", "h-12");
+
+    const placeInput = document.createElement('input');
+    placeInput.type = "text";
+    placeInput.autocomplete = "off";
+    placeInput.className = `input w-full ${inputHeight}`;
+    placeInput.setAttribute("placeholder", placeholder);
+    dest_div.appendChild(placeInput);
+
+    const validatorHint = document.createElement('p');
+    if (required_hint) {
+        placeInput.classList.add("validator");
+        placeInput.required = true;
+        validatorHint.className = "hidden validator-hint ml-3";
+        validatorHint.textContent = required_hint;
+        dest_div.appendChild(validatorHint);
+    }
+
+    function updateValidity() {
+        if (required_hint) {
+            placeInput.setCustomValidity(selectedPlaceInfo.value ? "" : required_hint);
+        }
+    }
+
+    const suggestionList = document.createElement('ul');
+    suggestionList.className = "menu bg-base-100 rounded-field shadow-sm w-full";
+    suggestionList.style.position = "absolute";
+    suggestionList.style.left = "0";
+    suggestionList.style.zIndex = "50";
+    suggestionList.setAttribute("hidden", "");
+    dest_div.appendChild(suggestionList);
 
     const selectedPlaceInfo = document.createElement('input');
     selectedPlaceInfo.setAttribute("hidden", "hidden");
@@ -189,56 +234,88 @@ async function autocomplete_init(div_id, id, placeholder) {
     selectedPlaceInfo.name = `${id}_json`
     selectedPlaceInfo.textContent = '';
     dest_div.appendChild(selectedPlaceInfo);
+    updateValidity();
 
-    // Add the gmp-select listener, and display the results.
-    placeAutocomplete.includedRegionCodes = ['fi'];
-    placeAutocomplete.setAttribute("placeholder", placeholder)
+    let sessionToken = new AutocompleteSessionToken();
+    // Used to ignore responses to requests that have since been superseded.
+    let requestCount = 0;
 
-    placeAutocomplete.addEventListener(
-        'gmp-select',
-        async ({ placePrediction }) => {
-            const place = placePrediction.toPlace();
-            await place.fetchFields({
-                fields: ['displayName', 'formattedAddress', 'location'],
-            });
-            selectedPlaceInfo.value = JSON.stringify(
-                place.toJSON(),
-                /* replacer */ null,
-                /* space */ 2
-            );
-        }
-    );
-}
-
-function stylingWorkaround() {
-    const attachShadow = Element.prototype.attachShadow;
-
-    Element.prototype.attachShadow = function (init) {
-    // Check if we are the new Google places autocomplete element...
-    if (this.localName === "gmp-place-autocomplete") {
-        // If we are, we need to override the default behaviour of attachShadow() to
-        // set the mode to open to allow us to crowbar a style element into the shadow DOM.
-        const shadow = attachShadow.call(this, {
-        ...init,
-        mode: "open"
-        });
-
-        const style = document.createElement("style");
-
-        // Apply our own styles to the shadow DOM.
-        style.textContent = `
-            
-            .focus-ring {
-                display: none !important;
-            }
-        `;
-
-        shadow.appendChild(style);
-
-        // Set the shadowRoot property to the new shadow root that has our styles in it.
-        return shadow;
+    function hideSuggestions() {
+        suggestionList.replaceChildren();
+        suggestionList.setAttribute("hidden", "");
     }
-    // ...for other elements, proceed with the original behaviour of attachShadow().
-    return attachShadow.call(this, init);
-    };
+
+    async function selectPlace(placePrediction) {
+        hideSuggestions();
+        placeInput.value = placePrediction.text.toString();
+
+        const place = placePrediction.toPlace();
+        await place.fetchFields({
+            fields: ['displayName', 'formattedAddress', 'location'],
+        });
+        selectedPlaceInfo.value = JSON.stringify(
+            place.toJSON(),
+            /* replacer */ null,
+            /* space */ 2
+        );
+        updateValidity();
+        // A session ends once a place is selected.
+        sessionToken = new AutocompleteSessionToken();
+    }
+
+    const fetchSuggestions = debounce(async () => {
+        const query = placeInput.value.trim();
+        const requestId = ++requestCount;
+        if (!query) {
+            hideSuggestions();
+            return;
+        }
+
+        const { suggestions } =
+            await AutocompleteSuggestion.fetchAutocompleteSuggestions({
+                input: query,
+                includedRegionCodes: ['fi'],
+                sessionToken: sessionToken,
+            });
+        if (requestId !== requestCount) {
+            return;
+        }
+
+        suggestionList.replaceChildren();
+        for (const { placePrediction } of suggestions) {
+            if (!placePrediction) {
+                continue;
+            }
+            const item = document.createElement('li');
+            const link = document.createElement('a');
+            link.textContent = placePrediction.text.toString();
+            // mousedown fires before the input's blur, so the list is still there.
+            link.addEventListener('mousedown', (event) => {
+                event.preventDefault();
+                selectPlace(placePrediction);
+            });
+            item.appendChild(link);
+            suggestionList.appendChild(item);
+        }
+        if (suggestionList.children.length > 0) {
+            // Directly under the input, above the validator hint
+            suggestionList.style.top = `${placeInput.offsetHeight}px`;
+            suggestionList.removeAttribute("hidden");
+        } else {
+            suggestionList.setAttribute("hidden", "");
+        }
+    }, 1000);
+
+    placeInput.addEventListener('input', () => {
+        // The text no longer matches the previously selected place.
+        selectedPlaceInfo.value = '';
+        updateValidity();
+        fetchSuggestions();
+    });
+    placeInput.addEventListener('blur', hideSuggestions);
+    placeInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            hideSuggestions();
+        }
+    });
 }

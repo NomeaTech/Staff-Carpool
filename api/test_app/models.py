@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.gis.db import models
 from django.conf import settings
-from django.contrib.postgres.fields import ArrayField
 from django.utils.translation import gettext as _
 from itertools import compress
 from dateutil import parser
@@ -52,24 +51,8 @@ class Ride(models.Model):
     start_json = models.JSONField()
     start_location = models.PointField(geography=True, blank=True, null=True)
 
-    vias = ArrayField(
-        models.CharField(blank=True),
-        blank=True,
-        null=True,
-    )
+    # Vias are stored in the Via model (ride.via_points)
 
-    vias_json = ArrayField(
-        models.JSONField(blank=True),
-        blank=True,
-        null=True,
-    )
-
-    vias_locations = ArrayField(
-        models.PointField(geography=True, blank=True, null=True),
-        blank=True,
-        null=True,
-    )
-    
     destination = models.CharField(blank=True, null=True)
     destination_json = models.JSONField()
     destination_location = models.PointField(geography=True, blank=True, null=True)
@@ -303,3 +286,20 @@ def to_string(self):
     for var_name, var_val in vars(self).items():
         l += f"{var_name}: {var_val}\n"
     return l
+
+
+class Via(models.Model):
+    ride = models.ForeignKey(
+        Ride,
+        on_delete=models.CASCADE,
+        related_name="via_points"
+    )
+    order = models.PositiveSmallIntegerField(default=0)
+    via_json = models.JSONField()
+    location = models.PointField(geography=True)
+
+    class Meta:
+        ordering = ["order"]
+
+    def __str__(self):
+        return self.via_json.get("displayName", "")

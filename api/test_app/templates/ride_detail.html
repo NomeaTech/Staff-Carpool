@@ -20,11 +20,11 @@
                             {{ ride.schedule_long | safe}}
                         </div>
                     {% endif %}
-                    {% if ride.vias_json %}
+                    {% if vias %}
                         <h3 class="text-lg">
                             <b>Via</b>
-                            {% for via in vias_json %}
-                              {{ via.displayName }}
+                            {% for via in vias %}
+                              {{ via.via_json.displayName }}{% if not forloop.last %},{% endif %}
                             {% endfor %}
                         </h3>
                     {% endif %}

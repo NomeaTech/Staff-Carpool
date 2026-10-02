@@ -35,7 +35,6 @@ class RideForm(forms.ModelForm):
             "other_field",
             "max_passengers",
             "start_json",
-            "vias",
             "destination_json",
             "one_time",
             "one_way",
