@@ -41,10 +41,8 @@
                 }
             }
 
-            stylingWorkaround();
-
-            autocomplete_init("div-autocomplete-start", "start", "From");
-            autocomplete_init("div-autocomplete-destination", "destination", "To");
+            autocomplete_init("div-autocomplete-start", "start", "From", "{% trans "Select a start location" %}");
+            autocomplete_init("div-autocomplete-destination", "destination", "To", "{% trans "Select a destination" %}");
         };
 
         window.onbeforeunload = function(event) { 
@@ -124,30 +122,16 @@
                             
                         <div class="divider col-span-3">{% trans "Address" %}</div>
                         <div id="div-inputs" class="grid grid-cols-5 col-span-3 gap-4">
+                            
                             <div id="div-autocomplete-start" class="col-span-5 skeleton h-12 w-full rounded-field"></div>
-                            <!-- <label class="floating-label col-span-5 w-full relative">
-                                <span>{% trans "From" %}</span>
-                                <input autocomplete="off" required id="id_start" name="start" class="input w-full digitrans_autocomplete" placeholder="{% trans "From" %}" data-digitrans-debounce="250" data-digitrans-size="7">
-                            </label> -->
                             <div hidden id="div-via" class="grid grid-cols-5 gap-4 col-span-5 w-full"></div>
-                            <!-- <label class="floating-label col-span-4 w-full">
-                                <span>{% trans "To" %}</span>
-                                <input required id="id_destination" name="destination" class="input w-full digitrans_autocomplete" placeholder="{% trans "To" %}">
-                            </label> -->
-                            <div id="div-autocomplete-destination" class="col-span-4 skeleton h-12 w-full rounded-field"></div>
-                            <button id="add_via" class="btn btn-success col-span-1" onclick="viaAdd()" type="button">
+                            <div id="div-autocomplete-destination" class="col-span-4 skeleton h-12 w-full rounded-field self-start"></div>
+                            
+                            <button id="add_via" class="btn btn-success col-span-1 self-start" onclick="viaAdd()" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="2 2 20 20" stroke-width="2" stroke="currentColor" class="scale-120">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                 </svg>
                             </button>
-                            <div class="col-span-5">
-                                <div class="tooltip w-full" data-tip="A descriptive name for your final destination">
-                                    <label class="floating-label w-full">
-                                        <span>{% trans "From" %}</span>        
-                                        <input required id="id_dest_name" name="dest_name" class="input w-full" placeholder="{% trans "Place name" %}">
-                                    </label>
-                                </div>
-                            </div>
                         </div>
                         <div class="divider col-span-3">{% trans "Schedule" %}</div>
                         <div class="grid grid-cols-2 col-span-3 gap-2">

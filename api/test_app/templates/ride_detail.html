@@ -13,17 +13,19 @@
             <div class="flex gap-4 place-content-between">    
                 <div class="grid gap-2 justify-items-center pe-4">
                     <div class="overflow-x-auto overflow-y-hidden w-full">
-                        <h2 class="card-title text-3xl">{{ ride.start }} {{ ride.sign }} {{ ride.dest_name }}</h2>
+                        <h2 class="card-title text-3xl">{{ ride.start_json.displayName }} {{ ride.sign }} {{ ride.destination_json.displayName }}</h2>
                     </div>
                     {% if ride.schedule_long %}
                         <div class="badge badge-soft badge-info rounded-full badge-3xl">
                             {{ ride.schedule_long | safe}}
                         </div>
                     {% endif %}
-                    {% if ride.vias %}
+                    {% if vias %}
                         <h3 class="text-lg">
                             <b>Via</b>
-                            {{ vias }}
+                            {% for via in vias %}
+                              {{ via.via_json.displayName }}{% if not forloop.last %},{% endif %}
+                            {% endfor %}
                         </h3>
                     {% endif %}
                 </div>

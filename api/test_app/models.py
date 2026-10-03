@@ -1,6 +1,6 @@
 from django.db import models
+from django.contrib.gis.db import models
 from django.conf import settings
-from django.contrib.postgres.fields import ArrayField
 from django.utils.translation import gettext as _
 from itertools import compress
 from dateutil import parser
@@ -17,9 +17,6 @@ class Address(models.Model):
 
     def __str__(self):
         return f"{self.country}, {self.city}, {self.postcode}, {self.street} {self.number}"
-
-# class AddressChar(models.Model):
-    # address = models.CharField(max_length=100)
 
 class Ride(models.Model):
 
@@ -50,14 +47,18 @@ class Ride(models.Model):
     max_passengers = models.IntegerField(blank=True, null=True)
 
     # Address
-    start = models.CharField()
-    vias = ArrayField(
-        models.CharField(blank=True),
-        blank=True,
-        null=True,
-    )
-    destination = models.CharField()
-    dest_name = models.CharField(help_text="Destination name")
+    start = models.CharField(blank=True, null=True)
+    start_json = models.JSONField()
+    start_location = models.PointField(geography=True, blank=True, null=True)
+
+    # Vias are stored in the Via model (ride.via_points)
+
+    destination = models.CharField(blank=True, null=True)
+    destination_json = models.JSONField()
+    destination_location = models.PointField(geography=True, blank=True, null=True)
+
+    # deprecated
+    dest_name = models.CharField(help_text="Destination name", blank=True, null=True)
 
     # Schedule
 
@@ -108,7 +109,10 @@ class Ride(models.Model):
     created_at = models.DateTimeField("date added", auto_now_add=True)
 
     def __str__(self):
-        return f"From: {self.start}, Destination: {self.dest_name}"
+        if self.start_json and self.destination_json:
+            return f"From: {self.start_json["displayName"]}, Destination: {self.destination_json["displayName"]}"
+        else:
+            return f"From: {self.start}, Destination: {self.destination}"
 
     def get_created_at(self):
         return formats.date_format(self.created_at, "Y.m.d")
@@ -282,3 +286,20 @@ def to_string(self):
     for var_name, var_val in vars(self).items():
         l += f"{var_name}: {var_val}\n"
     return l
+
+
+class Via(models.Model):
+    ride = models.ForeignKey(
+        Ride,
+        on_delete=models.CASCADE,
+        related_name="via_points"
+    )
+    order = models.PositiveSmallIntegerField(default=0)
+    via_json = models.JSONField()
+    location = models.PointField(geography=True)
+
+    class Meta:
+        ordering = ["order"]
+
+    def __str__(self):
+        return self.via_json.get("displayName", "")
