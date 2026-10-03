@@ -1,22 +1,27 @@
-{% load static tailwind_tags %}
+{% load static tailwind_tags pwa cache %}
 
 <!DOCTYPE html>
 <html data-theme="light">
-{% load pwa %}
-{% progressive_web_app_meta %}
-
-<link rel="manifest" href="manifest.json">
+{% comment %}
+  The static parts of the layout are cached as fragments. Blocks and anything
+  else that is per-request must stay outside the cache tags.
+{% endcomment %}
 <head>
     <title>{% block title %}Campus Ride{% endblock %}</title>
+    {% cache 86400 base_head using="templates" %}
+    {% progressive_web_app_meta %}
+    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="{% static "js/jquery-4.0.0.js" %}"></script>
     <script src="{% static "js/funcs.js" %}"></script>
     {% tailwind_css %}
+    {% endcache %}
 </head>
 <!-- <body class="bg-gray-50 text-black font-serif leading-normal tracking-normal"> -->
 <body class="bg-base-200">
+    {% cache 86400 base_body_top using="templates" %}
     <script>
         theme = localStorage["theme"];
         document.documentElement.setAttribute("data-theme", theme);
@@ -32,6 +37,7 @@
     <div class="container mx-auto">
         <section class="flex items-center justify-center h-screen">    
             <main>
+    {% endcache %}
                 {% block content %}
                 {% endblock %}
             </main>

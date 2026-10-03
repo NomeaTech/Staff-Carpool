@@ -133,6 +133,22 @@ TEMPLATES = [
 WSGI_APPLICATION = 'carpool.wsgi.application'
 
 
+# Cache
+# Template fragments ({% cache ... using="templates" %}) are not cached while
+# DEBUG is on, so template edits show up immediately during development.
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    },
+    "templates": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache" if DEBUG
+            else "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "templates",
+    },
+}
+
+
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
