@@ -11,7 +11,7 @@ import traceback
 import logging
 from django.utils.translation import gettext_lazy as _
 from django.http import JsonResponse, HttpResponseBadRequest
-from django.db.models import Q, Exists, OuterRef, Subquery
+from django.db.models import Q, Exists, OuterRef, Subquery, ExpressionWrapper, FloatField
 from django.db.models.functions import Least
 from django.db import transaction
 import os
@@ -57,29 +57,26 @@ def search(request):
             request_ride = form_clean["request"]
             other_ride = form_clean["other"]
             
-            # Simple search implementation for now. 
-            # Will expand later to make search less tedious
-            
-            found = True
-
-            rides = Ride.objects.all()
-
-            
-            
+            near = D(km=30)
+            filters = Q()
+            # Distance terms that are added together to order the results
+            distances = []
 
             if start_json:
                 sl = start_json["location"]
                 start_location = Point(sl["lng"], sl["lat"], srid=4326)
 
-                rides = rides.filter(start_location__distance_lte=(start_location, D(km=30))).annotate(dist=Distance("start_location", start_location)).order_by("dist")
+                filters &= Q(start_location__dwithin=(start_location, near))
+                distances.append(Distance("start_location", start_location))
+
             if destination_json:
                 dl = destination_json["location"]
                 destination_location = Point(dl["lng"], dl["lat"], srid=4326)
-                
+
                 # Match rides that end near the destination or pass by it on a via
                 vias_near = Via.objects.filter(
                     ride=OuterRef("pk"),
-                    location__distance_lte=(destination_location, D(km=30)),
+                    location__dwithin=(destination_location, near),
                 )
                 closest_via = Via.objects.filter(
                     ride=OuterRef("pk")
@@ -87,31 +84,33 @@ def search(request):
                     d=Distance("location", destination_location)
                 ).order_by("d").values("d")[:1]
 
-                rides = rides.filter(
-                    Q(destination_location__distance_lte=(destination_location, D(km=30))) |
+                filters &= (
+                    Q(destination_location__dwithin=(destination_location, near)) |
                     Exists(vias_near)
-                ).annotate(
-                    dist=Least(
-                        Distance("destination_location", destination_location),
-                        Subquery(closest_via),
-                    )
-                ).order_by("dist")
-            if offer_ride:
-                rides = rides.filter(offer=offer_ride)
-            if request_ride:
-                rides = rides.filter(request=request_ride)
-            if other_ride:
-                rides = rides.filter(
-                    Q(other=True) | 
-                    Q(train=True) | 
-                    Q(bus=True) | 
-                    Q(taxi=True)
                 )
-                # rides = rides.filter(other=other_ride)
+                distances.append(Least(
+                    Distance("destination_location", destination_location),
+                    Subquery(closest_via),
+                    output_field=FloatField(),
+                ))
 
-            if not rides:
-                found = False
-            
+            if offer_ride:
+                filters &= Q(offer=True)
+            if request_ride:
+                filters &= Q(request=True)
+            if other_ride:
+                filters &= Q(other=True) | Q(train=True) | Q(bus=True) | Q(taxi=True)
+
+            rides = Ride.objects.filter(filters).select_related("driver")
+            if distances:
+                rides = rides.annotate(
+                    dist=ExpressionWrapper(sum(distances[1:], distances[0]), output_field=FloatField())
+                ).order_by("dist")
+
+            # Evaluate once, so the template reuses the same results
+            rides = list(rides)
+            found = bool(rides)
+
             context = {"form": search_form, "rides": rides, "searched": True, "found": found, "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),}
         else:
             context = {"form": search_form, "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),}
