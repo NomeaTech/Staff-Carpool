@@ -15,12 +15,14 @@
         <a href="#faq" class="btn btn-secondary join-item rounded-r-full">{% trans "Learn more" %}</a>
         </div>
     </div>
-    <div>
-        <img src="{% static "images/temp_landing1.jpg" %}">
+    <div class="skeleton self-center">
+        <img src="{% static "images/temp_landing1.jpg" %}" width="4097" height="2736" alt="" class="rounded-box opacity-0 transition-opacity duration-300" onload="imageLoaded(this)" onerror="imageLoaded(this)">
     </div>
 </div>
 <div id="how-it-works" class="grid md:grid-cols-2 gap-4 w-full">
-    <img class="xl:w-130" src="{% static "images/posting_example.png" %}">
+    <div class="skeleton self-center xl:w-130 max-w-full">
+        <img src="{% static "images/posting_example.png" %}" width="1145" height="1376" alt="" class="opacity-0 transition-opacity duration-300" onload="imageLoaded(this)" onerror="imageLoaded(this)">
+    </div>
     <div class="grid gap-8 place-content-center">
         <h1 class="text-4xl font-bold">{% trans "How it works" %}</h1>
         <ul role="list" class="list-disc">
