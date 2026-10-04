@@ -7,8 +7,10 @@ from dateutil import parser
 from dateutil.parser import ParserError
 from datetime import datetime
 from django.utils import formats
+import uuid
 
 class Address(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     country = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
     postcode = models.CharField(max_length=200)
@@ -19,6 +21,7 @@ class Address(models.Model):
         return f"{self.country}, {self.city}, {self.postcode}, {self.street} {self.number}"
 
 class Ride(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     driver = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
@@ -289,6 +292,7 @@ def to_string(self):
 
 
 class Via(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     ride = models.ForeignKey(
         Ride,
         on_delete=models.CASCADE,

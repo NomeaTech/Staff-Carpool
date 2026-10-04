@@ -1,3 +1,4 @@
+import uuid
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError, transaction
@@ -87,6 +88,6 @@ def delete_ride(request):
 
 def get_ride_id(request):
     try:
-        return int(request.POST.get("ride"))
-    except (TypeError, ValueError):
+        return uuid.UUID(request.POST.get("ride"))
+    except (TypeError, ValueError, AttributeError):
         raise Http404
