@@ -1,5 +1,8 @@
+import uuid
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
+from django.db import IntegrityError, transaction
+from django.db.models import Exists, OuterRef
 from .models import Ride
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
@@ -20,7 +23,7 @@ def old_index(request):
 @login_required
 def my_rides(request):
     user = request.user
-    ride_list = user.rides.all()
+    ride_list = user.passenger.all()
     context = {"rides": ride_list}
 
     return render(request, "my_rides.html", context)
@@ -28,9 +31,15 @@ def my_rides(request):
 # Everything to do with recurring rides should be moved to its own app
 @login_required
 def ride_detail(request, ride_id):
-    ride = get_object_or_404(Ride, pk=ride_id)
-    is_driver = True if ride.driver.id == request.user.id else False
-    is_passenger = True if request.user in ride.passenger.all() else False
+    # Driver and passenger status are fetched in the same query as the ride
+    is_passenger = Ride.passenger.through.objects.filter(
+        ride=OuterRef("pk"), user=request.user.pk
+    )
+    ride = get_object_or_404(
+        Ride.objects.select_related("driver").annotate(is_passenger=Exists(is_passenger)),
+        pk=ride_id,
+    )
+    is_driver = ride.driver_id == request.user.id
 
     # leaving_at = f"{l_weekday.title()}, {str(l_hour).zfill(2)}:{str(l_minute).zfill(2)}"
     
@@ -40,46 +49,45 @@ def ride_detail(request, ride_id):
     context = {
         "ride": ride, 
         "is_driver": is_driver, 
-        "is_passenger": is_passenger,
+        "is_passenger": ride.is_passenger,
         # "leaving_at": leaving_at,
         # "arriving_at": arriving_at,
-        "num_passengers": len(ride.passenger.all()),
         "vias": ride.via_points.all(),
     }
     
     return render(request, "ride_detail.html", context)
 
+# join, leave and delete work on the ride id directly, without loading the ride
+
 @login_required
 def join_ride(request):
-    user, ride, response = ride_helper(request)
-    ride.passenger.add(user)
-    user.rides.add(ride)
+    ride_id = get_ride_id(request)
+    try:
+        with transaction.atomic():
+            request.user.passenger.add(ride_id)
+    except IntegrityError:
+        # The ride does not exist
+        raise Http404
 
-    return response
+    return HttpResponseRedirect(f"/ride/{ride_id}/")
 
 @login_required
 def leave_ride(request):
-    user, ride, response = ride_helper(request)
-    ride.passenger.remove(user)
-    user.rides.remove(ride)
+    ride_id = get_ride_id(request)
+    request.user.passenger.remove(ride_id)
 
-    return response
+    return HttpResponseRedirect(f"/ride/{ride_id}/")
 
 @login_required
 def delete_ride(request):
-    user, ride, response = ride_helper(request)
+    ride_id = get_ride_id(request)
+    # Only deletes the ride if the user is its driver
+    Ride.objects.filter(pk=ride_id, driver=request.user).delete()
 
-    if ride.driver.id == user.id:
-        ride.delete()
-        return HttpResponseRedirect("/")
-    else:
-        return HttpResponseRedirect("/")
+    return HttpResponseRedirect("/")
 
-def ride_helper(request):
-    post_data = request.POST
-    rt_id = post_data.get("ride")
-    ride = get_object_or_404(Ride, pk=rt_id)
-    user = request.user
-    response = HttpResponseRedirect(f"/ride/{rt_id}/")
-
-    return user, ride, response
+def get_ride_id(request):
+    try:
+        return uuid.UUID(request.POST.get("ride"))
+    except (TypeError, ValueError, AttributeError):
+        raise Http404

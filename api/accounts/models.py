@@ -1,15 +1,16 @@
 from django.db import models
+import uuid
 # from test_app.models import Address
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # Remove username without actually removing it
     username = models.CharField(null=True, blank=True)
     email = models.EmailField(unique=True)
 
     pfp = models.ImageField(upload_to='static/images/user_images/', blank=True, null=True)
     address = models.ForeignKey('test_app.Address', on_delete=models.CASCADE, null=True, blank=True)
-    rides = models.ManyToManyField('test_app.Ride', blank=True)
     phone = models.CharField(blank=True, null=True)
 
     def __str__(self):

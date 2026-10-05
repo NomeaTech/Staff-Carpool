@@ -14,6 +14,7 @@ from django.http import JsonResponse, HttpResponseBadRequest
 from django.db.models import Q, Exists, OuterRef, Subquery, ExpressionWrapper, FloatField
 from django.db.models.functions import Least
 from django.db import transaction
+from django.core.paginator import Paginator
 import os
 import requests
 from django.views.decorators.cache import never_cache, cache_control
@@ -41,83 +42,87 @@ def home(request):
     context = {"rides_created": rides_created, "rides_registered": rides_registered, "users": users}
     return render(request, "home.html", context)
 
+SEARCH_PAGE_SIZE = 12
+
 @login_required
 @never_cache
 def search(request):
-    search_form = SearchForm
+    context = {"GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY")}
 
-    if request.method == "POST":
-        search_form = SearchForm(request.POST)
-        
-        if search_form.is_valid():
-            form_clean = search_form.cleaned_data
-            start_json = form_clean["start_json"]
-            destination_json = form_clean["destination_json"]
-            offer_ride = form_clean["offer"]
-            request_ride = form_clean["request"]
-            other_ride = form_clean["other"]
-            
-            near = D(km=30)
-            filters = Q()
-            # Distance terms that are added together to order the results
-            distances = []
+    if request.method != "POST":
+        context["form"] = SearchForm()
+        return render(request, "search.html", context)
 
-            if start_json:
-                sl = start_json["location"]
-                start_location = Point(sl["lng"], sl["lat"], srid=4326)
+    search_form = SearchForm(request.POST)
+    context["form"] = search_form
 
-                filters &= Q(start_location__dwithin=(start_location, near))
-                distances.append(Distance("start_location", start_location))
+    if search_form.is_valid():
+        rides = search_rides(search_form.cleaned_data)
+        context["page"] = Paginator(rides, SEARCH_PAGE_SIZE).get_page(request.POST.get("page"))
+        context["searched"] = True
 
-            if destination_json:
-                dl = destination_json["location"]
-                destination_location = Point(dl["lng"], dl["lat"], srid=4326)
-
-                # Match rides that end near the destination or pass by it on a via
-                vias_near = Via.objects.filter(
-                    ride=OuterRef("pk"),
-                    location__dwithin=(destination_location, near),
-                )
-                closest_via = Via.objects.filter(
-                    ride=OuterRef("pk")
-                ).annotate(
-                    d=Distance("location", destination_location)
-                ).order_by("d").values("d")[:1]
-
-                filters &= (
-                    Q(destination_location__dwithin=(destination_location, near)) |
-                    Exists(vias_near)
-                )
-                distances.append(Least(
-                    Distance("destination_location", destination_location),
-                    Subquery(closest_via),
-                    output_field=FloatField(),
-                ))
-
-            if offer_ride:
-                filters &= Q(offer=True)
-            if request_ride:
-                filters &= Q(request=True)
-            if other_ride:
-                filters &= Q(other=True) | Q(train=True) | Q(bus=True) | Q(taxi=True)
-
-            rides = Ride.objects.filter(filters).select_related("driver")
-            if distances:
-                rides = rides.annotate(
-                    dist=ExpressionWrapper(sum(distances[1:], distances[0]), output_field=FloatField())
-                ).order_by("dist")
-
-            # Evaluate once, so the template reuses the same results
-            rides = list(rides)
-            found = bool(rides)
-
-            context = {"form": search_form, "rides": rides, "searched": True, "found": found, "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),}
-        else:
-            context = {"form": search_form, "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),}
-    else:
-        context = {"form": search_form, "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),}
+    # Asynchronous searches from the search page only need the results
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        return render(request, "search_results.html", context)
 
     return render(request, "search.html", context)
+
+def search_rides(form_clean):
+    """Build the search query. Nothing is fetched until it is evaluated."""
+    start_json = form_clean["start_json"]
+    destination_json = form_clean["destination_json"]
+
+    near = D(km=30)
+    filters = Q()
+    # Distance terms that are added together to order the results
+    distances = []
+
+    if start_json:
+        sl = start_json["location"]
+        start_location = Point(sl["lng"], sl["lat"], srid=4326)
+
+        filters &= Q(start_location__dwithin=(start_location, near))
+        distances.append(Distance("start_location", start_location))
+
+    if destination_json:
+        dl = destination_json["location"]
+        destination_location = Point(dl["lng"], dl["lat"], srid=4326)
+
+        # Match rides that end near the destination or pass by it on a via
+        vias_near = Via.objects.filter(
+            ride=OuterRef("pk"),
+            location__dwithin=(destination_location, near),
+        )
+        closest_via = Via.objects.filter(
+            ride=OuterRef("pk")
+        ).annotate(
+            d=Distance("location", destination_location)
+        ).order_by("d").values("d")[:1]
+
+        filters &= (
+            Q(destination_location__dwithin=(destination_location, near)) |
+            Exists(vias_near)
+        )
+        distances.append(Least(
+            Distance("destination_location", destination_location),
+            Subquery(closest_via),
+            output_field=FloatField(),
+        ))
+
+    if form_clean["offer"]:
+        filters &= Q(offer=True)
+    if form_clean["request"]:
+        filters &= Q(request=True)
+    if form_clean["other"]:
+        filters &= Q(other=True) | Q(train=True) | Q(bus=True) | Q(taxi=True)
+
+    rides = Ride.objects.filter(filters).select_related("driver")
+    # The order must be stable, so that pages do not overlap
+    if distances:
+        return rides.annotate(
+            dist=ExpressionWrapper(sum(distances[1:], distances[0]), output_field=FloatField())
+        ).order_by("dist", "-created_at", "-pk")
+    return rides.order_by("-created_at", "-pk")
 
 @login_required
 def add_ride(request):    
@@ -157,14 +162,15 @@ def add_ride(request):
 
                 with transaction.atomic():
                     ride.save()
-                    for order, via_json in enumerate(vias_json[:8]):
-                        vl = via_json["location"]
-                        Via.objects.create(
+                    Via.objects.bulk_create([
+                        Via(
                             ride=ride,
                             order=order,
                             via_json=via_json,
-                            location=Point(vl["lng"], vl["lat"], srid=4326),
+                            location=Point(via_json["location"]["lng"], via_json["location"]["lat"], srid=4326),
                         )
+                        for order, via_json in enumerate(vias_json[:8])
+                    ])
             except Exception as e:
                 context = {
                     "ride_form": ride_form,

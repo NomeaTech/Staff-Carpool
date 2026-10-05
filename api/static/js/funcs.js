@@ -319,3 +319,14 @@ async function autocomplete_init(div_id, id, placeholder, required_hint = null) 
         }
     });
 }
+
+// Images that start hidden inside a daisyUI skeleton call this from their
+// onload/onerror attributes. The image is faded in and the skeleton removed.
+// (Using the attributes means images that load before any script runs, e.g.
+// from the cache, are still handled.)
+function imageLoaded(img) {
+    img.parentElement.classList.remove("skeleton");
+    if (img.complete && img.naturalWidth > 0) {
+        img.style.opacity = 1;
+    }
+}

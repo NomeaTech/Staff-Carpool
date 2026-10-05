@@ -133,6 +133,25 @@ TEMPLATES = [
 WSGI_APPLICATION = 'carpool.wsgi.application'
 
 
+# Cache
+# Template fragments ({% cache ... using="templates" %}) are not cached while
+# DEBUG is on, so template edits show up immediately during development.
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    },
+    "templates": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache" if DEBUG
+            else "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "templates",
+    },
+}
+
+# Sessions are read from the cache, and only fetched from the database on a miss
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+
+
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
@@ -144,6 +163,9 @@ DATABASES = {
         "PASSWORD": "1234",
         "HOST": "127.0.0.1",
         "PORT": "5432",
+        # Keep connections open between requests instead of reconnecting each time
+        "CONN_MAX_AGE": 60,
+        "CONN_HEALTH_CHECKS": True,
     }
 }
 
