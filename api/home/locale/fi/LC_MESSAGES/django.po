@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-25 13:44+0300\n"
+"POT-Creation-Date: 2026-10-06 17:55+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,122 +18,140 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: home/templates/add_ride.html:58 home/templates/add_ride.html:227
+#: home/campuses.py:12
+msgid "Lappeenranta campus"
+msgstr ""
+
+#: home/campuses.py:22
+msgid "Lahti Mukkula campus"
+msgstr ""
+
+#: home/campuses.py:32
+msgid "Lahti Niemi campus"
+msgstr ""
+
+#: home/campuses.py:42
+msgid "Kouvola campus"
+msgstr ""
+
+#: home/campuses.py:52
+msgid "Mikkeli campus"
+msgstr ""
+
+#: home/templates/add_ride.html:45
+msgid "Select a start location"
+msgstr ""
+
+#: home/templates/add_ride.html:46 home/templates/search.html:18
+msgid "Other destination"
+msgstr ""
+
+#: home/templates/add_ride.html:46
+msgid "Select a destination"
+msgstr ""
+
+#: home/templates/add_ride.html:67 home/templates/add_ride.html:224
 msgid "Add ride"
 msgstr ""
 
-#: home/templates/add_ride.html:64
+#: home/templates/add_ride.html:73
 msgid "Ride options"
 msgstr ""
 
-#: home/templates/add_ride.html:67
+#: home/templates/add_ride.html:76
 msgid "Car ride"
 msgstr ""
 
-#: home/templates/add_ride.html:70
+#: home/templates/add_ride.html:79
 msgid "Offer"
 msgstr ""
 
-#: home/templates/add_ride.html:74
+#: home/templates/add_ride.html:83
 msgid "Request"
 msgstr ""
 
-#: home/templates/add_ride.html:80
+#: home/templates/add_ride.html:89
 msgid "Other transport"
 msgstr ""
 
-#: home/templates/add_ride.html:84
+#: home/templates/add_ride.html:93
 msgid "Train"
 msgstr ""
 
-#: home/templates/add_ride.html:88
+#: home/templates/add_ride.html:97
 msgid "Bus"
 msgstr ""
 
-#: home/templates/add_ride.html:92
+#: home/templates/add_ride.html:101
 msgid "Taxi"
 msgstr ""
 
-#: home/templates/add_ride.html:96 home/templates/add_ride.html:104
-#: home/templates/add_ride.html:105
+#: home/templates/add_ride.html:105 home/templates/add_ride.html:113
+#: home/templates/add_ride.html:114
 msgid "Other"
 msgstr ""
 
-#: home/templates/add_ride.html:110 home/templates/add_ride.html:111
+#: home/templates/add_ride.html:119 home/templates/add_ride.html:120
 msgid "Maximum passengers"
 msgstr ""
 
-#: home/templates/add_ride.html:115
+#: home/templates/add_ride.html:124
 msgid "Address"
 msgstr ""
 
-#: home/templates/add_ride.html:118 home/templates/add_ride.html:119
-#: home/templates/add_ride.html:134 home/templates/search.html:37
-msgid "From"
-msgstr ""
-
-#: home/templates/add_ride.html:123 home/templates/add_ride.html:124
-#: home/templates/search.html:38
-msgid "To"
-msgstr ""
-
-#: home/templates/add_ride.html:135
-msgid "Place name"
-msgstr ""
-
-#: home/templates/add_ride.html:140
+#: home/templates/add_ride.html:137
 msgid "Schedule"
 msgstr ""
 
-#: home/templates/add_ride.html:144
+#: home/templates/add_ride.html:141
 msgid "Recurrance"
 msgstr ""
 
-#: home/templates/add_ride.html:147
+#: home/templates/add_ride.html:144
 msgid "One-time"
 msgstr ""
 
-#: home/templates/add_ride.html:151
+#: home/templates/add_ride.html:148
 msgid "Recurring"
 msgstr ""
 
-#: home/templates/add_ride.html:157 home/templates/add_ride.html:165
+#: home/templates/add_ride.html:154 home/templates/add_ride.html:162
 msgid "Return"
 msgstr ""
 
-#: home/templates/add_ride.html:161
+#: home/templates/add_ride.html:158
 msgid "One-way"
 msgstr ""
 
-#: home/templates/add_ride.html:170 home/templates/search.html:39
+#: home/templates/add_ride.html:167 home/templates/search.html:53
 msgid "Date"
 msgstr ""
 
-#: home/templates/add_ride.html:171
+#: home/templates/add_ride.html:168
 msgid "Time"
 msgstr ""
 
-#: home/templates/add_ride.html:197
+#: home/templates/add_ride.html:194
 msgid "Date and time"
 msgstr ""
 
-#: home/templates/add_ride.html:200
+#: home/templates/add_ride.html:197
 msgid "Leaving at"
 msgstr ""
 
-#: home/templates/add_ride.html:206
+#: home/templates/add_ride.html:203
 msgid "Returning at"
 msgstr ""
 
-#: home/templates/add_ride.html:223
+#: home/templates/add_ride.html:220
 msgid "Note for passengers"
 msgstr ""
 
-#: home/templates/app.html:12
+#: home/templates/app.html:7
 msgid "Campus Carpool"
 msgstr ""
 
-#: home/templates/app.html:116
+#: home/templates/app.html:120
 msgid "LUT Kyyti"
 msgstr ""
 
@@ -182,50 +200,75 @@ msgctxt "Page title"
 msgid "Search"
 msgstr ""
 
-#: home/templates/search.html:20
+#: home/templates/search.html:32
 msgid "Offer car ride"
 msgstr ""
 
-#: home/templates/search.html:26
+#: home/templates/search.html:38
 msgid "Request car ride"
 msgstr ""
 
-#: home/templates/search.html:32
+#: home/templates/search.html:44
 msgid "Train, bus, taxi, other"
 msgstr ""
 
-#: home/templates/search.html:40
+#: home/templates/search.html:51
+msgid "From"
+msgstr ""
+
+#: home/templates/search.html:52
+msgid "To"
+msgstr ""
+
+#: home/templates/search.html:54
 msgid "Search"
 msgstr ""
 
-#: home/templates/search.html:108
+#: home/templates/search.html:66
+msgid "Search failed, please try again."
+msgstr ""
+
+#: home/templates/search_results.html:68
 msgid "No results found"
 msgstr ""
 
-#: home/views.py:94
+#: home/templates/search_results.html:79
+msgid "Previous page"
+msgstr ""
+
+#: home/templates/search_results.html:81
+#, python-format
+msgid "Page %(number)s of %(total)s"
+msgstr ""
+
+#: home/templates/search_results.html:85
+msgid "Next page"
+msgstr ""
+
+#: home/views.py:132
 msgid "Mon"
 msgstr ""
 
-#: home/views.py:95
+#: home/views.py:133
 msgid "Tue"
 msgstr ""
 
-#: home/views.py:96
+#: home/views.py:134
 msgid "Wed"
 msgstr ""
 
-#: home/views.py:97
+#: home/views.py:135
 msgid "Thu"
 msgstr ""
 
-#: home/views.py:98
+#: home/views.py:136
 msgid "Fri"
 msgstr ""
 
-#: home/views.py:99
+#: home/views.py:137
 msgid "Sat"
 msgstr ""
 
-#: home/views.py:100
+#: home/views.py:138
 msgid "Sun"
 msgstr ""

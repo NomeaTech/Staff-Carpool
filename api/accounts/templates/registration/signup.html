@@ -69,15 +69,15 @@
             <div class="col-span-3">
               {{ form.password1 }}
               <p class="hidden validator-hint ml-3">
-                {% blocktranslate %}
-                Your password can't be a commonly used password.
-                Your password can't be too similar to your other personal information.
-                Your password can't be entirely numeric.
-                Must be more than 8 characters, including
-                <br/>At least one number
-                <br/>At least one lowercase letter
-                <br/>At least one uppercase letter
-                {% endblocktranslate %}
+                
+                {% trans "Your password can't be a commonly used password." %}
+                {% trans "Your password can't be too similar to your other personal information." %}
+                {% trans "Your password can't be entirely numeric." %}
+                {% trans "Must be more than 8 characters, including" %}
+                <br/>{% trans "At least one number" %}
+                <br/>{% trans "At least one lowercase letter" %}
+                <br/>{% trans "At least one uppercase letter" %}
+                
               </p>
             </div>
             {{ form.password2 }}

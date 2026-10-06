@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-16 12:44+0300\n"
+"POT-Creation-Date: 2026-10-06 17:55+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,71 +18,71 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: test_app/models.py:163
+#: test_app/models.py:170
 msgid "Mon"
 msgstr ""
 
-#: test_app/models.py:164
+#: test_app/models.py:171
 msgid "Tue"
 msgstr ""
 
-#: test_app/models.py:165
+#: test_app/models.py:172
 msgid "Wed"
 msgstr ""
 
-#: test_app/models.py:166
+#: test_app/models.py:173
 msgid "Thu"
 msgstr ""
 
-#: test_app/models.py:167
+#: test_app/models.py:174
 msgid "Fri"
 msgstr ""
 
-#: test_app/models.py:168
+#: test_app/models.py:175
 msgid "Sat"
 msgstr ""
 
-#: test_app/models.py:169
+#: test_app/models.py:176
 msgid "Sun"
 msgstr ""
 
-#: test_app/models.py:175
+#: test_app/models.py:182
 msgid "Everyday"
 msgstr ""
 
-#: test_app/models.py:177
+#: test_app/models.py:184
 msgid "Weekdays"
 msgstr ""
 
-#: test_app/models.py:179
+#: test_app/models.py:186
 msgid "Weekends"
 msgstr ""
 
-#: test_app/models.py:223
+#: test_app/models.py:230
 msgid "Monday"
 msgstr ""
 
-#: test_app/models.py:224
+#: test_app/models.py:231
 msgid "Tuesday"
 msgstr ""
 
-#: test_app/models.py:225
+#: test_app/models.py:232
 msgid "Wednesday"
 msgstr ""
 
-#: test_app/models.py:226
+#: test_app/models.py:233
 msgid "Thursday"
 msgstr ""
 
-#: test_app/models.py:227
+#: test_app/models.py:234
 msgid "Friday"
 msgstr ""
 
-#: test_app/models.py:228
+#: test_app/models.py:235
 msgid "Saturday"
 msgstr ""
 
-#: test_app/models.py:229
+#: test_app/models.py:236
 msgid "Sunday"
 msgstr ""
 
@@ -90,30 +90,30 @@ msgstr ""
 msgid "You are offline"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:93
+#: test_app/templates/ride_detail.html:95
 msgid "Ride Options"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:101
+#: test_app/templates/ride_detail.html:103
 msgid "Car"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:111
+#: test_app/templates/ride_detail.html:113
 msgid "Request"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:121
+#: test_app/templates/ride_detail.html:123
 msgid "Train"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:131
+#: test_app/templates/ride_detail.html:133
 msgid "Bus"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:141
+#: test_app/templates/ride_detail.html:143
 msgid "Taxi"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:151
+#: test_app/templates/ride_detail.html:153
 msgid "Other"
 msgstr ""

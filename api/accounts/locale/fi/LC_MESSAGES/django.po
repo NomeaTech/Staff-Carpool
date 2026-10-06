@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-16 12:44+0300\n"
+"POT-Creation-Date: 2026-10-06 17:55+0300\n"
 "PO-Revision-Date: 2026-06-27 19:05+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,52 +27,53 @@ msgstr ""
 msgid "Email Address *"
 msgstr ""
 
-#: accounts/forms.py:24
+#: accounts/forms.py:25
 msgid "Username"
 msgstr "Käyttäjätunnus"
 
-#: accounts/forms.py:34
+#: accounts/forms.py:35
 msgid "First Name *"
 msgstr ""
 
-#: accounts/forms.py:44
+#: accounts/forms.py:45
 msgid "Last Name *"
 msgstr ""
 
-#: accounts/forms.py:57
+#: accounts/forms.py:58
 msgid "Phone"
 msgstr ""
 
-#: accounts/forms.py:67
+#: accounts/forms.py:68
 msgid "Password *"
 msgstr ""
 
-#: accounts/forms.py:71
+#: accounts/forms.py:73
 msgid ""
 "Must be more than 8 characters, including number, lowercase letter, "
 "uppercase letter"
 msgstr ""
 
-#: accounts/forms.py:80
+#: accounts/forms.py:82
 msgid "Confirm Password *"
 msgstr ""
 
-#: accounts/forms.py:84
+#: accounts/forms.py:87
 msgid ""
 "Must be more than 8 characters, including number, lowercase letter, "
 "uppercase letter *"
 msgstr ""
 
-#: accounts/forms.py:131
+#: accounts/forms.py:134
 msgid "Email"
 msgstr ""
 
-#: accounts/forms.py:149
+#: accounts/forms.py:152
 msgid "Password"
 msgstr ""
 
 #: accounts/templates/registration/login.html:16
 #: accounts/templates/registration/login.html:58
+#: accounts/templates/registration/signup.html:109
 msgid "Login"
 msgstr "Kirjaudu"
 
@@ -178,18 +179,32 @@ msgstr ""
 msgid "Username is required"
 msgstr ""
 
-#: accounts/templates/registration/signup.html:72
-msgid ""
-"\n"
-"                Your password can't be a commonly used password.\n"
-"                Your password can't be too similar to your other personal "
-"information.\n"
-"                Your password can't be entirely numeric.\n"
-"                Must be more than 8 characters, including\n"
-"                <br/>At least one number\n"
-"                <br/>At least one lowercase letter\n"
-"                <br/>At least one uppercase letter\n"
-"                "
+#: accounts/templates/registration/signup.html:73
+msgid "Your password can't be a commonly used password."
+msgstr ""
+
+#: accounts/templates/registration/signup.html:74
+msgid "Your password can't be too similar to your other personal information."
+msgstr ""
+
+#: accounts/templates/registration/signup.html:75
+msgid "Your password can't be entirely numeric."
+msgstr ""
+
+#: accounts/templates/registration/signup.html:76
+msgid "Must be more than 8 characters, including"
+msgstr ""
+
+#: accounts/templates/registration/signup.html:77
+msgid "At least one number"
+msgstr ""
+
+#: accounts/templates/registration/signup.html:78
+msgid "At least one lowercase letter"
+msgstr ""
+
+#: accounts/templates/registration/signup.html:79
+msgid "At least one uppercase letter"
 msgstr ""
 
 #: accounts/templates/registration/signup.html:87
@@ -200,14 +215,18 @@ msgstr ""
 msgid "Error in account creation. Check that passwords match"
 msgstr ""
 
-#: accounts/templates/registration/signup.html:104
+#: accounts/templates/registration/signup.html:105
 msgctxt ""
 "Full sentence: By creating an account you agree to the Terms of Use and "
 "Privacy Policy."
 msgid ""
 "\n"
-"              <p class=\"col-span-3\">By creating an account you agree to "
-"the <a class=\"link link-primary\" href=\"/\">Terms of Use </a>and <a "
-"class=\"link link-secondary\" href=\"/\">Privacy Policy</a>.</p>\n"
-"            "
+"                <p>By creating an account you agree to the <a class=\"link "
+"link-primary\" href=\"/terms-of-use\">Terms of Use</a> and <a class=\"link "
+"link-secondary\" href=\"/privacy-policy\">Privacy Policy</a>.</p>\n"
+"              "
+msgstr ""
+
+#: accounts/templates/registration/signup.html:109
+msgid "Already have a LUT Kyyti account?"
 msgstr ""
