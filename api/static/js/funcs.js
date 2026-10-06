@@ -239,19 +239,24 @@ async function destination_init(div_id, campuses_id, placeholder, other_label, r
         }
     }
 
-    select.addEventListener("change", async () => {
+    select.addEventListener("change", async (event) => {
         if (select.value === "other") {
             campusInfo.disabled = true;
             campusInfo.value = "";
             if (!otherReady) {
                 otherReady = autocomplete_init(otherDiv.id, "destination", placeholder, required_hint);
+                // Lets other code wait for the autocomplete input to exist
+                otherDiv.ready = otherReady;
             }
             showOther(true);
             await otherReady;
             // The selection may have changed while the autocomplete was loading
             if (select.value === "other") {
                 showOther(true);
-                otherDiv.querySelector('input[type="text"]').focus();
+                // Only when the user chose it, not when set from code
+                if (event.isTrusted) {
+                    otherDiv.querySelector('input[type="text"]').focus();
+                }
             }
         } else {
             showOther(false);
