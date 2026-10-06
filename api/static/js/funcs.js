@@ -180,6 +180,93 @@ function debounce(func, delay) {
     };
 }
 
+// Destination picker: a dropdown of the LUT campuses, whose place data is
+// already known (campuses_id is the id of a json_script element), so choosing
+// one makes no Google API query. "Other destination" shows the normal
+// autocomplete input instead. The selected place is submitted as
+// destination_json, the same as with autocomplete_init.
+// If required_hint is given, a destination must be chosen before submitting.
+async function destination_init(div_id, campuses_id, placeholder, other_label, required_hint = null) {
+    const dest_div = document.getElementById(div_id);
+    const campuses = JSON.parse(document.getElementById(campuses_id).textContent);
+
+    const fixedHeight = dest_div.classList.contains("h-12");
+    dest_div.classList.remove("skeleton", "h-12");
+    dest_div.classList.add("flex", "flex-col", "gap-2");
+
+    const select = document.createElement('select');
+    select.className = `select w-full ${fixedHeight ? "h-12" : ""}`;
+    const placeholderOption = new Option(placeholder, "", true, true);
+    // When a destination is required, the placeholder cannot be chosen
+    placeholderOption.disabled = Boolean(required_hint);
+    select.add(placeholderOption);
+    campuses.forEach((campus, index) => select.add(new Option(campus.label, String(index))));
+    select.add(new Option(other_label, "other"));
+    dest_div.appendChild(select);
+
+    if (required_hint) {
+        select.required = true;
+        select.classList.add("validator");
+        const validatorHint = document.createElement('p');
+        validatorHint.className = "hidden validator-hint ml-3";
+        validatorHint.textContent = required_hint;
+        dest_div.appendChild(validatorHint);
+    }
+
+    // Holds the selected campus. Disabled inputs are not submitted, so only
+    // one of this and the autocomplete's input is ever sent.
+    const campusInfo = document.createElement('input');
+    campusInfo.type = "hidden";
+    campusInfo.name = "destination_json";
+    campusInfo.disabled = true;
+    dest_div.appendChild(campusInfo);
+
+    // The autocomplete for "Other destination" is only created when needed
+    const otherDiv = document.createElement('div');
+    otherDiv.id = `${div_id}-other`;
+    if (fixedHeight) {
+        otherDiv.classList.add("h-12");
+    }
+    otherDiv.hidden = true;
+    dest_div.appendChild(otherDiv);
+    let otherReady = null;
+
+    // Hidden and disabled inputs are also skipped by form validation
+    function showOther(show) {
+        otherDiv.hidden = !show;
+        for (const input of otherDiv.querySelectorAll("input")) {
+            input.disabled = !show;
+        }
+    }
+
+    select.addEventListener("change", async (event) => {
+        if (select.value === "other") {
+            campusInfo.disabled = true;
+            campusInfo.value = "";
+            if (!otherReady) {
+                otherReady = autocomplete_init(otherDiv.id, "destination", placeholder, required_hint);
+                // Lets other code wait for the autocomplete input to exist
+                otherDiv.ready = otherReady;
+            }
+            showOther(true);
+            await otherReady;
+            // The selection may have changed while the autocomplete was loading
+            if (select.value === "other") {
+                showOther(true);
+                // Only when the user chose it, not when set from code
+                if (event.isTrusted) {
+                    otherDiv.querySelector('input[type="text"]').focus();
+                }
+            }
+        } else {
+            showOther(false);
+            const campus = campuses[select.value];
+            campusInfo.value = campus ? JSON.stringify(campus.place) : "";
+            campusInfo.disabled = !campus;
+        }
+    });
+}
+
 // If required_hint is given, the form cannot be submitted until a place
 // has been selected from the suggestions, and the hint is shown under the input.
 async function autocomplete_init(div_id, id, placeholder, required_hint = null) {

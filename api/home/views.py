@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from test_app.models import Ride
 from .forms import SearchForm
+from .campuses import CAMPUSES
 from accounts.models import User
 from test_app.forms import AddressForm, RideForm
 import traceback
@@ -47,7 +48,7 @@ SEARCH_PAGE_SIZE = 12
 @login_required
 @never_cache
 def search(request):
-    context = {"GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY")}
+    context = {"GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"), "campuses": CAMPUSES}
 
     if request.method != "POST":
         context["form"] = SearchForm()
@@ -175,7 +176,7 @@ def add_ride(request):
                 context = {
                     "ride_form": ride_form,
                     "day_list": day_list,
-                    "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),
+                    "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"), "campuses": CAMPUSES,
                 }
                 
                 return render(request, "add_ride.html", context)
@@ -186,7 +187,7 @@ def add_ride(request):
             context = {
                 "ride_form": ride_form,
                 "day_list": day_list,
-                "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),
+                "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"), "campuses": CAMPUSES,
             }
 
             return render(request, "add_ride.html", context)
@@ -198,7 +199,7 @@ def add_ride(request):
     context = {
         "ride_form": ride_form,
         "day_list": day_list,
-        "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"),
+        "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"), "campuses": CAMPUSES,
     }
 
     return render(request, "add_ride.html", context)

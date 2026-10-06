@@ -6,20 +6,24 @@
 
 {% block title %}{% trans "Search" context "Page title" %}{% endblock %}
 {% block content %}
+{{ campuses|json_script:"campus-data" }}
 
 <script>
     (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
         key: "{{ GOOGLE_MAPS_API_KEY }}"
     });
     
-    window.onload = function() {
-        autocomplete_init("div-autocomplete-start", "start", "From");
-        autocomplete_init("div-autocomplete-destination", "destination", "To");
-    };
+    // Resolves once the From and To inputs have been created
+    window.searchFormReady = new Promise((resolve) => {
+        window.addEventListener("load", () => resolve(Promise.all([
+            autocomplete_init("div-autocomplete-start", "start", "From"),
+            destination_init("div-autocomplete-destination", "campus-data", "To", "{% trans "Other destination" %}"),
+        ])));
+    });
 </script>
 
-<section class="flex flex-col pt-5 lg:pt-15 h-screen mx-auto overflow-scroll scrollbar-hide">
-    <form id="search-form" class="flex lg:absolute lg:top-20 top-5 inset-x-0 justify-center mx-2" action="/app/search/" method="post">
+<section class="flex flex-col pt-5 lg:pt-20 h-screen mx-auto overflow-scroll scrollbar-hide">
+    <form id="search-form" class="flex lg:sticky lg:top-0 z-10 justify-center mx-2" action="/app/search/" method="post">
         {% csrf_token %}
         
         <div class="card border-solid border-2 border-primary bg-base-100 shadow-sm lg:w-200 z-10 justify-center">
@@ -56,7 +60,7 @@
             </div>
         </div>
     </form>
-    <div id="search-results" aria-live="polite" class="flex flex-wrap 2xl:w-380 xl:w-300 md:w-200 mb-15 md:mb-0 lg:pb-2 pb-15 pt-5 lg:pt-55 col-span-1 xl:px-0 justify-center">
+    <div id="search-results" aria-live="polite" class="flex flex-wrap 2xl:w-380 xl:w-300 md:w-200 mb-15 md:mb-0 lg:pb-2 pb-15 pt-5 col-span-1 xl:px-0 justify-center">
         {% include "search_results.html" %}
     </div>
 </section>
@@ -68,18 +72,105 @@
 <script>
     // Search without reloading the page: the form is posted with fetch and
     // the server returns only the results (search_results.html).
+    //
+    // The last search (its form fields and results) is saved in the browser
+    // history entry, so going back to this page, e.g. from a ride, shows the
+    // same search again without querying the server.
     (function() {
         const form = document.getElementById("search-form");
         const results = document.getElementById("search-results");
         const scroller = results.closest("section");
         let lastSearch = null;
         let controller = null;
+        // The form as it was when the shown results were searched
+        let searchedForm = null;
+
+        // From/To autocompletes: the visible text and the selected place's JSON
+        function placeState(div) {
+            if (!div) {
+                return null;
+            }
+            return {
+                text: div.querySelector('input[type="text"]')?.value ?? "",
+                json: div.querySelector('input[name$="_json"]')?.value ?? "",
+            };
+        }
+
+        function setPlace(div, place) {
+            if (!div || !place) {
+                return;
+            }
+            div.querySelector('input[type="text"]').value = place.text;
+            div.querySelector('input[name$="_json"]').value = place.json;
+        }
+
+        function snapshotForm() {
+            return {
+                checks: Object.fromEntries(["offer", "request", "other"].map((name) => [name, form.elements[name].checked])),
+                date: form.querySelector('input[type="datetime-local"]').value,
+                start: placeState(document.getElementById("div-autocomplete-start")),
+                destination: {
+                    choice: document.querySelector("#div-autocomplete-destination select").value,
+                    other: placeState(document.getElementById("div-autocomplete-destination-other")),
+                },
+            };
+        }
+
+        async function restoreForm(saved) {
+            for (const [name, checked] of Object.entries(saved.checks)) {
+                form.elements[name].checked = checked;
+            }
+            form.querySelector('input[type="datetime-local"]').value = saved.date;
+            setPlace(document.getElementById("div-autocomplete-start"), saved.start);
+
+            const select = document.querySelector("#div-autocomplete-destination select");
+            select.value = saved.destination.choice;
+            select.dispatchEvent(new Event("change"));
+            if (saved.destination.choice === "other") {
+                const otherDiv = document.getElementById("div-autocomplete-destination-other");
+                await otherDiv.ready;
+                setPlace(otherDiv, saved.destination.other);
+            }
+        }
+
+        function saveState(changes) {
+            const state = history.state || {};
+            try {
+                history.replaceState({ ...state, search: { ...state.search, ...changes } }, "");
+            } catch (error) {
+                // e.g. the browser's size limit for history state
+                console.warn("Could not save the search", error);
+            }
+        }
+
+        const saved = history.state && history.state.search;
+        if (saved) {
+            lastSearch = saved.entries;
+            searchedForm = saved.form;
+            results.innerHTML = saved.results;
+            scroller.scrollTop = saved.scroll || 0;
+            window.searchFormReady
+                .then(() => restoreForm(saved.form))
+                .catch((error) => console.error("Could not restore the search form", error));
+        }
+
+        // Remember how far down the results were scrolled
+        let scrollTimer = null;
+        scroller.addEventListener("scroll", () => {
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(() => {
+                if (history.state && history.state.search) {
+                    saveState({ scroll: scroller.scrollTop });
+                }
+            }, 200);
+        });
 
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
 
             let data;
-            if (event.submitter && event.submitter.name === "page" && lastSearch) {
+            const changingPage = Boolean(event.submitter && event.submitter.name === "page" && lastSearch);
+            if (changingPage) {
                 // Changing page keeps the filters of the last search,
                 // even if the form has been edited since.
                 data = new FormData();
@@ -90,6 +181,7 @@
             } else {
                 data = new FormData(form);
                 lastSearch = [...data.entries()];
+                searchedForm = snapshotForm();
             }
 
             // Only the latest search is shown
@@ -115,7 +207,9 @@
                 if (!response.ok) {
                     throw new Error(`Search failed: ${response.status}`);
                 }
-                results.innerHTML = await response.text();
+                const html = await response.text();
+                results.innerHTML = html;
+                saveState({ form: searchedForm, entries: lastSearch, results: html, scroll: 0 });
                 scroller.scrollTo({ top: 0, behavior: "smooth" });
             } catch (error) {
                 if (error.name === "AbortError") {

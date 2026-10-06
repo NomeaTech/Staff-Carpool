@@ -5,6 +5,7 @@
 
 {% block title %}Add ride{% endblock %}
 {% block content %}
+{{ campuses|json_script:"campus-data" }}
 
 <script>
     // prettier-ignore
@@ -42,7 +43,7 @@
             }
 
             autocomplete_init("div-autocomplete-start", "start", "From", "{% trans "Select a start location" %}");
-            autocomplete_init("div-autocomplete-destination", "destination", "To", "{% trans "Select a destination" %}");
+            destination_init("div-autocomplete-destination", "campus-data", "To", "{% trans "Other destination" %}", "{% trans "Select a destination" %}");
         };
 
         window.onbeforeunload = function(event) { 
