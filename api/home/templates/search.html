@@ -19,8 +19,8 @@
     };
 </script>
 
-<section class="flex flex-col pt-5 lg:pt-15 h-screen mx-auto overflow-scroll scrollbar-hide">
-    <form id="search-form" class="flex lg:absolute lg:top-20 top-5 inset-x-0 justify-center mx-2" action="/app/search/" method="post">
+<section class="flex flex-col pt-5 lg:pt-20 h-screen mx-auto overflow-scroll scrollbar-hide">
+    <form id="search-form" class="flex lg:sticky lg:top-0 z-10 justify-center mx-2" action="/app/search/" method="post">
         {% csrf_token %}
         
         <div class="card border-solid border-2 border-primary bg-base-100 shadow-sm lg:w-200 z-10 justify-center">
@@ -57,7 +57,7 @@
             </div>
         </div>
     </form>
-    <div id="search-results" aria-live="polite" class="flex flex-wrap 2xl:w-380 xl:w-300 md:w-200 mb-15 md:mb-0 lg:pb-2 pb-15 pt-5 lg:pt-55 col-span-1 xl:px-0 justify-center">
+    <div id="search-results" aria-live="polite" class="flex flex-wrap 2xl:w-380 xl:w-300 md:w-200 mb-15 md:mb-0 lg:pb-2 pb-15 pt-5 col-span-1 xl:px-0 justify-center">
         {% include "search_results.html" %}
     </div>
 </section>
