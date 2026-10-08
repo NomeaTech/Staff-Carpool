@@ -9,19 +9,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-
+    # The code is pulled on the server itself, so the repository is not checked
+    # out here. The key is set up directly instead of with an action, as the
+    # previous actions ran on the deprecated Node 20.
     - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.7.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        install -m 700 -d ~/.ssh
+        printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
 
     - name: Deploy to Server
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'bash -s' << 'EOF'
+          # Stop at the first failing command, so a failed step fails the
+          # workflow instead of restarting the server with outdated code.
+          set -eo pipefail
+
           cd ${{ secrets.PROJECT_PATH }}
-          git pull origin testing
+
+          # Every file must be writable by the deploy user, or git and npm
+          # fail with "insufficient permission" / EACCES.
+          not_owned=$(find . ! -user "$(id -un)" -print -quit)
+          if [ -n "$not_owned" ]; then
+            echo "::error::Files in the project are not owned by $(id -un) (e.g. $not_owned). Run once on the server: sudo chown -R $(id -un): ${{ secrets.PROJECT_PATH }}"
+            exit 1
+          fi
+
+          git pull --ff-only origin testing
           source env/bin/activate
           cd api
           pip install -r requirements.txt
@@ -29,7 +45,6 @@ jobs:
           python manage.py tailwind build
           python manage.py migrate --noinput
           python manage.py collectstatic --noinput
-          sudo systemctl stop django_ride
-          sleep 2
-          sudo systemctl start django_ride
+          sudo systemctl restart django_ride
+          systemctl is-active --quiet django_ride
         EOF
