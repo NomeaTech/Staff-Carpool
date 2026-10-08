@@ -186,25 +186,28 @@ function debounce(func, delay) {
 // autocomplete input instead. The selected place is submitted as
 // destination_json, the same as with autocomplete_init.
 // If required_hint is given, a destination must be chosen before submitting.
-async function destination_init(div_id, campuses_id, placeholder, other_label, required_hint = null) {
+// With optional, no destination is needed, but text typed into "Other
+// destination" must still be turned into a place from the suggestions.
+async function destination_init(div_id, campuses_id, placeholder, other_label, required_hint = null, optional = false) {
     const dest_div = document.getElementById(div_id);
     const campuses = JSON.parse(document.getElementById(campuses_id).textContent);
 
     const fixedHeight = dest_div.classList.contains("h-12");
     dest_div.classList.remove("skeleton", "h-12");
     dest_div.classList.add("flex", "flex-col", "gap-2");
+    const required = Boolean(required_hint) && !optional;
 
     const select = document.createElement('select');
     select.className = `select w-full ${fixedHeight ? "h-12" : ""}`;
     const placeholderOption = new Option(placeholder, "", true, true);
     // When a destination is required, the placeholder cannot be chosen
-    placeholderOption.disabled = Boolean(required_hint);
+    placeholderOption.disabled = required;
     select.add(placeholderOption);
     campuses.forEach((campus, index) => select.add(new Option(campus.label, String(index))));
     select.add(new Option(other_label, "other"));
     dest_div.appendChild(select);
 
-    if (required_hint) {
+    if (required) {
         select.required = true;
         select.classList.add("validator");
         const validatorHint = document.createElement('p');
@@ -244,7 +247,7 @@ async function destination_init(div_id, campuses_id, placeholder, other_label, r
             campusInfo.disabled = true;
             campusInfo.value = "";
             if (!otherReady) {
-                otherReady = autocomplete_init(otherDiv.id, "destination", placeholder, required_hint);
+                otherReady = autocomplete_init(otherDiv.id, "destination", placeholder, required_hint, optional);
                 // Lets other code wait for the autocomplete input to exist
                 otherDiv.ready = otherReady;
             }
@@ -269,7 +272,9 @@ async function destination_init(div_id, campuses_id, placeholder, other_label, r
 
 // If required_hint is given, the form cannot be submitted until a place
 // has been selected from the suggestions, and the hint is shown under the input.
-async function autocomplete_init(div_id, id, placeholder, required_hint = null) {
+// With optional, the input may also be left empty, but any text in it must
+// still be turned into a place from the suggestions.
+async function autocomplete_init(div_id, id, placeholder, required_hint = null, optional = false) {
     const dest_div = document.getElementById(div_id);
     // console.log(dest_div);
 
@@ -295,7 +300,7 @@ async function autocomplete_init(div_id, id, placeholder, required_hint = null) 
     const validatorHint = document.createElement('p');
     if (required_hint) {
         placeInput.classList.add("validator");
-        placeInput.required = true;
+        placeInput.required = !optional;
         validatorHint.className = "hidden validator-hint ml-3";
         validatorHint.textContent = required_hint;
         dest_div.appendChild(validatorHint);
@@ -303,7 +308,8 @@ async function autocomplete_init(div_id, id, placeholder, required_hint = null) 
 
     function updateValidity() {
         if (required_hint) {
-            placeInput.setCustomValidity(selectedPlaceInfo.value ? "" : required_hint);
+            const missing = !selectedPlaceInfo.value && (!optional || placeInput.value.trim() !== "");
+            placeInput.setCustomValidity(missing ? required_hint : "");
         }
     }
 

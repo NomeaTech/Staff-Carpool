@@ -10,7 +10,7 @@
 
 {% if searched %}
     {% for ride in page %}
-        <a href="/ride/{{ride.id}}/">
+        <a href="/app/ride/{{ride.id}}/">
             <div class="card w-80 h-80 md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-out hover:drop-shadow-xl/10 hover:scale-102 drop-shadow-md">
                 <div class="card-body">
                     <div class="flex place-content-between w-full">
@@ -72,15 +72,16 @@
     {% endfor %}
 
     {% if page.paginator.num_pages > 1 %}
-    {# The buttons submit the search form, so paging also works without JavaScript #}
+    {# The buttons submit the search form, so paging also works without JavaScript.
+       They skip validation, as paging keeps the filters of the last search. #}
     <div class="join basis-full justify-center pb-5">
-        <button class="join-item btn" type="submit" form="search-form" name="page"
+        <button class="join-item btn" type="submit" form="search-form" name="page" formnovalidate
             value="{% if page.has_previous %}{{ page.previous_page_number }}{% endif %}"
             {% if not page.has_previous %}disabled{% endif %} aria-label="{% trans "Previous page" %}">«</button>
         <span class="join-item btn pointer-events-none">
             {% blocktrans with number=page.number total=page.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}
         </span>
-        <button class="join-item btn" type="submit" form="search-form" name="page"
+        <button class="join-item btn" type="submit" form="search-form" name="page" formnovalidate
             value="{% if page.has_next %}{{ page.next_page_number }}{% endif %}"
             {% if not page.has_next %}disabled{% endif %} aria-label="{% trans "Next page" %}">»</button>
     </div>
