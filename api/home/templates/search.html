@@ -16,14 +16,14 @@
     // Resolves once the From and To inputs have been created
     window.searchFormReady = new Promise((resolve) => {
         window.addEventListener("load", () => resolve(Promise.all([
-            autocomplete_init("div-autocomplete-start", "start", "From"),
-            destination_init("div-autocomplete-destination", "campus-data", "To", "{% trans "Other destination" %}"),
+            autocomplete_init("div-autocomplete-start", "start", "From", "{% trans "Select a start location from the list" %}", true),
+            destination_init("div-autocomplete-destination", "campus-data", "To", "{% trans "Other destination" %}", "{% trans "Select a destination from the list" %}", true),
         ])));
     });
 </script>
 
 <section class="flex flex-col pt-5 lg:pt-20 h-screen mx-auto overflow-scroll scrollbar-hide">
-    <form id="search-form" class="flex lg:sticky lg:top-0 z-10 justify-center mx-2" action="/app/search/" method="post">
+    <form id="search-form" class="flex z-2 justify-center mx-2" action="/app/search/" method="post">
         {% csrf_token %}
         
         <div class="card border-solid border-2 border-primary bg-base-100 shadow-sm lg:w-200 z-10 justify-center">

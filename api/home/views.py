@@ -1,28 +1,31 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from test_app.models import Ride, Via
-from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from test_app.models import Ride
 from .forms import SearchForm
 from .campuses import CAMPUSES
 from accounts.models import User
-from test_app.forms import AddressForm, RideForm
-import traceback
+from test_app.forms import RideForm
 import logging
 from django.utils.translation import gettext_lazy as _
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import JsonResponse
 from django.db.models import Q, Exists, OuterRef, Subquery, ExpressionWrapper, FloatField
 from django.db.models.functions import Least
 from django.db import transaction
 from django.core.paginator import Paginator
 import os
 import requests
-from django.views.decorators.cache import never_cache, cache_control
+from django.views.decorators.cache import never_cache
 import json
 from django.contrib.gis.geos import Point
 from django.contrib.gis.measure import D
 from django.contrib.gis.db.models.functions import Distance
+from django.urls import reverse
+from django.http import HttpResponseRedirect, Http404
+from django.db import IntegrityError, transaction
+from django.db.models import Exists, OuterRef
+import uuid
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +45,71 @@ def home(request):
 
     context = {"rides_created": rides_created, "rides_registered": rides_registered, "users": users}
     return render(request, "home.html", context)
+
+# Everything to do with recurring rides should be moved to its own app
+@login_required
+def ride_detail(request, ride_id):
+    # Driver and passenger status are fetched in the same query as the ride
+    is_passenger = Ride.passenger.through.objects.filter(
+        ride=OuterRef("pk"), user=request.user.pk
+    )
+    ride = get_object_or_404(
+        Ride.objects.select_related("driver").annotate(is_passenger=Exists(is_passenger)),
+        pk=ride_id,
+    )
+    is_driver = ride.driver_id == request.user.id
+
+    # leaving_at = f"{l_weekday.title()}, {str(l_hour).zfill(2)}:{str(l_minute).zfill(2)}"
+    
+    # leaving_at = f"{str(l_hour).zfill(2)}:{str(l_minute).zfill(2)}"
+    # arriving_at = f"{str(a_hour).zfill(2)}:{str(a_minute).zfill(2)}"
+
+    context = {
+        "ride": ride, 
+        "is_driver": is_driver, 
+        "is_passenger": ride.is_passenger,
+        # "leaving_at": leaving_at,
+        # "arriving_at": arriving_at,
+        "vias": ride.via_points.all(),
+    }
+    
+    return render(request, "ride_detail.html", context)
+
+# join, leave and delete work on the ride id directly, without loading the ride
+
+@login_required
+def join_ride(request):
+    ride_id = get_ride_id(request)
+    try:
+        with transaction.atomic():
+            request.user.passenger.add(ride_id)
+    except IntegrityError:
+        # The ride does not exist
+        raise Http404
+
+    return HttpResponseRedirect(f"/app/ride/{ride_id}/")
+
+@login_required
+def leave_ride(request):
+    ride_id = get_ride_id(request)
+    request.user.passenger.remove(ride_id)
+
+    return HttpResponseRedirect(f"/app/ride/{ride_id}/")
+
+@login_required
+def delete_ride(request):
+    ride_id = get_ride_id(request)
+    # Only deletes the ride if the user is its driver
+    Ride.objects.filter(pk=ride_id, driver=request.user).delete()
+
+    return HttpResponseRedirect(reverse("home"))
+
+def get_ride_id(request):
+    try:
+        return uuid.UUID(request.POST.get("ride"))
+    except (TypeError, ValueError, AttributeError):
+        raise Http404
+
 
 SEARCH_PAGE_SIZE = 12
 
@@ -180,7 +248,7 @@ def add_ride(request):
                 }
                 
                 return render(request, "add_ride.html", context)
-            return HttpResponseRedirect(f"/ride/{ride.id}")
+            return HttpResponseRedirect(f"/app/ride/{ride.id}")
             # return HttpResponseRedirect("/app/home")
 
         else:
