@@ -210,6 +210,19 @@ LOCALE_PATHS = [
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.getenv("STATIC_ROOT")
+
+# collectstatic adds a hash of each file's contents to its name (funcs.js ->
+# funcs.3f2a9c1b.js), and {% static %} links to that name. A changed file
+# therefore gets a new URL, so browsers never use an outdated cached copy.
+# (With DEBUG on, {% static %} links to the plain names.)
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+    },
+}
 USER_IMAGES_URL = '/user_images/'
 USER_IMAGES_ROOT = os.path.join(STATIC_ROOT, '/images/user_images/')
 
