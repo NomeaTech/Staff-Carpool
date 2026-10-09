@@ -51,7 +51,9 @@ def fetch_driving_route(points):
     The driving route through the given points (WGS84 Points, in order), as a
     list of (lat, lng) pairs, or None if the Routes API request fails.
     """
-    key = os.getenv("GOOGLE_MAPS_API_KEY")
+    # A key restricted to websites (HTTP referrers) only works from browsers,
+    # so server requests need their own key, restricted to the server's IP.
+    key = os.getenv("GOOGLE_MAPS_SERVER_KEY") or os.getenv("GOOGLE_MAPS_API_KEY")
     if not key:
         return None
     body = {
@@ -70,10 +72,17 @@ def fetch_driving_route(points):
             },
             timeout=10,
         )
-        response.raise_for_status()
+    except requests.RequestException:
+        logger.exception("Could not reach the Routes API")
+        return None
+    if not response.ok:
+        # Google explains the problem in the body, e.g. a key restriction
+        logger.error("The Routes API refused the request (%s): %s", response.status_code, response.text[:500])
+        return None
+    try:
         return decode_polyline(response.json()["routes"][0]["polyline"]["encodedPolyline"])
-    except (requests.RequestException, KeyError, IndexError, ValueError):
-        logger.exception("Could not fetch the driving route from the Routes API")
+    except (KeyError, IndexError, ValueError):
+        logger.exception("Unexpected response from the Routes API")
         return None
 
 

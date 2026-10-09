@@ -1,5 +1,5 @@
 # Staff-Carpool
-Version: 0.17.1
+Version: 0.17.2
 
 ## Installation instructions
 
@@ -10,7 +10,7 @@ SECRET_KEY = 'key'
 DEBUG = 'boolean'
 STATIC_ROOT = './directory/'
 ```
-
+dj
 ### Create development environment
 ```
 python -m venv env
