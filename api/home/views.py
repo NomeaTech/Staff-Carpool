@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from test_app.models import Ride, Via
+from test_app.routes import build_route, as_route_point
 from django.contrib.auth.decorators import login_required
 from test_app.models import Ride
 from .forms import SearchForm
@@ -10,7 +11,7 @@ from test_app.forms import RideForm
 import logging
 from django.utils.translation import gettext_lazy as _
 from django.http import JsonResponse
-from django.db.models import Q, Exists, OuterRef, Subquery, ExpressionWrapper, FloatField
+from django.db.models import Q, F, Exists, OuterRef, Subquery, ExpressionWrapper, FloatField, BooleanField, Case, When, Value
 from django.db.models.functions import Least
 from django.db import transaction
 from django.core.paginator import Paginator
@@ -20,7 +21,7 @@ from django.views.decorators.cache import never_cache
 import json
 from django.contrib.gis.geos import Point
 from django.contrib.gis.measure import D
-from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.db.models.functions import Distance, LineLocatePoint
 from django.urls import reverse
 from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError, transaction
@@ -136,31 +137,53 @@ def search(request):
 
     return render(request, "search.html", context)
 
+# How far a ride may start or end from the searched start or destination
+DIRECT_RADIUS = D(km=30)
+# How far a ride's route may pass from the searched start or destination to be
+# shown as a ride that could pick the searcher up / drop them off on the way
+ON_THE_WAY_RADIUS = D(km=5)
+
 def search_rides(form_clean):
-    """Build the search query. Nothing is fetched until it is evaluated."""
+    """
+    Build the search query. Nothing is fetched until it is evaluated.
+
+    Each ride is annotated with on_the_way:
+    - False: the ride starts near the searched start and ends near the searched
+      destination (or passes it on a via).
+    - True: otherwise, the ride's route passes near the searched start and
+      destination, in that order. The searcher would have to ask the driver
+      to pick them up or drop them off on the way.
+    Rides that are not on the way come first.
+    """
     start_json = form_clean["start_json"]
     destination_json = form_clean["destination_json"]
 
-    near = D(km=30)
-    filters = Q()
+    direct = Q()
+    on_the_way = Q(route__isnull=False)
     # Distance terms that are added together to order the results
-    distances = []
+    direct_distances = []
+    route_distances = []
+    rides = Ride.objects.select_related("driver")
 
     if start_json:
         sl = start_json["location"]
         start_location = Point(sl["lng"], sl["lat"], srid=4326)
+        start_on_route = as_route_point(start_location)
 
-        filters &= Q(start_location__dwithin=(start_location, near))
-        distances.append(Distance("start_location", start_location))
+        direct &= Q(start_location__dwithin=(start_location, DIRECT_RADIUS))
+        on_the_way &= Q(route__dwithin=(start_on_route, ON_THE_WAY_RADIUS))
+        direct_distances.append(Distance("start_location", start_location))
+        route_distances.append(Distance("route", start_on_route))
 
     if destination_json:
         dl = destination_json["location"]
         destination_location = Point(dl["lng"], dl["lat"], srid=4326)
+        destination_on_route = as_route_point(destination_location)
 
         # Match rides that end near the destination or pass by it on a via
         vias_near = Via.objects.filter(
             ride=OuterRef("pk"),
-            location__dwithin=(destination_location, near),
+            location__dwithin=(destination_location, DIRECT_RADIUS),
         )
         closest_via = Via.objects.filter(
             ride=OuterRef("pk")
@@ -168,30 +191,47 @@ def search_rides(form_clean):
             d=Distance("location", destination_location)
         ).order_by("d").values("d")[:1]
 
-        filters &= (
-            Q(destination_location__dwithin=(destination_location, near)) |
+        direct &= (
+            Q(destination_location__dwithin=(destination_location, DIRECT_RADIUS)) |
             Exists(vias_near)
         )
-        distances.append(Least(
+        on_the_way &= Q(route__dwithin=(destination_on_route, ON_THE_WAY_RADIUS))
+        direct_distances.append(Least(
             Distance("destination_location", destination_location),
             Subquery(closest_via),
             output_field=FloatField(),
         ))
+        route_distances.append(Distance("route", destination_on_route))
+
+    if start_json and destination_json:
+        # The ride must reach the start before the destination. A ride that
+        # also returns covers the other direction on the way back.
+        rides = rides.annotate(
+            start_position=LineLocatePoint("route", start_on_route),
+            destination_position=LineLocatePoint("route", destination_on_route),
+        )
+        on_the_way &= Q(start_position__lt=F("destination_position")) | Q(one_way=False)
 
     if form_clean["offer"]:
-        filters &= Q(offer=True)
+        rides = rides.filter(offer=True)
     if form_clean["request"]:
-        filters &= Q(request=True)
+        rides = rides.filter(request=True)
     if form_clean["other"]:
-        filters &= Q(other=True) | Q(train=True) | Q(bus=True) | Q(taxi=True)
+        rides = rides.filter(Q(other=True) | Q(train=True) | Q(bus=True) | Q(taxi=True))
 
-    rides = Ride.objects.filter(filters).select_related("driver")
     # The order must be stable, so that pages do not overlap
-    if distances:
-        return rides.annotate(
-            dist=ExpressionWrapper(sum(distances[1:], distances[0]), output_field=FloatField())
-        ).order_by("dist", "-created_at", "-pk")
-    return rides.order_by("-created_at", "-pk")
+    if not (start_json or destination_json):
+        return rides.annotate(on_the_way=Value(False)).order_by("-created_at", "-pk")
+
+    total = lambda terms: ExpressionWrapper(sum(terms[1:], terms[0]), output_field=FloatField())
+    return rides.filter(direct | on_the_way).annotate(
+        on_the_way=Case(When(direct, then=Value(False)), default=Value(True), output_field=BooleanField()),
+        dist=Case(
+            When(direct, then=total(direct_distances)),
+            default=total(route_distances),
+            output_field=FloatField(),
+        ),
+    ).order_by("on_the_way", "dist", "-created_at", "-pk")
 
 @login_required
 def add_ride(request):    
@@ -240,6 +280,14 @@ def add_ride(request):
                         )
                         for order, via_json in enumerate(vias_json[:8])
                     ])
+
+                # Saved separately, so that a failed or slow Routes API
+                # request cannot lose the ride itself
+                try:
+                    ride.route = build_route(ride)
+                    ride.save(update_fields=["route"])
+                except Exception:
+                    logger.exception("Could not save the route of ride %s", ride.pk)
             except Exception as e:
                 context = {
                     "ride_form": ride_form,

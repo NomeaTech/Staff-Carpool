@@ -10,8 +10,24 @@
 
 {% if searched %}
     {% for ride in page %}
+        {% comment %}
+          Rides that only pass by on the way come after the matching rides
+          (see search_rides), under their own heading on every page.
+        {% endcomment %}
+        {% ifchanged ride.on_the_way %}{% if ride.on_the_way %}
+        <div class="basis-full flex flex-col items-center px-2 pb-5">
+            <div class="divider w-full max-w-3xl">{% trans "Rides passing by on the way" %}</div>
+            <div role="alert" class="alert alert-info alert-soft max-w-3xl">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>{% trans "These rides don't start or end where you searched, but their route passes nearby. Ask the driver whether they can pick you up or drop you off on the way." %}</span>
+            </div>
+        </div>
+        {% endif %}{% endifchanged %}
         <a href="/app/ride/{{ride.id}}/">
-            <div class="card w-80 h-80 md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-out hover:drop-shadow-xl/10 hover:scale-102 drop-shadow-md">
+            <div class="card w-80 h-80 md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-out hover:drop-shadow-xl/10 hover:scale-102 drop-shadow-md{% if ride.on_the_way %} border-2 border-dashed border-info{% endif %}">
+                {% if ride.on_the_way %}
+                <span class="badge badge-info absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap">{% trans "On the way" %}</span>
+                {% endif %}
                 <div class="card-body">
                     <div class="flex place-content-between w-full">
                         <div class="flex flex-wrap justify-start content-start gap-1 items-center h-22 w-34">

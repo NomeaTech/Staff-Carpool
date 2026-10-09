@@ -60,6 +60,10 @@ class Ride(models.Model):
     destination_json = models.JSONField()
     destination_location = models.PointField(geography=True, blank=True, null=True)
 
+    # Driving route from start through the vias to the destination, in metres
+    # (EPSG:3067). Used to find rides passing by on the way; see test_app/routes.py
+    route = models.LineStringField(srid=3067, blank=True, null=True)
+
     # deprecated
     dest_name = models.CharField(help_text="Destination name", blank=True, null=True)
 

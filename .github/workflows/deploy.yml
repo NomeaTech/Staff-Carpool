@@ -44,6 +44,8 @@ jobs:
           python manage.py tailwind install
           python manage.py tailwind build
           python manage.py migrate --noinput
+          # Store the driving route of rides that do not have one yet
+          python manage.py compute_routes
           python manage.py collectstatic --noinput
           sudo systemctl restart django_ride
           systemctl is-active --quiet django_ride

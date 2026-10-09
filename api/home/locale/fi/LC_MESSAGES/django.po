@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 20:51+0300\n"
+"POT-Creation-Date: 2026-10-09 21:34+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -236,47 +236,62 @@ msgstr ""
 msgid "Search failed, please try again."
 msgstr ""
 
-#: home/templates/search_results.html:68
+#: home/templates/search_results.html:20
+msgid "Rides passing by on the way"
+msgstr ""
+
+#: home/templates/search_results.html:23
+msgid ""
+"These rides don't start or end where you searched, but their route passes "
+"nearby. Ask the driver whether they can pick you up or drop you off on the "
+"way."
+msgstr ""
+
+#: home/templates/search_results.html:30
+msgid "On the way"
+msgstr ""
+
+#: home/templates/search_results.html:85
 msgid "No results found"
 msgstr ""
 
-#: home/templates/search_results.html:80
+#: home/templates/search_results.html:97
 msgid "Previous page"
 msgstr ""
 
-#: home/templates/search_results.html:82
+#: home/templates/search_results.html:99
 #, python-format
 msgid "Page %(number)s of %(total)s"
 msgstr ""
 
-#: home/templates/search_results.html:86
+#: home/templates/search_results.html:103
 msgid "Next page"
 msgstr ""
 
-#: home/views.py:200
+#: home/views.py:240
 msgid "Mon"
 msgstr ""
 
-#: home/views.py:201
+#: home/views.py:241
 msgid "Tue"
 msgstr ""
 
-#: home/views.py:202
+#: home/views.py:242
 msgid "Wed"
 msgstr ""
 
-#: home/views.py:203
+#: home/views.py:243
 msgid "Thu"
 msgstr ""
 
-#: home/views.py:204
+#: home/views.py:244
 msgid "Fri"
 msgstr ""
 
-#: home/views.py:205
+#: home/views.py:245
 msgid "Sat"
 msgstr ""
 
-#: home/views.py:206
+#: home/views.py:246
 msgid "Sun"
 msgstr ""

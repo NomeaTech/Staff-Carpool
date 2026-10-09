@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 17:55+0300\n"
+"POT-Creation-Date: 2026-10-09 21:34+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,71 +18,71 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: test_app/models.py:170
+#: test_app/models.py:174
 msgid "Mon"
 msgstr ""
 
-#: test_app/models.py:171
+#: test_app/models.py:175
 msgid "Tue"
 msgstr ""
 
-#: test_app/models.py:172
+#: test_app/models.py:176
 msgid "Wed"
 msgstr ""
 
-#: test_app/models.py:173
+#: test_app/models.py:177
 msgid "Thu"
 msgstr ""
 
-#: test_app/models.py:174
+#: test_app/models.py:178
 msgid "Fri"
 msgstr ""
 
-#: test_app/models.py:175
+#: test_app/models.py:179
 msgid "Sat"
 msgstr ""
 
-#: test_app/models.py:176
+#: test_app/models.py:180
 msgid "Sun"
 msgstr ""
 
-#: test_app/models.py:182
+#: test_app/models.py:186
 msgid "Everyday"
 msgstr ""
 
-#: test_app/models.py:184
+#: test_app/models.py:188
 msgid "Weekdays"
 msgstr ""
 
-#: test_app/models.py:186
+#: test_app/models.py:190
 msgid "Weekends"
 msgstr ""
 
-#: test_app/models.py:230
+#: test_app/models.py:234
 msgid "Monday"
 msgstr ""
 
-#: test_app/models.py:231
+#: test_app/models.py:235
 msgid "Tuesday"
 msgstr ""
 
-#: test_app/models.py:232
+#: test_app/models.py:236
 msgid "Wednesday"
 msgstr ""
 
-#: test_app/models.py:233
+#: test_app/models.py:237
 msgid "Thursday"
 msgstr ""
 
-#: test_app/models.py:234
+#: test_app/models.py:238
 msgid "Friday"
 msgstr ""
 
-#: test_app/models.py:235
+#: test_app/models.py:239
 msgid "Saturday"
 msgstr ""
 
-#: test_app/models.py:236
+#: test_app/models.py:240
 msgid "Sunday"
 msgstr ""
 
