@@ -1,5 +1,5 @@
 # Staff-Carpool
-Version: 0.16.6
+Version: 0.17.0
 
 ## Installation instructions
 
