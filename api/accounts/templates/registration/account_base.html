@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% comment %}
+  Card layout shared by the account pages (password reset and change), matching
+  the login and signup pages. Pages fill in the title, card_title and card_body
+  blocks.
+{% endcomment %}
+
+{% block content %}
+<div>
+  <div class="card bg-base-100 w-96 shadow-sm font-display">
+    <div class="card-body">
+      <div class="flex flex-nowrap mb-4 justify-between">
+        <h2 class="card-title mb-0 mt-0">{% block card_title %}{% endblock %}</h2>
+        <span class="flex">
+          {% include "registration/_theme_switcher.html" %}
+        </span>
+      </div>
+      {% block card_body %}{% endblock %}
+    </div>
+  </div>
+</div>
+{% endblock %}

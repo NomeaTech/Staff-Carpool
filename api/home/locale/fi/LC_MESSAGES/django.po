@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 17:55+0300\n"
+"POT-Creation-Date: 2026-10-09 20:51+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,7 +42,7 @@ msgstr ""
 msgid "Select a start location"
 msgstr ""
 
-#: home/templates/add_ride.html:46 home/templates/search.html:18
+#: home/templates/add_ride.html:46 home/templates/search.html:20
 msgid "Other destination"
 msgstr ""
 
@@ -123,7 +123,7 @@ msgstr ""
 msgid "One-way"
 msgstr ""
 
-#: home/templates/add_ride.html:167 home/templates/search.html:53
+#: home/templates/add_ride.html:167 home/templates/search.html:56
 msgid "Date"
 msgstr ""
 
@@ -200,31 +200,39 @@ msgctxt "Page title"
 msgid "Search"
 msgstr ""
 
-#: home/templates/search.html:32
+#: home/templates/search.html:19
+msgid "Select a start location from the list"
+msgstr ""
+
+#: home/templates/search.html:20
+msgid "Select a destination from the list"
+msgstr ""
+
+#: home/templates/search.html:35
 msgid "Offer car ride"
 msgstr ""
 
-#: home/templates/search.html:38
+#: home/templates/search.html:41
 msgid "Request car ride"
 msgstr ""
 
-#: home/templates/search.html:44
+#: home/templates/search.html:47
 msgid "Train, bus, taxi, other"
 msgstr ""
 
-#: home/templates/search.html:51
+#: home/templates/search.html:54
 msgid "From"
 msgstr ""
 
-#: home/templates/search.html:52
+#: home/templates/search.html:55
 msgid "To"
 msgstr ""
 
-#: home/templates/search.html:54
+#: home/templates/search.html:57
 msgid "Search"
 msgstr ""
 
-#: home/templates/search.html:66
+#: home/templates/search.html:69
 msgid "Search failed, please try again."
 msgstr ""
 
@@ -232,43 +240,43 @@ msgstr ""
 msgid "No results found"
 msgstr ""
 
-#: home/templates/search_results.html:79
+#: home/templates/search_results.html:80
 msgid "Previous page"
 msgstr ""
 
-#: home/templates/search_results.html:81
+#: home/templates/search_results.html:82
 #, python-format
 msgid "Page %(number)s of %(total)s"
 msgstr ""
 
-#: home/templates/search_results.html:85
+#: home/templates/search_results.html:86
 msgid "Next page"
 msgstr ""
 
-#: home/views.py:132
+#: home/views.py:200
 msgid "Mon"
 msgstr ""
 
-#: home/views.py:133
+#: home/views.py:201
 msgid "Tue"
 msgstr ""
 
-#: home/views.py:134
+#: home/views.py:202
 msgid "Wed"
 msgstr ""
 
-#: home/views.py:135
+#: home/views.py:203
 msgid "Thu"
 msgstr ""
 
-#: home/views.py:136
+#: home/views.py:204
 msgid "Fri"
 msgstr ""
 
-#: home/views.py:137
+#: home/views.py:205
 msgid "Sat"
 msgstr ""
 
-#: home/views.py:138
+#: home/views.py:206
 msgid "Sun"
 msgstr ""
