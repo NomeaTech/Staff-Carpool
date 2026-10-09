@@ -16,7 +16,7 @@
         {% endcomment %}
         {% ifchanged ride.on_the_way %}{% if ride.on_the_way %}
         <div class="basis-full flex flex-col items-center px-2 pb-5">
-            <div class="divider w-full max-w-3xl">{% trans "Rides passing by on the way" %}</div>
+            <div class="divider w-full">{% trans "Rides passing by on the way" %}</div>
             <div role="alert" class="alert alert-info alert-soft max-w-3xl">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <span>{% trans "These rides don't start or end where you searched, but their route passes nearby. Ask the driver whether they can pick you up or drop you off on the way." %}</span>
