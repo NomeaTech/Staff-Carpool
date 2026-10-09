@@ -10,7 +10,7 @@ SECRET_KEY = 'key'
 DEBUG = 'boolean'
 STATIC_ROOT = './directory/'
 ```
-
+dj
 ### Create development environment
 ```
 python -m venv env
