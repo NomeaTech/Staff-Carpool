@@ -137,8 +137,10 @@ def search(request):
 
     return render(request, "search.html", context)
 
-# How far a ride may start or end from the searched start or destination
-DIRECT_RADIUS = D(km=30)
+# How far a ride may start or end from the searched start or destination to
+# count as a matching ride. Rides further away that pass by on their route are
+# shown separately, as rides on the way.
+DIRECT_RADIUS = D(km=10)
 # How far a ride's route may pass from the searched start or destination to be
 # shown as a ride that could pick the searcher up / drop them off on the way
 ON_THE_WAY_RADIUS = D(km=5)
