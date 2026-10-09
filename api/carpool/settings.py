@@ -46,6 +46,11 @@ DEBUG = os.getenv("DEBUG")
 
 ALLOWED_HOSTS = ['localhost', 'kyyti.net', 'static.cloudflareinsights.com']
 
+# Public address of the site, used for links in emails (e.g. password reset).
+# Requests reach Django through a proxy on localhost, so the address cannot be
+# taken from the request. Leave unset in development to use the request's.
+SITE_URL = os.getenv("SITE_URL", "").rstrip("/")
+
 CSRF_TRUSTED_ORIGINS = ['https://kyyti.net', 'http://localhost:8120', 'https://static.cloudflareinsights.com']
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
