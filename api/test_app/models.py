@@ -9,6 +9,8 @@ from datetime import datetime
 from django.utils import formats
 import uuid
 
+from .transport import TRANSPORT_OPTIONS
+
 class Address(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     country = models.CharField(max_length=200)
@@ -120,6 +122,10 @@ class Ride(models.Model):
             return f"From: {self.start_json["displayName"]}, Destination: {self.destination_json["displayName"]}"
         else:
             return f"From: {self.start}, Destination: {self.destination}"
+
+    def transport_options(self):
+        """The ride's ways of travelling (car offer, request, train, ...) with their icons."""
+        return [option for option in TRANSPORT_OPTIONS if getattr(self, option.field)]
 
     def get_created_at(self):
         return formats.date_format(self.created_at, "Y.m.d")
