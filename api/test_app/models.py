@@ -252,37 +252,37 @@ class Ride(models.Model):
             (
                 days[0], 
                 self.monday_leaving_at_time, 
-                self.monday_leaving_at_time
+                self.monday_returning_at_time
             ),
             (
                 days[1], 
                 self.tuesday_leaving_at_time, 
-                self.tuesday_leaving_at_time
+                self.tuesday_returning_at_time
             ),
             (
                 days[2], 
                 self.wednesday_leaving_at_time, 
-                self.wednesday_leaving_at_time
+                self.wednesday_returning_at_time
             ),
             (
                 days[3], 
                 self.thursday_leaving_at_time, 
-                self.thursday_leaving_at_time
+                self.thursday_returning_at_time
             ),
             (
                 days[4], 
                 self.friday_leaving_at_time, 
-                self.friday_leaving_at_time
+                self.friday_returning_at_time
             ),
             (
                 days[5], 
                 self.saturday_leaving_at_time, 
-                self.saturday_leaving_at_time
+                self.saturday_returning_at_time
             ),
             (
                 days[6], 
                 self.sunday_leaving_at_time, 
-                self.sunday_leaving_at_time
+                self.sunday_returning_at_time
             ),
         ]
 

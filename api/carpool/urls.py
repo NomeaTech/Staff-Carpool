@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.templatetags.static import static
+from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,4 +27,6 @@ urlpatterns = [
     path('', include('test_app.urls')),
     path('', include('landing.urls')),
     path('', include('pwa.urls')),
+    # Browsers and other tools ask for /favicon.ico when a page names no icon
+    path('favicon.ico', RedirectView.as_view(url=static('images/icons/favicon.ico'), permanent=True)),
 ]

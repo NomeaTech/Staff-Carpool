@@ -256,6 +256,8 @@ else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "LUT Kyyti <noreply@kyyti.net>")
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
+# Where messages from the contact page are sent
+CONTACT_EMAIL = "jubeen.sharbaf@lut.fi"
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 CRISPY_TEMPLATE_PACK = "tailwind"
@@ -267,7 +269,7 @@ STATICFILES_DIRS = [
 
 PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js', 'serviceworker.js')
 
-PWA_APP_NAME = 'Campus Ride'
+PWA_APP_NAME = 'LUT Kyyti'
 PWA_APP_DESCRIPTION = "Ride sharing app for LUT staff"
 PWA_APP_THEME_COLOR = "#FFFFFF"
 PWA_APP_BACKGROUND_COLOR = '#F8F8F8'
@@ -276,16 +278,24 @@ PWA_APP_SCOPE = '/app/'
 PWA_APP_ORIENTATION = 'portrait'
 PWA_APP_START_URL = '/app/home'
 PWA_APP_STATUS_BAR_COLOR = 'default'
+# LUT's icons, from https://www.lut.fi (the largest it offers is 384x384).
+# The largest comes last: django-pwa also uses the last one as the favicon.
 PWA_APP_ICONS = [
     {
-        'src': '/static/images/icons/icon.png',
-        'sizes': '160x160'
-    }
+        'src': '/static/images/icons/android-chrome-192x192.png',
+        'sizes': '192x192',
+        'type': 'image/png',
+    },
+    {
+        'src': '/static/images/icons/android-chrome-384x384.png',
+        'sizes': '384x384',
+        'type': 'image/png',
+    },
 ]
 PWA_APP_ICONS_APPLE = [
     {
-        'src': '/static/images/icons/icon.png',
-        'sizes': '160x160'
+        'src': '/static/images/icons/apple-touch-icon.png',
+        'sizes': '180x180',
     }
 ]
 PWA_APP_SPLASH_SCREEN = [

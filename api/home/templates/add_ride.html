@@ -75,11 +75,11 @@
                                 <fieldset class="fieldset rounded-field bg-base-100 border-base-300 border p-4 pb-3.5" required>
                                     <legend class="fieldset-legend">{% trans "Car ride" %}</legend>
                                     <label class="label">
-                                    <input required id="id_offer" type="checkbox" name="offer" class="options checkbox checkbox-primary" onchange="enableMaxPassengerField(this)">
+                                    <input required id="id_offer" type="checkbox" name="offer" class="options checkbox checkbox-offer" onchange="enableMaxPassengerField(this)">
                                     {% trans "Offer" %}
                                     </label>
                                     <label class="label">
-                                    <input required id="id_request" type="checkbox" name="request" class="options checkbox checkbox-secondary">
+                                    <input required id="id_request" type="checkbox" name="request" class="options checkbox checkbox-request">
                                     {% trans "Request" %}
                                     </label>
                                 </fieldset>
@@ -89,19 +89,19 @@
                                     <legend class="fieldset-legend">{% trans "Other transport" %}</legend>
                                     <div class="grid grid-cols-2 gap-1">
                                         <label class="label">
-                                            <input required id="id_train" name="train" value="train" type="checkbox" class="options checkbox checkbox-error">
+                                            <input required id="id_train" name="train" value="train" type="checkbox" class="options checkbox checkbox-train">
                                             {% trans "Train" %}
                                         </label>
                                         <label class="label">
-                                            <input required id="id_bus" name="bus" value="bus" type="checkbox" class="options checkbox checkbox-info">
+                                            <input required id="id_bus" name="bus" value="bus" type="checkbox" class="options checkbox checkbox-bus">
                                             {% trans "Bus" %}
                                         </label>
                                         <label class="label">
-                                            <input required id="id_taxi" name="taxi" value="taxi" type="checkbox" class="options checkbox checkbox-warning">
+                                            <input required id="id_taxi" name="taxi" value="taxi" type="checkbox" class="options checkbox checkbox-taxi">
                                             {% trans "Taxi" %}
                                         </label>
                                         <label class="label">
-                                            <input required id="id_other" name="other" value="other" type="checkbox" class="options checkbox" onchange="enableOtherField(this)">
+                                            <input required id="id_other" name="other" value="other" type="checkbox" class="options checkbox checkbox-other" onchange="enableOtherField(this)">
                                             {% trans "Other" %}
                                         </label>
                                     </div>
