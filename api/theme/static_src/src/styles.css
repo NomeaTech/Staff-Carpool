@@ -19,26 +19,28 @@
   default: true;
   prefersdark: false;
   color-scheme: "light";
-  --color-base-100: oklch(100% 0 0);
-  --color-base-200: oklch(98% 0 0);
-  --color-base-300: oklch(95% 0 0);
-  --color-base-content: oklch(21% 0.006 285.885);
-  --color-primary: oklch(45% 0.24 277.023);
-  --color-primary-content: oklch(93% 0.034 272.788);
-  --color-secondary: oklch(65% 0.241 354.308);
-  --color-secondary-content: oklch(94% 0.028 342.258);
-  --color-accent: oklch(77% 0.152 181.912);
-  --color-accent-content: oklch(38% 0.063 188.416);
-  --color-neutral: oklch(14% 0.005 285.823);
-  --color-neutral-content: oklch(92% 0.004 286.32);
-  --color-info: oklch(74% 0.16 232.661);
-  --color-info-content: oklch(29% 0.066 243.157);
-  --color-success: oklch(76% 0.177 163.223);
-  --color-success-content: oklch(37% 0.077 168.94);
-  --color-warning: oklch(82% 0.189 84.429);
-  --color-warning-content: oklch(41% 0.112 45.904);
-  --color-error: oklch(71% 0.194 13.428);
-  --color-error-content: oklch(27% 0.105 12.094);
+  /* Cards, navbar, inputs, ... are base-100; the page background is base-200 */
+  --color-base-100: #fdfdf9;
+  --color-base-200: #f7fade;
+  --color-base-300: #e4e8c3;
+  --color-base-content: #1f2a22;
+  /* Semantic colours, taken from the transport palette below */
+  --color-primary: #16875d;          /* train */
+  --color-primary-content: #ffffff;
+  --color-secondary: #8666bc;        /* request */
+  --color-secondary-content: #ffffff;
+  --color-accent: #c47e91;           /* other */
+  --color-accent-content: #2e1219;
+  --color-neutral: #2f3a33;
+  --color-neutral-content: #fdfdf9;
+  --color-info: #6899d4;             /* bus */
+  --color-info-content: #0f2540;
+  --color-success: #7dbb9b;          /* offer */
+  --color-success-content: #10301f;
+  --color-warning: #ebc65a;          /* taxi */
+  --color-warning-content: #3d2e05;
+  --color-error: #c2453a;
+  --color-error-content: #ffffff;
   --radius-selector: 0.5rem;
   --radius-field: 0.5rem;
   --radius-box: 2rem;
@@ -123,7 +125,78 @@
 @plugin "@tailwindcss/typography"; 
 
 @theme {
-  --font-display: "Oswald", sans-serif
+  --font-display: "Oswald", sans-serif;
+
+  /* Transport colours, the same in every theme (see test_app/transport.py).
+     Use them as text-offer, bg-train, badge-bus, checkbox-taxi, ... */
+  --color-offer: #7dbb9b;
+  --color-offer-content: #10301f;
+  --color-request: #8666bc;
+  --color-request-content: #ffffff;
+  --color-train: #16875d;
+  --color-train-content: #ffffff;
+  --color-bus: #6899d4;
+  --color-bus-content: #0f2540;
+  --color-taxi: #ebc65a;
+  --color-taxi-content: #3d2e05;
+  --color-other: #c47e91;
+  --color-other-content: #2e1219;
+}
+
+/* Pages use base-200 as their background (base-100 is for cards), so paint
+   the area outside a short <body> in it too instead of daisyUI's base-100 */
+:root {
+  --root-bg: var(--color-base-200);
+}
+
+/* daisyUI badge and checkbox colours for the transport colours */
+@utility badge-offer {
+  --badge-color: var(--color-offer);
+  --badge-fg: var(--color-offer-content);
+}
+@utility checkbox-offer {
+  color: var(--color-offer-content);
+  --input-color: var(--color-offer);
+}
+@utility badge-request {
+  --badge-color: var(--color-request);
+  --badge-fg: var(--color-request-content);
+}
+@utility checkbox-request {
+  color: var(--color-request-content);
+  --input-color: var(--color-request);
+}
+@utility badge-train {
+  --badge-color: var(--color-train);
+  --badge-fg: var(--color-train-content);
+}
+@utility checkbox-train {
+  color: var(--color-train-content);
+  --input-color: var(--color-train);
+}
+@utility badge-bus {
+  --badge-color: var(--color-bus);
+  --badge-fg: var(--color-bus-content);
+}
+@utility checkbox-bus {
+  color: var(--color-bus-content);
+  --input-color: var(--color-bus);
+}
+@utility badge-taxi {
+  --badge-color: var(--color-taxi);
+  --badge-fg: var(--color-taxi-content);
+}
+@utility checkbox-taxi {
+  color: var(--color-taxi-content);
+  --input-color: var(--color-taxi);
+}
+@utility badge-other {
+  --badge-color: var(--color-other);
+  --badge-fg: var(--color-other-content);
+}
+@utility checkbox-other {
+  color: var(--color-other-content);
+  --input-color: var(--color-other);
 }
 
 /**

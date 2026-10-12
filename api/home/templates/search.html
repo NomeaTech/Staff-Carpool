@@ -85,6 +85,32 @@
         // The form as it was when the shown results were searched
         let searchedForm = null;
 
+        // Start and destination names on the ride cards shrink to fit on one
+        // line. Below MIN_FONT_SIZE they are cut off with an ellipsis instead
+        // (the truncate class), except campus names, which always fit in full.
+        const MIN_FONT_SIZE = 20;
+        const CAMPUS_MIN_FONT_SIZE = 8;
+        const campusNames = new Set(
+            JSON.parse(document.getElementById("campus-data").textContent).map((campus) => campus.place.displayName)
+        );
+
+        function fitRideTitles() {
+            for (const el of results.querySelectorAll("[data-fit-text]")) {
+                el.style.fontSize = "";
+                const min = campusNames.has(el.textContent.trim()) ? CAMPUS_MIN_FONT_SIZE : MIN_FONT_SIZE;
+                let size = parseFloat(getComputedStyle(el).fontSize);
+                while (el.scrollWidth > el.clientWidth && size > min) {
+                    size = Math.max(size - 1, min);
+                    el.style.fontSize = `${size}px`;
+                }
+            }
+        }
+
+        // Results change on every search, page change and restore from history
+        new MutationObserver(fitRideTitles).observe(results, { childList: true });
+        // Text widths change once web fonts have loaded
+        document.fonts.ready.then(fitRideTitles);
+
         // From/To autocompletes: the visible text and the selected place's JSON
         function placeState(div) {
             if (!div) {
@@ -149,10 +175,21 @@
             searchedForm = saved.form;
             results.innerHTML = saved.results;
             scroller.scrollTop = saved.scroll || 0;
-            window.searchFormReady
-                .then(() => restoreForm(saved.form))
-                .catch((error) => console.error("Could not restore the search form", error));
+            // The form is not saved for the results shown when the page opens
+            if (saved.form) {
+                window.searchFormReady
+                    .then(() => restoreForm(saved.form))
+                    .catch((error) => console.error("Could not restore the search form", error));
+            }
+        } else {
+            // The page opens with the results of a search without filters
+            // (see the search view). Save them like any other search, so that
+            // paging works and going back here restores them.
+            lastSearch = [...new FormData(form).entries()];
+            saveState({ form: null, entries: lastSearch, results: results.innerHTML, scroll: 0 });
         }
+
+        fitRideTitles();
 
         // Remember how far down the results were scrolled
         let scrollTimer = null;

@@ -114,6 +114,15 @@ class CustomUserCreationForm(AdminUserCreationForm):
         # fields = UserCreationForm.Meta.fields + 
         # + AddressForm.Meta.fields
 
+class SignUpForm(CustomUserCreationForm):
+    """The sign up page's form: the admin's user creation form without the
+    phone number and profile picture."""
+    phone = None
+    pfp = None
+
+    class Meta(CustomUserCreationForm.Meta):
+        fields = tuple(f for f in CustomUserCreationForm.Meta.fields if f not in ("phone", "pfp"))
+
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = User

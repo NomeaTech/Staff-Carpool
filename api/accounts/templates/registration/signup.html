@@ -50,13 +50,6 @@
               {% include "registration/_password_hint.html" %}
             </div>
             {{ form.password2 }}
-            
-            <div class="col-span-3">
-              {{ form.phone }}
-              <p class="hidden validator-hint ml-3">{% trans "Must be a 10 digit phone number" %}</p>
-            </div>
-
-            {{ form.pfp }}
 
             {% if form.errors %}
               <div class="col-span-3" style="color:var(--color-error)">{% trans "Error in account creation. Check that passwords match" %}</div>
@@ -71,11 +64,13 @@
             <!-- <a href="{% url 'password_reset' %}" class="btn btn-sm btn-ghost col-span-3">Password Reset</a> -->
             
             <div class="col-span-3">
+              <p class="col-span-3 text-lg">{% trans "Already have a LUT Kyyti account?" %}</p>
+              <a class="link link-primary text-lg" href="{% url "login" %}">{% trans "Log in" %}</a>
+              <br>
+              <br>
               {% blocktranslate context "Full sentence: By creating an account you agree to the Terms of Use and Privacy Policy." %}
                 <p>By creating an account you agree to the <a class="link link-primary" href="/terms-of-use">Terms of Use</a> and <a class="link link-secondary" href="/privacy-policy">Privacy Policy</a>.</p>
               {% endblocktranslate %}
-              <br>
-              <p class="col-span-3">{% trans "Already have a LUT Kyyti account?" %} <a class="link link-primary" href="{% url "login" %}">{% trans "Login" %}</a></p>
             </div>
           </div>
         </form>

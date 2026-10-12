@@ -34,11 +34,7 @@
                 <div class="flex place-content-center">
                     <span>
                         {% if is_driver %}
-                        <form class="h-full" action="{% url 'delete_ride' %}" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" id="ride" type="text" name="ride" value="{{ ride.id }}">
-                        <button class="btn btn-soft btn-primary h-full" type="submit">Delete Trip</button>
-                    </form>
+                        <button class="btn btn-soft btn-primary h-full" type="button" onclick="document.getElementById('delete-ride-modal').showModal()">{% trans "Delete Trip" %}</button>
                     {% endif %}
     
                     {% if not is_passenger and not is_driver %}
@@ -81,7 +77,7 @@
                     <div class="join-item badge badge-primary badge-outline badge-sm w-full">
                       {{ day.1 }}
                       
-                      {% if not ride.one_time %}
+                      {% if not ride.one_way %}
                         {{ ride.sign }}
                         {{ day.2 }}
                       {% endif %}
@@ -96,10 +92,10 @@
             <div class="flex flex-wrap justify-center gap-4">
               {% for option in ride.transport_options %}
                 <div class="join join-vertical">
-                  <div class="join-item badge {{ option.badge_class }} badge-lg h-13 w-18">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="{{ option.viewbox }}" fill="currentColor" width="40" height="40" class="text-white" aria-hidden="true">{{ option.icon }}</svg>
+                  <div class="join-item badge {{ option.badge_class }} badge-lg h-16 w-24">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="{{ option.viewbox }}" fill="currentColor" width="52" height="52" class="text-white" aria-hidden="true">{{ option.icon }}</svg>
                   </div>
-                  <div class="join-item badge {{ option.badge_class }} badge-outline badge-sm w-18">
+                  <div class="join-item badge {{ option.badge_class }} badge-outline badge-sm w-24 whitespace-nowrap">
                     {{ option.label }}
                   </div>
                 </div>
@@ -128,4 +124,39 @@
         </div>
     </div>
 </section>
+
+{% if is_driver %}
+{% comment %}
+  Asks for confirmation before deleting. Cancel, Escape or clicking outside closes it.
+  It is kept outside the card: the card's drop-shadow is a CSS filter, which
+  would position the dialog relative to the card while it fades out.
+{% endcomment %}
+<dialog id="delete-ride-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="delete-ride-title">
+    <div class="modal-box">
+        <div role="alert" class="alert alert-warning">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <h3 id="delete-ride-title" class="font-bold">{% trans "Delete this trip?" %}</h3>
+        </div>
+        <p class="py-4">{% trans "The trip will be removed for everyone and cannot be restored." %}</p>
+        {% with passengers=ride.passenger.count %}{% if passengers %}
+        <p class="pb-4">
+            {% blocktrans count counter=passengers %}{{ counter }} passenger has joined this trip. Let them know you are cancelling.{% plural %}{{ counter }} passengers have joined this trip. Let them know you are cancelling.{% endblocktrans %}
+        </p>
+        {% endif %}{% endwith %}
+        <div class="modal-action">
+            <form method="dialog">
+                <button class="btn" autofocus>{% trans "Cancel" %}</button>
+            </form>
+            <form action="{% url 'delete_ride' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="ride" value="{{ ride.id }}">
+                <button class="btn btn-error" type="submit">{% trans "Delete trip" %}</button>
+            </form>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>{% trans "Cancel" %}</button>
+    </form>
+</dialog>
+{% endif %}
 {% endblock %}

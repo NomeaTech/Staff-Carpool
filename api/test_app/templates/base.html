@@ -7,9 +7,10 @@
   else that is per-request must stay outside the cache tags.
 {% endcomment %}
 <head>
-    <title>{% block title %}Campus Ride{% endblock %}</title>
+    <title>{% block title %}LUT Kyyti{% endblock %}</title>
     {% cache 86400 base_head using="templates" %}
     {% progressive_web_app_meta %}
+    {% include "_favicons.html" %}
     <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

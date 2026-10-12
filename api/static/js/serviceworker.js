@@ -1,36 +1,33 @@
 // Base Service Worker implementation.  To use your own Service Worker, set the PWA_SERVICE_WORKER_PATH variable in settings.py
 
 var staticCacheName = "django-pwa-v" + new Date().getTime();
+// Files that are available offline. Every file must exist: see the install
+// handler below for what happens otherwise.
 var filesToCache = [
-    '/offline',
+    '/offline/',
     '/static/css/django-pwa-app.css',
-    '/static/images/icons/icon-72x72.png',
-    '/static/images/icons/icon-96x96.png',
-    '/static/images/icons/icon-128x128.png',
-    '/static/images/icons/icon-144x144.png',
-    '/static/images/icons/icon-152x152.png',
-    '/static/images/icons/icon-192x192.png',
-    '/static/images/icons/icon-384x384.png',
-    '/static/images/icons/icon-512x512.png',
+    '/static/images/icons/favicon.ico',
+    '/static/images/icons/favicon-16x16.png',
+    '/static/images/icons/favicon-32x32.png',
+    '/static/images/icons/apple-touch-icon.png',
+    '/static/images/icons/android-chrome-192x192.png',
+    '/static/images/icons/android-chrome-384x384.png',
     '/static/images/icons/splash-640x1136.png',
     '/static/images/icons/splash-750x1334.png',
-    '/static/images/icons/splash-1242x2208.png',
-    '/static/images/icons/splash-1125x2436.png',
-    '/static/images/icons/splash-828x1792.png',
-    '/static/images/icons/splash-1242x2688.png',
-    '/static/images/icons/splash-1536x2048.png',
-    '/static/images/icons/splash-1668x2224.png',
-    '/static/images/icons/splash-1668x2388.png',
-    '/static/images/icons/splash-2048x2732.png'
+    '/static/images/icons/splash-1334x750.png'
 ];
 
-// Cache on install
+// Cache on install. Each file is cached on its own: with cache.addAll() one
+// missing file failed the whole install, so the service worker never ran.
 self.addEventListener("install", event => {
     this.skipWaiting();
     event.waitUntil(
         caches.open(staticCacheName)
-            .then(cache => {
-                return cache.addAll(filesToCache);
+            .then(cache => Promise.allSettled(filesToCache.map(file => cache.add(file))))
+            .then(results => {
+                results
+                    .filter(result => result.status === "rejected")
+                    .forEach(result => console.warn("Service worker could not cache a file:", result.reason));
             })
     )
 });
@@ -57,7 +54,7 @@ self.addEventListener("fetch", event => {
                 return response || fetch(event.request);
             })
             .catch(() => {
-                return caches.match('offline');
+                return caches.match('/offline/');
             })
     )
 });

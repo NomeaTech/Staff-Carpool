@@ -119,11 +119,8 @@ SEARCH_PAGE_SIZE = 12
 def search(request):
     context = {"GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"), "campuses": CAMPUSES}
 
-    if request.method != "POST":
-        context["form"] = SearchForm()
-        return render(request, "search.html", context)
-
-    search_form = SearchForm(request.POST)
+    # Opening the page shows all rides, the same as searching without filters
+    search_form = SearchForm(request.POST if request.method == "POST" else {})
     context["form"] = search_form
 
     if search_form.is_valid():
