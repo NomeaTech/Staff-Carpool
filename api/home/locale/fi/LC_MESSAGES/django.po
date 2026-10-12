@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 21:34+0300\n"
+"POT-Creation-Date: 2026-10-12 19:42+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,6 +36,10 @@ msgstr ""
 
 #: home/campuses.py:52
 msgid "Mikkeli campus"
+msgstr ""
+
+#: home/templates/add_ride.html:6
+msgid "Post a ride"
 msgstr ""
 
 #: home/templates/add_ride.html:45
@@ -147,11 +151,7 @@ msgstr ""
 msgid "Note for passengers"
 msgstr ""
 
-#: home/templates/app.html:7
-msgid "Campus Carpool"
-msgstr ""
-
-#: home/templates/app.html:120
+#: home/templates/app.html:121
 msgid "LUT Kyyti"
 msgstr ""
 
@@ -196,8 +196,7 @@ msgid "Add Recurring Trip"
 msgstr ""
 
 #: home/templates/search.html:7
-msgctxt "Page title"
-msgid "Search"
+msgid "Find a ride"
 msgstr ""
 
 #: home/templates/search.html:19
@@ -251,47 +250,47 @@ msgstr ""
 msgid "On the way"
 msgstr ""
 
-#: home/templates/search_results.html:85
+#: home/templates/search_results.html:71
 msgid "No results found"
 msgstr ""
 
-#: home/templates/search_results.html:97
+#: home/templates/search_results.html:83
 msgid "Previous page"
 msgstr ""
 
-#: home/templates/search_results.html:99
+#: home/templates/search_results.html:85
 #, python-format
 msgid "Page %(number)s of %(total)s"
 msgstr ""
 
-#: home/templates/search_results.html:103
+#: home/templates/search_results.html:89
 msgid "Next page"
 msgstr ""
 
-#: home/views.py:240
+#: home/views.py:255
 msgid "Mon"
 msgstr ""
 
-#: home/views.py:241
+#: home/views.py:256
 msgid "Tue"
 msgstr ""
 
-#: home/views.py:242
+#: home/views.py:257
 msgid "Wed"
 msgstr ""
 
-#: home/views.py:243
+#: home/views.py:258
 msgid "Thu"
 msgstr ""
 
-#: home/views.py:244
+#: home/views.py:259
 msgid "Fri"
 msgstr ""
 
-#: home/views.py:245
+#: home/views.py:260
 msgid "Sat"
 msgstr ""
 
-#: home/views.py:246
+#: home/views.py:261
 msgid "Sun"
 msgstr ""

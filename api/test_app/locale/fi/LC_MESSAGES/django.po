@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 21:34+0300\n"
+"POT-Creation-Date: 2026-10-12 19:42+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,102 +18,137 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: test_app/models.py:174
+#: test_app/models.py:180
 msgid "Mon"
 msgstr ""
 
-#: test_app/models.py:175
+#: test_app/models.py:181
 msgid "Tue"
 msgstr ""
 
-#: test_app/models.py:176
+#: test_app/models.py:182
 msgid "Wed"
 msgstr ""
 
-#: test_app/models.py:177
+#: test_app/models.py:183
 msgid "Thu"
 msgstr ""
 
-#: test_app/models.py:178
+#: test_app/models.py:184
 msgid "Fri"
 msgstr ""
 
-#: test_app/models.py:179
+#: test_app/models.py:185
 msgid "Sat"
 msgstr ""
 
-#: test_app/models.py:180
+#: test_app/models.py:186
 msgid "Sun"
 msgstr ""
 
-#: test_app/models.py:186
+#: test_app/models.py:192
 msgid "Everyday"
 msgstr ""
 
-#: test_app/models.py:188
+#: test_app/models.py:194
 msgid "Weekdays"
 msgstr ""
 
-#: test_app/models.py:190
+#: test_app/models.py:196
 msgid "Weekends"
 msgstr ""
 
-#: test_app/models.py:234
+#: test_app/models.py:240
 msgid "Monday"
 msgstr ""
 
-#: test_app/models.py:235
+#: test_app/models.py:241
 msgid "Tuesday"
 msgstr ""
 
-#: test_app/models.py:236
+#: test_app/models.py:242
 msgid "Wednesday"
 msgstr ""
 
-#: test_app/models.py:237
+#: test_app/models.py:243
 msgid "Thursday"
 msgstr ""
 
-#: test_app/models.py:238
+#: test_app/models.py:244
 msgid "Friday"
 msgstr ""
 
-#: test_app/models.py:239
+#: test_app/models.py:245
 msgid "Saturday"
 msgstr ""
 
-#: test_app/models.py:240
+#: test_app/models.py:246
 msgid "Sunday"
+msgstr ""
+
+#: test_app/templates/offline-new.html:9
+msgid "Offline"
 msgstr ""
 
 #: test_app/templates/offline-new.html:17
 msgid "You are offline"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:95
+#: test_app/templates/ride_detail.html:37
+msgid "Delete Trip"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:91
 msgid "Ride Options"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:103
-msgid "Car"
+#: test_app/templates/ride_detail.html:138
+msgid "Delete this trip?"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:113
-msgid "Request"
-msgstr ""
-
-#: test_app/templates/ride_detail.html:123
-msgid "Train"
-msgstr ""
-
-#: test_app/templates/ride_detail.html:133
-msgid "Bus"
+#: test_app/templates/ride_detail.html:140
+msgid "The trip will be removed for everyone and cannot be restored."
 msgstr ""
 
 #: test_app/templates/ride_detail.html:143
-msgid "Taxi"
+#, python-format
+msgid ""
+"%(counter)s passenger has joined this trip. Let them know you are cancelling."
+msgid_plural ""
+"%(counter)s passengers have joined this trip. Let them know you are "
+"cancelling."
+msgstr[0] ""
+msgstr[1] ""
+
+#: test_app/templates/ride_detail.html:148
+#: test_app/templates/ride_detail.html:158
+msgid "Cancel"
 msgstr ""
 
 #: test_app/templates/ride_detail.html:153
+msgid "Delete trip"
+msgstr ""
+
+#: test_app/transport.py:28
+msgid "Ride offer"
+msgstr ""
+
+#: test_app/transport.py:36
+msgid "Request"
+msgstr ""
+
+#: test_app/transport.py:44
+msgid "Train"
+msgstr ""
+
+#: test_app/transport.py:52
+msgid "Bus"
+msgstr ""
+
+#: test_app/transport.py:60
+msgid "Taxi"
+msgstr ""
+
+#: test_app/transport.py:68
 msgid "Other"
 msgstr ""
