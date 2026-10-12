@@ -53,7 +53,7 @@
                     <div id="div-autocomplete-destination" class="col-span-2 w-full skeleton rounded-field"></div>
                     <!-- <input type="search" name="start" placeholder="{% trans "From" %}" class="input col-span-2 w-full" id="id_search_query">
                     <input type="search" name="destination" placeholder="{% trans "To" %}" class="input col-span-2 w-full" id="id_search_query"> -->
-                    <input type="datetime-local" placeholder="{% trans "Date" %}" class="input col-span-2 w-full">
+                    <input type="date" name="date" aria-label="{% trans "Date" %}" class="input col-span-2 w-full">
                     <input class="btn btn-primary md:col-span-1 col-span-2" type="submit" value="{% trans "Search" %}">
                 </div>
 
@@ -107,7 +107,7 @@
         function snapshotForm() {
             return {
                 checks: Object.fromEntries(["offer", "request", "other"].map((name) => [name, form.elements[name].checked])),
-                date: form.querySelector('input[type="datetime-local"]').value,
+                date: form.elements.date.value,
                 start: placeState(document.getElementById("div-autocomplete-start")),
                 destination: {
                     choice: document.querySelector("#div-autocomplete-destination select").value,
@@ -120,7 +120,7 @@
             for (const [name, checked] of Object.entries(saved.checks)) {
                 form.elements[name].checked = checked;
             }
-            form.querySelector('input[type="datetime-local"]').value = saved.date;
+            form.elements.date.value = saved.date;
             setPlace(document.getElementById("div-autocomplete-start"), saved.start);
 
             const select = document.querySelector("#div-autocomplete-destination select");

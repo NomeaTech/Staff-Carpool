@@ -5,7 +5,7 @@ class SearchForm(forms.Form):
     start_json = forms.JSONField(required=False)
     destination = forms.CharField(required=False)
     destination_json = forms.JSONField(required=False)
-    date = forms.CharField(required=False)
+    date = forms.DateField(required=False)
 
     offer = forms.BooleanField(required=False)
     request = forms.BooleanField(required=False)
