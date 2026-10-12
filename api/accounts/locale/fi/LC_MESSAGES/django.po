@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 20:51+0300\n"
+"POT-Creation-Date: 2026-10-12 19:42+0300\n"
 "PO-Revision-Date: 2026-06-27 19:05+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
+
+#: accounts/admin.py:24
+msgid "Personal info"
+msgstr ""
+
+#: accounts/admin.py:26
+msgid "Permissions"
+msgstr ""
+
+#: accounts/admin.py:29
+msgid "Important dates"
+msgstr ""
 
 #: accounts/forms.py:13
 msgid "Required. Enter a valid email address."
@@ -63,12 +75,12 @@ msgid ""
 "uppercase letter *"
 msgstr ""
 
-#: accounts/forms.py:134
+#: accounts/forms.py:143
 #: accounts/templates/registration/password_reset_form.html:10
 msgid "Email"
 msgstr ""
 
-#: accounts/forms.py:152
+#: accounts/forms.py:161
 msgid "Password"
 msgstr ""
 
@@ -100,10 +112,14 @@ msgstr ""
 msgid "At least one uppercase letter"
 msgstr ""
 
+#: accounts/templates/registration/login.html:9
+#: accounts/templates/registration/signup.html:68
+msgid "Log in"
+msgstr ""
+
 #: accounts/templates/registration/login.html:16
 #: accounts/templates/registration/login.html:37
 #: accounts/templates/registration/password_reset_complete.html:8
-#: accounts/templates/registration/signup.html:78
 msgid "Login"
 msgstr "Kirjaudu"
 
@@ -113,6 +129,7 @@ msgid "Enter a valid email and password"
 msgstr ""
 
 #: accounts/templates/registration/login.html:38
+#: accounts/templates/registration/signup.html:9
 msgid "Sign up"
 msgstr ""
 
@@ -255,7 +272,7 @@ msgid "Reset your LUT Kyyti password"
 msgstr ""
 
 #: accounts/templates/registration/signup.html:23
-#: accounts/templates/registration/signup.html:69
+#: accounts/templates/registration/signup.html:62
 msgid "Sign Up"
 msgstr ""
 
@@ -275,15 +292,15 @@ msgstr ""
 msgid "Username is required"
 msgstr ""
 
-#: accounts/templates/registration/signup.html:56
-msgid "Must be a 10 digit phone number"
-msgstr ""
-
-#: accounts/templates/registration/signup.html:62
+#: accounts/templates/registration/signup.html:55
 msgid "Error in account creation. Check that passwords match"
 msgstr ""
 
-#: accounts/templates/registration/signup.html:74
+#: accounts/templates/registration/signup.html:67
+msgid "Already have a LUT Kyyti account?"
+msgstr ""
+
+#: accounts/templates/registration/signup.html:71
 msgctxt ""
 "Full sentence: By creating an account you agree to the Terms of Use and "
 "Privacy Policy."
@@ -293,10 +310,6 @@ msgid ""
 "link-primary\" href=\"/terms-of-use\">Terms of Use</a> and <a class=\"link "
 "link-secondary\" href=\"/privacy-policy\">Privacy Policy</a>.</p>\n"
 "              "
-msgstr ""
-
-#: accounts/templates/registration/signup.html:78
-msgid "Already have a LUT Kyyti account?"
 msgstr ""
 
 #, fuzzy

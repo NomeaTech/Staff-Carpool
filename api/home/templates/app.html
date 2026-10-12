@@ -4,7 +4,7 @@
 <html data-theme="light" class="h-full overflow-hidden">
 {% get_current_language as LANGUAGE_CODE %}
 <head>
-    <title>{% block title %}{% trans "LUT Kyyti" %}{% endblock %}</title>
+    <title>{% block title %}LUT Kyyti{% endblock %}</title>
     {% cache 86400 app_head using="templates" %}
     {% progressive_web_app_meta %}
     {% include "_favicons.html" %}
