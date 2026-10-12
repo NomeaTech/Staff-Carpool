@@ -220,6 +220,8 @@ def search_rides(form_clean):
         rides = rides.filter(request=True)
     if form_clean["other"]:
         rides = rides.filter(Q(other=True) | Q(train=True) | Q(bus=True) | Q(taxi=True))
+    if form_clean["date"]:
+        rides = rides.filter(on_date(form_clean["date"]))
 
     # The order must be stable, so that pages do not overlap
     if not (start_json or destination_json):
@@ -234,6 +236,20 @@ def search_rides(form_clean):
             output_field=FloatField(),
         ),
     ).order_by("on_the_way", "dist", "-created_at", "-pk")
+
+WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+
+def on_date(date):
+    """
+    Match rides happening on the given date:
+    - one-time rides leaving on it, or returning on it if they return
+    - recurring rides on its day of the week
+    """
+    # Dates are stored as datetime-local strings, e.g. "2026-10-12T08:30"
+    day = date.isoformat()
+    one_time = Q(leaving_at_date_time__startswith=day) | Q(one_way=False, returning_at_date_time__startswith=day)
+    recurring = Q(**{f"{WEEKDAYS[date.weekday()]}_check": True})
+    return Q(one_time=True) & one_time | Q(one_time=False) & recurring
 
 @login_required
 def add_ride(request):    

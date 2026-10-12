@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.utils.translation import gettext_lazy as _
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
 from .models import User
@@ -13,7 +14,29 @@ class CustomUserAdmin(UserAdmin):
         "first_name",
         "last_name",
     ]
-    fieldsets = UserAdmin.fieldsets + ((None, {"fields": ("address", "pfp", "phone")}),)
-    add_fieldsets = UserAdmin.add_fieldsets + ((None, {"fields": ("email", "address", "pfp", "phone")}),)
+    search_fields = ("email", "first_name", "last_name")
+    ordering = ("email",)
+
+    # Users log in with their email and have no username, so the default
+    # UserAdmin fieldsets (which start with the username) are replaced
+    fieldsets = (
+        (None, {"fields": ("email", "password")}),
+        (_("Personal info"), {"fields": ("first_name", "last_name", "phone", "address", "pfp")}),
+        (
+            _("Permissions"),
+            {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")},
+        ),
+        (_("Important dates"), {"fields": ("last_login", "date_joined")}),
+    )
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ("email", "first_name", "last_name", "usable_password", "password1", "password2"),
+            },
+        ),
+        (None, {"fields": ("phone", "address", "pfp")}),
+    )
 
 admin.site.register(User, CustomUserAdmin)
