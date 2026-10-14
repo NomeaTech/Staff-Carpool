@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.gis.db import models
 from django.conf import settings
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, gettext_lazy
+from django.utils import timezone
 from itertools import compress
 from dateutil import parser
 from dateutil.parser import ParserError
@@ -22,6 +23,26 @@ class Address(models.Model):
     def __str__(self):
         return f"{self.country}, {self.city}, {self.postcode}, {self.street} {self.number}"
 
+class RideQuerySet(models.QuerySet):
+    def upcoming(self):
+        """Recurring rides, and one-time rides that have not left (or returned) yet."""
+        # Dates are stored as datetime-local strings, e.g. "2026-10-12T08:30",
+        # which sort the same way as the dates they stand for
+        now = timezone.localtime().strftime("%Y-%m-%dT%H:%M")
+        return self.filter(
+            models.Q(one_time=False)
+            | models.Q(leaving_at_date_time__gte=now)
+            | models.Q(one_way=False, returning_at_date_time__gte=now)
+        )
+
+    def past(self):
+        return self.exclude(pk__in=self.upcoming().values("pk"))
+
+    def with_seats_taken(self):
+        return self.annotate(seats_taken=models.Count(
+            "requests", filter=models.Q(requests__status=RideRequest.Status.ACCEPTED)
+        ))
+
 class Ride(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
@@ -31,12 +52,7 @@ class Ride(models.Model):
         related_name="driver"
     )
 
-    passenger = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, 
-        related_name="passenger",
-        blank=True,
-        null=True
-    )
+    # Passengers are the accepted RideRequests (ride.requests)
     
     # Car Ride
     offer = models.BooleanField(default=False)
@@ -117,6 +133,8 @@ class Ride(models.Model):
 
     created_at = models.DateTimeField("date added", auto_now_add=True)
 
+    objects = RideQuerySet.as_manager()
+
     def __str__(self):
         if self.start_json and self.destination_json:
             return f"From: {self.start_json["displayName"]}, Destination: {self.destination_json["displayName"]}"
@@ -126,6 +144,59 @@ class Ride(models.Model):
     def transport_options(self):
         """The ride's ways of travelling (car offer, request, train, ...) with their icons."""
         return [option for option in TRANSPORT_OPTIONS if getattr(self, option.field)]
+
+    def route_name(self):
+        return f"{self.start_json['displayName']} {self.sign()} {self.destination_json['displayName']}"
+
+    def leaving_at(self):
+        """When a one-time ride leaves, None for recurring rides or unreadable dates."""
+        return parse_local(self.leaving_at_date_time) if self.one_time else None
+
+    def returning_at(self):
+        return parse_local(self.returning_at_date_time) if self.one_time and not self.one_way else None
+
+    def days(self):
+        """Short summary of a recurring ride's days, e.g. "Weekdays" or "Mon, Wed"."""
+        day_filter = self.day_filter()
+        if all(day_filter):
+            return _("Everyday")
+        if all(day_filter[:5]) and not any(day_filter[5:7]):
+            return _("Weekdays")
+        if all(day_filter[5:7]) and not any(day_filter[:5]):
+            return _("Weekends")
+        return ", ".join(compress([_("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun")], day_filter))
+
+    def day_filter(self):
+        return [
+            self.monday_check,
+            self.tuesday_check,
+            self.wednesday_check,
+            self.thursday_check,
+            self.friday_check,
+            self.saturday_check,
+            self.sunday_check,
+        ]
+
+    def departure_time(self):
+        """The time the ride leaves, for recurring rides the time on its first day."""
+        if self.one_time:
+            leaving_at = self.leaving_at()
+            return leaving_at.strftime("%H:%M") if leaving_at else ""
+        first_day = next(self.weekly_schedule(), None)
+        return first_day[1] if first_day else ""
+
+    def seats_left(self):
+        """Free seats, or None when the driver set no limit. Uses the
+        seats_taken annotation (RideQuerySet.with_seats_taken) when present."""
+        if self.max_passengers is None:
+            return None
+        taken = getattr(self, "seats_taken", None)
+        if taken is None:
+            taken = self.requests.filter(status=RideRequest.Status.ACCEPTED).count()
+        return max(self.max_passengers - taken, 0)
+
+    def is_full(self):
+        return self.seats_left() == 0
 
     def get_created_at(self):
         return formats.date_format(self.created_at, "Y.m.d")
@@ -294,6 +365,13 @@ class Ride(models.Model):
         else:
             return "⇄"
 
+def parse_local(value):
+    """A datetime-local string ("2026-10-12T08:30") as a naive datetime."""
+    try:
+        return datetime.strptime(value[:16], "%Y-%m-%dT%H:%M")
+    except (TypeError, ValueError):
+        return None
+
 def to_string(self):
     l = ""
     for var_name, var_val in vars(self).items():
@@ -317,3 +395,36 @@ class Via(models.Model):
 
     def __str__(self):
         return self.via_json.get("displayName", "")
+
+
+class RideRequest(models.Model):
+    """
+    A request to join a ride. The driver accepts or declines it; accepted
+    requests are the ride's passengers. Withdrawing a request or leaving a
+    ride deletes it, while a declined request stays so it cannot be resent.
+    """
+    class Status(models.TextChoices):
+        PENDING = "pending", gettext_lazy("Pending")
+        ACCEPTED = "accepted", gettext_lazy("Accepted")
+        DECLINED = "declined", gettext_lazy("Declined")
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    ride = models.ForeignKey(Ride, on_delete=models.CASCADE, related_name="requests")
+    passenger = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="ride_requests",
+    )
+    status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
+    message = models.TextField(blank=True, default="", max_length=500, help_text="Message from the passenger to the driver")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["created_at"]
+        constraints = [
+            models.UniqueConstraint(fields=["ride", "passenger"], name="one_request_per_ride_and_passenger"),
+        ]
+
+    def __str__(self):
+        return f"{self.passenger} → {self.ride} ({self.status})"

@@ -1,5 +1,5 @@
 {% load i18n %}
-{% load static %}
+{% load static privacy %}
 {% comment %}
   Search results, rendered inside search.html and returned on its own for
   asynchronous searches.
@@ -50,13 +50,8 @@
                                 <p class="truncate" data-fit-text>{{ ride.destination_json.displayName }}</p>
                             </h2>
                             <div class="badge badge-soft badge-primary rounded-full badge-lg pl-0 pr-2">
-                                <label class="avatar">
-                                    <div class="w-8 rounded-full">
-                                      <img src="/{{ ride.driver.pfp }}" onerror="this.onerror=null; this.src='{% static "images/pfp_not_found.jpg" %}'" alt="Profile picture"/>
-                                    </div>
-                                  </label>
-                          
-                                {{ ride.driver }}
+                                {% avatar ride.driver "w-8" "text-xs" %}
+                                {{ ride.driver|display_name }}
                             </div>
                         </div>
                     </div>

@@ -23,6 +23,10 @@ class CustomUserAdmin(UserAdmin):
         (None, {"fields": ("email", "password")}),
         (_("Personal info"), {"fields": ("first_name", "last_name", "phone", "address", "pfp")}),
         (
+            _("Privacy and notifications"),
+            {"fields": ("name_visibility", "show_photo", "share_email", "share_phone", "notify_ride_requests")},
+        ),
+        (
             _("Permissions"),
             {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")},
         ),

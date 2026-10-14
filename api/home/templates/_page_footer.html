@@ -1,0 +1,8 @@
+{% load i18n %}
+<footer class="footer footer-horizontal footer-center gap-6 mt-10 text-xs text-base-content/50">
+  <nav class="grid grid-flow-col gap-6">
+    <a href="{% url 'contact' %}" class="link link-hover">{% trans "Contact" %}</a>
+    <a href="{% url 'terms-of-use' %}" class="link link-hover">{% trans "Terms of use" %}</a>
+    <a href="{% url 'privacy-policy' %}" class="link link-hover">{% trans "Privacy policy" %}</a>
+  </nav>
+</footer>

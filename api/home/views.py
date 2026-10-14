@@ -1,17 +1,20 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.views.decorators.http import require_POST
+from accounts.privacy import contact_details
+from . import notifications
 from django.http import HttpResponseRedirect
-from test_app.models import Ride, Via
+from test_app.models import Ride, RideRequest, Via
 from test_app.routes import build_route, as_route_point
 from django.contrib.auth.decorators import login_required
 from test_app.models import Ride
 from .forms import SearchForm
 from .campuses import CAMPUSES
-from accounts.models import User
 from test_app.forms import RideForm
 import logging
 from django.utils.translation import gettext_lazy as _
 from django.http import JsonResponse
-from django.db.models import Q, F, Exists, OuterRef, Subquery, ExpressionWrapper, FloatField, BooleanField, Case, When, Value
+from django.db.models import Q, F, Count, Exists, OuterRef, Subquery, ExpressionWrapper, FloatField, BooleanField, Case, When, Value
 from django.db.models.functions import Least
 from django.db import transaction
 from django.core.paginator import Paginator
@@ -37,71 +40,169 @@ def index(request):
 @login_required
 def home(request):
     user = request.user
+    upcoming = Ride.objects.upcoming()
 
-    rides_created = Ride.objects.filter(driver=user.pk)
-    rides_registered = Ride.objects.filter(passenger=user.pk)
-    
-    # testing
-    users = User.objects.all()
+    pending_requests = RideRequest.objects.filter(
+        ride__in=upcoming, ride__driver=user, status=RideRequest.Status.PENDING
+    ).select_related("ride", "passenger")
 
-    context = {"rides_created": rides_created, "rides_registered": rides_registered, "users": users}
+    recent_rides = (
+        upcoming.exclude(driver=user)
+        .with_seats_taken()
+        .order_by("-created_at")[:4]
+    )
+
+    context = {
+        "my_rides": my_ride_entries(user, upcoming)[:HOME_RIDES],
+        "pending_requests": pending_requests,
+        "recent_rides": recent_rides,
+    }
     return render(request, "home.html", context)
+
+# How many of the user's upcoming rides the home page shows
+HOME_RIDES = 4
+
+@login_required
+def my_rides(request):
+    rides = Ride.objects.all()
+    context = {
+        "upcoming": my_ride_entries(request.user, rides.upcoming()),
+        "past": my_ride_entries(request.user, rides.past(), reverse=True),
+    }
+    return render(request, "my_rides.html", context)
+
+def my_ride_entries(user, rides, reverse=False):
+    """
+    The rides among rides that the user drives or has requested to join, as
+    (ride, request) pairs, request being None for rides the user drives.
+    One-time rides come in the order they leave, then recurring rides.
+    """
+    driving = rides.filter(driver=user).with_seats_taken().annotate(
+        pending=Count("requests", filter=Q(requests__status=RideRequest.Status.PENDING))
+    )
+    requested = RideRequest.objects.filter(ride__in=rides, passenger=user).select_related("ride")
+
+    entries = [(ride, None) for ride in driving] + [(r.ride, r) for r in requested]
+    dated = sorted((e for e in entries if e[0].leaving_at()), key=lambda e: e[0].leaving_at(), reverse=reverse)
+    return dated + [e for e in entries if not e[0].leaving_at()]
 
 # Everything to do with recurring rides should be moved to its own app
 @login_required
 def ride_detail(request, ride_id):
-    # Driver and passenger status are fetched in the same query as the ride
-    is_passenger = Ride.passenger.through.objects.filter(
-        ride=OuterRef("pk"), user=request.user.pk
-    )
-    ride = get_object_or_404(
-        Ride.objects.select_related("driver").annotate(is_passenger=Exists(is_passenger)),
-        pk=ride_id,
-    )
-    is_driver = ride.driver_id == request.user.id
-
-    # leaving_at = f"{l_weekday.title()}, {str(l_hour).zfill(2)}:{str(l_minute).zfill(2)}"
-    
-    # leaving_at = f"{str(l_hour).zfill(2)}:{str(l_minute).zfill(2)}"
-    # arriving_at = f"{str(a_hour).zfill(2)}:{str(a_minute).zfill(2)}"
+    ride = get_object_or_404(Ride.objects.select_related("driver").with_seats_taken(), pk=ride_id)
+    user = request.user
+    is_driver = ride.driver_id == user.id
 
     context = {
-        "ride": ride, 
-        "is_driver": is_driver, 
-        "is_passenger": ride.is_passenger,
-        # "leaving_at": leaving_at,
-        # "arriving_at": arriving_at,
+        "ride": ride,
+        "is_driver": is_driver,
+        # Ride partners see each other's full names and shared contact details
+        "is_partner": False,
+        "is_upcoming": Ride.objects.upcoming().filter(pk=ride.pk).exists(),
         "vias": ride.via_points.all(),
+        "share_url": request.build_absolute_uri(reverse("ride_detail", args=[ride.pk])),
     }
-    
+
+    if is_driver:
+        # Accepted passengers are the driver's ride partners: their full names
+        # and shared contact details are shown (see accounts/privacy.py)
+        requests = ride.requests.exclude(status=RideRequest.Status.DECLINED).select_related("passenger")
+        context["pending_requests"] = [r for r in requests if r.status == RideRequest.Status.PENDING]
+        context["passengers"] = [
+            (r, contact_details(r.passenger)) for r in requests if r.status == RideRequest.Status.ACCEPTED
+        ]
+    else:
+        own_request = ride.requests.filter(passenger=user).first()
+        context["own_request"] = own_request
+        context["is_partner"] = own_request is not None and own_request.status == RideRequest.Status.ACCEPTED
+        if context["is_partner"]:
+            context["driver_contacts"] = contact_details(ride.driver)
+
     return render(request, "ride_detail.html", context)
 
-# join, leave and delete work on the ride id directly, without loading the ride
+@login_required
+@require_POST
+def request_ride(request, ride_id):
+    ride = get_object_or_404(Ride.objects.upcoming().with_seats_taken(), pk=ride_id)
+    message = request.POST.get("message", "").strip()[:500]
+
+    if ride.driver_id == request.user.id:
+        messages.error(request, _("You cannot request to join your own ride."))
+    elif ride.is_full():
+        messages.error(request, _("This ride has no free seats left."))
+    else:
+        try:
+            with transaction.atomic():
+                ride_request = RideRequest.objects.create(ride=ride, passenger=request.user, message=message)
+                notifications.request_received(request, ride_request)
+            messages.success(request, _("Request sent. You will be notified when the driver responds."))
+        except IntegrityError:
+            # The user has already requested to join this ride
+            pass
+
+    return redirect("ride_detail", ride_id=ride_id)
 
 @login_required
-def join_ride(request):
-    ride_id = get_ride_id(request)
-    try:
-        with transaction.atomic():
-            request.user.passenger.add(ride_id)
-    except IntegrityError:
-        # The ride does not exist
-        raise Http404
+@require_POST
+def withdraw_request(request, ride_id):
+    """Withdraws a pending request, or leaves the ride once it was accepted."""
+    with transaction.atomic():
+        ride_request = RideRequest.objects.filter(
+            ride=ride_id, passenger=request.user
+        ).exclude(status=RideRequest.Status.DECLINED).select_related("ride").first()
 
-    return HttpResponseRedirect(f"/app/ride/{ride_id}/")
+        if ride_request:
+            ride_request.delete()
+            if ride_request.status == RideRequest.Status.ACCEPTED:
+                notifications.passenger_left(request, ride_request)
+                messages.success(request, _("You have left the ride."))
+            else:
+                messages.success(request, _("Your request was withdrawn."))
+
+    return redirect("ride_detail", ride_id=ride_id)
 
 @login_required
-def leave_ride(request):
-    ride_id = get_ride_id(request)
-    request.user.passenger.remove(ride_id)
+@require_POST
+def answer_request(request, request_id):
+    """The driver accepts or declines a request, or removes an accepted passenger."""
+    accept = request.POST.get("action") == "accept"
 
-    return HttpResponseRedirect(f"/app/ride/{ride_id}/")
+    with transaction.atomic():
+        ride_request = get_object_or_404(
+            RideRequest.objects.select_related("ride", "passenger"),
+            pk=request_id, ride__driver=request.user,
+        )
+        # Locking the ride makes requests accepted at the same time count
+        # each other's seats
+        ride = Ride.objects.select_for_update().get(pk=ride_request.ride_id)
+
+        if accept and ride_request.status == RideRequest.Status.PENDING:
+            if ride.is_full():
+                messages.error(request, _("The ride is full. Increase its seats or remove a passenger first."))
+            else:
+                ride_request.status = RideRequest.Status.ACCEPTED
+                ride_request.save(update_fields=["status", "updated_at"])
+                notifications.request_answered(request, ride_request)
+                messages.success(request, _("Request accepted. You can now see the passenger's shared contact details."))
+        elif not accept and ride_request.status != RideRequest.Status.DECLINED:
+            ride_request.status = RideRequest.Status.DECLINED
+            ride_request.save(update_fields=["status", "updated_at"])
+            notifications.request_answered(request, ride_request)
+            messages.success(request, _("Request declined."))
+
+    return redirect("ride_detail", ride_id=ride_request.ride_id)
 
 @login_required
+@require_POST
 def delete_ride(request):
     ride_id = get_ride_id(request)
     # Only deletes the ride if the user is its driver
-    Ride.objects.filter(pk=ride_id, driver=request.user).delete()
+    ride = Ride.objects.filter(pk=ride_id, driver=request.user).first()
+    if ride:
+        with transaction.atomic():
+            notifications.ride_cancelled(request, ride)
+            ride.delete()
+        messages.success(request, _("The ride was deleted."))
 
     return HttpResponseRedirect(reverse("home"))
 

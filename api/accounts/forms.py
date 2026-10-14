@@ -90,7 +90,7 @@ class CustomUserCreationForm(AdminUserCreationForm):
     )
 
     # Don't forget to implement the view for this otherwise file upload will not work :)
-    pfp = forms.FileField(
+    pfp = forms.ImageField(
         required=False,
         widget=forms.FileInput(
             attrs={
@@ -162,3 +162,58 @@ class UserLoginForm(AuthenticationForm):
         }
     )
 )
+
+class ProfileForm(forms.ModelForm):
+    """Personal information on the profile & settings page. The email address
+    identifies the account and is not changed here."""
+    phone = forms.RegexField(
+        required=False,
+        regex=r"^\+?[0-9 ]{6,20}$",
+        error_messages={"invalid": _("Enter a phone number using digits, e.g. +358 40 123 4567.")},
+    )
+
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name", "phone")
+
+    def clean_phone(self):
+        return self.cleaned_data["phone"].replace(" ", "") or None
+
+
+class SettingsForm(forms.ModelForm):
+    """Privacy and notification settings, see accounts/privacy.py."""
+    class Meta:
+        model = User
+        fields = ("name_visibility", "show_photo", "share_email", "share_phone", "notify_ride_requests")
+        widgets = {"name_visibility": forms.RadioSelect(attrs={"class": "radio radio-primary radio-sm"})}
+
+
+PHOTO_MAX_UPLOAD = 10 * 1024 * 1024
+
+class PhotoForm(forms.Form):
+    photo = forms.ImageField()
+
+    def clean_photo(self):
+        photo = self.cleaned_data["photo"]
+        if photo.size > PHOTO_MAX_UPLOAD:
+            raise forms.ValidationError(_("The photo must be smaller than 10 MB."))
+        return photo
+
+    def save(self, user):
+        # User.save() shrinks the photo and names it with a UUID
+        user.pfp = self.cleaned_data["photo"]
+        user.save(update_fields=["pfp"])
+
+
+class DeleteAccountForm(forms.Form):
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_password(self):
+        password = self.cleaned_data["password"]
+        if not self.user.check_password(password):
+            raise forms.ValidationError(_("The password is incorrect."))
+        return password
