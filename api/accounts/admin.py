@@ -26,7 +26,7 @@ class CustomUserAdmin(UserAdmin):
         (_("Personal info"), {"fields": ("first_name", "last_name", "phone", "address", "pfp")}),
         (
             _("Privacy and notifications"),
-            {"fields": ("name_visibility", "show_photo", "share_email", "share_phone", "notify_ride_requests")},
+            {"fields": ("name_visibility", "show_photo", "share_email", "share_phone", "email_notifications")},
         ),
         (
             _("Permissions"),

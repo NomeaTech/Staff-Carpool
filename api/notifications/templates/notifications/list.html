@@ -1,0 +1,47 @@
+{% extends "app.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Notifications" %} | LUT Kyyti{% endblock %}
+
+{% block content %}
+<section class="h-screen w-full overflow-y-auto pt-7 lg:pt-24 pb-28 lg:pb-10">
+  <div class="max-w-2xl mx-auto px-4 lg:px-7">
+    <header class="flex flex-wrap items-end justify-between gap-3 mb-6">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-widest text-primary mb-2">{% trans "Your account" %}</p>
+        <h1 class="text-3xl font-bold tracking-tight">{% trans "Notifications" %}</h1>
+      </div>
+      {% if unread_count %}
+      <form method="post" action="{% url 'notifications_mark_all_read' %}">
+        {% csrf_token %}
+        <button class="btn btn-outline btn-primary btn-sm" type="submit">{% trans "Mark all as read" %}</button>
+      </form>
+      {% endif %}
+    </header>
+
+    <section class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-3 sm:p-4">
+        {% if page.object_list %}
+          <ul class="grid gap-1">
+            {% for notification in page %}{% include "notifications/_item.html" %}{% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-sm text-base-content/60 py-8 text-center">{% trans "No notifications yet. You'll be notified here about your ride requests and rides." %}</p>
+        {% endif %}
+      </div>
+    </section>
+
+    {% if page.paginator.num_pages > 1 %}
+    <div class="join flex justify-center mt-5">
+      <a class="join-item btn btn-sm {% if not page.has_previous %}btn-disabled{% endif %}" href="{% if page.has_previous %}?page={{ page.previous_page_number }}{% endif %}" aria-label="{% trans "Previous page" %}">«</a>
+      <span class="join-item btn btn-sm pointer-events-none">{% blocktrans with number=page.number total=page.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</span>
+      <a class="join-item btn btn-sm {% if not page.has_next %}btn-disabled{% endif %}" href="{% if page.has_next %}?page={{ page.next_page_number }}{% endif %}" aria-label="{% trans "Next page" %}">»</a>
+    </div>
+    {% endif %}
+
+    <p class="text-xs text-base-content/50 text-center mt-5">
+      {% url 'account' as account_url %}{% blocktrans %}Choose which notifications are also emailed to you in your <a href="{{ account_url }}#notifications" class="link">settings</a>.{% endblocktrans %}
+    </p>
+  </div>
+</section>
+{% endblock %}

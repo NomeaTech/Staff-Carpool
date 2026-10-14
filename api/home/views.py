@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.views.decorators.http import require_POST
 from accounts.privacy import contact_details
-from . import notifications
+from notifications import services as notifications
+from notifications.models import Notification
 from django.http import HttpResponseRedirect
 from test_app.models import Ride, RideRequest, Via
 from test_app.routes import build_route, as_route_point
@@ -31,6 +32,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.db import IntegrityError, transaction
 from django.db.models import Exists, OuterRef
 import uuid
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -93,6 +95,9 @@ def ride_detail(request, ride_id):
     ride = get_object_or_404(Ride.objects.select_related("driver").with_seats_taken(), pk=ride_id)
     user = request.user
     is_driver = ride.driver_id == user.id
+
+    # Seeing the ride is seeing what its notifications were about
+    Notification.objects.filter(recipient=user, ride=ride, read_at__isnull=True).update(read_at=timezone.now())
 
     context = {
         "ride": ride,
@@ -158,6 +163,7 @@ def withdraw_request(request, ride_id):
                 notifications.passenger_left(request, ride_request)
                 messages.success(request, _("You have left the ride."))
             else:
+                notifications.request_withdrawn(request, ride_request)
                 messages.success(request, _("Your request was withdrawn."))
 
     return redirect("ride_detail", ride_id=ride_id)
@@ -183,13 +189,19 @@ def answer_request(request, request_id):
             else:
                 ride_request.status = RideRequest.Status.ACCEPTED
                 ride_request.save(update_fields=["status", "updated_at"])
-                notifications.request_answered(request, ride_request)
+                notifications.request_accepted(request, ride_request)
                 messages.success(request, _("Request accepted. You can now see the passenger's shared contact details."))
         elif not accept and ride_request.status != RideRequest.Status.DECLINED:
+            # Declining a request, or removing a passenger who was accepted
+            was_accepted = ride_request.status == RideRequest.Status.ACCEPTED
             ride_request.status = RideRequest.Status.DECLINED
             ride_request.save(update_fields=["status", "updated_at"])
-            notifications.request_answered(request, ride_request)
-            messages.success(request, _("Request declined."))
+            if was_accepted:
+                notifications.passenger_removed(request, ride_request)
+                messages.success(request, _("The passenger was removed from the ride."))
+            else:
+                notifications.request_declined(request, ride_request)
+                messages.success(request, _("Request declined."))
 
     return redirect("ride_detail", ride_id=ride_request.ride_id)
 

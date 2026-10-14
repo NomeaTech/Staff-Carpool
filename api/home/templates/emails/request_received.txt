@@ -1,6 +1,6 @@
 {% load i18n %}{% autoescape off %}{% blocktrans with name=recipient.first_name %}Hi {{ name }},{% endblocktrans %}
 
-{% blocktrans %}{{ passenger }} would like to join your ride {{ route }}.{% endblocktrans %}
+{% blocktrans %}{{ name }} would like to join your ride {{ route }}.{% endblocktrans %}
 {% if message %}
 {% trans "Their message:" %}
 {{ message }}

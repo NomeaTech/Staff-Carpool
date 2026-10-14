@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     'tailwind',
     'pwa',
     'accounts',
+    'notifications',
     'landing',
     'test_app.apps.TestAppConfig',
     # 3rd party
@@ -130,7 +131,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'home.context_processors.pending_requests',
+                'notifications.context_processors.notifications',
             ],
         },
     },

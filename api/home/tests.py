@@ -110,10 +110,18 @@ class RideRequestTests(TestCase):
         self.assertIn("Hello", mail.outbox[0].body)
         self.assertNotIn(self.passenger.email, mail.outbox[0].body)
 
-        self.passenger.notify_ride_requests = False
-        self.passenger.save()
-        self.answer(RideRequest.objects.get(), "accept")
+        # Only essential emails: new requests are not emailed, answers are
+        self.driver.email_notifications = "essential"
+        self.driver.save()
+        other = make_user("Kalle", "Virtanen")
+        self.request_ride(other)
         self.assertEqual(len(mail.outbox), 1)
+
+        self.passenger.email_notifications = "essential"
+        self.passenger.save()
+        self.answer(RideRequest.objects.get(passenger=self.passenger), "accept")
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(mail.outbox[1].to, [self.passenger.email])
 
     def test_seats_limit_acceptance(self):
         other = make_user("Kalle", "Virtanen")
@@ -242,6 +250,7 @@ class AccountTests(TestCase):
         })
         self.client.post(self.url, {
             "form": "settings", "settings-name_visibility": "full", "settings-share_phone": "on",
+            "settings-email_notifications": "essential",
         })
         self.user.refresh_from_db()
         self.assertEqual(self.user.last_name, "S")
@@ -249,7 +258,7 @@ class AccountTests(TestCase):
         self.assertEqual(self.user.name_visibility, "full")
         self.assertTrue(self.user.share_phone)
         self.assertFalse(self.user.share_email)
-        self.assertFalse(self.user.notify_ride_requests)
+        self.assertEqual(self.user.email_notifications, "essential")
 
     def save_phone(self, value):
         response = self.client.post(self.url, {
