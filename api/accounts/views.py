@@ -15,7 +15,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 
-from home import notifications
+from notifications import services as notifications
+from test_app.models import RideRequest
 from .forms import SignUpForm, UserLoginForm, ProfileForm, SettingsForm, PhotoForm, DeleteAccountForm, EmailChangeForm, PHOTO_MAX_UPLOAD, photo_too_large
 from . import email_change
 from .confirmation import send_confirmation, token_generator
@@ -164,9 +165,16 @@ def account(request):
         return redirect("account")
     if posted == "delete" and delete_form.is_valid():
         with transaction.atomic():
-            # Everyone in the rides the user drives is told they are cancelled
+            # Everyone in the rides the user drives is told they are
+            # cancelled, and the drivers of rides they joined or requested
+            # that they left
             for ride in user.driver.all():
                 notifications.ride_cancelled(request, ride)
+            for ride_request in user.ride_requests.select_related("ride__driver"):
+                if ride_request.status == RideRequest.Status.ACCEPTED:
+                    notifications.passenger_left(request, ride_request)
+                elif ride_request.status == RideRequest.Status.PENDING:
+                    notifications.request_withdrawn(request, ride_request)
             photo = user.pfp.name if user.pfp else None
             logout(request)
             user.delete()

@@ -1,6 +1,6 @@
 {% load i18n %}{% autoescape off %}{% blocktrans with name=recipient.first_name %}Hi {{ name }},{% endblocktrans %}
 
-{% blocktrans %}{{ driver }} has changed the ride {{ route }}. Check the new details, such as the time and the route, on the ride's page:{% endblocktrans %}
+{% blocktrans %}{{ name }} has changed the ride {{ route }}. Check the new details, such as the time and the route, on the ride's page:{% endblocktrans %}
 
 {{ url }}
 

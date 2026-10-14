@@ -120,17 +120,25 @@
           {% csrf_token %}
           <input type="hidden" name="form" value="settings">
 
-          <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <section id="notifications" class="card bg-base-100 border border-base-300 shadow-sm scroll-mt-24">
             <div class="card-body p-5 sm:p-6">
               <h2 class="card-title text-lg mb-1">{% trans "Notifications" %}</h2>
-              <p class="text-sm text-base-content/60 mb-2">{% trans "Choose which ride updates you receive by email." %}</p>
-              <label class="flex gap-3 cursor-pointer">
-                {% render_field settings_form.notify_ride_requests class="toggle toggle-primary toggle-sm mt-0.5" %}
-                <span>
-                  <strong class="block text-sm">{% trans "Ride requests and responses" %}</strong>
-                  <span class="text-xs text-base-content/60">{% trans "New requests on your rides, answers to your requests, and cancellations" %}</span>
-                </span>
-              </label>
+              <p class="text-sm text-base-content/60 mb-2">{% url 'notifications' as notifications_url %}{% blocktrans %}All notifications are shown in the app, under the bell and on the <a href="{{ notifications_url }}" class="link">notifications page</a>. Choose which ones are also emailed to you.{% endblocktrans %}</p>
+              <fieldset class="fieldset">
+                <legend class="fieldset-legend">{% trans "Email me about" %}</legend>
+                {% for radio in settings_form.email_notifications %}
+                <label class="flex items-start gap-3 cursor-pointer py-1">
+                  {{ radio.tag }}
+                  <span>
+                    <strong class="block text-sm">{{ radio.choice_label }}</strong>
+                    <span class="text-xs text-base-content/60">
+                      {% if radio.data.value == "all" %}{% trans "Also new requests on your rides and withdrawn requests" %}{% else %}{% trans "Only changes to your trips: answers to your requests, passengers leaving, and rides being changed or cancelled" %}{% endif %}
+                    </span>
+                  </span>
+                </label>
+                {% endfor %}
+                <p class="label whitespace-normal">{% trans "Emails about your account, such as confirming your email address or resetting your password, are always sent." %}</p>
+              </fieldset>
             </div>
           </section>
 

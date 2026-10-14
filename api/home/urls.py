@@ -13,6 +13,7 @@ urlpatterns = [
     path("requests/<uuid:request_id>/answer/", answer_request, name="answer_request"),
     path("home/", home, name="home"),
     path("rides/", my_rides, name="my_rides"),
+    path("notifications/", include("notifications.urls")),
     path("search/", search, name="search"),
     path("add/", add_ride, name="add"),
     path("digitrans/autocomplete/", digitrans_autocomplete_proxy, name="digitrans_autocomplete_proxy")

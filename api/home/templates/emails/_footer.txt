@@ -1,4 +1,4 @@
 {% load i18n %}
 --
 LUT Kyyti
-{% blocktrans %}You can turn off these emails in your settings: {{ account_url }}{% endblocktrans %}
+{% blocktrans %}You can choose to get emails about all notifications or only essential ones in your settings: {{ account_url }}{% endblocktrans %}

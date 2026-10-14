@@ -82,6 +82,12 @@
                 <span class="block text-xs text-base-content/60">{% trans "Profile & settings" %}</span>
               </span>
             </a>
+            <li>
+              <a href="{% url 'notifications' %}" class="flex justify-between">
+                {% trans "Notifications" %}
+                {% with count=unread_notification_count %}<span class="badge badge-sm badge-error {% if not count %}hidden{% endif %}" data-unread-badge>{% if count > 9 %}9+{% else %}{{ count }}{% endif %}</span>{% endwith %}
+              </a>
+            </li>
             {% cache 86400 app_sidebar_links LANGUAGE_CODE using="templates" %}
             <li><a href="{% url 'my_rides' %}">{% trans "My rides" %}</a></li>
             <li><a href="{% url 'faq' %}">{% trans "Help" %}</a></li>
@@ -111,7 +117,7 @@
               {% csrf_token %}
               <button class="btn btn-warning w-full" type="submit">Log Out</button>
             </form>
-    <p class="col-span-3">Version: 0.20.1</p>
+    <p class="col-span-3">Version: 0.21.0</p>
           </div>
         </div>
       </div>
@@ -125,22 +131,28 @@
           </a>
         </div>
         <div class="navbar-end gap-2 w-auto grow">
-          <ul class="menu menu-horizontal gap-1 font-semibold">
+          <ul class="menu menu-horizontal gap-1 font-semibold text-base">
             {% comment %}
               My rides and Help are in the side menu (and My rides in the mobile dock).
               The current page is not highlighted; hovering a link turns it green.
             {% endcomment %}
-            <li><a href="{% url 'home' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Home" %}{% include "_icon.html" with name="home" class="size-5" %}</a></li>
-            <li><a href="{% url 'search' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Find a ride" %}{% include "_icon.html" with name="search" class="size-5" %}</a></li>
-            <li><a href="{% url 'add' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Post a ride" %}{% include "_icon.html" with name="car" class="size-5" %}</a></li>
+            <li><a href="{% url 'home' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Home" %}{% include "_icon.html" with name="home" class="size-6" %}</a></li>
+            <li><a href="{% url 'search' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Find a ride" %}{% include "_icon.html" with name="search" class="size-6" %}</a></li>
+            <li><a href="{% url 'add' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Post a ride" %}{% include "_icon.html" with name="car" class="size-6" %}</a></li>
           </ul>
-          {% with count=pending_request_count %}
-          <a href="{% url 'home' %}#attention" class="btn btn-ghost btn-circle" aria-label="{% blocktrans count counter=count %}{{ counter }} ride request to review{% plural %}{{ counter }} ride requests to review{% endblocktrans %}">
-            <div class="indicator">
-              {% include "_icon.html" with name="bell" %}
-              {% if count %}<span class="badge badge-xs badge-error indicator-item">{{ count }}</span>{% endif %}
+          {# The bell's menu is fetched when it opens; see static/js/notifications.js #}
+          {% with count=unread_notification_count %}
+          <div class="dropdown dropdown-end" data-notifications data-menu-url="{% url 'notifications_menu' %}" data-poll-url="{% url 'notifications_poll' %}" data-since="{% now 'c' %}">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-circle" aria-label="{% trans "Notifications" %}">
+              <div class="indicator">
+                {% include "_icon.html" with name="bell" class="size-6" %}
+                <span class="badge badge-xs badge-error indicator-item {% if not count %}hidden{% endif %}" data-unread-badge>{% if count > 9 %}9+{% else %}{{ count }}{% endif %}</span>
+              </div>
             </div>
-          </a>
+            <div tabindex="0" class="dropdown-content bg-base-100 border border-base-300 rounded-box shadow-lg w-96 max-w-[calc(100vw-2rem)] p-2 mt-3 z-50" data-notifications-menu>
+              <div class="skeleton h-32 w-full"></div>
+            </div>
+          </div>
           {% endwith %}
           {# Opens the side menu, as the dock's profile picture does on phones; the menu links to Profile & settings #}
           <label for="my-drawer-5" class="btn btn-ghost btn-circle" aria-label="{% trans "Menu" %}">
@@ -152,10 +164,7 @@
 <!-- dock for mobile view, navbar for desktop view -->
     <div class="dock lg:hidden pb-3 border-t border-base-300 z-5">
         <a href="{% url 'home' %}" class="{% if page == 'home' %}dock-active text-primary{% endif %}">
-          <div class="indicator">
-            {% include "_icon.html" with name="home" class="size-6" %}
-            {% if pending_request_count %}<span class="status status-error indicator-item" aria-label="{% trans "Ride requests to review" %}"></span>{% endif %}
-          </div>
+          {% include "_icon.html" with name="home" class="size-6" %}
           <span class="dock-label">{% trans "Home" %}</span>
         </a>
         <a href="{% url 'search' %}" class="{% if page == 'search' %}dock-active text-primary{% endif %}">
@@ -171,7 +180,10 @@
           <span class="dock-label">{% trans "My rides" %}</span>
         </a>
         <label for="my-drawer-5" class="{% if page == 'account' %}dock-active text-primary{% endif %}">
-          {% avatar user "w-6" "text-[0.6rem]" %}
+          <div class="indicator">
+            {% avatar user "w-6" "text-[0.6rem]" %}
+            <span class="status status-error indicator-item {% if not unread_notification_count %}hidden{% endif %}" data-unread-dot aria-label="{% trans "Unread notifications" %}"></span>
+          </div>
           <span class="dock-label">{% trans "More" %}</span>
         </label>
     </div>
@@ -187,5 +199,7 @@
     </div>
     <script>setTimeout(() => document.getElementById("messages")?.remove(), 6000);</script>
     {% endif %}
+    <div class="toast toast-end toast-bottom z-50 mb-20 lg:mb-2" id="notification-toasts" aria-live="polite"></div>
+    <script src="{% static "js/notifications.js" %}"></script>
 </body>
 </html>

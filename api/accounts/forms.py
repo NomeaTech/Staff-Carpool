@@ -235,8 +235,11 @@ class SettingsForm(forms.ModelForm):
     """Privacy and notification settings, see accounts/privacy.py."""
     class Meta:
         model = User
-        fields = ("name_visibility", "show_photo", "share_email", "share_phone", "notify_ride_requests")
-        widgets = {"name_visibility": forms.RadioSelect(attrs={"class": "radio radio-primary radio-sm"})}
+        fields = ("name_visibility", "show_photo", "share_email", "share_phone", "email_notifications")
+        widgets = {
+            "name_visibility": forms.RadioSelect(attrs={"class": "radio radio-primary radio-sm"}),
+            "email_notifications": forms.RadioSelect(attrs={"class": "radio radio-primary radio-sm"}),
+        }
 
 
 # Larger photos are refused. The profile page also checks this before

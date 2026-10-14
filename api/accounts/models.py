@@ -104,8 +104,14 @@ class User(AbstractUser):
     share_email = models.BooleanField(default=True, help_text="Share the email address with people sharing a ride")
     share_phone = models.BooleanField(default=False, help_text="Share the phone number with people sharing a ride")
 
-    # Notifications
-    notify_ride_requests = models.BooleanField(default=True, help_text="Email about ride requests and responses")
+    # Which notifications are also emailed (notifications/services.py). All
+    # of them are always shown in the app. Account emails (confirming an
+    # address, password resets) are sent either way.
+    class EmailNotifications(models.TextChoices):
+        ALL = "all", _("All notifications")
+        ESSENTIAL = "essential", _("Only essential notifications")
+
+    email_notifications = models.CharField(max_length=10, choices=EmailNotifications.choices, default=EmailNotifications.ALL)
 
     # Email confirmation (accounts/confirmation.py). Accounts cannot be used
     # until the email address is confirmed (EmailBackend). This is separate
@@ -142,6 +148,11 @@ class User(AbstractUser):
         if old != (self.pfp.name or ""):
             delete_photo_file(old)
         self._saved_pfp = self.pfp.name or ""
+
+    def wants_email(self, kind):
+        """Whether to email this user a notification of kind (notifications.models.Kind)."""
+        from notifications.models import ESSENTIAL
+        return self.email_notifications == self.EmailNotifications.ALL or kind in ESSENTIAL
 
     def initials(self):
         return f"{self.first_name[:1]}{self.last_name[:1]}".upper() or "?"

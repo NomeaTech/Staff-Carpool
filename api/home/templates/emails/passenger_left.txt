@@ -1,6 +1,6 @@
 {% load i18n %}{% autoescape off %}{% blocktrans with name=recipient.first_name %}Hi {{ name }},{% endblocktrans %}
 
-{% blocktrans %}{{ passenger }} has left your ride {{ route }}. Their seat is available again.{% endblocktrans %}
+{% blocktrans %}{{ name }} has left your ride {{ route }}. Their seat is available again.{% endblocktrans %}
 
 {{ url }}
 {% include "emails/_footer.txt" %}{% endautoescape %}
