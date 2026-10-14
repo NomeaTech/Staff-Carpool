@@ -3,9 +3,11 @@
 {% load widget_tweaks %}
 {% load i18n %}
 
-{% block title %}{% trans "Post a ride" %} | LUT Kyyti{% endblock %}
+{% block title %}{% if editing %}{% trans "Edit ride" %}{% else %}{% trans "Post a ride" %}{% endif %} | LUT Kyyti{% endblock %}
 {% block content %}
 {{ campuses|json_script:"campus-data" }}
+{# The places the location pickers start with: the ride's when editing, the posted ones after a failed post #}
+{{ initial_places|json_script:"initial-places" }}
 
 <script>
     // prettier-ignore
@@ -29,43 +31,26 @@
                 }
             }
             
-            new_form = document.getElementById("new-form")
-            if (new_form.checked) {
-                localStorage.removeItem('vias_values');
-                new_form.checked = false
-            } else {
-                vias_values = JSON.parse(localStorage['vias_values']);
-                if (vias_values) {
-                    for (const via of vias_values) {
-                        viaAdd(via);
-                    }
-                }
+            // Seats and "Other" are shown for the transport options already chosen
+            enableMaxPassengerField(document.getElementById("id_offer"));
+            enableOtherField(document.getElementById("id_other"));
+            // At least one option must be chosen (see funcs.js)
+            $(".options").first().trigger("change");
+
+            const places = JSON.parse(document.getElementById("initial-places").textContent) || {};
+            for (const via of places.vias || []) {
+                viaAdd(via);
             }
-
-            autocomplete_init("div-autocomplete-start", "start", "From", "{% trans "Select a start location" %}");
-            destination_init("div-autocomplete-destination", "campus-data", "To", "{% trans "Other destination" %}", "{% trans "Select a destination" %}");
-        };
-
-        window.onbeforeunload = function(event) { 
-            div_via = document.getElementById("div-via");
-            vias = div_via.getElementsByTagName("INPUT");
-            vias_values = []
-            
-            for (const via of vias) {
-                vias_values.push(via.value);
-            }
-
-            localStorage['vias_values'] = JSON.stringify(vias_values);
-            // return confirm();
+            autocomplete_init("div-autocomplete-start", "start", "From", "{% trans "Select a start location" %}", false, places.start);
+            destination_init("div-autocomplete-destination", "campus-data", "To", "{% trans "Other destination" %}", "{% trans "Select a destination" %}", false, places.destination);
         };
     </script>
-    <input hidden id="new-form" type="checkbox" checked>
 
     <div class="card bg-base-100 w-96 max-w-[calc(100%-1rem)] shadow-sm font-display my-2 mx-auto">
         <div class="card-body">
             <div class="">
-                <h2 class="card-title mb-0 mt-0 mb-4">{% trans "Add ride" %}</h2>
-                <form action="/app/add/" name="RideForm" method="post" data-day-required="{% trans "Choose at least one day for a recurring ride." %}">                    
+                <h2 class="card-title mb-0 mt-0 mb-4">{% if editing %}{% trans "Edit ride" %}{% else %}{% trans "Add ride" %}{% endif %}</h2>
+                <form action="{% if editing %}{% url 'edit_ride' ride.pk %}{% else %}{% url 'add' %}{% endif %}" name="RideForm" method="post" data-day-required="{% trans "Choose at least one day for a recurring ride." %}">                    
                     {% csrf_token %}
                     <div class="grid grid-cols-3 gap-4">
                         
@@ -75,11 +60,11 @@
                                 <fieldset class="fieldset rounded-field bg-base-100 border-base-300 border p-4 pb-3.5" required>
                                     <legend class="fieldset-legend">{% trans "Car ride" %}</legend>
                                     <label class="label">
-                                    <input required id="id_offer" type="checkbox" name="offer" class="options checkbox checkbox-offer" onchange="enableMaxPassengerField(this)">
+                                    <input required id="id_offer" type="checkbox" name="offer" class="options checkbox checkbox-offer" onchange="enableMaxPassengerField(this)" {% if ride_form.offer.value %}checked{% endif %}>
                                     {% trans "Offer" %}
                                     </label>
                                     <label class="label">
-                                    <input required id="id_request" type="checkbox" name="request" class="options checkbox checkbox-request">
+                                    <input required id="id_request" type="checkbox" name="request" class="options checkbox checkbox-request" {% if ride_form.request.value %}checked{% endif %}>
                                     {% trans "Request" %}
                                     </label>
                                 </fieldset>
@@ -89,19 +74,19 @@
                                     <legend class="fieldset-legend">{% trans "Other transport" %}</legend>
                                     <div class="grid grid-cols-2 gap-1">
                                         <label class="label">
-                                            <input required id="id_train" name="train" value="train" type="checkbox" class="options checkbox checkbox-train">
+                                            <input required id="id_train" name="train" value="train" type="checkbox" class="options checkbox checkbox-train" {% if ride_form.train.value %}checked{% endif %}>
                                             {% trans "Train" %}
                                         </label>
                                         <label class="label">
-                                            <input required id="id_bus" name="bus" value="bus" type="checkbox" class="options checkbox checkbox-bus">
+                                            <input required id="id_bus" name="bus" value="bus" type="checkbox" class="options checkbox checkbox-bus" {% if ride_form.bus.value %}checked{% endif %}>
                                             {% trans "Bus" %}
                                         </label>
                                         <label class="label">
-                                            <input required id="id_taxi" name="taxi" value="taxi" type="checkbox" class="options checkbox checkbox-taxi">
+                                            <input required id="id_taxi" name="taxi" value="taxi" type="checkbox" class="options checkbox checkbox-taxi" {% if ride_form.taxi.value %}checked{% endif %}>
                                             {% trans "Taxi" %}
                                         </label>
                                         <label class="label">
-                                            <input required id="id_other" name="other" value="other" type="checkbox" class="options checkbox checkbox-other" onchange="enableOtherField(this)">
+                                            <input required id="id_other" name="other" value="other" type="checkbox" class="options checkbox checkbox-other" onchange="enableOtherField(this)" {% if ride_form.other.value %}checked{% endif %}>
                                             {% trans "Other" %}
                                         </label>
                                     </div>
@@ -111,13 +96,13 @@
                         <div id="other_div" hidden class="col-span-3">                        
                             <label class="floating-label">
                                 <span>{% trans "Other" %}</span>
-                                <input disabled id="id_other_field" name="other_field" class="input" maxlength="300" placeholder="{% trans "Other" %}"/>
+                                <input disabled id="id_other_field" name="other_field" class="input" maxlength="300" placeholder="{% trans "Other" %}" value="{{ ride_form.other_field.value|default_if_none:"" }}"/>
                             </label>
                         </div>
                         <div hidden class="col-span-3" id="id_max_passengers_div">                        
                             <label class="floating-label">
                                 <span>{% trans "Maximum passengers" %}</span>
-                                <input disabled id="id_max_passengers" name="max_passengers" placeholder="{% trans "Maximum passengers" %}" type="number" pattern="\d*" id="max-passengers" min="1" max="100" class="input"/>
+                                <input disabled id="id_max_passengers" name="max_passengers" placeholder="{% trans "Maximum passengers" %}" type="number" pattern="\d*" min="1" max="100" class="input" value="{{ ride_form.max_passengers.value|default_if_none:"" }}"/>
                             </label>
                         </div>
                             
@@ -252,7 +237,8 @@
                             <textarea id="id_note" name="note" class="textarea w-full" placeholder="">{{ ride_form.note.value|default_if_none:"" }}</textarea>
                         </div>
                         <div class="tooltip col-span-3 w-full" data-tip="Complete all required elements">
-                            <input class="btn btn-md btn-secondary w-full" type="submit" value="{% trans "Add ride" %}">
+                            <input class="btn btn-md btn-secondary w-full" type="submit" value="{% if editing %}{% trans "Save changes" %}{% else %}{% trans "Add ride" %}{% endif %}">
+                            {% if editing %}<a href="{% url 'ride_detail' ride.pk %}" class="btn btn-md btn-ghost w-full mt-2">{% trans "Cancel" %}</a>{% endif %}
                         </div>
                         {% if ride_form.errors %}
                         <div role="alert" class="alert alert-error alert-soft col-span-3">

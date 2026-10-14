@@ -77,3 +77,12 @@ def ride_cancelled(request, ride):
             request, ride_request.passenger, _("A ride you requested was cancelled"), "ride_cancelled",
             ride=ride, driver=display_name(ride.driver),
         )
+
+
+def ride_updated(request, ride):
+    """Sent to everyone who requested or joined the ride when its driver edits it."""
+    for ride_request in ride.requests.exclude(status=ride.requests.model.Status.DECLINED).select_related("passenger"):
+        notify(
+            request, ride_request.passenger, _("A ride you requested was changed"), "ride_updated",
+            ride=ride, driver=display_name(ride.driver),
+        )

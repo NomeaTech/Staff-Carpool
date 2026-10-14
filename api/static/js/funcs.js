@@ -1,4 +1,5 @@
-function viaAdd(via_value = "") {
+// initial_place: a place (as in via_json) to start with, e.g. when editing a ride
+function viaAdd(initial_place = null) {
     count = $("#div-via").children().length;
     if (count > 7) {
         return
@@ -18,7 +19,8 @@ function viaAdd(via_value = "") {
         </div>`
     );
 
-    autocomplete_init(`div-autocomplete-via-${id}`, `via_${id}`, "Via");
+    autocomplete_init(`div-autocomplete-via-${id}`, `via_${id}`, "Via", null, false,
+        initial_place && typeof initial_place === "object" ? initial_place : null);
 
     if (count >= 7) {
         $("#add_via").prop("disabled", true);
@@ -188,7 +190,9 @@ function debounce(func, delay) {
 // If required_hint is given, a destination must be chosen before submitting.
 // With optional, no destination is needed, but text typed into "Other
 // destination" must still be turned into a place from the suggestions.
-async function destination_init(div_id, campuses_id, placeholder, other_label, required_hint = null, optional = false) {
+// initial_place selects a place to start with: its campus, or "Other
+// destination" with the place filled in.
+async function destination_init(div_id, campuses_id, placeholder, other_label, required_hint = null, optional = false, initial_place = null) {
     const dest_div = document.getElementById(div_id);
     const campuses = JSON.parse(document.getElementById(campuses_id).textContent);
 
@@ -247,7 +251,7 @@ async function destination_init(div_id, campuses_id, placeholder, other_label, r
             campusInfo.disabled = true;
             campusInfo.value = "";
             if (!otherReady) {
-                otherReady = autocomplete_init(otherDiv.id, "destination", placeholder, required_hint, optional);
+                otherReady = autocomplete_init(otherDiv.id, "destination", placeholder, required_hint, optional, otherInitial);
                 // Lets other code wait for the autocomplete input to exist
                 otherDiv.ready = otherReady;
             }
@@ -268,13 +272,26 @@ async function destination_init(div_id, campuses_id, placeholder, other_label, r
             campusInfo.disabled = !campus;
         }
     });
+
+    // Start with initial_place selected
+    let otherInitial = null;
+    if (initial_place) {
+        const index = campuses.findIndex((campus) => campus.place.id === initial_place.id);
+        if (index === -1) {
+            otherInitial = initial_place;
+        }
+        select.value = index === -1 ? "other" : String(index);
+        select.dispatchEvent(new Event("change"));
+    }
 }
 
 // If required_hint is given, the form cannot be submitted until a place
 // has been selected from the suggestions, and the hint is shown under the input.
 // With optional, the input may also be left empty, but any text in it must
 // still be turned into a place from the suggestions.
-async function autocomplete_init(div_id, id, placeholder, required_hint = null, optional = false) {
+// initial_place (a place as submitted in <id>_json) starts the input with
+// that place selected, e.g. when editing a ride.
+async function autocomplete_init(div_id, id, placeholder, required_hint = null, optional = false, initial_place = null) {
     const dest_div = document.getElementById(div_id);
     // console.log(dest_div);
 
@@ -327,6 +344,10 @@ async function autocomplete_init(div_id, id, placeholder, required_hint = null, 
     selectedPlaceInfo.name = `${id}_json`
     selectedPlaceInfo.textContent = '';
     dest_div.appendChild(selectedPlaceInfo);
+    if (initial_place) {
+        placeInput.value = initial_place.displayName ?? "";
+        selectedPlaceInfo.value = JSON.stringify(initial_place);
+    }
     updateValidity();
 
     let sessionToken = new AutocompleteSessionToken();

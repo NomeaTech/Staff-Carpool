@@ -207,7 +207,10 @@
             {% endfor %}
 
             <div class="divider my-1"></div>
-            <button class="btn btn-outline btn-error btn-sm w-full" type="button" onclick="document.getElementById('delete-ride-modal').showModal()">{% trans "Delete ride" %}</button>
+            <div class="grid grid-cols-2 gap-2">
+              <a href="{% url 'edit_ride' ride.id %}" class="btn btn-primary btn-sm">{% trans "Edit ride" %}</a>
+              <button class="btn btn-outline btn-error btn-sm" type="button" onclick="document.getElementById('delete-ride-modal').showModal()">{% trans "Delete ride" %}</button>
+            </div>
           </div>
         </section>
         {% else %}

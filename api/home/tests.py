@@ -13,7 +13,7 @@ from django.utils import timezone
 from PIL import Image
 
 from accounts.models import User
-from test_app.models import Ride, RideRequest
+from test_app.models import Ride, RideRequest, Via
 
 
 def make_user(first, last, **fields):
@@ -430,7 +430,7 @@ class AddRideScheduleTests(TestCase):
     def setUp(self):
         self.client.force_login(make_user("Aino", "Mäkinen"))
         place = lambda name: json.dumps({"displayName": name, "location": {"lat": 61.0, "lng": 28.2}})
-        self.base = {"offer": "on", "start_json": place("Lappeenranta"), "destination_json": place("Lahti")}
+        self.base = {"offer": "on", "max_passengers": "3", "start_json": place("Lappeenranta"), "destination_json": place("Lahti")}
 
     def post(self, **schedule):
         return self.client.post(reverse("add"), {**self.base, **schedule})
@@ -522,3 +522,180 @@ class AddRideScheduleTests(TestCase):
         self.assertContains(response, 'id="id_monday_check" name="monday_check" type="checkbox" class="checkbox" checked')
         self.assertContains(response, 'value="07:30"')
         self.assertContains(response, "Room for luggage")
+
+
+PLACE = lambda name, lat=61.0: {"displayName": name, "location": {"lat": lat, "lng": 28.2}}
+VALID_ONE_TIME = {"one_time": "oneTime", "one_way": "oneWay", "leaving_at_date_time": "2099-10-14T07:30"}
+
+
+@patch("home.views.build_route", return_value=None)
+class RideFormChecksTests(TestCase):
+    """Checks shared by adding and editing a ride (RideForm)."""
+
+    def setUp(self):
+        self.client.force_login(make_user("Aino", "Mäkinen"))
+
+    def post(self, **fields):
+        data = {"start_json": json.dumps(PLACE("Lappeenranta")), "destination_json": json.dumps(PLACE("Lahti")),
+                "offer": "on", "max_passengers": "3", **VALID_ONE_TIME}
+        data.update(fields)
+        return self.client.post(reverse("add"), {k: v for k, v in data.items() if v is not None})
+
+    def assert_refused(self, response, message):
+        self.assertContains(response, message)
+        self.assertFalse(Ride.objects.exists())
+
+    def test_places_must_come_from_the_pickers(self, _route):
+        self.assert_refused(self.post(start_json=None), "Choose a start location from the list.")
+        self.assert_refused(self.post(start_json=json.dumps({"displayName": "Typed text"})), "Choose a start location from the list.")
+        self.assert_refused(self.post(destination_json=json.dumps(PLACE("Lahti", lat=200))), "Choose a destination from the list.")
+        self.assert_refused(self.post(destination_json="not json"), "Choose a destination from the list.")
+
+    def test_stops_on_the_way(self, _route):
+        self.assert_refused(self.post(via_a_json='{"displayName": "Nowhere"}'), "Choose each stop on the way from the list")
+        too_many = {f"via_{i}_json": json.dumps(PLACE(f"Stop {i}")) for i in range(9)}
+        self.assert_refused(self.post(**too_many), "at most 8 stops")
+
+        # Empty stops (added but not chosen) are left out; the rest keep their order
+        self.post(via_b_json=json.dumps(PLACE("Kouvola")), via_c_json="", via_a_json=json.dumps(PLACE("Utti")))
+        self.assertEqual([via.via_json["displayName"] for via in Ride.objects.get().via_points.all()], ["Kouvola", "Utti"])
+
+    def test_a_way_of_travelling_is_needed(self, _route):
+        self.assert_refused(self.post(offer=None, max_passengers=None), "Choose at least one way of travelling.")
+        self.assert_refused(self.post(offer=None, max_passengers=None, other="other"), "Describe the other way of travelling.")
+        self.post(offer=None, max_passengers="4", other="other", other_field=" Ferry ")
+        ride = Ride.objects.get()
+        self.assertEqual(ride.other_field, "Ferry")
+        # Only ride offers have seats
+        self.assertIsNone(ride.max_passengers)
+
+    def test_offers_need_seats(self, _route):
+        self.assert_refused(self.post(max_passengers=None), "Enter how many passengers you can take.")
+        self.assert_refused(self.post(max_passengers="0"), "Enter a number of passengers from 1 to 100.")
+        self.assert_refused(self.post(max_passengers="101"), "Enter a number of passengers from 1 to 100.")
+
+
+@override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
+@patch("home.views.build_route", return_value=None)
+class EditRideTests(TestCase):
+    def setUp(self):
+        self.driver = make_user("Aino", "Mäkinen")
+        self.ride = make_ride(self.driver, max_passengers=3)
+        Via.objects.create(ride=self.ride, order=0, via_json=PLACE("Kouvola"), location="POINT(28.2 61.0)")
+        self.url = reverse("edit_ride", args=[self.ride.pk])
+        self.client.force_login(self.driver)
+
+    def post(self, **fields):
+        data = {"start_json": json.dumps(PLACE("Lappeenranta")), "destination_json": json.dumps(PLACE("Lahti")),
+                "via_x_json": json.dumps(PLACE("Kouvola")), "offer": "on", "max_passengers": "3", **VALID_ONE_TIME}
+        data.update(fields)
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(self.url, {k: v for k, v in data.items() if v is not None})
+        self.ride.refresh_from_db()
+        return response
+
+    def test_only_the_driver_can_edit(self, _route):
+        self.client.force_login(make_user("Jamie", "Saarinen"))
+        self.assertEqual(self.client.get(self.url).status_code, 404)
+        self.assertEqual(self.post(max_passengers="9").status_code, 404)
+        self.assertEqual(self.ride.max_passengers, 3)
+        self.assertNotContains(self.client.get(reverse("ride_detail", args=[self.ride.pk])), self.url)
+
+    def test_edit_page_starts_with_the_ride(self, _route):
+        self.assertContains(self.client.get(reverse("ride_detail", args=[self.ride.pk])), f'href="{self.url}"')
+        response = self.client.get(self.url)
+        self.assertContains(response, "Edit ride")
+        self.assertContains(response, 'value="2099-10-14T07:30"')
+        self.assertContains(response, 'value="oneTime" checked')
+        self.assertContains(response, 'onchange="enableMaxPassengerField(this)" checked')
+        self.assertContains(response, 'max="100" class="input" value="3"')
+        places = response.context["initial_places"]
+        self.assertEqual((places["start"]["displayName"], places["destination"]["displayName"]), ("Lappeenranta", "Lahti"))
+        self.assertEqual([via["displayName"] for via in places["vias"]], ["Kouvola"])
+
+    def test_saving_changes(self, route):
+        response = self.post(one_time="recurring", one_way="twoWay", tuesday_check="on",
+                             tuesday_leaving_at_time="07:15", tuesday_returning_at_time="16:30",
+                             note="Now every Tuesday", via_x_json=json.dumps(PLACE("Utti")))
+        self.assertRedirects(response, reverse("ride_detail", args=[self.ride.pk]), fetch_redirect_response=False)
+        self.assertFalse(self.ride.one_time)
+        self.assertEqual((self.ride.tuesday_leaving_at_time, self.ride.tuesday_returning_at_time), ("07:15", "16:30"))
+        self.assertEqual(self.ride.leaving_at_date_time, "")
+        self.assertEqual(self.ride.note, "Now every Tuesday")
+        self.assertEqual([via.via_json["displayName"] for via in self.ride.via_points.all()], ["Utti"])
+        self.assertEqual(Ride.objects.count(), 1)
+
+    def test_route_is_only_recalculated_when_places_change(self, route):
+        self.post(note="Same places")
+        route.assert_not_called()
+        self.post(destination_json=json.dumps(PLACE("Mikkeli", lat=61.7)))
+        route.assert_called_once()
+
+    def test_editing_is_checked_like_adding(self, _route):
+        for fields, message in [
+            ({"leaving_at_date_time": "2000-01-01T08:00"}, "The ride cannot leave in the past."),
+            ({"leaving_at_date_time": None}, "Enter the date and time the ride leaves."),
+            ({"one_time": "recurring"}, "Choose at least one day for a recurring ride."),
+            ({"start_json": None}, "Choose a start location from the list."),
+            ({"offer": None, "max_passengers": None}, "Choose at least one way of travelling."),
+        ]:
+            with self.subTest(fields=fields):
+                response = self.post(**fields)
+                self.assertContains(response, message)
+                self.assertEqual(self.ride.leaving_at_date_time, "2099-10-14T07:30")
+                self.assertTrue(self.ride.offer)
+
+    def test_seats_cannot_go_below_the_passengers(self, _route):
+        for name in ("Jamie", "Kalle"):
+            RideRequest.objects.create(ride=self.ride, passenger=make_user(name, "X"), status="accepted")
+        self.assertContains(self.post(max_passengers="1"), "2 passengers have already joined.")
+        self.assertEqual(self.ride.max_passengers, 3)
+        self.post(max_passengers="2")
+        self.assertEqual(self.ride.max_passengers, 2)
+
+    def test_passengers_are_told_about_changes(self, _route):
+        joined, waiting, declined = (make_user(n, "X") for n in ("Jamie", "Kalle", "Liisa"))
+        for user, status in ((joined, "accepted"), (waiting, "pending"), (declined, "declined")):
+            RideRequest.objects.create(ride=self.ride, passenger=user, status=status)
+        self.post(leaving_at_date_time="2099-10-14T08:00")
+        self.assertEqual(sorted(m.to[0] for m in mail.outbox), [joined.email, waiting.email])
+        self.assertIn("has changed the ride", mail.outbox[0].body)
+
+        mail.outbox.clear()
+        self.post(leaving_at_date_time="2099-10-14T08:00")
+        self.assertEqual(mail.outbox, [])
+
+
+class TransportIconTests(TestCase):
+    """Which transport icons a search result shows (test_app/transport.py icon_layout)."""
+
+    def layout(self, *fields, filters=()):
+        from test_app.transport import TRANSPORT_OPTIONS, icon_layout
+        layout = icon_layout([option for option in TRANSPORT_OPTIONS if option.field in fields], filters)
+        return [option.field for option in layout.options], layout.box_class
+
+    def test_fewer_icons_are_bigger(self):
+        self.assertEqual(self.layout("bus")[1], "size-20")
+        self.assertEqual(self.layout("bus", "taxi")[1], "size-16")
+        for count in range(3, 7):
+            fields = ["offer", "request", "train", "bus", "taxi", "other"][:count]
+            self.assertEqual(self.layout(*fields)[1], "size-[2.625rem]")
+
+    def test_all_options_are_shown_offers_and_requests_first(self):
+        everything = ("offer", "request", "train", "bus", "taxi", "other")
+        self.assertEqual(self.layout(*everything)[0], list(everything))
+        self.assertEqual(self.layout("taxi", "request", "bus")[0], ["request", "bus", "taxi"])
+
+    def test_filtered_options_come_first(self):
+        everything = ("offer", "request", "train", "bus", "taxi", "other")
+        self.assertEqual(self.layout(*everything, filters=["other"])[0], ["train", "bus", "taxi", "other", "offer", "request"])
+        self.assertEqual(self.layout(*everything, filters=["request"])[0], ["request", "offer", "train", "bus", "taxi", "other"])
+
+    def test_search_results_show_every_option(self):
+        self.client.force_login(make_user("Aino", "Mäkinen"))
+        make_ride(User.objects.get(), request=True, train=True, bus=True, taxi=True, other=True)
+        page = self.client.post(reverse("search"), {"other": "on"}).content.decode()
+        labels = ["Train", "Bus", "Taxi", "Other", "Ride offer", "Request"]
+        positions = [page.index(f'aria-label="{label}" title="{label}"') for label in labels]
+        self.assertEqual(positions, sorted(positions))
+        self.assertIn("grid-cols-[repeat(3,max-content)]", page)
