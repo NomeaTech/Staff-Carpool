@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from test_app.models import Ride
 from .forms import SearchForm
 from .campuses import CAMPUSES
-from test_app.forms import RideForm
+from test_app.forms import RideForm, WEEKDAYS as WEEKDAY_NAMES
 import logging
 from django.utils.translation import gettext_lazy as _
 from django.http import JsonResponse
@@ -352,16 +352,6 @@ def on_date(date):
 @login_required
 def add_ride(request):    
 
-    day_list = [
-        (_("Mon"), "monday"),
-        (_("Tue"), "tuesday"),
-        (_("Wed"), "wednesday"),
-        (_("Thu"), "thursday"),
-        (_("Fri"), "friday"),
-        (_("Sat"), "saturday"),
-        (_("Sun"), "sunday")
-    ]
-
     if request.method == "POST":
         ride_form = RideForm(request.POST)
         if ride_form.is_valid():
@@ -379,9 +369,6 @@ def add_ride(request):
 
                 dl = json.loads(request.POST["destination_json"])["location"]
                 ride.destination_location = Point(dl["lng"], dl["lat"], srid=4326)
-
-                ride.one_time = True if request.POST["one_time"] == "oneTime" else False
-                ride.one_way = True if request.POST["one_way"] == "oneWay" else False
 
                 ride.driver = request.user
 
@@ -404,36 +391,44 @@ def add_ride(request):
                     ride.save(update_fields=["route"])
                 except Exception:
                     logger.exception("Could not save the route of ride %s", ride.pk)
-            except Exception as e:
-                context = {
-                    "ride_form": ride_form,
-                    "day_list": day_list,
-                    "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"), "campuses": CAMPUSES,
-                }
-                
-                return render(request, "add_ride.html", context)
+            except Exception:
+                logger.exception("Could not save a new ride")
+                return add_ride_page(request, ride_form)
             return HttpResponseRedirect(f"/app/ride/{ride.id}")
             # return HttpResponseRedirect("/app/home")
 
         else:
-            context = {
-                "ride_form": ride_form,
-                "day_list": day_list,
-                "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"), "campuses": CAMPUSES,
-            }
-
-            return render(request, "add_ride.html", context)
+            return add_ride_page(request, ride_form)
     else:
         # from_address_form = AddressForm()
         # to_address_form = AddressForm()
         ride_form = RideForm()
 
+    return add_ride_page(request, ride_form)
+
+
+DAY_LABELS = [_("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun")]
+
+def add_ride_page(request, ride_form):
+    """
+    The add ride page. After a failed post, the schedule entered is shown
+    again with the errors (see RideForm.clean).
+    """
+    days = [
+        {
+            "label": label,
+            "key": day,
+            "checked": ride_form[f"{day}_check"].value(),
+            "leaving": ride_form[f"{day}_leaving_at_time"].value() or "",
+            "returning": ride_form[f"{day}_returning_at_time"].value() or "",
+        }
+        for label, (day, _name) in zip(DAY_LABELS, WEEKDAY_NAMES)
+    ]
     context = {
         "ride_form": ride_form,
-        "day_list": day_list,
+        "day_list": days,
         "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"), "campuses": CAMPUSES,
     }
-
     return render(request, "add_ride.html", context)
 
 
