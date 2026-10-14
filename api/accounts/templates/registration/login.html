@@ -28,7 +28,9 @@
 
             {{ form.password|append_attr:"required"}}
             
-            {% if form.errors %}
+            {% if form.unconfirmed_email %}
+              {% for error in form.non_field_errors %}<div role="alert" class="col-span-3 text-error">{{ error }}</div>{% endfor %}
+            {% elif form.errors %}
               <div class="col-span-3" style="color:var(--color-error)">{% trans "Enter a valid email and password" %}</div>
             {% else %}
               <div class="hidden validator-hint col-span-3">{% trans "Enter a valid email and password" %}</div>
@@ -39,6 +41,9 @@
             <a href="{% url 'password_reset' %}" class="btn btn-sm btn-ghost col-span-3">{% trans "Password Reset" %}</a>
           </div>
         </form>
+        {% if form.unconfirmed_email %}
+          <div class="mt-2">{% include "registration/_resend_confirmation.html" with email=form.unconfirmed_email %}</div>
+        {% endif %}
       </div>
     </div>
 </div>

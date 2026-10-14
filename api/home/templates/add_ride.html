@@ -14,7 +14,7 @@
     });
 </script>
 
-<div class="justify-center content-center h-screen mx-auto lg:pt-20 pt-5 pb-20 overflow-scroll scrollbar-hide">
+<div class="content-center w-full h-screen lg:pt-20 pt-5 pb-20 overflow-scroll scrollbar-hide">
     <script>
         // Set form to same state after reload
         window.onload = function() {
@@ -61,7 +61,7 @@
     </script>
     <input hidden id="new-form" type="checkbox" checked>
 
-    <div class="card bg-base-100 w-96 shadow-sm font-display m-2">
+    <div class="card bg-base-100 w-96 max-w-[calc(100%-1rem)] shadow-sm font-display my-2 mx-auto">
         <div class="card-body">
             <div class="">
                 <h2 class="card-title mb-0 mt-0 mb-4">{% trans "Add ride" %}</h2>

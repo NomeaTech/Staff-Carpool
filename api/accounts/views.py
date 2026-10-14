@@ -1,24 +1,100 @@
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import logout
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.db import transaction
+from django.core.exceptions import ValidationError
 from django.http import FileResponse, Http404
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 
 from home import notifications
 from .forms import SignUpForm, UserLoginForm, ProfileForm, SettingsForm, PhotoForm, DeleteAccountForm, PHOTO_MAX_UPLOAD, photo_too_large
+from .confirmation import send_confirmation, token_generator
 from .models import User, delete_photo_file
 from .privacy import can_see_photo
 
 class SignUpView(CreateView):
+    """
+    New accounts cannot log in until their email address is confirmed: the
+    user is sent a link and shown the "check your inbox" page.
+    """
     form_class = SignUpForm
-    success_url = reverse_lazy("login")
     template_name = "registration/signup.html"
+
+    def form_valid(self, form):
+        user = form.save()
+        send_confirmation(self.request, user)
+        return confirmation_sent_redirect(self.request, user.email)
+
+    def form_invalid(self, form):
+        if form.unconfirmed_user:
+            send_confirmation(self.request, form.unconfirmed_user)
+            self.request.session["confirmation_email"] = form.unconfirmed_user.email
+        return super().form_invalid(form)
+
+def confirmation_sent_redirect(request, email):
+    # The address is kept in the session, not the URL, so it is not logged
+    request.session["confirmation_email"] = email
+    return redirect("confirmation_sent")
+
+def confirmation_sent(request):
+    """The "check your inbox" page, with a button for sending a new link."""
+    email = request.session.get("confirmation_email")
+    if not email:
+        return redirect("login")
+    return render(request, "registration/confirmation_sent.html", {
+        "email": email,
+        "resent": request.GET.get("resent") == "1",
+    })
+
+@require_POST
+def resend_confirmation(request):
+    """
+    Sends a new confirmation link. The page says the same whether or not the
+    address has an unconfirmed account, so it does not reveal which do.
+    """
+    email = request.POST.get("email", "").strip()
+    user = User.objects.filter(email__iexact=email, email_confirmed_at__isnull=True, is_active=True).first() if email else None
+    if user:
+        send_confirmation(request, user)
+    request.session["confirmation_email"] = email
+    return redirect(f"{reverse('confirmation_sent')}?resent=1")
+
+def confirm_email(request, uidb64, token):
+    """
+    The link in the confirmation email. Opening it shows a button that
+    confirms the address and logs the user in: confirming only on a POST
+    means email security scanners that open links do not use them up.
+    """
+    try:
+        user = User.objects.get(pk=force_str(urlsafe_base64_decode(uidb64)))
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist, ValidationError):
+        user = None
+
+    valid = user is not None and token_generator.check_token(user, token)
+    if not valid:
+        already_confirmed = user is not None and user.email_confirmed_at is not None
+        return render(request, "registration/confirm_email.html", {"invalid": True, "already_confirmed": already_confirmed}, status=400)
+
+    if request.method == "POST":
+        user.email_confirmed_at = timezone.now()
+        user.save(update_fields=["email_confirmed_at"])
+        request.session.pop("confirmation_email", None)
+        if user.is_active:
+            login(request, user, backend="accounts.backends.EmailBackend")
+            messages.success(request, _("Your email address is confirmed. Welcome to LUT Kyyti!"))
+            return redirect("home")
+        return redirect("login")
+
+    return render(request, "registration/confirm_email.html", {"email": user.email})
 
 class UserLoginView(LoginView):
     template_name = "registration/login.html"

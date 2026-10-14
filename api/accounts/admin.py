@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
@@ -14,6 +15,7 @@ class CustomUserAdmin(UserAdmin):
         "first_name",
         "last_name",
     ]
+    list_filter = ("is_active", "is_staff", ("email_confirmed_at", admin.EmptyFieldListFilter))
     search_fields = ("email", "first_name", "last_name")
     ordering = ("email",)
 
@@ -30,8 +32,9 @@ class CustomUserAdmin(UserAdmin):
             _("Permissions"),
             {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")},
         ),
-        (_("Important dates"), {"fields": ("last_login", "date_joined")}),
+        (_("Important dates"), {"fields": ("last_login", "date_joined", "email_confirmed_at", "confirmation_sent_at")}),
     )
+    readonly_fields = ("confirmation_sent_at",)
     add_fieldsets = (
         (
             None,
@@ -42,5 +45,11 @@ class CustomUserAdmin(UserAdmin):
         ),
         (None, {"fields": ("phone", "address", "pfp")}),
     )
+
+    def save_model(self, request, obj, form, change):
+        # Accounts created by an admin need no email confirmation
+        if not change and obj.email_confirmed_at is None:
+            obj.email_confirmed_at = timezone.now()
+        super().save_model(request, obj, form, change)
 
 admin.site.register(User, CustomUserAdmin)

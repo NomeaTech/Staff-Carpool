@@ -1,0 +1,12 @@
+{% load i18n %}{% autoescape off %}{% trans "Hi" %} {{ user.first_name }},
+
+{% trans "Thanks for signing up to LUT Kyyti. Open the link below to confirm your email address and start using your account:" %}
+
+{{ url }}
+
+{% trans "The link works once and expires in 3 days." %}
+
+{% trans "If you didn't sign up to LUT Kyyti, you can ignore this email. The account won't be usable without confirming it." %}
+
+{% trans "The LUT Kyyti team" %}
+{% endautoescape %}

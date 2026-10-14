@@ -7,7 +7,8 @@ from PIL import Image, ImageCms, ImageOps
 from django.utils.translation import gettext_lazy as _
 import uuid
 # from test_app.models import Address
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager as BaseUserManager
+from django.utils import timezone
 
 # Profile photos are kept out of the static files, which anyone can download,
 # and are only served by accounts.views.photo to users allowed to see them.
@@ -75,6 +76,12 @@ def to_srgb(image, icc_profile):
             pass
     return image.convert("RGB")
 
+class UserManager(BaseUserManager):
+    def create_superuser(self, *args, **extra_fields):
+        # Superusers are created from the command line, without an email to confirm
+        extra_fields.setdefault("email_confirmed_at", timezone.now())
+        return super().create_superuser(*args, **extra_fields)
+
 class User(AbstractUser):
     class NameVisibility(models.TextChoices):
         FIRST = "first", _("First name only")
@@ -99,6 +106,14 @@ class User(AbstractUser):
 
     # Notifications
     notify_ride_requests = models.BooleanField(default=True, help_text="Email about ride requests and responses")
+
+    # Email confirmation (accounts/confirmation.py). Accounts cannot be used
+    # until the email address is confirmed (EmailBackend). This is separate
+    # from is_active, which admins use to block accounts.
+    email_confirmed_at = models.DateTimeField(null=True, blank=True)
+    confirmation_sent_at = models.DateTimeField(null=True, blank=True)
+
+    objects = UserManager()
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

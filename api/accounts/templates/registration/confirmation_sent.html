@@ -1,0 +1,17 @@
+{% extends "registration/account_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Confirm your email" %} | LUT Kyyti{% endblock %}
+{% block card_title %}{% trans "Confirm your email" %}{% endblock %}
+{% block card_body %}
+{% if resent %}
+  <div role="status" class="alert alert-success alert-soft">
+    {% blocktrans %}If {{ email }} has an account waiting for confirmation, we've sent it a new link.{% endblocktrans %}
+  </div>
+{% else %}
+  <p>{% blocktrans %}We've sent a confirmation link to <strong>{{ email }}</strong>. Open it to start using your account.{% endblocktrans %}</p>
+{% endif %}
+<p class="text-base-content/70">{% trans "If you don't receive an email within a few minutes, check your spam folder or send a new link." %}</p>
+<div class="mt-2">{% include "registration/_resend_confirmation.html" %}</div>
+<a href="{% url 'login' %}" class="btn btn-sm btn-ghost w-full">{% trans "Back to login" %}</a>
+{% endblock %}
