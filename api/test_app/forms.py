@@ -1,4 +1,5 @@
 from datetime import datetime, time
+import json
 
 from django import forms
 from django.utils import timezone
@@ -27,6 +28,29 @@ def parse_date_time(value):
     except ValueError:
         return None
     return None if parsed.tzinfo else parsed.replace(second=0, microsecond=0)
+
+# A ride can have at most this many stops on the way
+MAX_VIAS = 8
+# Most passengers a ride offer can take (as on the add ride page)
+MAX_SEATS = 100
+TRANSPORT_FIELDS = ("offer", "request", "train", "bus", "taxi", "other")
+
+def clean_place(value):
+    """
+    A place from the location pickers (place.toJSON() of Google Places, or a
+    campus from home/campuses.py), or None if it is not one.
+    """
+    if not isinstance(value, dict) or not isinstance(value.get("displayName"), str) or not value["displayName"].strip():
+        return None
+    location = value.get("location")
+    if not isinstance(location, dict):
+        return None
+    lat, lng = location.get("lat"), location.get("lng")
+    if not all(isinstance(n, (int, float)) and not isinstance(n, bool) for n in (lat, lng)):
+        return None
+    if not (-90 <= lat <= 90 and -180 <= lng <= 180):
+        return None
+    return value
 
 def parse_time(value):
     """A time input value ("08:30") as a time, or None."""
@@ -58,7 +82,11 @@ class AddressForm(forms.ModelForm):
 
 class RideForm(forms.ModelForm):
     """
-    The add ride form. Its schedule depends on two choices:
+    The add and edit ride form (the same checks for both). A ride needs a
+    start and destination chosen from the location pickers (stops on the way
+    are optional), and at least one way of travelling.
+
+    Its schedule depends on two choices:
     - one-time rides need a departure date and time, recurring rides at
       least one day with a departure time on each chosen day
     - return rides also need a return date and time (one-time rides) or a
@@ -78,8 +106,77 @@ class RideForm(forms.ModelForm):
         error_messages={"required": _("Choose whether the ride is one-way or has a return journey.")},
     )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # An existing ride's choices, as the radio buttons' values (a new ride
+        # already has its UUID, so instance.pk does not tell them apart)
+        if not self.instance._state.adding:
+            self.initial["one_time"] = "oneTime" if self.instance.one_time else "recurring"
+            self.initial["one_way"] = "oneWay" if self.instance.one_way else "twoWay"
+
+    def clean_start_json(self):
+        place = clean_place(self.cleaned_data.get("start_json"))
+        if place is None:
+            raise forms.ValidationError(self.fields["start_json"].error_messages["required"], code="invalid")
+        return place
+
+    def clean_destination_json(self):
+        place = clean_place(self.cleaned_data.get("destination_json"))
+        if place is None:
+            raise forms.ValidationError(self.fields["destination_json"].error_messages["required"], code="invalid")
+        return place
+
+    def clean_vias(self):
+        """
+        Stops on the way, posted as via_<id>_json in the order they are on
+        the page. Empty ones (a stop added but not chosen) are left out.
+        """
+        vias = []
+        for key, value in self.data.items():
+            if not (key.startswith("via_") and key.endswith("_json")) or not value:
+                continue
+            try:
+                place = clean_place(json.loads(value))
+            except ValueError:
+                place = None
+            if place is None:
+                self.add_error(None, _("Choose each stop on the way from the list of suggestions."))
+                return []
+            vias.append(place)
+        if len(vias) > MAX_VIAS:
+            self.add_error(None, _("A ride can have at most %(count)s stops on the way.") % {"count": MAX_VIAS})
+        return vias[:MAX_VIAS]
+
+    def clean_transport(self, data):
+        if not any(data.get(field) for field in TRANSPORT_FIELDS):
+            self.add_error(None, _("Choose at least one way of travelling."))
+        if data.get("other"):
+            data["other_field"] = (data.get("other_field") or "").strip()
+            if not data["other_field"]:
+                self.add_error("other_field", _("Describe the other way of travelling."))
+        else:
+            data["other_field"] = None
+        # Only ride offers have seats
+        if not data.get("offer"):
+            data["max_passengers"] = None
+        elif "max_passengers" in self.errors:
+            pass
+        elif data.get("max_passengers") is None:
+            self.add_error("max_passengers", _("Enter how many passengers you can take."))
+        else:
+            if not 1 <= data["max_passengers"] <= MAX_SEATS:
+                self.add_error("max_passengers", _("Enter a number of passengers from 1 to %(max)s.") % {"max": MAX_SEATS})
+            elif not self.instance._state.adding:
+                taken = self.instance.requests.filter(status="accepted").count()
+                if data["max_passengers"] < taken:
+                    self.add_error("max_passengers", _(
+                        "%(count)s passengers have already joined. Remove passengers before lowering the seats below that."
+                    ) % {"count": taken})
+
     def clean(self):
         data = super().clean()
+        data["vias"] = self.clean_vias()
+        self.clean_transport(data)
         one_time, one_way = data.get("one_time"), data.get("one_way")
         if one_time is None or one_way is None:
             return data
@@ -185,6 +282,6 @@ class RideForm(forms.ModelForm):
             # "private",
         )
         error_messages = {
-            "start_json": {"required": _("Choose a start location from the list.")},
-            "destination_json": {"required": _("Choose a destination from the list.")},
+            "start_json": {"required": _("Choose a start location from the list."), "invalid": _("Choose a start location from the list.")},
+            "destination_json": {"required": _("Choose a destination from the list."), "invalid": _("Choose a destination from the list.")},
         }

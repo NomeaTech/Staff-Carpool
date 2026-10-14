@@ -7,6 +7,7 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("ride/delete_ride", delete_ride, name="delete_ride"),
     path("ride/<uuid:ride_id>/", ride_detail, name="ride_detail"),
+    path("ride/<uuid:ride_id>/edit/", edit_ride, name="edit_ride"),
     path("ride/<uuid:ride_id>/request/", request_ride, name="request_ride"),
     path("ride/<uuid:ride_id>/withdraw/", withdraw_request, name="withdraw_request"),
     path("requests/<uuid:request_id>/answer/", answer_request, name="answer_request"),

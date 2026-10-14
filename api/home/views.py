@@ -6,11 +6,12 @@ from . import notifications
 from django.http import HttpResponseRedirect
 from test_app.models import Ride, RideRequest, Via
 from test_app.routes import build_route, as_route_point
+from test_app.transport import FILTER_OPTIONS, icon_layout
 from django.contrib.auth.decorators import login_required
 from test_app.models import Ride
 from .forms import SearchForm
 from .campuses import CAMPUSES
-from test_app.forms import RideForm, WEEKDAYS as WEEKDAY_NAMES
+from test_app.forms import RideForm, WEEKDAYS as WEEKDAY_NAMES, clean_place
 import logging
 from django.utils.translation import gettext_lazy as _
 from django.http import JsonResponse
@@ -226,7 +227,12 @@ def search(request):
 
     if search_form.is_valid():
         rides = search_rides(search_form.cleaned_data)
-        context["page"] = Paginator(rides, SEARCH_PAGE_SIZE).get_page(request.POST.get("page"))
+        page = Paginator(rides, SEARCH_PAGE_SIZE).get_page(request.POST.get("page"))
+        # The icons of the options the search is filtered by come first
+        filters = [name for name in FILTER_OPTIONS if search_form.cleaned_data.get(name)]
+        for ride in page:
+            ride.icons = icon_layout(ride.transport_options(), filters)
+        context["page"] = page
         context["searched"] = True
 
     # Asynchronous searches from the search page only need the results
@@ -350,69 +356,80 @@ def on_date(date):
     return Q(one_time=True) & one_time | Q(one_time=False) & recurring
 
 @login_required
-def add_ride(request):    
+def add_ride(request):
+    return ride_form_page(request, Ride(driver=request.user))
 
-    if request.method == "POST":
-        ride_form = RideForm(request.POST)
-        if ride_form.is_valid():
-            try:
-                ride = ride_form.save(commit=False)
+@login_required
+def edit_ride(request, ride_id):
+    # Only the ride's driver can edit it
+    ride = get_object_or_404(Ride, pk=ride_id, driver=request.user)
+    return ride_form_page(request, ride)
 
-                # collect vias, in the order they appear on the form
-                vias_json = []
-                for key, value in request.POST.items():
-                    if key.startswith("via_") and key.endswith("_json") and value:
-                        vias_json.append(json.loads(value))
+def ride_form_page(request, ride):
+    """
+    The add and edit ride page. Both use RideForm, so a ride is checked the
+    same way however it is saved.
+    """
+    # (A new ride already has its UUID, so ride.pk does not tell them apart)
+    editing = not ride._state.adding
+    if request.method != "POST":
+        return render_ride_form(request, RideForm(instance=ride), ride)
 
-                sl = json.loads(request.POST["start_json"])["location"]
-                ride.start_location = Point(sl["lng"], sl["lat"], srid=4326)
+    # Before checking the form, which copies the posted values onto the ride
+    old_places = place_signature(ride) if editing else None
+    ride_form = RideForm(request.POST, instance=ride)
+    if not ride_form.is_valid():
+        return render_ride_form(request, ride_form, ride)
 
-                dl = json.loads(request.POST["destination_json"])["location"]
-                ride.destination_location = Point(dl["lng"], dl["lat"], srid=4326)
+    try:
+        ride = save_ride(ride_form)
+    except Exception:
+        logger.exception("Could not save ride %s", ride.pk)
+        messages.error(request, _("The ride could not be saved. Please try again."))
+        return render_ride_form(request, ride_form, ride)
 
-                ride.driver = request.user
+    # Saved separately, so that a failed or slow Routes API request cannot
+    # lose the ride itself. Only needed when the places have changed.
+    if place_signature(ride) != old_places:
+        try:
+            ride.route = build_route(ride)
+            ride.save(update_fields=["route"])
+        except Exception:
+            logger.exception("Could not save the route of ride %s", ride.pk)
 
-                with transaction.atomic():
-                    ride.save()
-                    Via.objects.bulk_create([
-                        Via(
-                            ride=ride,
-                            order=order,
-                            via_json=via_json,
-                            location=Point(via_json["location"]["lng"], via_json["location"]["lat"], srid=4326),
-                        )
-                        for order, via_json in enumerate(vias_json[:8])
-                    ])
+    if editing:
+        if ride_form.has_changed() or place_signature(ride) != old_places:
+            notifications.ride_updated(request, ride)
+        messages.success(request, _("The ride was updated."))
+    return redirect("ride_detail", ride_id=ride.pk)
 
-                # Saved separately, so that a failed or slow Routes API
-                # request cannot lose the ride itself
-                try:
-                    ride.route = build_route(ride)
-                    ride.save(update_fields=["route"])
-                except Exception:
-                    logger.exception("Could not save the route of ride %s", ride.pk)
-            except Exception:
-                logger.exception("Could not save a new ride")
-                return add_ride_page(request, ride_form)
-            return HttpResponseRedirect(f"/app/ride/{ride.id}")
-            # return HttpResponseRedirect("/app/home")
+def save_ride(ride_form):
+    """Saves the ride, its locations and its stops on the way (RideForm.clean_vias)."""
+    ride = ride_form.save(commit=False)
+    point = lambda place: Point(place["location"]["lng"], place["location"]["lat"], srid=4326)
+    ride.start_location = point(ride.start_json)
+    ride.destination_location = point(ride.destination_json)
 
-        else:
-            return add_ride_page(request, ride_form)
-    else:
-        # from_address_form = AddressForm()
-        # to_address_form = AddressForm()
-        ride_form = RideForm()
+    with transaction.atomic():
+        ride.save()
+        ride.via_points.all().delete()
+        Via.objects.bulk_create([
+            Via(ride=ride, order=order, via_json=via, location=point(via))
+            for order, via in enumerate(ride_form.cleaned_data["vias"])
+        ])
+    return ride
 
-    return add_ride_page(request, ride_form)
-
+def place_signature(ride):
+    """The ride's start, stops and destination, to tell whether its route needs recalculating."""
+    places = [ride.start_json, *(via.via_json for via in ride.via_points.all()), ride.destination_json]
+    return [(place["location"]["lat"], place["location"]["lng"]) for place in places]
 
 DAY_LABELS = [_("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun")]
 
-def add_ride_page(request, ride_form):
+def render_ride_form(request, ride_form, ride):
     """
-    The add ride page. After a failed post, the schedule entered is shown
-    again with the errors (see RideForm.clean).
+    The add or edit ride page. The places and schedule shown are the ones
+    posted after a failed post, otherwise the ride's own (when editing).
     """
     days = [
         {
@@ -426,10 +443,38 @@ def add_ride_page(request, ride_form):
     ]
     context = {
         "ride_form": ride_form,
+        "ride": ride,
+        "editing": not ride._state.adding,
         "day_list": days,
+        "initial_places": initial_places(ride_form, ride),
         "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"), "campuses": CAMPUSES,
     }
     return render(request, "add_ride.html", context)
+
+def initial_places(ride_form, ride):
+    """The start, destination and stops the location pickers start with."""
+    def place(value):
+        if isinstance(value, str):
+            try:
+                value = json.loads(value)
+            except ValueError:
+                return None
+        return clean_place(value)
+
+    if ride_form.is_bound:
+        vias = [place(value) for key, value in ride_form.data.items() if key.startswith("via_") and key.endswith("_json")]
+        return {
+            "start": place(ride_form.data.get("start_json")),
+            "destination": place(ride_form.data.get("destination_json")),
+            "vias": [via for via in vias if via],
+        }
+    if not ride._state.adding:
+        return {
+            "start": ride.start_json,
+            "destination": ride.destination_json,
+            "vias": [via.via_json for via in ride.via_points.all()],
+        }
+    return None
 
 
 @login_required

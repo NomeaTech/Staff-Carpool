@@ -30,9 +30,12 @@
                 {% endif %}
                 <div class="card-body">
                     <div class="flex place-content-between w-full">
-                        <div class="flex flex-wrap justify-start content-start gap-1 items-center h-22 w-34">
-                            {% for option in ride.transport_options %}
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="{{ option.viewbox }}" fill="currentColor" class="w-10 h-10 {{ option.text_class }}" role="img" aria-label="{{ option.label }}">{{ option.icon }}</svg>
+                        <div class="grid {{ ride.icons.grid_class }} gap-1 content-start justify-start h-22 w-34">
+                            {# Which icons, and how big: test_app/transport.py icon_layout #}
+                            {% for option in ride.icons.options %}
+                                <span class="grid place-items-center {{ ride.icons.box_class }} rounded-md {{ option.bg_class }} text-base-100" role="img" aria-label="{{ option.label }}" title="{{ option.label }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="{{ option.viewbox }}" fill="currentColor" class="{{ ride.icons.icon_class }}" aria-hidden="true">{{ option.icon }}</svg>
+                                </span>
                             {% endfor %}
                         </div>
                         <div class="grid grid-cols-2 gap-1 justify-items-end w-35">                                     

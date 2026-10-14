@@ -67,12 +67,10 @@
             <!-- <a href="{% url 'password_reset' %}" class="btn btn-sm btn-ghost col-span-3">Password Reset</a> -->
             
             <div class="col-span-3">
-              <p class="col-span-3 text-lg">{% trans "Already have a LUT Kyyti account?" %}</p>
-              <a class="link link-primary text-lg" href="{% url "login" %}">{% trans "Log in" %}</a>
-              <br>
+              <p class="col-span-3 text-[1.0625rem]">{% trans "Already have a LUT Kyyti account?" %} <a class="link link-primary" href="{% url "login" %}">{% trans "Log in" %}</a></p>
               <br>
               {% blocktranslate context "Full sentence: By creating an account you agree to the Terms of Use and Privacy Policy." %}
-                <p>By creating an account you agree to the <a class="link link-primary" href="/terms-of-use">Terms of Use</a> and <a class="link link-secondary" href="/privacy-policy">Privacy Policy</a>.</p>
+                <p class="text-[0.8125rem]">By creating an account you agree to the <a class="link link-primary" href="/terms-of-use">Terms of Use</a> and <a class="link link-secondary" href="/privacy-policy">Privacy Policy</a>.</p>
               {% endblocktranslate %}
             </div>
           </div>
