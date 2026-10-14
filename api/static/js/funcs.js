@@ -433,3 +433,49 @@ function showIfCached(img) {
         imageLoaded(img);
     }
 }
+
+// Cmd+Enter (Mac) or Ctrl+Enter (elsewhere) submits the form being filled in,
+// as if its submit button was clicked: the browser checks required fields
+// and the page's own submit handlers run (e.g. the search page's).
+// - Only from fields typed or chosen in, never from a focused button, so
+//   e.g. a request's Accept / Decline buttons cannot be pressed by accident.
+// - Forms marked data-no-submit-shortcut are left out (e.g. deleting the
+//   account, the language picker).
+const IS_MAC = /Mac|iPhone|iPad/.test(navigator.userAgentData?.platform ?? navigator.platform);
+const SHORTCUT_FIELD_TYPES_LEFT_OUT = ["button", "submit", "reset", "image", "file", "hidden"];
+
+function shortcutSubmitButtons(form) {
+    return [...form.elements].filter((element) => element.type === "submit");
+}
+
+document.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" || event.repeat || event.isComposing) return;
+    if (!(IS_MAC ? event.metaKey : event.ctrlKey) || event.altKey || event.shiftKey) return;
+
+    const field = document.activeElement;
+    const form = field?.form;
+    if (!form || form.matches("[data-no-submit-shortcut]") || form.method === "dialog") return;
+    if (field.tagName === "BUTTON" || SHORTCUT_FIELD_TYPES_LEFT_OUT.includes(field.type)) return;
+
+    event.preventDefault();
+    // With a single submit button, submit as if it was clicked (its name and
+    // value are sent). With several, e.g. the search page's page buttons,
+    // submit without one.
+    const buttons = shortcutSubmitButtons(form);
+    if (buttons.length === 1) {
+        if (!buttons[0].disabled) form.requestSubmit(buttons[0]);
+    } else {
+        form.requestSubmit();
+    }
+});
+
+// Submit buttons show the shortcut when hovered
+document.addEventListener("DOMContentLoaded", () => {
+    const hint = IS_MAC ? "⌘ + Enter" : "Ctrl + Enter";
+    for (const form of document.forms) {
+        if (form.matches("[data-no-submit-shortcut]") || form.method === "dialog") continue;
+        for (const button of shortcutSubmitButtons(form)) {
+            if (!button.title) button.title = hint;
+        }
+    }
+});

@@ -9,6 +9,7 @@ from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.utils import timezone
 from PIL import Image
 
 from accounts.models import User
@@ -17,6 +18,7 @@ from test_app.models import Ride, RideRequest
 
 def make_user(first, last, **fields):
     # Users have no username, so they are created like the sign up form does
+    fields.setdefault("email_confirmed_at", timezone.now())
     user = User(email=f"{first.lower()}@lut.fi", first_name=first, last_name=last, **fields)
     user.set_password("Passw0rd!x")
     user.save()

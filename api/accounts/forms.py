@@ -123,6 +123,23 @@ class SignUpForm(CustomUserCreationForm):
     class Meta(CustomUserCreationForm.Meta):
         fields = tuple(f for f in CustomUserCreationForm.Meta.fields if f not in ("phone", "pfp"))
 
+    # An account with the email address that was never confirmed. SignUpView
+    # sends its confirmation link again.
+    unconfirmed_user = None
+
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        existing = User.objects.filter(email__iexact=email).first()
+        if existing and existing.email_confirmed_at is None:
+            self.unconfirmed_user = existing
+            raise forms.ValidationError(
+                _("This email address has already signed up but has not been confirmed yet. We have sent the confirmation link again."),
+                code="unconfirmed",
+            )
+        if existing:
+            raise forms.ValidationError(_("An account with this email address already exists."), code="unique")
+        return email
+
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = User
@@ -134,8 +151,28 @@ class CustomUserChangeForm(UserChangeForm):
         # fields = UserChangeForm.Meta.fields
 
 class UserLoginForm(AuthenticationForm):
+    # The email address when the password is right but the address has not
+    # been confirmed, so that the login page can offer a new link
+    unconfirmed_email = None
+
     def __init__(self, *args, **kwargs):
         super(UserLoginForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        try:
+            return super().clean()
+        except forms.ValidationError:
+            # Only with the right password, so that it does not tell anyone
+            # else whether the address has an account
+            email, password = self.cleaned_data.get("username"), self.cleaned_data.get("password")
+            user = User.objects.filter(email=email).first() if email else None
+            if user and user.is_active and user.email_confirmed_at is None and user.check_password(password):
+                self.unconfirmed_email = user.email
+                raise forms.ValidationError(
+                    _("Confirm your email address before logging in. Open the link we sent to %(email)s.") % {"email": user.email},
+                    code="unconfirmed",
+                )
+            raise
 
     username = forms.EmailField(widget=forms.EmailInput(
         attrs={

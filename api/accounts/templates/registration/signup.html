@@ -52,10 +52,13 @@
             {{ form.password2 }}
 
             {% if form.errors %}
-              <div class="col-span-3" style="color:var(--color-error)">{% trans "Error in account creation. Check that passwords match" %}</div>
-              {% for error in form.errors %}
-                <p class="text-error">{{ error }}</p>
-              {% endfor %}
+              <ul role="alert" class="col-span-3 text-error list-disc ps-5">
+                {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                {% for field in form %}{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}
+              </ul>
+              {% if form.unconfirmed_user %}
+                <a href="{% url 'confirmation_sent' %}" class="link link-primary col-span-3">{% trans "Didn't get the email?" %}</a>
+              {% endif %}
             {% endif %}
             
 

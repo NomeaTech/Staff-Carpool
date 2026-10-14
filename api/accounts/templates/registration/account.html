@@ -4,7 +4,7 @@
 {% block title %}{% trans "Profile & settings" %} | LUT Kyyti{% endblock %}
 
 {% block content %}
-<section class="h-screen w-screen overflow-y-auto pt-7 lg:pt-24 pb-28 lg:pb-10">
+<section class="h-screen w-full overflow-y-auto pt-7 lg:pt-24 pb-28 lg:pb-10">
   <div class="max-w-6xl mx-auto px-4 lg:px-7">
     <header class="mb-7">
       <p class="text-xs font-bold uppercase tracking-widest text-primary mb-2">{% trans "Your account" %}</p>
@@ -202,7 +202,7 @@
       <h3 id="delete-account-title" class="font-bold">{% trans "Delete your account?" %}</h3>
     </div>
     <p class="py-4 text-sm">{% trans "Your account, your profile photo, the rides you have posted and your ride requests are deleted permanently. People who joined or requested your rides are notified that they are cancelled." %}</p>
-    <form method="post" id="delete-account-form">
+    <form method="post" id="delete-account-form" data-no-submit-shortcut>
       {% csrf_token %}
       <input type="hidden" name="form" value="delete">
       <fieldset class="fieldset">

@@ -22,7 +22,7 @@
     });
 </script>
 
-<section class="flex flex-col pt-5 lg:pt-20 h-screen mx-auto overflow-scroll scrollbar-hide">
+<section class="flex flex-col w-full pt-5 lg:pt-20 h-screen overflow-scroll scrollbar-hide">
     <form id="search-form" class="flex z-2 justify-center mx-2" action="/app/search/" method="post">
         {% csrf_token %}
         
@@ -60,7 +60,7 @@
             </div>
         </div>
     </form>
-    <div id="search-results" aria-live="polite" class="flex flex-wrap 2xl:w-380 xl:w-300 md:w-200 mb-15 md:mb-0 lg:pb-2 pb-15 pt-5 col-span-1 xl:px-0 justify-center">
+    <div id="search-results" aria-live="polite" class="flex flex-wrap self-center max-w-full 2xl:w-380 xl:w-300 md:w-200 mb-15 md:mb-0 lg:pb-2 pb-15 pt-5 col-span-1 xl:px-0 justify-center">
         {% include "search_results.html" %}
     </div>
 </section>

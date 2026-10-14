@@ -37,7 +37,8 @@
     <div class="drawer drawer-end">
       <input id="my-drawer-5" type="checkbox" class="drawer-toggle"/>
       <div class="drawer-content">    
-        <div class="flex justify-items-center mx-auto">
+        {# Full width, so that each page's scrolling area covers the whole screen #}
+        <div class="flex w-full">
     {% endcache %}
           {% block content %}
           {% endblock %}
@@ -89,7 +90,7 @@
             {% endcache %}
           </div>
           <div class="grid grid-cols-3 w-full gap-3">
-            <form id="id_lang_form" class="w-full col-span-1" action="{% url 'set_language' %}" method="post">
+            <form id="id_lang_form" data-no-submit-shortcut class="w-full col-span-1" action="{% url 'set_language' %}" method="post">
               {% csrf_token %}
               <input name="next" type="hidden" value="{{ redirect_to }}">
               {% cache 86400 app_language_select LANGUAGE_CODE using="templates" %}
