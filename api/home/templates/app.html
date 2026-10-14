@@ -142,11 +142,9 @@
             </div>
           </a>
           {% endwith %}
-          <a href="{% url 'account' %}" class="btn btn-ghost btn-circle" aria-label="{% trans "Profile & settings" %}">
-            {% avatar user %}
-          </a>
+          {# Opens the side menu, as the dock's profile picture does on phones; the menu links to Profile & settings #}
           <label for="my-drawer-5" class="btn btn-ghost btn-circle" aria-label="{% trans "Menu" %}">
-            {% include "_icon.html" with name="menu" %}
+            {% avatar user %}
           </label>
         </div>
     </div>

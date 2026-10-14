@@ -173,6 +173,9 @@
   /* Was Oswald, which was never loaded: now the same as the rest of the site */
   --font-display: var(--font-sans);
 
+  /* Headings on the landing page (always in the light theme), as text-heading */
+  --color-heading: #557743;
+
   /* Transport colours, the same in every theme (see test_app/transport.py).
      Use them as text-offer, bg-train, badge-bus, checkbox-taxi, ... */
   --color-offer: #7dbb9b;
