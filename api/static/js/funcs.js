@@ -423,3 +423,13 @@ function imageLoaded(img) {
         img.style.opacity = 1;
     }
 }
+
+// Called right after a profile photo's <img> (see _avatar.html). A photo the
+// browser already has, e.g. the navbar's on every page, is shown at once
+// instead of replaying the skeleton and fade-in each time.
+function showIfCached(img) {
+    if (img.complete && img.naturalWidth > 0) {
+        img.classList.remove("transition-opacity");
+        imageLoaded(img);
+    }
+}

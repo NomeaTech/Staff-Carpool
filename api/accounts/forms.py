@@ -188,20 +188,34 @@ class SettingsForm(forms.ModelForm):
         widgets = {"name_visibility": forms.RadioSelect(attrs={"class": "radio radio-primary radio-sm"})}
 
 
+# Larger photos are refused. The profile page also checks this before
+# uploading (photo_too_large), as Nginx refuses requests over 100 MB with its
+# own error page, before they reach the app.
 PHOTO_MAX_UPLOAD = 10 * 1024 * 1024
+
+def photo_too_large():
+    return _("The photo must be smaller than %(size)s MB.") % {"size": PHOTO_MAX_UPLOAD // (1024 * 1024)}
 
 class PhotoForm(forms.Form):
     photo = forms.ImageField()
+    # The square the user framed their face in (see account.html). Without
+    # it, e.g. when JavaScript is off, the middle of the photo is used.
+    crop_x = forms.FloatField(required=False, widget=forms.HiddenInput)
+    crop_y = forms.FloatField(required=False, widget=forms.HiddenInput)
+    crop_size = forms.FloatField(required=False, min_value=1, widget=forms.HiddenInput)
 
     def clean_photo(self):
         photo = self.cleaned_data["photo"]
         if photo.size > PHOTO_MAX_UPLOAD:
-            raise forms.ValidationError(_("The photo must be smaller than 10 MB."))
+            raise forms.ValidationError(photo_too_large())
         return photo
 
     def save(self, user):
         # User.save() shrinks the photo and names it with a UUID
-        user.pfp = self.cleaned_data["photo"]
+        data = self.cleaned_data
+        crop = (data["crop_x"], data["crop_y"], data["crop_size"])
+        user.pfp = data["photo"]
+        user.pfp_crop = crop if None not in crop else None
         user.save(update_fields=["pfp"])
 
 

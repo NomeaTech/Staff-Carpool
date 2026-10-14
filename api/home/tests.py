@@ -1,5 +1,9 @@
 from io import BytesIO
+from unittest import skipUnless
+from unittest.mock import patch
+import os
 
+from django.conf import settings
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
@@ -210,6 +214,10 @@ def image_file(size=(800, 600)):
     return SimpleUploadedFile("me.png", output.getvalue(), content_type="image/png")
 
 
+# A photo with an embedded Adobe RGB (1998) colour profile
+WIDE_GAMUT_PHOTO = os.path.join(settings.BASE_DIR, "static/images/user_images/Péter_Magyar_MEP_2024.jpg")
+
+
 class AccountTests(TestCase):
     def setUp(self):
         self.user = make_user("Jamie", "Saarinen")
@@ -247,7 +255,10 @@ class AccountTests(TestCase):
 
         photo_url = reverse("user_photo", args=[self.user.pk])
         self.client.force_login(self.other)
-        self.assertEqual(self.client.get(photo_url).status_code, 200)
+        response = self.client.get(photo_url)
+        self.assertEqual(response.status_code, 200)
+        # Cached by the browser only, and not checked again (the URL changes with the photo)
+        self.assertEqual(response["Cache-Control"], "private, max-age=31536000, immutable")
 
         self.user.show_photo = False
         self.user.save()
@@ -277,6 +288,87 @@ class AccountTests(TestCase):
         self.user.refresh_from_db()
         self.assertFalse(self.user.pfp)
         self.assertFalse(self.user.pfp.storage.exists(second))
+
+    def test_photo_size_limit(self):
+        # The page refuses large photos before uploading them (see account.html)
+        response = self.client.get(self.url)
+        self.assertContains(response, 'data-max-size="10485760"')
+        self.assertContains(response, 'data-too-large="The photo must be smaller than 10 MB."')
+        self.assertContains(response, "<title>Profile & settings | LUT Kyyti</title>", html=False)
+
+        # and the server refuses them too
+        with patch("accounts.forms.PHOTO_MAX_UPLOAD", 100):
+            response = self.client.post(self.url, {"form": "photo", "photo-photo": image_file()})
+        self.assertContains(response, "The photo must be smaller than")
+        self.user.refresh_from_db()
+        self.assertFalse(self.user.pfp)
+
+    @skipUnless(os.path.exists(WIDE_GAMUT_PHOTO), "needs the sample Adobe RGB photo")
+    def test_wide_gamut_photos_keep_their_colours(self):
+        with Image.open(WIDE_GAMUT_PHOTO) as sample:
+            adobe_rgb = sample.info["icc_profile"]
+        # This muted green in Adobe RGB is a vivid (0, 172, 84) in sRGB
+        output = BytesIO()
+        Image.new("RGB", (600, 600), (90, 170, 90)).save(output, "JPEG", icc_profile=adobe_rgb, quality=100)
+        self.user.pfp = SimpleUploadedFile("green.jpg", output.getvalue(), content_type="image/jpeg")
+        self.user.save()
+
+        # The saved photo has no profile, so browsers read its values as sRGB
+        with Image.open(self.user.pfp.path) as image:
+            pixel = image.getpixel((256, 256))
+        for channel, value in zip(pixel, (0, 172, 84)):
+            self.assertAlmostEqual(channel, value, delta=6)
+
+    def framed_photo(self, **crop):
+        """Uploads a 1000 x 500 photo, red on the left half and blue on the right."""
+        image = Image.new("RGB", (1000, 500), "red")
+        image.paste((0, 0, 255), (500, 0, 1000, 500))
+        output = BytesIO()
+        image.save(output, "PNG")
+        upload = SimpleUploadedFile("me.png", output.getvalue(), content_type="image/png")
+        data = {"form": "photo", "photo-photo": upload}
+        data.update({f"photo-crop_{key}": value for key, value in crop.items()})
+        self.client.post(self.url, data)
+        self.user.refresh_from_db()
+        with Image.open(self.user.pfp.path) as saved:
+            return saved.size, saved.getpixel((10, 256)), saved.getpixel((501, 256))
+
+    def is_blue(self, pixel):
+        return pixel[2] > 200 and pixel[0] < 50
+
+    def test_photo_is_cropped_to_the_framed_square(self):
+        size, left, right = self.framed_photo(x=500, y=0, size=500)
+        self.assertEqual(size, (512, 512))
+        self.assertTrue(self.is_blue(left) and self.is_blue(right))
+
+    def test_photo_crop_is_kept_inside_the_photo(self):
+        # Larger than the photo and partly outside it: moved and shrunk to fit
+        size, left, right = self.framed_photo(x=900, y=-50, size=800)
+        self.assertEqual(size, (512, 512))
+        self.assertTrue(self.is_blue(left) and self.is_blue(right))
+
+    def test_photo_without_framing_uses_the_middle(self):
+        size, left, right = self.framed_photo()
+        self.assertEqual(size, (512, 512))
+        self.assertFalse(self.is_blue(left))
+        self.assertTrue(self.is_blue(right))
+
+    def test_older_photo_files_are_never_deleted(self):
+        # Photos from before uploads were stored privately can be files kept
+        # in the repository, such as the sample photos
+        legacy = "static/images/user_images/test_legacy_photo.jpg"
+        path = os.path.join(settings.BASE_DIR, legacy)
+        Image.new("RGB", (10, 10)).save(path)
+        self.addCleanup(os.remove, path)
+        User.objects.filter(pk=self.user.pk).update(pfp=legacy)
+
+        self.client.post(self.url, {"form": "photo", "photo-photo": image_file()})
+        self.client.post(self.url, {"form": "remove_photo"})
+        self.assertTrue(os.path.exists(path))
+
+        User.objects.filter(pk=self.user.pk).update(pfp=legacy)
+        self.client.post(self.url, {"form": "delete", "delete-password": "Passw0rd!x"})
+        self.assertTrue(os.path.exists(path))
 
     def test_photo_must_be_an_image(self):
         not_image = SimpleUploadedFile("me.png", b"not an image", content_type="image/png")
