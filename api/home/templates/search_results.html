@@ -48,9 +48,9 @@
                         <div name="card-footer" class="">
                             <h2 class="card-title grid gap-0 pb-10 text-3xl">
                                 {# The start and destination are all the same size; names too long for the card end in an ellipsis #}
-                                <p class="truncate text-xl" title="{{ ride.start_json.displayName }}">{{ ride.start_json.displayName }}</p>
+                                <p class="truncate text-2xl" title="{{ ride.start_json.displayName }}">{{ ride.start_json.displayName }}</p>
                                 <p>{{ ride.sign }}</p>
-                                <p class="truncate text-xl" title="{{ ride.destination_json.displayName }}">{{ ride.destination_json.displayName }}</p>
+                                <p class="truncate text-2xl" title="{{ ride.destination_json.displayName }}">{{ ride.destination_json.displayName }}</p>
                             </h2>
                             <div class="badge badge-soft badge-primary rounded-full badge-lg pl-0 pr-2">
                                 {% avatar ride.driver "w-8" "text-xs" %}
@@ -72,8 +72,10 @@
     {% endfor %}
 
     {% if page.paginator.num_pages > 1 %}
-    {# The buttons submit the search form, so paging also works without JavaScript.
-       They skip validation, as paging keeps the filters of the last search. #}
+    {% comment %}
+      The buttons submit the search form, so paging also works without JavaScript.
+      They skip validation, as paging keeps the filters of the last search.
+    {% endcomment %}
     <div class="join basis-full justify-center pb-5">
         <button class="join-item btn" type="submit" form="search-form" name="page" formnovalidate
             value="{% if page.has_previous %}{{ page.previous_page_number }}{% endif %}"

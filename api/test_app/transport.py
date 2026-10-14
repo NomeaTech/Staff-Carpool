@@ -91,12 +91,13 @@ FILTER_OPTIONS = {
 }
 
 # Icons shown on a search result card, which has room for a 136 x 88 px area:
-# one or two big icons, or up to all six in three columns and two rows.
+# one or two big icons (the same size), or up to all six in three columns and
+# two rows.
 # Columns, box and icon sizes by the number of icons (Tailwind classes,
 # written out in full so that Tailwind finds them). The columns are only as
 # wide as the boxes, so that the boxes sit next to each other.
 ICON_SIZES = {
-    1: ("grid-cols-[max-content]", "size-20", "size-14"),                  # 80 px
+    1: ("grid-cols-[max-content]", "size-16", "size-11"),                  # 64 px, like two
     2: ("grid-cols-[repeat(2,max-content)]", "size-16", "size-11"),        # 64 px, side by side
 }
 ICON_GRID = ("grid-cols-[repeat(3,max-content)]", "size-[2.625rem]", "size-7")  # 42 px, 3 x 2
