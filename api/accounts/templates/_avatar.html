@@ -1,5 +1,9 @@
-{% load i18n %}{% if photo_url %}
-<div class="avatar"><div class="{{ size }} rounded-full"><img src="{{ photo_url }}" alt="{% trans "Profile photo" %}" loading="lazy"></div></div>
+{% load i18n %}{% comment %}
+  A profile photo shows a skeleton until it has loaded and then fades in,
+  like the landing page's pictures (imageLoaded() in funcs.js). Photos the
+  browser has cached are shown at once (showIfCached()).
+{% endcomment %}{% if photo_url %}
+<div class="avatar"><div class="{{ size }} rounded-full skeleton"><img src="{{ photo_url }}" alt="{% trans "Profile photo" %}" class="opacity-0 transition-opacity duration-300" onload="imageLoaded(this)" onerror="imageLoaded(this)"><script>showIfCached(document.currentScript.previousElementSibling)</script></div></div>
 {% else %}
 <div class="avatar avatar-placeholder" aria-hidden="true"><div class="{{ size }} {{ text }} rounded-full bg-primary/10 text-primary font-bold"><span>{{ user.initials }}</span></div></div>
 {% endif %}

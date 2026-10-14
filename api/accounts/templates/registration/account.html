@@ -1,10 +1,7 @@
 {% extends "app.html" %}
-{% load i18n privacy widget_tweaks %}
+{% load i18n privacy static widget_tweaks %}
 
-{% block title %}{% trans "Profile & settings" %} | LUT Kyyti{% if delete_form.errors %}
-<script>document.getElementById("delete-account-modal").showModal();</script>
-{% endif %}
-{% endblock %}
+{% block title %}{% trans "Profile & settings" %} | LUT Kyyti{% endblock %}
 
 {% block content %}
 <section class="h-screen w-screen overflow-y-auto pt-7 lg:pt-24 pb-28 lg:pb-10">
@@ -29,12 +26,14 @@
                 </div>
               </div>
               <div class="flex flex-wrap gap-2">
-                <form method="post" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data" id="photo-form">
                   {% csrf_token %}
                   <input type="hidden" name="form" value="photo">
+                  {{ photo_form.crop_x }}{{ photo_form.crop_y }}{{ photo_form.crop_size }}
                   <label class="btn btn-outline btn-primary btn-sm">
                     {% if user.pfp %}{% trans "Change photo" %}{% else %}{% trans "Add photo" %}{% endif %}
-                    <input type="file" name="photo-photo" accept="image/*" class="hidden" onchange="this.form.submit()">
+                    <input type="file" name="photo-photo" accept="image/*" class="hidden" id="photo-input"
+                      data-max-size="{{ photo_max_upload }}" data-too-large="{{ photo_too_large }}">
                   </label>
                 </form>
                 {% if user.pfp %}
@@ -46,7 +45,9 @@
                 {% endif %}
               </div>
             </div>
-            {% for error in photo_form.photo.errors %}<p class="text-error text-sm mt-2">{{ error }}</p>{% endfor %}
+            <div id="photo-errors" aria-live="polite">
+              {% for error in photo_form.photo.errors %}<p class="text-error text-sm mt-2">{{ error }}</p>{% endfor %}
+            </div>
 
             <div class="divider my-2"></div>
 
@@ -217,6 +218,163 @@
   </div>
   <form method="dialog" class="modal-backdrop"><button>{% trans "Cancel" %}</button></form>
 </dialog>
+{% comment %}
+  Photo framing dialog. Picking a photo opens it: the user moves and zooms
+  the photo behind a fixed circle, and the square around the circle is sent
+  with the photo (photo-crop_*) for the server to cut out (accounts.models.shrink_photo).
+{% endcomment %}
+<link rel="stylesheet" href="{% static 'css/vendor/cropper-1.6.2.min.css' %}">
+<script src="{% static 'js/vendor/cropper-1.6.2.min.js' %}"></script>
+<style>
+  /* The crop square is shown as a circle. The photo is dimmed outside it
+     (the circle shows its own, undimmed copy of the photo), and the space
+     around the photo keeps the card's background. */
+  #photo-cropper .cropper-view-box,
+  #photo-cropper .cropper-face { border-radius: 50%; }
+  #photo-cropper .cropper-view-box { outline: 0; box-shadow: 0 0 0 2px rgb(255 255 255 / 0.9); }
+  #photo-cropper .cropper-canvas img { filter: brightness(0.45); }
+</style>
+
+<dialog id="photo-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="photo-modal-title">
+  <div class="modal-box">
+    <h3 id="photo-modal-title" class="text-lg font-bold">{% trans "Frame your photo" %}</h3>
+    <p class="text-sm text-base-content/60 mt-1">{% trans "Drag the photo to place your face inside the circle. Zoom with the slider, the mouse wheel or by pinching." %}</p>
+    <div id="photo-cropper" class="mt-4 h-72 sm:h-80 rounded-field overflow-hidden bg-base-100">
+      <img id="photo-preview" alt="{% trans "Your new photo" %}" class="block max-w-full">
+    </div>
+    <label class="flex items-center gap-3 mt-4">
+      <span class="sr-only">{% trans "Zoom" %}</span>
+      {% include "_icon.html" with name="search" class="size-4 text-base-content/50" %}
+      <input id="photo-zoom" type="range" min="0" max="100" value="0" step="1" class="range range-primary range-xs grow" aria-label="{% trans "Zoom" %}">
+      {% include "_icon.html" with name="search" class="size-6 text-base-content/50" %}
+    </label>
+    <div class="modal-action">
+      <form method="dialog"><button class="btn">{% trans "Cancel" %}</button></form>
+      <button id="photo-save" class="btn btn-primary" type="button">{% trans "Save photo" %}</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>{% trans "Cancel" %}</button></form>
+</dialog>
+
+<script>
+  (function () {
+    const input = document.getElementById("photo-input");
+    const form = document.getElementById("photo-form");
+    const errors = document.getElementById("photo-errors");
+    const modal = document.getElementById("photo-modal");
+    const preview = document.getElementById("photo-preview");
+    const zoom = document.getElementById("photo-zoom");
+    const save = document.getElementById("photo-save");
+    // The slider goes from the photo filling the circle to MAX_ZOOM times that
+    const MAX_ZOOM = 4;
+    // Space between the circle and the edge of the frame, so its ring shows
+    const CIRCLE_MARGIN = 4;
+    let cropper = null;
+    let minRatio = 1;
+    let submitting = false;
+
+    function showError(message) {
+      const error = document.createElement("p");
+      error.className = "text-error text-sm mt-2";
+      error.textContent = message;
+      errors.replaceChildren(error);
+    }
+
+    input.addEventListener("change", function () {
+      const file = input.files[0];
+      if (!file) return;
+      // Photos over the limit are refused here instead of being uploaded, so
+      // a very large file never gets Nginx's "413 Request Entity Too Large" page
+      if (file.size > Number(input.dataset.maxSize)) {
+        showError(input.dataset.tooLarge);
+        input.value = "";
+        return;
+      }
+      errors.replaceChildren();
+      preview.src = URL.createObjectURL(file);
+      modal.showModal();
+    });
+
+    // The cropper is created once the photo has loaded in the open dialog,
+    // as it measures the space it has
+    preview.addEventListener("load", function () {
+      cropper = new Cropper(preview, {
+        aspectRatio: 1,
+        viewMode: 1,             // the photo always covers the circle
+        dragMode: "move",        // dragging moves the photo, not the circle
+        cropBoxMovable: false,
+        cropBoxResizable: false,
+        toggleDragModeOnDblclick: false,
+        guides: false,
+        center: false,
+        highlight: false,
+        background: false,
+        modal: false,            // the photo is dimmed by the styles above instead
+        restore: false,
+        // Browsers already show photos upright; the server turns them the same way
+        checkOrientation: false,
+        ready() {
+          // The circle is as large as the frame allows, and the photo starts
+          // zoomed out as far as it can while still covering the circle
+          const frame = cropper.getContainerData();
+          const image = cropper.getImageData();
+          const size = Math.min(frame.width, frame.height) - 2 * CIRCLE_MARGIN;
+          minRatio = size / Math.min(image.naturalWidth, image.naturalHeight);
+          const width = image.naturalWidth * minRatio;
+          const height = image.naturalHeight * minRatio;
+          cropper.setCanvasData({ left: (frame.width - width) / 2, top: (frame.height - height) / 2, width, height });
+          cropper.setCropBoxData({ left: (frame.width - size) / 2, top: (frame.height - size) / 2, width: size, height: size });
+          zoom.value = 0;
+        },
+        zoom(event) {
+          // Not smaller than filling the circle, nor larger than the slider allows
+          const ratio = event.detail.ratio;
+          if (ratio < minRatio || ratio > minRatio * MAX_ZOOM) {
+            event.preventDefault();
+            cropper.zoomTo(Math.min(Math.max(ratio, minRatio), minRatio * MAX_ZOOM));
+            return;
+          }
+          zoom.value = Math.round((ratio / minRatio - 1) / (MAX_ZOOM - 1) * 100);
+        },
+      });
+    });
+
+    // A photo the browser cannot show (e.g. some HEIC photos) is uploaded
+    // without framing, and the server checks it as before
+    preview.addEventListener("error", function () {
+      if (!preview.getAttribute("src")) return;
+      submitting = true;
+      modal.close();
+      form.submit();
+    });
+
+    zoom.addEventListener("input", function () {
+      cropper?.zoomTo(minRatio * (1 + zoom.value / 100 * (MAX_ZOOM - 1)));
+    });
+
+    save.addEventListener("click", function () {
+      if (!cropper) return;
+      const data = cropper.getData(true);
+      form.elements["photo-crop_x"].value = data.x;
+      form.elements["photo-crop_y"].value = data.y;
+      form.elements["photo-crop_size"].value = Math.min(data.width, data.height);
+      submitting = true;
+      save.disabled = true;
+      save.insertAdjacentHTML("afterbegin", '<span class="loading loading-spinner loading-sm"></span>');
+      form.submit();
+    });
+
+    // Closed with Cancel, Escape or by clicking outside: nothing is uploaded
+    modal.addEventListener("close", function () {
+      if (submitting) return;
+      cropper?.destroy();
+      cropper = null;
+      URL.revokeObjectURL(preview.src);
+      preview.removeAttribute("src");
+      input.value = "";
+    });
+  })();
+</script>
 {% if delete_form.errors %}
 <script>document.getElementById("delete-account-modal").showModal();</script>
 {% endif %}

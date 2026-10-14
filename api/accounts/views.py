@@ -11,8 +11,8 @@ from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 
 from home import notifications
-from .forms import SignUpForm, UserLoginForm, ProfileForm, SettingsForm, PhotoForm, DeleteAccountForm
-from .models import User
+from .forms import SignUpForm, UserLoginForm, ProfileForm, SettingsForm, PhotoForm, DeleteAccountForm, PHOTO_MAX_UPLOAD, photo_too_large
+from .models import User, delete_photo_file
 from .privacy import can_see_photo
 
 class SignUpView(CreateView):
@@ -78,8 +78,7 @@ def account(request):
             photo = user.pfp.name if user.pfp else None
             logout(request)
             user.delete()
-        if photo:
-            User.pfp.field.storage.delete(photo)
+        delete_photo_file(photo)
         return redirect("landing")
 
     context = {
@@ -87,6 +86,8 @@ def account(request):
         "settings_form": settings_form,
         "photo_form": photo_form,
         "delete_form": delete_form,
+        "photo_max_upload": PHOTO_MAX_UPLOAD,
+        "photo_too_large": photo_too_large(),
     }
     return render(request, "registration/account.html", context)
 
@@ -100,6 +101,8 @@ def photo(request, user_id):
         response = FileResponse(user.pfp.open("rb"), content_type="image/jpeg")
     except FileNotFoundError:
         raise Http404
-    # Only the browser may keep a copy, as the photo is not public
-    response["Cache-Control"] = "private, max-age=86400"
+    # Only the browser may keep a copy, as the photo is not public. A new
+    # photo has a new URL (?v=<file name>, see the avatar tag), so the copy
+    # never needs checking: the browser keeps using it across pages.
+    response["Cache-Control"] = "private, max-age=31536000, immutable"
     return response
