@@ -126,11 +126,13 @@
         </div>
         <div class="navbar-end gap-2 w-auto grow">
           <ul class="menu menu-horizontal gap-1 font-semibold">
-            <li><a href="{% url 'home' %}" class="{% if page == 'home' %}bg-primary/10 text-primary{% endif %}">{% trans "Home" %}</a></li>
-            <li><a href="{% url 'search' %}" class="{% if page == 'search' %}bg-primary/10 text-primary{% endif %}">{% trans "Find a ride" %}</a></li>
-            <li><a href="{% url 'add' %}" class="{% if page == 'add' %}bg-primary/10 text-primary{% endif %}">{% trans "Post a ride" %}</a></li>
-            <li><a href="{% url 'my_rides' %}" class="{% if page == 'my_rides' %}bg-primary/10 text-primary{% endif %}">{% trans "My rides" %}</a></li>
-            <li><a href="{% url 'faq' %}">{% trans "Help" %}</a></li>
+            {% comment %}
+              My rides and Help are in the side menu (and My rides in the mobile dock).
+              The current page is not highlighted; hovering a link turns it green.
+            {% endcomment %}
+            <li><a href="{% url 'home' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Home" %}{% include "_icon.html" with name="home" class="size-5" %}</a></li>
+            <li><a href="{% url 'search' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Find a ride" %}{% include "_icon.html" with name="search" class="size-5" %}</a></li>
+            <li><a href="{% url 'add' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Post a ride" %}{% include "_icon.html" with name="car" class="size-5" %}</a></li>
           </ul>
           {% with count=pending_request_count %}
           <a href="{% url 'home' %}#attention" class="btn btn-ghost btn-circle" aria-label="{% blocktrans count counter=count %}{{ counter }} ride request to review{% plural %}{{ counter }} ride requests to review{% endblocktrans %}">

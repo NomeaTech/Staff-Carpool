@@ -675,7 +675,7 @@ class TransportIconTests(TestCase):
         return [option.field for option in layout.options], layout.box_class
 
     def test_fewer_icons_are_bigger(self):
-        self.assertEqual(self.layout("bus")[1], "size-20")
+        self.assertEqual(self.layout("bus")[1], "size-16")
         self.assertEqual(self.layout("bus", "taxi")[1], "size-16")
         for count in range(3, 7):
             fields = ["offer", "request", "train", "bus", "taxi", "other"][:count]
