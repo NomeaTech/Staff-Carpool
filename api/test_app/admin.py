@@ -8,6 +8,11 @@ class ViaInline(admin.TabularInline):
     extra = 0
 
 
+class RideRequestInline(admin.TabularInline):
+    model = RideRequest
+    extra = 0
+
+
 @admin.register(Ride)
 class RideAdmin(admin.ModelAdmin):
-    inlines = [ViaInline]
+    inlines = [ViaInline, RideRequestInline]

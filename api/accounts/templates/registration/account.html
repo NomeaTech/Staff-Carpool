@@ -1,0 +1,223 @@
+{% extends "app.html" %}
+{% load i18n privacy widget_tweaks %}
+
+{% block title %}{% trans "Profile & settings" %} | LUT Kyyti{% if delete_form.errors %}
+<script>document.getElementById("delete-account-modal").showModal();</script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<section class="h-screen w-screen overflow-y-auto pt-7 lg:pt-24 pb-28 lg:pb-10">
+  <div class="max-w-6xl mx-auto px-4 lg:px-7">
+    <header class="mb-7">
+      <p class="text-xs font-bold uppercase tracking-widest text-primary mb-2">{% trans "Your account" %}</p>
+      <h1 class="text-3xl font-bold tracking-tight mb-1">{% trans "Profile & settings" %}</h1>
+      <p class="text-base-content/60">{% trans "Manage your personal information, privacy and account preferences." %}</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(285px,1fr)] gap-5 items-start">
+      <div class="grid gap-5">
+
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5 sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <div class="flex items-center gap-4">
+                {% avatar user "w-16" "text-xl" %}
+                <div>
+                  <strong class="block text-lg">{{ user.first_name }} {{ user.last_name }}</strong>
+                  <span class="text-xs text-base-content/60">{% trans "LUT / LAB verified member" %}</span>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <form method="post" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <input type="hidden" name="form" value="photo">
+                  <label class="btn btn-outline btn-primary btn-sm">
+                    {% if user.pfp %}{% trans "Change photo" %}{% else %}{% trans "Add photo" %}{% endif %}
+                    <input type="file" name="photo-photo" accept="image/*" class="hidden" onchange="this.form.submit()">
+                  </label>
+                </form>
+                {% if user.pfp %}
+                <form method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="form" value="remove_photo">
+                  <button class="btn btn-ghost btn-sm" type="submit">{% trans "Remove" %}</button>
+                </form>
+                {% endif %}
+              </div>
+            </div>
+            {% for error in photo_form.photo.errors %}<p class="text-error text-sm mt-2">{{ error }}</p>{% endfor %}
+
+            <div class="divider my-2"></div>
+
+            <h2 class="card-title text-lg mb-2">{% trans "Personal information" %}</h2>
+            <form method="post" class="grid gap-1">
+              {% csrf_token %}
+              <input type="hidden" name="form" value="profile">
+              <div class="grid sm:grid-cols-2 gap-x-4">
+                <fieldset class="fieldset">
+                  <legend class="fieldset-legend">{% trans "First name" %}</legend>
+                  {% render_field profile_form.first_name class="input w-full" autocomplete="given-name" required="" %}
+                  {% for error in profile_form.first_name.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+                </fieldset>
+                <fieldset class="fieldset">
+                  <legend class="fieldset-legend">{% trans "Last name" %}</legend>
+                  {% render_field profile_form.last_name class="input w-full" autocomplete="family-name" required="" %}
+                  {% for error in profile_form.last_name.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+                </fieldset>
+              </div>
+              <fieldset class="fieldset">
+                <legend class="fieldset-legend">{% trans "University email" %}</legend>
+                <input class="input w-full" type="email" value="{{ user.email }}" readonly aria-readonly="true">
+                <p class="label whitespace-normal">{% trans "Your verified account identifier. Contact support to change it." %}</p>
+              </fieldset>
+              <fieldset class="fieldset">
+                <legend class="fieldset-legend">{% trans "Phone number (optional)" %}</legend>
+                {% render_field profile_form.phone class="input w-full" type="tel" placeholder="+358 ..." autocomplete="tel" %}
+                {% for error in profile_form.phone.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+                <p class="label whitespace-normal">{% trans "Only shared with people on your rides, and only if you allow it under Privacy." %}</p>
+              </fieldset>
+              <div><button class="btn btn-primary mt-3" type="submit">{% trans "Save profile changes" %}</button></div>
+            </form>
+          </div>
+        </section>
+
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5 sm:p-6">
+            <h2 class="card-title text-lg mb-2">{% trans "Security" %}</h2>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <strong class="block">{% trans "Password" %}</strong>
+                <span class="text-xs text-base-content/60">{% trans "Update your account password" %}</span>
+              </div>
+              <a class="btn btn-outline btn-primary btn-sm" href="{% url 'password_change' %}">{% trans "Change password" %}</a>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="grid gap-5">
+        <form method="post" class="grid gap-5">
+          {% csrf_token %}
+          <input type="hidden" name="form" value="settings">
+
+          <section class="card bg-base-100 border border-base-300 shadow-sm">
+            <div class="card-body p-5 sm:p-6">
+              <h2 class="card-title text-lg mb-1">{% trans "Notifications" %}</h2>
+              <p class="text-sm text-base-content/60 mb-2">{% trans "Choose which ride updates you receive by email." %}</p>
+              <label class="flex gap-3 cursor-pointer">
+                {% render_field settings_form.notify_ride_requests class="toggle toggle-primary toggle-sm mt-0.5" %}
+                <span>
+                  <strong class="block text-sm">{% trans "Ride requests and responses" %}</strong>
+                  <span class="text-xs text-base-content/60">{% trans "New requests on your rides, answers to your requests, and cancellations" %}</span>
+                </span>
+              </label>
+            </div>
+          </section>
+
+          <section id="privacy" class="card bg-base-100 border border-base-300 shadow-sm scroll-mt-24">
+            <div class="card-body p-5 sm:p-6">
+              <h2 class="card-title text-lg mb-1">{% trans "Privacy & visibility" %}</h2>
+              <p class="text-sm text-base-content/60 mb-2">{% trans "Choose what other LUT Kyyti members can see about you." %}</p>
+
+              <fieldset class="fieldset">
+                <legend class="fieldset-legend">{% trans "Name shown on rides and requests" %}</legend>
+                {% for radio in settings_form.name_visibility %}
+                <label class="flex items-center gap-3 cursor-pointer py-1">
+                  {{ radio.tag }}
+                  <span class="text-sm">
+                    {{ radio.choice_label }}
+                    <span class="text-base-content/50">·
+                      {% if radio.data.value == "first" %}{{ user.first_name }}{% elif radio.data.value == "initial" %}{{ user.first_name }} {{ user.last_name|first }}.{% else %}{{ user.first_name }} {{ user.last_name }}{% endif %}
+                    </span>
+                  </span>
+                </label>
+                {% endfor %}
+                <p class="label whitespace-normal">{% trans "People on the same ride as you always see your full name." %}</p>
+              </fieldset>
+
+              <div class="grid gap-3 mt-2">
+                <label class="flex gap-3 cursor-pointer">
+                  {% render_field settings_form.show_photo class="toggle toggle-primary toggle-sm mt-0.5" %}
+                  <span>
+                    <strong class="block text-sm">{% trans "Show my profile photo" %}</strong>
+                    <span class="text-xs text-base-content/60">{% trans "Otherwise others see your initials" %}</span>
+                  </span>
+                </label>
+                <label class="flex gap-3 cursor-pointer">
+                  {% render_field settings_form.share_email class="toggle toggle-primary toggle-sm mt-0.5" %}
+                  <span>
+                    <strong class="block text-sm">{% trans "Share my email with ride partners" %}</strong>
+                    <span class="text-xs text-base-content/60">{% trans "The driver of a ride you join, or passengers you accept" %}</span>
+                  </span>
+                </label>
+                <label class="flex gap-3 cursor-pointer">
+                  {% render_field settings_form.share_phone class="toggle toggle-primary toggle-sm mt-0.5" %}
+                  <span>
+                    <strong class="block text-sm">{% trans "Share my phone number with ride partners" %}</strong>
+                    <span class="text-xs text-base-content/60">
+                      {% if user.phone %}{% trans "The driver of a ride you join, or passengers you accept" %}{% else %}{% trans "Add a phone number to your profile first" %}{% endif %}
+                    </span>
+                  </span>
+                </label>
+              </div>
+
+              <div class="rounded-field bg-primary/5 text-sm p-3 mt-3 flex gap-2">
+                {% include "_icon.html" with name="lock" class="size-5 text-primary" %}
+                <span>{% trans "Your email and phone number never appear on ride listings. They are only shown to people sharing a ride with you." %}</span>
+              </div>
+
+              <button class="btn btn-primary mt-3" type="submit">{% trans "Save settings" %}</button>
+              <a href="{% url 'privacy-policy' %}" class="link link-primary link-hover text-sm font-semibold mt-1">{% trans "Read the privacy policy" %} →</a>
+            </div>
+          </section>
+        </form>
+
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5 sm:p-6">
+            <h2 class="card-title text-lg mb-2">{% trans "Account management" %}</h2>
+            <div class="grid gap-3 text-sm font-semibold">
+              <a href="{% url 'faq' %}" class="link link-primary link-hover">{% trans "Help & support" %} →</a>
+              <a href="{% url 'contact' %}" class="link link-primary link-hover">{% trans "Contact support" %} →</a>
+              <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button class="link link-primary link-hover" type="submit">{% trans "Log out" %} →</button>
+              </form>
+              <button class="link link-error link-hover text-start" type="button" onclick="document.getElementById('delete-account-modal').showModal()">{% trans "Delete account" %} →</button>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    {% include "_page_footer.html" %}
+  </div>
+</section>
+
+<dialog id="delete-account-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="delete-account-title">
+  <div class="modal-box">
+    <div role="alert" class="alert alert-error alert-soft">
+      {% include "_icon.html" with name="alert" class="size-6" %}
+      <h3 id="delete-account-title" class="font-bold">{% trans "Delete your account?" %}</h3>
+    </div>
+    <p class="py-4 text-sm">{% trans "Your account, your profile photo, the rides you have posted and your ride requests are deleted permanently. People who joined or requested your rides are notified that they are cancelled." %}</p>
+    <form method="post" id="delete-account-form">
+      {% csrf_token %}
+      <input type="hidden" name="form" value="delete">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">{% trans "Enter your password to confirm" %}</legend>
+        {% render_field delete_form.password class="input w-full" autocomplete="current-password" required="" %}
+        {% for error in delete_form.password.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+      </fieldset>
+    </form>
+    <div class="modal-action">
+      <form method="dialog"><button class="btn" autofocus>{% trans "Cancel" %}</button></form>
+      <button class="btn btn-error" type="submit" form="delete-account-form">{% trans "Delete account" %}</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>{% trans "Cancel" %}</button></form>
+</dialog>
+{% if delete_form.errors %}
+<script>document.getElementById("delete-account-modal").showModal();</script>
+{% endif %}
+{% endblock %}

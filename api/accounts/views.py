@@ -1,10 +1,19 @@
+from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
+from django.db import transaction
+from django.http import FileResponse, Http404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 
-from .forms import SignUpForm, UserLoginForm
+from home import notifications
+from .forms import SignUpForm, UserLoginForm, ProfileForm, SettingsForm, PhotoForm, DeleteAccountForm
+from .models import User
+from .privacy import can_see_photo
 
 class SignUpView(CreateView):
     form_class = SignUpForm
@@ -26,3 +35,71 @@ class UserLoginView(LoginView):
 
 def LogoutView(request):
     logout(request)
+
+@login_required
+def account(request):
+    """
+    The profile & settings page. Its forms are posted here, each with a
+    "form" field naming it, and the page is shown again with the others
+    unbound.
+    """
+    user = request.user
+    posted = request.POST.get("form") if request.method == "POST" else None
+    data = lambda name: (request.POST, request.FILES) if posted == name else (None,)
+
+    profile_form = ProfileForm(*data("profile"), instance=user, prefix="profile")
+    settings_form = SettingsForm(*data("settings"), instance=user, prefix="settings")
+    photo_form = PhotoForm(*data("photo"), prefix="photo")
+    delete_form = DeleteAccountForm(user, *data("delete"), prefix="delete")
+
+    if posted == "profile" and profile_form.is_valid():
+        profile_form.save()
+        messages.success(request, _("Your profile was saved."))
+        return redirect("account")
+    if posted == "settings" and settings_form.is_valid():
+        settings_form.save()
+        messages.success(request, _("Your settings were saved."))
+        return redirect("account")
+    if posted == "photo" and photo_form.is_valid():
+        photo_form.save(user)
+        messages.success(request, _("Your photo was changed."))
+        return redirect("account")
+    if posted == "remove_photo" and user.pfp:
+        # User.save() deletes the file
+        user.pfp = None
+        user.save(update_fields=["pfp"])
+        messages.success(request, _("Your photo was removed."))
+        return redirect("account")
+    if posted == "delete" and delete_form.is_valid():
+        with transaction.atomic():
+            # Everyone in the rides the user drives is told they are cancelled
+            for ride in user.driver.all():
+                notifications.ride_cancelled(request, ride)
+            photo = user.pfp.name if user.pfp else None
+            logout(request)
+            user.delete()
+        if photo:
+            User.pfp.field.storage.delete(photo)
+        return redirect("landing")
+
+    context = {
+        "profile_form": profile_form,
+        "settings_form": settings_form,
+        "photo_form": photo_form,
+        "delete_form": delete_form,
+    }
+    return render(request, "registration/account.html", context)
+
+@login_required
+def photo(request, user_id):
+    """A member's profile photo, for those allowed to see it (see accounts/privacy.py)."""
+    user = get_object_or_404(User, pk=user_id)
+    if not can_see_photo(user, request.user):
+        raise Http404
+    try:
+        response = FileResponse(user.pfp.open("rb"), content_type="image/jpeg")
+    except FileNotFoundError:
+        raise Http404
+    # Only the browser may keep a copy, as the photo is not public
+    response["Cache-Control"] = "private, max-age=86400"
+    return response

@@ -1,119 +1,130 @@
 {% extends "app.html" %}
-{% load i18n %}
+{% load i18n privacy %}
 
 {% block title %}{% trans "Home" %} | LUT Kyyti{% endblock %}
 
 {% block content %}
-<section class="grid grid-cols-1 xl:grid-cols-4 gap-10 lg:pt-16 justify-center h-screen mx-auto">
-        <!-- <h3>Logged in user: {{user.username}}</h3> -->
+<section class="h-screen w-screen overflow-y-auto pt-7 lg:pt-24 pb-28 lg:pb-10">
+  <div class="max-w-6xl mx-auto px-4 lg:px-7">
 
-        <div class="hidden col-span-1 justify-self-end xl:block lg:mt-3">
-            <ul class="list bg-base-100 rounded-box shadow-md">
-  
-                <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">{% trans "Friends" %}</li>
-                  
-                {% for user in users %}
-                  <a href="/profile/{{ user.id }}">
-                    <li class="list-row">
-                      
-                      <div class="avatar">
-                        <div class="w-8 rounded-full">
-                          <img src="https://img.daisyui.com/images/profile/demo/batperson@192.webp" />
-                        </div>
-                      </div>
+    <header class="mb-7">
+      <p class="text-xs font-bold uppercase tracking-widest text-primary mb-2">{% trans "Your dashboard" %}</p>
+      <h1 class="text-3xl font-bold tracking-tight mb-1">{% blocktrans with name=user.first_name %}Welcome back, {{ name }}!{% endblocktrans %}</h1>
+      <p class="text-base-content/60">{% trans "Share your commute. Make every journey count." %}</p>
+    </header>
 
-                      <div class="flex items-center">
-                        <div>{{ user.first_name }} {{ user.last_name }}</div>
-                      </div>
-                    </li>
-                  </a>
-                {% endfor %}
-                
-        </div>
+    <nav class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5 mb-7" aria-label="{% trans "Main actions" %}">
+      <a href="{% url 'search' %}" class="card card-side bg-primary text-primary-content items-center gap-4 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+        <span class="grid place-items-center size-13 rounded-field bg-primary-content/15">{% include "_icon.html" with name="search" class="size-6" %}</span>
+        <span class="grow">
+          <span class="block text-lg font-bold">{% trans "Find a ride" %}</span>
+          <span class="block text-sm opacity-80">{% trans "Explore upcoming shared journeys" %}</span>
+        </span>
+        <span class="text-2xl" aria-hidden="true">→</span>
+      </a>
+      <a href="{% url 'add' %}" class="card card-side bg-base-100 border border-base-300 items-center gap-4 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+        <span class="grid place-items-center size-13 rounded-field bg-primary/10 text-primary">{% include "_icon.html" with name="car" class="size-6" %}</span>
+        <span class="grow">
+          <span class="block text-lg font-bold">{% trans "Offer a ride" %}</span>
+          <span class="block text-sm text-base-content/60">{% trans "Post a trip and share your seats" %}</span>
+        </span>
+        <span class="text-2xl text-base-content/30" aria-hidden="true">→</span>
+      </a>
+    </nav>
 
-        <div class="lg:pt-3 mb-15 md:mb-0 lg:pb-2 pb-15 col-span-2 xl:px-0 justify-self-center overflow-scroll scrollbar-hide">
-          {% if rides_created %}
-          <div class="divider">Created rides</div>
-            {% for ride in rides_created %}
-              
-              {% include "c_card.html" %}
+    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_minmax(310px,1fr)] gap-5 items-start">
+      <div class="grid gap-5">
 
-            {% endfor %}
-          {% endif %}
-
-          {% if rides_registered %}
-            <div class="divider">Joined rides</div>
-            {% for ride in rides_registered %}
-
-              {% include "c_card.html" %}
-
-            {% endfor %}
-          {% endif %}
-
-          {% if not rides_created and not rides_registered %}
-            <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
-              <div class="card-body">
-                  <h2 class="flex text-center card-title">
-                      <span>
-                        {% trans "No active rides found. Create your own" %} <a class="link-primary inline" href="/app/add/">{% trans "here" context "Create your own -here-" %}</a>{% trans ", or look for a ride under" context "Create your own here, or look for a ride under Search" %} <a class="link-accent inline" href="/app/search">{% trans "Search" context "Create your own here, or look for a ride under Search" %}</a>
-                      </span>
-                  </h2>
-              </div>
+        {% if pending_requests %}
+        <section id="attention" class="card bg-base-100 border border-base-300 shadow-sm scroll-mt-24">
+          <div class="card-body p-5 sm:p-6">
+            <div class="flex items-center justify-between gap-3 mb-2">
+              <h2 class="card-title text-lg">{% trans "Needs your attention" %}</h2>
+              <span class="badge border-0 bg-warning/30 text-warning-content badge-sm">{% blocktrans count counter=pending_requests|length %}{{ counter }} pending{% plural %}{{ counter }} pending{% endblocktrans %}</span>
             </div>
-          {% endif %}
-        </div>
-        
+            <div class="grid gap-3">
+              {% for ride_request in pending_requests %}
+              <div role="alert" class="alert border-warning/50 bg-warning/15 text-base-content items-start">
+                {% include "_icon.html" with name="alert" class="size-5 mt-0.5" %}
+                <div>
+                  <p class="font-bold">{% trans "New ride request" %}</p>
+                  <p class="text-sm opacity-80">
+                    {% blocktrans with name=ride_request.passenger|display_name route=ride_request.ride.route_name %}{{ name }} would like to join your ride {{ route }}{% endblocktrans %}{% if ride_request.ride.one_time %} · {{ ride_request.ride.leaving_at|date:"j F" }}{% endif %}
+                  </p>
+                  <a href="{% url 'ride_detail' ride_request.ride_id %}#requests" class="link link-primary text-sm font-bold no-underline">{% trans "Review request" %} →</a>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </section>
+        {% endif %}
 
-        <div class="hidden col-span-1 justify-self-start xl:block lg:mt-3">
-            <ul class="list bg-base-100 rounded-box shadow-md">
-                
-                <li class="p-4 pb-2 text-xs opacity-60 tracking-wide">Some other list of things</li>
-                
-                <li class="list-row">
-                    <!-- <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/1@94.webp"/></div>
-                    <div>
-                    <div>Dio Lupa</div>
-                    <div class="text-xs uppercase font-semibold opacity-60">Remaining Reason</div>
-                    </div>
-                    <button class="btn btn-square btn-ghost">
-                    <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M6 3L20 12 6 21 6 3z"></path></g></svg>
-                    </button>
-                    <button class="btn btn-square btn-ghost">
-                    <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></g></svg>
-                    </button> -->
-                </li>
-                
-                <li class="list-row">
-                    <!-- <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/4@94.webp"/></div>
-                    <div>
-                    <div>Ellie Beilish</div>
-                    <div class="text-xs uppercase font-semibold opacity-60">Bears of a fever</div>
-                    </div>
-                    <button class="btn btn-square btn-ghost">
-                    <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M6 3L20 12 6 21 6 3z"></path></g></svg>
-                    </button>
-                    <button class="btn btn-square btn-ghost">
-                    <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></g></svg>
-                    </button> -->
-                </li>
-                
-                <li class="list-row">
-                    <!-- <div><img class="size-10 rounded-box" src="https://img.daisyui.com/images/profile/demo/3@94.webp"/></div>
-                    <div>
-                    <div>Sabrino Gardener</div>
-                    <div class="text-xs uppercase font-semibold opacity-60">Cappuccino</div>
-                    </div>
-                    <button class="btn btn-square btn-ghost">
-                    <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M6 3L20 12 6 21 6 3z"></path></g></svg>
-                    </button>
-                    <button class="btn btn-square btn-ghost">
-                    <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></g></svg>
-                    </button> -->
-                </li>
-                
-                </ul>
-              <a href="/app/add/" class="btn btn-success w-full mt-5">{% trans "Add Recurring Trip" %}</a>
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5 sm:p-6">
+            <div class="flex items-center justify-between gap-3 mb-2">
+              <h2 class="card-title text-lg">{% trans "Your upcoming rides" %}</h2>
+              <a href="{% url 'my_rides' %}" class="link link-primary link-hover text-sm font-semibold">{% trans "View all" %} →</a>
+            </div>
+            {% if my_rides %}
+              <div class="grid gap-3">
+                {% for ride, ride_request in my_rides %}
+                  {% include "_ride_entry.html" %}
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="rounded-field border border-dashed border-primary/40 bg-primary/5 text-center px-4 py-8">
+                {% include "_icon.html" with name="road" class="size-8 mx-auto text-primary" %}
+                <p class="font-bold mt-2 mb-1">{% trans "No upcoming rides yet" %}</p>
+                <p class="text-sm text-base-content/60 max-w-xs mx-auto">{% trans "Find a ride for your next commute, or offer a seat on a trip you're already taking." %}</p>
+              </div>
+            {% endif %}
+          </div>
+        </section>
+      </div>
+
+      <div class="grid gap-5">
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5 sm:p-6">
+            <div class="flex items-center justify-between gap-3 mb-1">
+              <h2 class="card-title text-lg">{% trans "Recently posted rides" %}</h2>
+              <a href="{% url 'search' %}" class="link link-primary link-hover text-sm font-semibold">{% trans "View all" %} →</a>
+            </div>
+            {% if recent_rides %}
+            <ul class="list -mx-4">
+              {% for ride in recent_rides %}
+              <li>
+                <a href="{% url 'ride_detail' ride.id %}" class="list-row items-center hover:bg-base-200 rounded-field">
+                  <span class="grid place-items-center size-10 rounded-field bg-primary/10 text-primary">{% include "_icon.html" with name="car" %}</span>
+                  <span class="min-w-0">
+                    <span class="block font-semibold truncate">{{ ride.route_name }}</span>
+                    <span class="flex flex-wrap gap-x-3 text-xs text-base-content/60">
+                      {% include "_ride_when.html" %}
+                      {% with seats=ride.seats_left %}{% if seats is not None %}<span>{% blocktrans count counter=seats %}{{ counter }} seat{% plural %}{{ counter }} seats{% endblocktrans %}</span>{% endif %}{% endwith %}
+                    </span>
+                  </span>
+                  <span class="text-xl text-base-content/30" aria-hidden="true">›</span>
+                </a>
+              </li>
+              {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-sm text-base-content/60">{% trans "No other upcoming rides have been posted yet." %}</p>
+            {% endif %}
+          </div>
+        </section>
+
+        <div role="note" class="alert alert-soft items-start text-xs">
+          {% include "_icon.html" with name="alert" class="size-5" %}
+          <span>
+            {% url 'faq' as faq_url %}{% url 'safety' as safety_url %}
+            {% blocktrans %}New to LUT Kyyti? Read our <a href="{{ faq_url }}" class="link link-primary">FAQ</a> and <a href="{{ safety_url }}" class="link link-primary">safety tips</a> before your first shared trip.{% endblocktrans %}
+          </span>
         </div>
+      </div>
+    </div>
+
+    {% include "_page_footer.html" %}
+  </div>
 </section>
-
 {% endblock %}

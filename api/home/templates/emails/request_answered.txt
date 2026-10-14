@@ -1,0 +1,6 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=recipient.first_name %}Hi {{ name }},{% endblocktrans %}
+
+{% if accepted %}{% blocktrans %}{{ driver }} accepted your request to join the ride {{ route }}. You can now see the driver's contact details on the ride's page. Agree on the meeting point and time before the trip.{% endblocktrans %}{% else %}{% blocktrans %}{{ driver }} declined your request to join the ride {{ route }}. You can look for another ride on LUT Kyyti.{% endblocktrans %}{% endif %}
+
+{{ url }}
+{% include "emails/_footer.txt" %}{% endautoescape %}

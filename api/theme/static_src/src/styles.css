@@ -21,7 +21,7 @@
   color-scheme: "light";
   /* Cards, navbar, inputs, ... are base-100; the page background is base-200 */
   --color-base-100: #fdfdf9;
-  --color-base-200: #f7fade;
+  --color-base-200: #fefce0;
   --color-base-300: #e4e8c3;
   --color-base-content: #1f2a22;
   /* Semantic colours, taken from the transport palette below */

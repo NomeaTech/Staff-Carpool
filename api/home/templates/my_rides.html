@@ -1,0 +1,49 @@
+{% extends "app.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "My rides" %} | LUT Kyyti{% endblock %}
+
+{% block content %}
+<section class="h-screen w-screen overflow-y-auto pt-7 lg:pt-24 pb-28 lg:pb-10">
+  <div class="max-w-3xl mx-auto px-4 lg:px-7">
+    <header class="mb-7">
+      <p class="text-xs font-bold uppercase tracking-widest text-primary mb-2">{% trans "Your rides" %}</p>
+      <h1 class="text-3xl font-bold tracking-tight mb-1">{% trans "My rides" %}</h1>
+      <p class="text-base-content/60">{% trans "Rides you have posted and rides you have asked to join." %}</p>
+    </header>
+
+    <section class="card bg-base-100 border border-base-300 shadow-sm mb-5">
+      <div class="card-body p-5 sm:p-6">
+        <h2 class="card-title text-lg mb-2">{% trans "Upcoming" %}</h2>
+        {% if upcoming %}
+          <div class="grid gap-3">
+            {% for ride, ride_request in upcoming %}{% include "_ride_entry.html" %}{% endfor %}
+          </div>
+        {% else %}
+          <div class="rounded-field border border-dashed border-primary/40 bg-primary/5 text-center px-4 py-8">
+            {% include "_icon.html" with name="road" class="size-8 mx-auto text-primary" %}
+            <p class="font-bold mt-2 mb-1">{% trans "No upcoming rides yet" %}</p>
+            <p class="text-sm text-base-content/60 max-w-xs mx-auto mb-4">{% trans "Find a ride for your next commute, or offer a seat on a trip you're already taking." %}</p>
+            <div class="flex flex-wrap justify-center gap-2">
+              <a href="{% url 'search' %}" class="btn btn-primary btn-sm">{% trans "Find a ride" %}</a>
+              <a href="{% url 'add' %}" class="btn btn-outline btn-primary btn-sm">{% trans "Offer a ride" %}</a>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </section>
+
+    {% if past %}
+    <section class="collapse collapse-arrow bg-base-100 border border-base-300 shadow-sm">
+      <input type="checkbox" aria-label="{% trans "Show past rides" %}">
+      <div class="collapse-title font-bold">{% blocktrans count counter=past|length %}{{ counter }} past ride{% plural %}{{ counter }} past rides{% endblocktrans %}</div>
+      <div class="collapse-content grid gap-3 opacity-80">
+        {% for ride, ride_request in past %}{% include "_ride_entry.html" %}{% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    {% include "_page_footer.html" %}
+  </div>
+</section>
+{% endblock %}

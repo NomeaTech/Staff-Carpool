@@ -1,0 +1,4 @@
+{% load i18n %}
+--
+LUT Kyyti
+{% blocktrans %}You can turn off these emails in your settings: {{ account_url }}{% endblocktrans %}

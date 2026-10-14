@@ -1,0 +1,5 @@
+{% load i18n %}{% if photo_url %}
+<div class="avatar"><div class="{{ size }} rounded-full"><img src="{{ photo_url }}" alt="{% trans "Profile photo" %}" loading="lazy"></div></div>
+{% else %}
+<div class="avatar avatar-placeholder" aria-hidden="true"><div class="{{ size }} {{ text }} rounded-full bg-primary/10 text-primary font-bold"><span>{{ user.initials }}</span></div></div>
+{% endif %}
