@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+#
+# git ship: commit everything, bump the version, and ship balazs to testing.
+#
+#   git add -A
+#   git commit -m "<message>"
+#   bump-my-version bump <patch|minor|major>   (commits "Bump version: ..." and tags it)
+#   git push origin balazs
+#   git checkout testing
+#   git pull --ff-only origin testing
+#   git merge --no-edit balazs
+#   git push origin testing                    (deploys, see .github/workflows/deploy.yml)
+#   git checkout balazs
+#
+# Asks for the commit message and which part of the version to bump. Works
+# from any directory in the repository.
+#
+# Set up the alias once per clone:
+#   git config alias.ship '!scripts/git-ship'
+# (git runs "!" aliases from the top of the repository)
+
+set -euo pipefail
+
+root=$(git rev-parse --show-toplevel)
+cd "$root"
+
+# Ships the balazs branch, so only run from it
+branch=$(git symbolic-ref --quiet --short HEAD || true)
+if [ "$branch" != "balazs" ]; then
+    echo "git ship: you are on '${branch:-a detached HEAD}', but git ship ships the balazs branch." >&2
+    exit 1
+fi
+
+# bump-my-version is installed in the project's virtualenv
+bump="$root/env/bin/bump-my-version"
+if [ ! -x "$bump" ]; then
+    bump=$(command -v bump-my-version || true)
+fi
+if [ -z "$bump" ]; then
+    echo "git ship: bump-my-version not found (expected in env/bin)." >&2
+    exit 1
+fi
+
+# Changes to commit, if any (staged, unstaged and untracked)
+if [ -n "$(git status --porcelain)" ]; then
+    echo "Changes to commit:"
+    git status --short
+    echo
+    message=""
+    while [ -z "$message" ]; do
+        read -rp "Commit message: " message
+    done
+else
+    message=""
+    echo "No changes to commit: only bumping the version and shipping."
+fi
+
+current=$(cd "$root/api" && "$bump" show current_version 2>/dev/null || echo "?")
+echo
+echo "Current version: $current"
+PS3="Bump which part? "
+select part in patch minor major; do
+    if [ -n "${part:-}" ]; then
+        break
+    fi
+    echo "Choose 1, 2 or 3."
+done
+
+echo
+if [ -n "$message" ]; then
+    git add -A
+    git commit -m "$message"
+fi
+
+# Run from api/, where its configuration (pyproject.toml) is
+(cd "$root/api" && "$bump" bump "$part")
+new=$(cd "$root/api" && "$bump" show current_version)
+
+# Ship: push balazs, then merge it into testing and push that
+git push origin balazs
+git checkout testing
+git pull --ff-only origin testing
+git merge --no-edit balazs
+git push origin testing
+git checkout balazs
+
+echo
+echo "Shipped $new ($current → $new)."
