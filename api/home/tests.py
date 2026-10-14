@@ -1,4 +1,5 @@
 from io import BytesIO
+import json
 from unittest import skipUnless
 from unittest.mock import patch
 import os
@@ -385,3 +386,104 @@ class AccountTests(TestCase):
         self.assertRedirects(response, reverse("landing"), fetch_redirect_response=False)
         self.assertFalse(User.objects.filter(pk=self.user.pk).exists())
         self.assertFalse(Ride.objects.exists())
+
+
+@patch("home.views.build_route", return_value=None)
+class AddRideScheduleTests(TestCase):
+    """The add ride page's date and time checks (RideForm.clean)."""
+
+    def setUp(self):
+        self.client.force_login(make_user("Aino", "Mäkinen"))
+        place = lambda name: json.dumps({"displayName": name, "location": {"lat": 61.0, "lng": 28.2}})
+        self.base = {"offer": "on", "start_json": place("Lappeenranta"), "destination_json": place("Lahti")}
+
+    def post(self, **schedule):
+        return self.client.post(reverse("add"), {**self.base, **schedule})
+
+    def assert_error(self, response, message):
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, message)
+        self.assertFalse(Ride.objects.exists())
+
+    # One-time rides
+
+    def test_one_time_one_way(self, _route):
+        self.post(one_time="oneTime", one_way="oneWay", leaving_at_date_time="2099-10-14T07:30",
+                  returning_at_date_time="2099-10-14T16:00", monday_check="on", monday_leaving_at_time="08:00")
+        ride = Ride.objects.get()
+        self.assertTrue(ride.one_time and ride.one_way)
+        self.assertEqual(ride.leaving_at_date_time, "2099-10-14T07:30")
+        # Values for other kinds of rides are not kept
+        self.assertEqual(ride.returning_at_date_time, "")
+        self.assertFalse(ride.monday_check)
+        self.assertEqual(ride.monday_leaving_at_time, "")
+
+    def test_one_time_needs_a_departure(self, _route):
+        self.assert_error(self.post(one_time="oneTime", one_way="oneWay"), "Enter the date and time the ride leaves.")
+        self.assert_error(self.post(one_time="oneTime", one_way="oneWay", leaving_at_date_time="soon"),
+                          "Enter the date and time the ride leaves.")
+
+    def test_one_time_cannot_leave_in_the_past(self, _route):
+        self.assert_error(self.post(one_time="oneTime", one_way="oneWay", leaving_at_date_time="2000-01-01T08:00"),
+                          "The ride cannot leave in the past.")
+
+    def test_one_time_return(self, _route):
+        self.assert_error(self.post(one_time="oneTime", one_way="twoWay", leaving_at_date_time="2099-10-14T07:30"),
+                          "Enter the date and time of the return journey.")
+        self.assert_error(self.post(one_time="oneTime", one_way="twoWay", leaving_at_date_time="2099-10-14T07:30",
+                                    returning_at_date_time="2099-10-14T07:30"),
+                          "The return journey must be after the departure.")
+        self.post(one_time="oneTime", one_way="twoWay", leaving_at_date_time="2099-10-14T07:30",
+                  returning_at_date_time="2099-10-14T16:00")
+        ride = Ride.objects.get()
+        self.assertFalse(ride.one_way)
+        self.assertEqual(ride.returning_at_date_time, "2099-10-14T16:00")
+
+    # Recurring rides
+
+    def test_recurring_one_way(self, _route):
+        self.post(one_time="recurring", one_way="oneWay", leaving_at_date_time="2099-10-14T07:30",
+                  monday_check="on", monday_leaving_at_time="07:30", monday_returning_at_time="16:00",
+                  tuesday_leaving_at_time="09:00")
+        ride = Ride.objects.get()
+        self.assertFalse(ride.one_time)
+        self.assertTrue(ride.monday_check)
+        self.assertEqual(ride.monday_leaving_at_time, "07:30")
+        # Values for other kinds of rides, and for days not chosen, are not kept
+        self.assertEqual(ride.monday_returning_at_time, "")
+        self.assertEqual(ride.tuesday_leaving_at_time, "")
+        self.assertEqual(ride.leaving_at_date_time, "")
+
+    def test_recurring_needs_a_day(self, _route):
+        self.assert_error(self.post(one_time="recurring", one_way="oneWay", leaving_at_date_time="2099-10-14T07:30"),
+                          "Choose at least one day for a recurring ride.")
+
+    def test_recurring_days_need_a_departure_time(self, _route):
+        self.assert_error(self.post(one_time="recurring", one_way="oneWay", monday_check="on", monday_leaving_at_time="07:30",
+                                    wednesday_check="on"),
+                          "Enter the time the ride leaves on Wednesday.")
+
+    def test_recurring_return(self, _route):
+        self.assert_error(self.post(one_time="recurring", one_way="twoWay", friday_check="on", friday_leaving_at_time="07:30"),
+                          "Enter the time of the return journey on Friday.")
+        self.assert_error(self.post(one_time="recurring", one_way="twoWay", friday_check="on", friday_leaving_at_time="16:00",
+                                    friday_returning_at_time="07:30"),
+                          "The return journey on Friday must be after the departure.")
+        self.post(one_time="recurring", one_way="twoWay", friday_check="on", friday_leaving_at_time="07:30",
+                  friday_returning_at_time="16:00")
+        self.assertEqual(Ride.objects.get().friday_returning_at_time, "16:00")
+
+    def test_kind_of_ride_must_be_chosen(self, _route):
+        self.assert_error(self.post(one_way="oneWay", leaving_at_date_time="2099-10-14T07:30"),
+                          "Choose whether the ride is one-time or recurring.")
+        self.assert_error(self.post(one_time="oneTime", leaving_at_date_time="2099-10-14T07:30"),
+                          "Choose whether the ride is one-way or has a return journey.")
+
+    def test_schedule_is_kept_after_an_error(self, _route):
+        response = self.post(one_time="recurring", one_way="twoWay", monday_check="on", monday_leaving_at_time="07:30",
+                             note="Room for luggage")
+        self.assertContains(response, 'value="recurring" checked')
+        self.assertContains(response, 'value="twoWay" checked')
+        self.assertContains(response, 'id="id_monday_check" name="monday_check" type="checkbox" class="checkbox" checked')
+        self.assertContains(response, 'value="07:30"')
+        self.assertContains(response, "Room for luggage")

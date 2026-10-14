@@ -44,10 +44,10 @@
                     <div class="grid place-content-between h-full">
                         <div name="card-footer" class="">
                             <h2 class="card-title grid gap-0 pb-10 text-3xl">
-                                {# data-fit-text: shrunk to fit by fitRideTitles() in search.html #}
-                                <p class="truncate" data-fit-text>{{ ride.start_json.displayName }}</p> 
-                                <p>{{ ride.sign }}</p> 
-                                <p class="truncate" data-fit-text>{{ ride.destination_json.displayName }}</p>
+                                {# The start and destination are all the same size; names too long for the card end in an ellipsis #}
+                                <p class="truncate text-xl" title="{{ ride.start_json.displayName }}">{{ ride.start_json.displayName }}</p>
+                                <p>{{ ride.sign }}</p>
+                                <p class="truncate text-xl" title="{{ ride.destination_json.displayName }}">{{ ride.destination_json.displayName }}</p>
                             </h2>
                             <div class="badge badge-soft badge-primary rounded-full badge-lg pl-0 pr-2">
                                 {% avatar ride.driver "w-8" "text-xs" %}
