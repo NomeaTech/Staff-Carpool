@@ -2,9 +2,9 @@
   Contact details from accounts.privacy.contact_details(), only for ride partners.
 {% endcomment %}
 <ul class="grid gap-1 text-sm">
-  {% for kind, value in contacts %}
+  {% for kind, value, link in contacts %}
   <li>
-    <a href="{% if kind == 'email' %}mailto:{% else %}tel:{% endif %}{{ value }}" class="link link-hover inline-flex items-center gap-2 break-all">
+    <a href="{{ link }}" class="link link-hover inline-flex items-center gap-2 break-all">
       {% include "_icon.html" with name=kind class="size-4 text-primary" %}{{ value }}
     </a>
   </li>

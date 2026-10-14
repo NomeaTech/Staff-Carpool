@@ -13,6 +13,7 @@ What members can see of each other.
 Views decide who is a partner and pass that on; templates use the
 display_name filter and avatar tag in accounts/templatetags/privacy.py.
 """
+from . import phone as phone_numbers
 
 
 def display_name(user, partner=False):
@@ -28,11 +29,14 @@ def can_see_photo(user, viewer):
 
 
 def contact_details(user):
-    """The contact details a member shares with their ride partners."""
+    """
+    The contact details a member shares with their ride partners, as
+    (kind, text to show, link) tuples.
+    """
     details = []
     if user.share_email and user.email:
-        details.append(("email", user.email))
+        details.append(("email", user.email, f"mailto:{user.email}"))
     if user.share_phone and user.phone:
-        details.append(("phone", user.phone))
+        details.append(("phone", phone_numbers.display(user.phone), f"tel:{user.phone.replace(' ', '')}"))
     return details
 

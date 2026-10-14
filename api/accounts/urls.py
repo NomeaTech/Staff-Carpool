@@ -1,13 +1,14 @@
 from django.conf import settings
 from django.contrib.auth.views import PasswordResetView
 from django.urls import path
-from .views import SignUpView, LogoutView, UserLoginView, account, photo, confirmation_sent, resend_confirmation, confirm_email
+from .views import SignUpView, LogoutView, UserLoginView, account, photo, confirmation_sent, resend_confirmation, confirm_email, confirm_email_change
 
 urlpatterns = [
     path("signup/", SignUpView.as_view(), name="signup"),
     path("confirm/", confirmation_sent, name="confirmation_sent"),
     path("confirm/resend/", resend_confirmation, name="resend_confirmation"),
     path("confirm/<uidb64>/<token>/", confirm_email, name="confirm_email"),
+    path("email/<uidb64>/<token>/", confirm_email_change, name="confirm_email_change"),
     path('login/', UserLoginView.as_view(), name='login'),
     path("logout", LogoutView, name="logout"),
     path("profile/", account, name="account"),

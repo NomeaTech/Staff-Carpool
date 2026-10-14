@@ -22,7 +22,7 @@ class CustomUserAdmin(UserAdmin):
     # Users log in with their email and have no username, so the default
     # UserAdmin fieldsets (which start with the username) are replaced
     fieldsets = (
-        (None, {"fields": ("email", "password")}),
+        (None, {"fields": ("email", "pending_email", "password")}),
         (_("Personal info"), {"fields": ("first_name", "last_name", "phone", "address", "pfp")}),
         (
             _("Privacy and notifications"),
@@ -34,7 +34,7 @@ class CustomUserAdmin(UserAdmin):
         ),
         (_("Important dates"), {"fields": ("last_login", "date_joined", "email_confirmed_at", "confirmation_sent_at")}),
     )
-    readonly_fields = ("confirmation_sent_at",)
+    readonly_fields = ("confirmation_sent_at", "pending_email")
     add_fieldsets = (
         (
             None,

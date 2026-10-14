@@ -1,5 +1,8 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AdminUserCreationForm, AuthenticationForm, UsernameField
 from .models import User
+from .backends import find_user
+from . import email_change
+from . import phone as phone_numbers
 from django.db import models
 from django import forms
 from django.utils.translation import gettext_lazy as _
@@ -165,7 +168,7 @@ class UserLoginForm(AuthenticationForm):
             # Only with the right password, so that it does not tell anyone
             # else whether the address has an account
             email, password = self.cleaned_data.get("username"), self.cleaned_data.get("password")
-            user = User.objects.filter(email=email).first() if email else None
+            user = find_user(email) if email else None
             if user and user.is_active and user.email_confirmed_at is None and user.check_password(password):
                 self.unconfirmed_email = user.email
                 raise forms.ValidationError(
@@ -203,18 +206,29 @@ class UserLoginForm(AuthenticationForm):
 class ProfileForm(forms.ModelForm):
     """Personal information on the profile & settings page. The email address
     identifies the account and is not changed here."""
-    phone = forms.RegexField(
-        required=False,
-        regex=r"^\+?[0-9 ]{6,20}$",
-        error_messages={"invalid": _("Enter a phone number using digits, e.g. +358 40 123 4567.")},
-    )
+    phone = forms.CharField(required=False, max_length=30)
 
     class Meta:
         model = User
         fields = ("first_name", "last_name", "phone")
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Shown spaced out, e.g. "+358 40 1234567"
+        if self.instance.phone:
+            self.initial["phone"] = phone_numbers.display(self.instance.phone)
+
     def clean_phone(self):
-        return self.cleaned_data["phone"].replace(" ", "") or None
+        value = self.cleaned_data["phone"].strip()
+        if not value:
+            return None
+        number = phone_numbers.parse(value)
+        if number is None:
+            raise forms.ValidationError(
+                _("Enter a valid phone number, e.g. 040 123 4567 or +358 40 123 4567. Include the country code for numbers outside Finland."),
+                code="invalid",
+            )
+        return phone_numbers.to_e164(number)
 
 
 class SettingsForm(forms.ModelForm):
@@ -267,4 +281,34 @@ class DeleteAccountForm(forms.Form):
         password = self.cleaned_data["password"]
         if not self.user.check_password(password):
             raise forms.ValidationError(_("The password is incorrect."))
+        return password
+
+
+# Only LUT and LAB addresses can be used (as on the sign up page)
+ALLOWED_EMAIL_DOMAINS = ("lut.fi", "lab.fi")
+
+class EmailChangeForm(forms.Form):
+    """Asks to change the account's email address (accounts/email_change.py)."""
+    new_email = forms.EmailField(max_length=254)
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_new_email(self):
+        # Saved in lower case: addresses are not case-sensitive in practice
+        email = self.cleaned_data["new_email"].strip().lower()
+        if email.rsplit("@", 1)[-1] not in ALLOWED_EMAIL_DOMAINS:
+            raise forms.ValidationError(_("Use your LUT or LAB email address (ending in @lut.fi or @lab.fi)."), code="domain")
+        if email == self.user.email.lower():
+            raise forms.ValidationError(_("This is already your email address."), code="same")
+        if email_change.address_taken(email, self.user):
+            raise forms.ValidationError(_("Another account already uses this email address."), code="taken")
+        return email
+
+    def clean_password(self):
+        password = self.cleaned_data["password"]
+        if not self.user.check_password(password):
+            raise forms.ValidationError(_("The password is incorrect."), code="password")
         return password

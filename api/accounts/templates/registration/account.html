@@ -69,17 +69,35 @@
               </div>
               <fieldset class="fieldset">
                 <legend class="fieldset-legend">{% trans "University email" %}</legend>
-                <input class="input w-full" type="email" value="{{ user.email }}" readonly aria-readonly="true">
-                <p class="label whitespace-normal">{% trans "Your verified account identifier. Contact support to change it." %}</p>
+                <div class="join w-full">
+                  <input class="input join-item w-full" type="email" value="{{ user.email }}" readonly aria-readonly="true">
+                  <button class="btn btn-outline btn-primary join-item" type="button" onclick="document.getElementById('email-modal').showModal()">{% trans "Change" %}</button>
+                </div>
+                {% if user.pending_email %}
+                  {# The buttons belong to forms after this one, as forms cannot be nested #}
+                  <div role="status" class="rounded-field border border-warning/50 bg-warning/15 p-3 mt-1 grid gap-2 text-sm">
+                    <p>{% blocktrans with new=user.pending_email %}Waiting for you to confirm <strong>{{ new }}</strong>. Open the link we sent there. Until then, keep using your current address.{% endblocktrans %}</p>
+                    <div class="flex flex-wrap gap-2">
+                      <button class="btn btn-xs btn-outline" type="submit" form="email-resend-form">{% trans "Send the link again" %}</button>
+                      <button class="btn btn-xs btn-ghost" type="submit" form="email-cancel-form">{% trans "Cancel change" %}</button>
+                    </div>
+                  </div>
+                {% else %}
+                  <p class="label whitespace-normal">{% trans "You log in with this address. Changing it needs confirming from the new inbox." %}</p>
+                {% endif %}
               </fieldset>
               <fieldset class="fieldset">
                 <legend class="fieldset-legend">{% trans "Phone number (optional)" %}</legend>
-                {% render_field profile_form.phone class="input w-full" type="tel" placeholder="+358 ..." autocomplete="tel" %}
+                {% render_field profile_form.phone class="input w-full" type="tel" placeholder="040 123 4567" autocomplete="tel" inputmode="tel" pattern="[+0-9 \(\)\-]{5,30}" %}
                 {% for error in profile_form.phone.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
-                <p class="label whitespace-normal">{% trans "Only shared with people on your rides, and only if you allow it under Privacy." %}</p>
+                <p class="label whitespace-normal">{% trans "A Finnish number, or include the country code (e.g. +46) for numbers from elsewhere. Only shared with people on your rides, and only if you allow it under Privacy." %}</p>
               </fieldset>
               <div><button class="btn btn-primary mt-3" type="submit">{% trans "Save profile changes" %}</button></div>
             </form>
+            {% if user.pending_email %}
+            <form id="email-resend-form" method="post" hidden>{% csrf_token %}<input type="hidden" name="form" value="email_resend"></form>
+            <form id="email-cancel-form" method="post" hidden>{% csrf_token %}<input type="hidden" name="form" value="email_cancel"></form>
+            {% endif %}
           </div>
         </section>
 
@@ -194,6 +212,32 @@
     {% include "_page_footer.html" %}
   </div>
 </section>
+
+<dialog id="email-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="email-modal-title">
+  <div class="modal-box">
+    <h3 id="email-modal-title" class="text-lg font-bold">{% trans "Change email address" %}</h3>
+    <p class="text-sm text-base-content/70 mt-1">{% blocktrans with email=user.email %}We'll send a link to the new address. Your account keeps using <strong>{{ email }}</strong> until you open it, so a typo can't lock you out.{% endblocktrans %}</p>
+    <form method="post" id="email-form" class="mt-2">
+      {% csrf_token %}
+      <input type="hidden" name="form" value="email">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">{% trans "New email address" %}</legend>
+        {% render_field email_form.new_email class="input w-full" type="email" autocomplete="email" placeholder="firstname.lastname@lut.fi" required="" %}
+        {% for error in email_form.new_email.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+      </fieldset>
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">{% trans "Current password" %}</legend>
+        {% render_field email_form.password class="input w-full" autocomplete="current-password" required="" %}
+        {% for error in email_form.password.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+      </fieldset>
+    </form>
+    <div class="modal-action">
+      <form method="dialog"><button class="btn">{% trans "Cancel" %}</button></form>
+      <button class="btn btn-primary" type="submit" form="email-form">{% trans "Send confirmation link" %}</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>{% trans "Cancel" %}</button></form>
+</dialog>
 
 <dialog id="delete-account-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="delete-account-title">
   <div class="modal-box">
@@ -377,5 +421,8 @@
 </script>
 {% if delete_form.errors %}
 <script>document.getElementById("delete-account-modal").showModal();</script>
+{% endif %}
+{% if email_form.errors %}
+<script>document.getElementById("email-modal").showModal();</script>
 {% endif %}
 {% endblock %}
