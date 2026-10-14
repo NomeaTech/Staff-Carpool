@@ -16,7 +16,8 @@ from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 
 from home import notifications
-from .forms import SignUpForm, UserLoginForm, ProfileForm, SettingsForm, PhotoForm, DeleteAccountForm, PHOTO_MAX_UPLOAD, photo_too_large
+from .forms import SignUpForm, UserLoginForm, ProfileForm, SettingsForm, PhotoForm, DeleteAccountForm, EmailChangeForm, PHOTO_MAX_UPLOAD, photo_too_large
+from . import email_change
 from .confirmation import send_confirmation, token_generator
 from .models import User, delete_photo_file
 from .privacy import can_see_photo
@@ -127,6 +128,7 @@ def account(request):
     settings_form = SettingsForm(*data("settings"), instance=user, prefix="settings")
     photo_form = PhotoForm(*data("photo"), prefix="photo")
     delete_form = DeleteAccountForm(user, *data("delete"), prefix="delete")
+    email_form = EmailChangeForm(user, *data("email"), prefix="email")
 
     if posted == "profile" and profile_form.is_valid():
         profile_form.save()
@@ -146,6 +148,20 @@ def account(request):
         user.save(update_fields=["pfp"])
         messages.success(request, _("Your photo was removed."))
         return redirect("account")
+    if posted == "email" and email_form.is_valid():
+        email_change.request_change(request, user, email_form.cleaned_data["new_email"])
+        messages.success(request, _("We sent a confirmation link to %(email)s. Your email address changes once you open it.") % {"email": user.pending_email})
+        return redirect("account")
+    if posted == "email_resend" and user.pending_email:
+        if email_change.send_link(request, user):
+            messages.success(request, _("We sent a new confirmation link to %(email)s.") % {"email": user.pending_email})
+        else:
+            messages.info(request, _("A link was sent less than a minute ago. Wait a moment before asking for a new one."))
+        return redirect("account")
+    if posted == "email_cancel" and user.pending_email:
+        email_change.cancel(user)
+        messages.success(request, _("The email change was cancelled. Your address stays %(email)s.") % {"email": user.email})
+        return redirect("account")
     if posted == "delete" and delete_form.is_valid():
         with transaction.atomic():
             # Everyone in the rides the user drives is told they are cancelled
@@ -162,10 +178,41 @@ def account(request):
         "settings_form": settings_form,
         "photo_form": photo_form,
         "delete_form": delete_form,
+        "email_form": email_form,
         "photo_max_upload": PHOTO_MAX_UPLOAD,
         "photo_too_large": photo_too_large(),
     }
     return render(request, "registration/account.html", context)
+
+def confirm_email_change(request, uidb64, token):
+    """
+    The link sent to a new email address. Opening it shows a button that
+    switches the account to the address (POST only, so that email scanners
+    opening the link do not use it up). It works without logging in: the
+    change was asked for with the password, and the link proves the new
+    address works.
+    """
+    try:
+        user = User.objects.get(pk=force_str(urlsafe_base64_decode(uidb64)))
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist, ValidationError):
+        user = None
+
+    if user is None or not user.pending_email or not email_change.token_generator.check_token(user, token):
+        return render(request, "registration/confirm_email_change.html", {"invalid": True}, status=400)
+
+    if request.method == "POST":
+        new_email = user.pending_email
+        try:
+            email_change.complete(request, user)
+        except email_change.EmailTaken:
+            email_change.cancel(user)
+            return render(request, "registration/confirm_email_change.html", {"taken": True, "email": new_email}, status=409)
+        if request.user.is_authenticated and request.user.pk == user.pk:
+            messages.success(request, _("Your email address is now %(email)s.") % {"email": new_email})
+            return redirect("account")
+        return render(request, "registration/confirm_email_change.html", {"done": True, "email": new_email})
+
+    return render(request, "registration/confirm_email_change.html", {"email": user.pending_email, "old_email": user.email})
 
 @login_required
 def photo(request, user_id):

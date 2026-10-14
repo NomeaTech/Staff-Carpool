@@ -1,0 +1,12 @@
+{% load i18n %}{% autoescape off %}{% trans "Hi" %} {{ user.first_name }},
+
+{% blocktrans with old=user.email %}You asked to change the email address of your LUT Kyyti account from {{ old }} to this address. Open the link below to confirm the change:{% endblocktrans %}
+
+{{ url }}
+
+{% blocktrans with old=user.email %}Until you confirm, your account keeps using {{ old }}. The link works once and expires in 3 days.{% endblocktrans %}
+
+{% trans "If you didn't ask for this, you can ignore this email and nothing will change." %}
+
+{% trans "The LUT Kyyti team" %}
+{% endautoescape %}

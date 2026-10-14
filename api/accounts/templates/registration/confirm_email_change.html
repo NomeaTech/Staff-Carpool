@@ -1,0 +1,25 @@
+{% extends "registration/account_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Change email address" %} | LUT Kyyti{% endblock %}
+{% block card_title %}{% trans "Change email address" %}{% endblock %}
+{% block card_body %}
+{% if done %}
+  <p>{% blocktrans %}Your email address is now <strong>{{ email }}</strong>. Use it to log in from now on.{% endblocktrans %}</p>
+  <a href="{% url 'login' %}" class="btn btn-md btn-primary w-full mt-2">{% trans "Log in" %}</a>
+{% elif taken %}
+  <p>{% blocktrans %}<strong>{{ email }}</strong> is now used by another account, so your email address was not changed.{% endblocktrans %}</p>
+  <a href="{% url 'account' %}" class="btn btn-md btn-primary w-full mt-2">{% trans "Go to your profile" %}</a>
+{% elif invalid %}
+  <p>{% trans "This link is invalid or has expired, or the change was cancelled. Your email address has not changed." %}</p>
+  <p class="text-base-content/70">{% trans "You can ask for a new link on your profile page." %}</p>
+  <a href="{% url 'account' %}" class="btn btn-md btn-primary w-full mt-2">{% trans "Go to your profile" %}</a>
+{% else %}
+  <p>{% blocktrans %}Change the email address of your LUT Kyyti account from <strong>{{ old_email }}</strong> to <strong>{{ email }}</strong>?{% endblocktrans %}</p>
+  <p class="text-base-content/70">{% trans "You will log in with the new address from now on. Your password stays the same." %}</p>
+  <form method="post" class="mt-2">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-md btn-primary w-full">{% trans "Confirm new address" %}</button>
+  </form>
+{% endif %}
+{% endblock %}

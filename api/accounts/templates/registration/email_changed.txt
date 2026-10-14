@@ -1,0 +1,8 @@
+{% load i18n %}{% autoescape off %}{% trans "Hi" %} {{ user.first_name }},
+
+{% blocktrans %}The email address of your LUT Kyyti account was changed to {{ new_email }}. From now on, log in with that address. This address no longer receives emails about your account.{% endblocktrans %}
+
+{% blocktrans %}If you didn't make this change, contact us right away: {{ contact_url }}{% endblocktrans %}
+
+{% trans "The LUT Kyyti team" %}
+{% endautoescape %}

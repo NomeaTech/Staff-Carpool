@@ -113,6 +113,11 @@ class User(AbstractUser):
     email_confirmed_at = models.DateTimeField(null=True, blank=True)
     confirmation_sent_at = models.DateTimeField(null=True, blank=True)
 
+    # A requested new email address (accounts/email_change.py). The account
+    # keeps using email until the new address is confirmed from its inbox.
+    pending_email = models.EmailField(blank=True, default="")
+    pending_email_sent_at = models.DateTimeField(null=True, blank=True)
+
     objects = UserManager()
 
     def __str__(self):

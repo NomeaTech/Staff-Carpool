@@ -62,6 +62,7 @@ class RideRequestTests(TestCase):
         self.assertNotIn("Mäkinen", page)
         self.assertNotIn(self.driver.email, page)
         self.assertNotIn(self.driver.phone, page)
+        self.assertNotIn("+358 40 1234567", page)
 
         # The driver sees the request without the passenger's contact details
         self.client.force_login(self.driver)
@@ -77,7 +78,8 @@ class RideRequestTests(TestCase):
         page = self.client.get(self.url).content.decode()
         self.assertIn("Aino Mäkinen", page)
         self.assertIn(self.driver.email, page)
-        self.assertIn(self.driver.phone, page)
+        self.assertIn('href="tel:+358401234567"', page)
+        self.assertIn("+358 40 1234567", page)
 
     def test_contact_details_follow_sharing_settings(self):
         self.passenger.share_email = False
@@ -248,6 +250,37 @@ class AccountTests(TestCase):
         self.assertTrue(self.user.share_phone)
         self.assertFalse(self.user.share_email)
         self.assertFalse(self.user.notify_ride_requests)
+
+    def save_phone(self, value):
+        response = self.client.post(self.url, {
+            "form": "profile", "profile-first_name": "Jamie", "profile-last_name": "Saarinen", "profile-phone": value,
+        })
+        self.user.refresh_from_db()
+        return response
+
+    def test_phone_numbers_are_checked_and_stored_in_one_format(self):
+        for value, stored in [
+            ("040 123 4567", "+358401234567"),        # Finnish, without a country code
+            ("+358 40 123 4567", "+358401234567"),
+            ("(040) 123-4567", "+358401234567"),
+            ("+46 70 123 45 67", "+46701234567"),     # Swedish
+            ("", None),                               # removes the number
+        ]:
+            with self.subTest(value=value):
+                self.save_phone(value)
+                self.assertEqual(self.user.phone, stored)
+
+    def test_invalid_phone_numbers_are_refused(self):
+        self.save_phone("040 123 4567")
+        for value in ["123", "000000", "+358 00 000", "+1 2 3 4 5 6", "phone me", "040 123 4567 8901 2345"]:
+            with self.subTest(value=value):
+                response = self.save_phone(value)
+                self.assertContains(response, "Enter a valid phone number")
+                self.assertEqual(self.user.phone, "+358401234567")
+
+    def test_phone_number_is_shown_spaced_out(self):
+        self.save_phone("0401234567")
+        self.assertContains(self.client.get(self.url), 'value="+358 40 1234567"')
 
     def test_photo_is_resized_and_follows_visibility(self):
         self.client.post(self.url, {"form": "photo", "photo-photo": image_file()})
