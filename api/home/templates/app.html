@@ -201,5 +201,11 @@
     {% endif %}
     <div class="toast toast-end toast-bottom z-50 mb-20 lg:mb-2" id="notification-toasts" aria-live="polite"></div>
     <script src="{% static "js/notifications.js" %}"></script>
+    {% if push_public_key %}
+    {# Push notifications on this device (static/js/push.js, notifications/push.py) #}
+    <div hidden id="push-config" data-public-key="{{ push_public_key }}" data-csrf="{{ csrf_token }}"
+         data-subscribe-url="{% url 'push_subscribe' %}" data-unsubscribe-url="{% url 'push_unsubscribe' %}"></div>
+    <script src="{% static "js/push.js" %}"></script>
+    {% endif %}
 </body>
 </html>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-12 19:42+0300\n"
+"POT-Creation-Date: 2026-10-16 14:07+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,7 +31,7 @@ msgid "Please complete the human verification."
 msgstr ""
 
 #: landing/templates/contact.html:6 landing/templates/contact.html:12
-#: landing/templates/index.html:139 landing/templates/landing.html:51
+#: landing/templates/index.html:140 landing/templates/landing.html:51
 #: landing/templates/landing.html:89
 msgid "Contact"
 msgstr ""
@@ -935,21 +935,17 @@ msgstr ""
 msgid "View all FAQs"
 msgstr ""
 
-#: landing/templates/index.html:135
+#: landing/templates/index.html:136
 msgid ""
 "Help our university reach its climate goals by reducing commute emissions"
 msgstr ""
 
-#: landing/templates/index.html:137
+#: landing/templates/index.html:138
 msgid "Get in touch"
 msgstr ""
 
-#: landing/templates/index.html:138
+#: landing/templates/index.html:139
 msgid "Questions, feedback, or ideas for improving LUT Kyyti? Contact us!"
-msgstr ""
-
-#: landing/templates/landing.html:28 landing/templates/landing.html:36
-msgid "LUT Kyyti"
 msgstr ""
 
 #: landing/templates/landing.html:49 landing/templates/landing.html:87

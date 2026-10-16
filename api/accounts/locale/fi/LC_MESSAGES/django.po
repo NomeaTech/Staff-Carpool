@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-12 19:42+0300\n"
+"POT-Creation-Date: 2026-10-16 14:07+0300\n"
 "PO-Revision-Date: 2026-06-27 19:05+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,121 +19,756 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
-#: accounts/admin.py:24
+#: accounts/admin.py:26
 msgid "Personal info"
 msgstr ""
 
-#: accounts/admin.py:26
+#: accounts/admin.py:28
+msgid "Privacy and notifications"
+msgstr ""
+
+#: accounts/admin.py:32
 msgid "Permissions"
 msgstr ""
 
-#: accounts/admin.py:29
+#: accounts/admin.py:35
 msgid "Important dates"
 msgstr ""
 
-#: accounts/forms.py:13
+#: accounts/email_change.py:74
+msgid "Your LUT Kyyti email address is being changed"
+msgstr ""
+
+#: accounts/email_change.py:88
+msgid "Confirm your new LUT Kyyti email address"
+msgstr ""
+
+#: accounts/email_change.py:117
+msgid "Your LUT Kyyti email address was changed"
+msgstr ""
+
+#: accounts/forms.py:26 accounts/templates/registration/signup.html:51
+msgid "The passwords don't match. Type the same password in both fields."
+msgstr ""
+
+#: accounts/forms.py:40
 msgid "Required. Enter a valid email address."
 msgstr ""
 
-#: accounts/forms.py:16
+#: accounts/forms.py:42
+msgid "Enter your LUT or LAB email address."
+msgstr ""
+
+#: accounts/forms.py:43
+msgid "Enter a valid email address, e.g. firstname.lastname@lut.fi."
+msgstr ""
+
+#: accounts/forms.py:47
 msgid "Email Address *"
 msgstr ""
 
-#: accounts/forms.py:25
+#: accounts/forms.py:50
+msgid "Your LUT or LAB email address, ending in @lut.fi or @lab.fi"
+msgstr ""
+
+#: accounts/forms.py:57
 msgid "Username"
 msgstr "Käyttäjätunnus"
 
-#: accounts/forms.py:35
+#: accounts/forms.py:65
+msgid "Enter your first name."
+msgstr ""
+
+#: accounts/forms.py:66
+#, python-format
+msgid "Your first name can be at most %(limit_value)s characters."
+msgstr ""
+
+#: accounts/forms.py:71
 msgid "First Name *"
 msgstr ""
 
-#: accounts/forms.py:45
+#: accounts/forms.py:80
+msgid "Enter your last name."
+msgstr ""
+
+#: accounts/forms.py:81
+#, python-format
+msgid "Your last name can be at most %(limit_value)s characters."
+msgstr ""
+
+#: accounts/forms.py:86
 msgid "Last Name *"
 msgstr ""
 
-#: accounts/forms.py:58
+#: accounts/forms.py:100
 msgid "Phone"
 msgstr ""
 
-#: accounts/forms.py:68
+#: accounts/forms.py:108
+msgid "Choose a password."
+msgstr ""
+
+#: accounts/forms.py:112
 msgid "Password *"
 msgstr ""
 
-#: accounts/forms.py:73
+#: accounts/forms.py:116
 msgid ""
-"Must be more than 8 characters, including number, lowercase letter, "
-"uppercase letter"
+"At least 8 characters, including a number, a lower case letter and an upper "
+"case letter"
 msgstr ""
 
-#: accounts/forms.py:82
+#: accounts/forms.py:123
+msgid "Type your password again to confirm it."
+msgstr ""
+
+#: accounts/forms.py:127
 msgid "Confirm Password *"
 msgstr ""
 
-#: accounts/forms.py:87
-msgid ""
-"Must be more than 8 characters, including number, lowercase letter, "
-"uppercase letter *"
+#: accounts/forms.py:129
+msgid "The same password again"
 msgstr ""
 
-#: accounts/forms.py:143
+#: accounts/forms.py:177 accounts/forms.py:350
+msgid "Use your LUT or LAB email address (ending in @lut.fi or @lab.fi)."
+msgstr ""
+
+#: accounts/forms.py:183
+msgid ""
+"This email address has already signed up but has not been confirmed yet. We "
+"have sent the confirmation link again."
+msgstr ""
+
+#: accounts/forms.py:188
+msgid ""
+"An account with this email address already exists. Log in, or reset your "
+"password if you have forgotten it."
+msgstr ""
+
+#: accounts/forms.py:222
+#, python-format
+msgid ""
+"Confirm your email address before logging in. Open the link we sent to "
+"%(email)s."
+msgstr ""
+
+#: accounts/forms.py:230
+#: accounts/templates/registration/_resend_confirmation.html:10
 #: accounts/templates/registration/password_reset_form.html:10
 msgid "Email"
 msgstr ""
 
-#: accounts/forms.py:161
+#: accounts/forms.py:248 accounts/templates/registration/account.html:109
 msgid "Password"
 msgstr ""
 
+#: accounts/forms.py:275
+msgid ""
+"Enter a valid phone number, e.g. 040 123 4567 or +358 40 123 4567. Include "
+"the country code for numbers outside Finland."
+msgstr ""
+
+#: accounts/forms.py:298
+#, python-format
+msgid "The photo must be smaller than %(size)s MB."
+msgstr ""
+
+#: accounts/forms.py:333 accounts/forms.py:360
+msgid "The password is incorrect."
+msgstr ""
+
+#: accounts/forms.py:352
+msgid "This is already your email address."
+msgstr ""
+
+#: accounts/forms.py:354
+msgid "Another account already uses this email address."
+msgstr ""
+
+#: accounts/models.py:87
+msgid "First name only"
+msgstr ""
+
+#: accounts/models.py:88
+msgid "First name and last initial"
+msgstr ""
+
+#: accounts/models.py:89
+msgid "Full name"
+msgstr ""
+
+#: accounts/models.py:111
+msgid "All notifications"
+msgstr ""
+
+#: accounts/models.py:112
+msgid "Only essential notifications"
+msgstr ""
+
+#: accounts/templates/_avatar.html:6
+msgid "Profile photo"
+msgstr ""
+
 #: accounts/templates/registration/_password_hint.html:4
-msgid "Your password can't be a commonly used password."
+msgid ""
+"At least 8 characters, including a number, a lower case letter and an upper "
+"case letter."
 msgstr ""
 
 #: accounts/templates/registration/_password_hint.html:5
-msgid "Your password can't be too similar to your other personal information."
+msgid ""
+"It can't be a commonly used password, or too similar to your name or email "
+"address."
 msgstr ""
 
-#: accounts/templates/registration/_password_hint.html:6
-msgid "Your password can't be entirely numeric."
+#: accounts/templates/registration/_resend_confirmation.html:12
+msgid "Send a new link"
 msgstr ""
 
-#: accounts/templates/registration/_password_hint.html:7
-msgid "Must be more than 8 characters, including"
+#: accounts/templates/registration/account.html:4
+#: accounts/templates/registration/account.html:11
+msgid "Profile & settings"
 msgstr ""
 
-#: accounts/templates/registration/_password_hint.html:8
-msgid "At least one number"
+#: accounts/templates/registration/account.html:10
+msgid "Your account"
 msgstr ""
 
-#: accounts/templates/registration/_password_hint.html:9
-msgid "At least one lowercase letter"
+#: accounts/templates/registration/account.html:12
+msgid "Manage your personal information, privacy and account preferences."
 msgstr ""
 
-#: accounts/templates/registration/_password_hint.html:10
-msgid "At least one uppercase letter"
+#: accounts/templates/registration/account.html:25
+msgid "LUT / LAB verified member"
 msgstr ""
 
+#: accounts/templates/registration/account.html:34
+msgid "Change photo"
+msgstr ""
+
+#: accounts/templates/registration/account.html:34
+msgid "Add photo"
+msgstr ""
+
+#: accounts/templates/registration/account.html:43
+msgid "Remove"
+msgstr ""
+
+#: accounts/templates/registration/account.html:54
+msgid "Personal information"
+msgstr ""
+
+#: accounts/templates/registration/account.html:60
+msgid "First name"
+msgstr ""
+
+#: accounts/templates/registration/account.html:65
+msgid "Last name"
+msgstr ""
+
+#: accounts/templates/registration/account.html:71
+msgid "University email"
+msgstr ""
+
+#: accounts/templates/registration/account.html:74
+msgid "Change"
+msgstr ""
+
+#: accounts/templates/registration/account.html:79
+#, python-format
+msgid ""
+"Waiting for you to confirm <strong>%(new)s</strong>. Open the link we sent "
+"there. Until then, keep using your current address."
+msgstr ""
+
+#: accounts/templates/registration/account.html:81
+msgid "Send the link again"
+msgstr ""
+
+#: accounts/templates/registration/account.html:82
+msgid "Cancel change"
+msgstr ""
+
+#: accounts/templates/registration/account.html:86
+msgid ""
+"You log in with this address. Changing it needs confirming from the new "
+"inbox."
+msgstr ""
+
+#: accounts/templates/registration/account.html:90
+msgid "Phone number (optional)"
+msgstr ""
+
+#: accounts/templates/registration/account.html:93
+msgid ""
+"A Finnish number, or include the country code (e.g. +46) for numbers from "
+"elsewhere. Only shared with people on your rides, and only if you allow it "
+"under Privacy."
+msgstr ""
+
+#: accounts/templates/registration/account.html:95
+msgid "Save profile changes"
+msgstr ""
+
+#: accounts/templates/registration/account.html:106
+msgid "Security"
+msgstr ""
+
+#: accounts/templates/registration/account.html:110
+msgid "Update your account password"
+msgstr ""
+
+#: accounts/templates/registration/account.html:112
+#: accounts/templates/registration/password_change_form.html:4
+#: accounts/templates/registration/password_change_form.html:5
+#: accounts/templates/registration/password_change_form.html:27
+msgid "Change password"
+msgstr ""
+
+#: accounts/templates/registration/account.html:125
+msgid "Notifications"
+msgstr ""
+
+#: accounts/templates/registration/account.html:126
+#, python-format
+msgid ""
+"All notifications are shown in the app, under the bell and on the <a "
+"href=\"%(notifications_url)s\" class=\"link\">notifications page</a>. Choose "
+"which ones are also emailed to you."
+msgstr ""
+
+#: accounts/templates/registration/account.html:128
+msgid "Email me about"
+msgstr ""
+
+#: accounts/templates/registration/account.html:135
+msgid "Also new requests on your rides and withdrawn requests"
+msgstr ""
+
+#: accounts/templates/registration/account.html:135
+msgid ""
+"Only changes to your trips: answers to your requests, passengers leaving, "
+"and rides being changed or cancelled"
+msgstr ""
+
+#: accounts/templates/registration/account.html:140
+msgid ""
+"Emails about your account, such as confirming your email address or "
+"resetting your password, are always sent."
+msgstr ""
+
+#: accounts/templates/registration/account.html:145
+msgid "On: notifications appear on this device even when LUT Kyyti is closed."
+msgstr ""
+
+#: accounts/templates/registration/account.html:146
+msgid "Get notifications on this device even when LUT Kyyti is closed."
+msgstr ""
+
+#: accounts/templates/registration/account.html:147
+msgid ""
+"On iPhone and iPad, add LUT Kyyti to your Home Screen first (Share, then Add "
+"to Home Screen) and open it from there to turn on notifications."
+msgstr ""
+
+#: accounts/templates/registration/account.html:148
+msgid ""
+"This browser can't show push notifications. You'll still see them in the app "
+"and by email."
+msgstr ""
+
+#: accounts/templates/registration/account.html:149
+msgid ""
+"Notifications are blocked for LUT Kyyti in this browser. Allow them in the "
+"browser's site settings to turn them on."
+msgstr ""
+
+#: accounts/templates/registration/account.html:150
+msgid "Push notifications could not be turned on. Please try again."
+msgstr ""
+
+#: accounts/templates/registration/account.html:151
+msgid "Turn on"
+msgstr ""
+
+#: accounts/templates/registration/account.html:151
+msgid "Turn off"
+msgstr ""
+
+#: accounts/templates/registration/account.html:152
+msgid "Push notifications on this device"
+msgstr ""
+
+#: accounts/templates/registration/account.html:153
+msgid "Checking what this device can do…"
+msgstr ""
+
+#: accounts/templates/registration/account.html:162
+msgid "Privacy & visibility"
+msgstr ""
+
+#: accounts/templates/registration/account.html:163
+msgid "Choose what other LUT Kyyti members can see about you."
+msgstr ""
+
+#: accounts/templates/registration/account.html:166
+msgid "Name shown on rides and requests"
+msgstr ""
+
+#: accounts/templates/registration/account.html:178
+msgid "People on the same ride as you always see your full name."
+msgstr ""
+
+#: accounts/templates/registration/account.html:185
+msgid "Show my profile photo"
+msgstr ""
+
+#: accounts/templates/registration/account.html:186
+msgid "Otherwise others see your initials"
+msgstr ""
+
+#: accounts/templates/registration/account.html:192
+msgid "Share my email with ride partners"
+msgstr ""
+
+#: accounts/templates/registration/account.html:193
+#: accounts/templates/registration/account.html:201
+msgid "The driver of a ride you join, or passengers you accept"
+msgstr ""
+
+#: accounts/templates/registration/account.html:199
+msgid "Share my phone number with ride partners"
+msgstr ""
+
+#: accounts/templates/registration/account.html:201
+msgid "Add a phone number to your profile first"
+msgstr ""
+
+#: accounts/templates/registration/account.html:209
+msgid ""
+"Your email and phone number never appear on ride listings. They are only "
+"shown to people sharing a ride with you."
+msgstr ""
+
+#: accounts/templates/registration/account.html:212
+msgid "Save settings"
+msgstr ""
+
+#: accounts/templates/registration/account.html:213
+msgid "Read the privacy policy"
+msgstr ""
+
+#: accounts/templates/registration/account.html:220
+msgid "Account management"
+msgstr ""
+
+#: accounts/templates/registration/account.html:222
+msgid "Help & support"
+msgstr ""
+
+#: accounts/templates/registration/account.html:223
+msgid "Contact support"
+msgstr ""
+
+#: accounts/templates/registration/account.html:226
+msgid "Log out"
+msgstr ""
+
+#: accounts/templates/registration/account.html:228
+#: accounts/templates/registration/account.html:283
+msgid "Delete account"
+msgstr ""
+
+#: accounts/templates/registration/account.html:241
+#: accounts/templates/registration/confirm_email_change.html:4
+#: accounts/templates/registration/confirm_email_change.html:5
+msgid "Change email address"
+msgstr ""
+
+#: accounts/templates/registration/account.html:242
+#, python-format
+msgid ""
+"We'll send a link to the new address. Your account keeps using "
+"<strong>%(email)s</strong> until you open it, so a typo can't lock you out."
+msgstr ""
+
+#: accounts/templates/registration/account.html:247
+msgid "New email address"
+msgstr ""
+
+#: accounts/templates/registration/account.html:252
+#: accounts/templates/registration/password_change_form.html:10
+msgid "Current password"
+msgstr ""
+
+#: accounts/templates/registration/account.html:258
+#: accounts/templates/registration/account.html:262
+#: accounts/templates/registration/account.html:282
+#: accounts/templates/registration/account.html:286
+#: accounts/templates/registration/account.html:319
+#: accounts/templates/registration/account.html:323
+#: accounts/templates/registration/password_change_form.html:28
+msgid "Cancel"
+msgstr ""
+
+#: accounts/templates/registration/account.html:259
+msgid "Send confirmation link"
+msgstr ""
+
+#: accounts/templates/registration/account.html:269
+msgid "Delete your account?"
+msgstr ""
+
+#: accounts/templates/registration/account.html:271
+msgid ""
+"Your account, your profile photo, the rides you have posted and your ride "
+"requests are deleted permanently. People who joined or requested your rides "
+"are notified that they are cancelled."
+msgstr ""
+
+#: accounts/templates/registration/account.html:276
+msgid "Enter your password to confirm"
+msgstr ""
+
+#: accounts/templates/registration/account.html:307
+msgid "Frame your photo"
+msgstr ""
+
+#: accounts/templates/registration/account.html:308
+msgid ""
+"Drag the photo to place your face inside the circle. Zoom with the slider, "
+"the mouse wheel or by pinching."
+msgstr ""
+
+#: accounts/templates/registration/account.html:310
+msgid "Your new photo"
+msgstr ""
+
+#: accounts/templates/registration/account.html:313
+#: accounts/templates/registration/account.html:315
+msgid "Zoom"
+msgstr ""
+
+#: accounts/templates/registration/account.html:320
+msgid "Save photo"
+msgstr ""
+
+#: accounts/templates/registration/confirm_email.html:4
+#: accounts/templates/registration/confirm_email.html:5
+#: accounts/templates/registration/confirmation_sent.html:4
+#: accounts/templates/registration/confirmation_sent.html:5
+msgid "Confirm your email"
+msgstr ""
+
+#: accounts/templates/registration/confirm_email.html:8
+#, python-format
+msgid ""
+"Confirm <strong>%(email)s</strong> as the email address of your LUT Kyyti "
+"account."
+msgstr ""
+
+#: accounts/templates/registration/confirm_email.html:11
+msgid "Confirm and log in"
+msgstr ""
+
+#: accounts/templates/registration/confirm_email.html:14
+msgid ""
+"This email address is already confirmed. You can log in to your account."
+msgstr ""
+
+#: accounts/templates/registration/confirm_email.html:15
+#: accounts/templates/registration/confirm_email_change.html:9
 #: accounts/templates/registration/login.html:9
-#: accounts/templates/registration/signup.html:68
+#: accounts/templates/registration/signup.html:88
 msgid "Log in"
 msgstr ""
 
+#: accounts/templates/registration/confirm_email.html:17
+msgid ""
+"This confirmation link is invalid or has expired. Enter your email address "
+"to get a new one."
+msgstr ""
+
+#: accounts/templates/registration/confirm_email.html:19
+#: accounts/templates/registration/confirmation_sent.html:16
+#: accounts/templates/registration/password_reset_done.html:9
+#: accounts/templates/registration/password_reset_form.html:18
+msgid "Back to login"
+msgstr ""
+
+#: accounts/templates/registration/confirm_email_change.html:8
+#, python-format
+msgid ""
+"Your email address is now <strong>%(email)s</strong>. Use it to log in from "
+"now on."
+msgstr ""
+
+#: accounts/templates/registration/confirm_email_change.html:11
+#, python-format
+msgid ""
+"<strong>%(email)s</strong> is now used by another account, so your email "
+"address was not changed."
+msgstr ""
+
+#: accounts/templates/registration/confirm_email_change.html:12
+#: accounts/templates/registration/confirm_email_change.html:16
+msgid "Go to your profile"
+msgstr ""
+
+#: accounts/templates/registration/confirm_email_change.html:14
+msgid ""
+"This link is invalid or has expired, or the change was cancelled. Your email "
+"address has not changed."
+msgstr ""
+
+#: accounts/templates/registration/confirm_email_change.html:15
+msgid "You can ask for a new link on your profile page."
+msgstr ""
+
+#: accounts/templates/registration/confirm_email_change.html:18
+#, python-format
+msgid ""
+"Change the email address of your LUT Kyyti account from "
+"<strong>%(old_email)s</strong> to <strong>%(email)s</strong>?"
+msgstr ""
+
+#: accounts/templates/registration/confirm_email_change.html:19
+msgid ""
+"You will log in with the new address from now on. Your password stays the "
+"same."
+msgstr ""
+
+#: accounts/templates/registration/confirm_email_change.html:22
+msgid "Confirm new address"
+msgstr ""
+
+#: accounts/templates/registration/confirmation_email.txt:1
+#: accounts/templates/registration/email_change_confirm.txt:1
+#: accounts/templates/registration/email_change_requested.txt:1
+#: accounts/templates/registration/email_changed.txt:1
+#: accounts/templates/registration/password_reset_email.html:1
+msgid "Hi"
+msgstr ""
+
+#: accounts/templates/registration/confirmation_email.txt:3
+msgid ""
+"Thanks for signing up to LUT Kyyti. Open the link below to confirm your "
+"email address and start using your account:"
+msgstr ""
+
+#: accounts/templates/registration/confirmation_email.txt:7
+msgid "The link works once and expires in 3 days."
+msgstr ""
+
+#: accounts/templates/registration/confirmation_email.txt:9
+msgid ""
+"If you didn't sign up to LUT Kyyti, you can ignore this email. The account "
+"won't be usable without confirming it."
+msgstr ""
+
+#: accounts/templates/registration/confirmation_email.txt:11
+#: accounts/templates/registration/email_change_confirm.txt:11
+#: accounts/templates/registration/email_change_requested.txt:9
+#: accounts/templates/registration/email_changed.txt:7
+#: accounts/templates/registration/password_reset_email.html:9
+msgid "The LUT Kyyti team"
+msgstr ""
+
+#: accounts/templates/registration/confirmation_email_subject.txt:1
+msgid "Confirm your LUT Kyyti email address"
+msgstr ""
+
+#: accounts/templates/registration/confirmation_sent.html:9
+#, python-format
+msgid ""
+"If %(email)s has an account waiting for confirmation, we've sent it a new "
+"link."
+msgstr ""
+
+#: accounts/templates/registration/confirmation_sent.html:12
+#, python-format
+msgid ""
+"We've sent a confirmation link to <strong>%(email)s</strong>. Open it to "
+"start using your account."
+msgstr ""
+
+#: accounts/templates/registration/confirmation_sent.html:14
+msgid ""
+"If you don't receive an email within a few minutes, check your spam folder "
+"or send a new link."
+msgstr ""
+
+#: accounts/templates/registration/email_change_confirm.txt:3
+#, python-format
+msgid ""
+"You asked to change the email address of your LUT Kyyti account from %(old)s "
+"to this address. Open the link below to confirm the change:"
+msgstr ""
+
+#: accounts/templates/registration/email_change_confirm.txt:7
+#, python-format
+msgid ""
+"Until you confirm, your account keeps using %(old)s. The link works once and "
+"expires in 3 days."
+msgstr ""
+
+#: accounts/templates/registration/email_change_confirm.txt:9
+msgid ""
+"If you didn't ask for this, you can ignore this email and nothing will "
+"change."
+msgstr ""
+
+#: accounts/templates/registration/email_change_requested.txt:3
+#, python-format
+msgid ""
+"Someone asked to change the email address of your LUT Kyyti account to "
+"%(new_email)s. The change only happens once it is confirmed from that inbox, "
+"and until then your account keeps using this address."
+msgstr ""
+
+#: accounts/templates/registration/email_change_requested.txt:5
+msgid "If this was you, there is nothing else to do here."
+msgstr ""
+
+#: accounts/templates/registration/email_change_requested.txt:7
+#, python-format
+msgid ""
+"If it wasn't you, cancel the change on your profile page and change your "
+"password: %(account_url)s"
+msgstr ""
+
+#: accounts/templates/registration/email_changed.txt:3
+#, python-format
+msgid ""
+"The email address of your LUT Kyyti account was changed to %(new_email)s. "
+"From now on, log in with that address. This address no longer receives "
+"emails about your account."
+msgstr ""
+
+#: accounts/templates/registration/email_changed.txt:5
+#, python-format
+msgid "If you didn't make this change, contact us right away: %(contact_url)s"
+msgstr ""
+
 #: accounts/templates/registration/login.html:16
-#: accounts/templates/registration/login.html:37
+#: accounts/templates/registration/login.html:39
 #: accounts/templates/registration/password_reset_complete.html:8
 msgid "Login"
 msgstr "Kirjaudu"
 
-#: accounts/templates/registration/login.html:32
 #: accounts/templates/registration/login.html:34
+#: accounts/templates/registration/login.html:36
 msgid "Enter a valid email and password"
 msgstr ""
 
-#: accounts/templates/registration/login.html:38
+#: accounts/templates/registration/login.html:40
 #: accounts/templates/registration/signup.html:9
 msgid "Sign up"
 msgstr ""
 
-#: accounts/templates/registration/login.html:39
+#: accounts/templates/registration/login.html:41
 msgid "Password Reset"
 msgstr ""
 
@@ -150,18 +785,8 @@ msgstr ""
 msgid "Continue"
 msgstr ""
 
-#: accounts/templates/registration/password_change_form.html:4
-#: accounts/templates/registration/password_change_form.html:5
-#: accounts/templates/registration/password_change_form.html:27
-msgid "Change password"
-msgstr ""
-
 #: accounts/templates/registration/password_change_form.html:7
 msgid "Enter your current password, then your new password twice."
-msgstr ""
-
-#: accounts/templates/registration/password_change_form.html:10
-msgid "Current password"
 msgstr ""
 
 #: accounts/templates/registration/password_change_form.html:11
@@ -172,10 +797,6 @@ msgstr ""
 #: accounts/templates/registration/password_change_form.html:12
 #: accounts/templates/registration/password_reset_confirm.html:11
 msgid "Confirm new password"
-msgstr ""
-
-#: accounts/templates/registration/password_change_form.html:28
-msgid "Cancel"
 msgstr ""
 
 #: accounts/templates/registration/password_reset_complete.html:4
@@ -222,15 +843,6 @@ msgid ""
 "If you don't receive an email within a few minutes, check your spam folder."
 msgstr ""
 
-#: accounts/templates/registration/password_reset_done.html:9
-#: accounts/templates/registration/password_reset_form.html:18
-msgid "Back to login"
-msgstr ""
-
-#: accounts/templates/registration/password_reset_email.html:1
-msgid "Hi"
-msgstr ""
-
 #: accounts/templates/registration/password_reset_email.html:3
 msgid ""
 "We received a request to reset the password of your LUT Kyyti account. Open "
@@ -241,10 +853,6 @@ msgstr ""
 msgid ""
 "If you didn't ask to reset your password, you can ignore this email. Your "
 "password won't change."
-msgstr ""
-
-#: accounts/templates/registration/password_reset_email.html:9
-msgid "The LUT Kyyti team"
 msgstr ""
 
 #: accounts/templates/registration/password_reset_form.html:4
@@ -259,7 +867,6 @@ msgid ""
 msgstr ""
 
 #: accounts/templates/registration/password_reset_form.html:14
-#: accounts/templates/registration/signup.html:33
 msgid "Enter valid email address"
 msgstr ""
 
@@ -271,45 +878,136 @@ msgstr ""
 msgid "Reset your LUT Kyyti password"
 msgstr ""
 
-#: accounts/templates/registration/signup.html:23
-#: accounts/templates/registration/signup.html:62
+#: accounts/templates/registration/signup.html:46
+#: accounts/templates/registration/signup.html:83
 msgid "Sign Up"
 msgstr ""
 
-#: accounts/templates/registration/signup.html:26
+#: accounts/templates/registration/signup.html:49
 msgid "* = Mandatory"
 msgstr ""
 
-#: accounts/templates/registration/signup.html:38
-msgid "First name is required"
+#: accounts/templates/registration/signup.html:52
+msgid "Your password can't contain your name or email address."
 msgstr ""
 
-#: accounts/templates/registration/signup.html:42
-msgid "Last name is required"
+#: accounts/templates/registration/signup.html:63
+msgid "Use your LUT or LAB email address, e.g. firstname.lastname@lut.fi"
 msgstr ""
 
-#: accounts/templates/registration/signup.html:46
-msgid "Username is required"
-msgstr ""
-
-#: accounts/templates/registration/signup.html:55
-msgid "Error in account creation. Check that passwords match"
+#: accounts/templates/registration/signup.html:65
+msgid "Enter your first name (at most 50 characters)"
 msgstr ""
 
 #: accounts/templates/registration/signup.html:67
-msgid "Already have a LUT Kyyti account?"
+msgid "Enter your last name (at most 50 characters)"
+msgstr ""
+
+#: accounts/templates/registration/signup.html:69
+msgid ""
+"At least 8 characters, including a number, a lower case letter and an upper "
+"case letter. It can't contain your name or email address."
 msgstr ""
 
 #: accounts/templates/registration/signup.html:71
+msgid "Type the same password again"
+msgstr ""
+
+#: accounts/templates/registration/signup.html:80
+msgid "Didn't get the email?"
+msgstr ""
+
+#: accounts/templates/registration/signup.html:88
+msgid "Already have a LUT Kyyti account?"
+msgstr ""
+
+#: accounts/templates/registration/signup.html:90
 msgctxt ""
 "Full sentence: By creating an account you agree to the Terms of Use and "
 "Privacy Policy."
 msgid ""
 "\n"
-"                <p>By creating an account you agree to the <a class=\"link "
-"link-primary\" href=\"/terms-of-use\">Terms of Use</a> and <a class=\"link "
-"link-secondary\" href=\"/privacy-policy\">Privacy Policy</a>.</p>\n"
+"                <p class=\"text-[0.8125rem]\">By creating an account you "
+"agree to the <a class=\"link link-primary\" href=\"/terms-of-use\">Terms of "
+"Use</a> and <a class=\"link link-secondary\" href=\"/privacy-"
+"policy\">Privacy Policy</a>.</p>\n"
 "              "
+msgstr ""
+
+#: accounts/validators.py:15
+msgid "a number"
+msgstr ""
+
+#: accounts/validators.py:17
+msgid "a lower case letter"
+msgstr ""
+
+#: accounts/validators.py:19
+msgid "an upper case letter"
+msgstr ""
+
+#: accounts/validators.py:21
+#, python-format
+msgid "%(first)s and %(last)s"
+msgstr ""
+
+#: accounts/validators.py:25
+#, python-format
+msgid "Your password must also contain %(missing)s."
+msgstr ""
+
+#: accounts/validators.py:30
+msgid ""
+"Your password must contain a number, a lower case letter and an upper case "
+"letter."
+msgstr ""
+
+#: accounts/views.py:95
+msgid "Your email address is confirmed. Welcome to LUT Kyyti!"
+msgstr ""
+
+#: accounts/views.py:136
+msgid "Your profile was saved."
+msgstr ""
+
+#: accounts/views.py:140
+msgid "Your settings were saved."
+msgstr ""
+
+#: accounts/views.py:144
+msgid "Your photo was changed."
+msgstr ""
+
+#: accounts/views.py:150
+msgid "Your photo was removed."
+msgstr ""
+
+#: accounts/views.py:154
+#, python-format
+msgid ""
+"We sent a confirmation link to %(email)s. Your email address changes once "
+"you open it."
+msgstr ""
+
+#: accounts/views.py:158
+#, python-format
+msgid "We sent a new confirmation link to %(email)s."
+msgstr ""
+
+#: accounts/views.py:160
+msgid ""
+"A link was sent less than a minute ago. Wait a moment before asking for a "
+"new one."
+msgstr ""
+
+#: accounts/views.py:164
+#, python-format
+msgid "The email change was cancelled. Your address stays %(email)s."
+msgstr ""
+
+#: accounts/views.py:219
+#, python-format
+msgid "Your email address is now %(email)s."
 msgstr ""
 
 #, fuzzy

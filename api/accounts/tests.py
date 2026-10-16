@@ -251,3 +251,56 @@ class EmailChangeTests(TestCase):
         response = self.client.get(self.url)
         self.assertContains(response, "Waiting for you to confirm")
         self.assertContains(response, 'form="email-cancel-form"')
+
+
+class SignUpValidationTests(TestCase):
+    """What the sign up page says is wrong, under the field it is about."""
+
+    def errors(self, **fields):
+        response = self.client.post(reverse("signup"), {**SIGNUP, **fields})
+        form = response.context["form"] if response.context else None
+        return {name: list(errors) for name, errors in form.errors.items()} if form else {}
+
+    def test_messages_name_the_problem(self):
+        make_user("Aino", "Mäkinen")
+        cases = [
+            ({"email": "aino@lut.fi"}, "email", "An account with this email address already exists."),
+            ({"email": "AINO@LUT.FI"}, "email", "An account with this email address already exists."),
+            ({"email": "jamie@gmail.com"}, "email", "Use your LUT or LAB email address"),
+            ({"email": "jamie"}, "email", "Enter a valid email address"),
+            ({"email": ""}, "email", "Enter your LUT or LAB email address."),
+            ({"first_name": ""}, "first_name", "Enter your first name."),
+            ({"last_name": "S" * 51}, "last_name", "Your last name can be at most 50 characters."),
+            ({"password1": ""}, "password1", "Choose a password."),
+            ({"password2": "Kyyti-Passw0rd2"}, "password2", "The passwords don't match."),
+            ({"password1": "Ky-0a", "password2": "Ky-0a"}, "password1", "This password is too short."),
+            ({"password1": "kyyti-password", "password2": "kyyti-password"}, "password1",
+             "Your password must also contain a number and an upper case letter."),
+            ({"password1": "Saarinen2026", "password2": "Saarinen2026"}, "password1", "too similar to the last name"),
+        ]
+        for fields, field, message in cases:
+            with self.subTest(fields=fields):
+                errors = self.errors(**fields)
+                self.assertIn(field, errors)
+                self.assertTrue(any(message in error for error in errors[field]), errors[field])
+        self.assertEqual(User.objects.count(), 1)
+
+    def test_page_shows_errors_under_their_fields(self):
+        response = self.client.post(reverse("signup"), {**SIGNUP, "email": "jamie@gmail.com", "first_name": ""})
+        page = response.content.decode()
+        self.assertIn('id="id_email-errors"', page)
+        self.assertIn('aria-invalid="true"', page)
+        self.assertIn("Enter your first name.", page)
+        # No bare field names
+        self.assertNotIn("<li>email</li>", page)
+
+    def test_email_is_saved_in_lower_case(self):
+        self.client.post(reverse("signup"), {**SIGNUP, "email": "Jamie.Saarinen@LUT.fi"})
+        self.assertTrue(User.objects.filter(email="jamie.saarinen@lut.fi").exists())
+
+    def test_browser_checks_are_on_the_fields(self):
+        page = self.client.get(reverse("signup")).content.decode()
+        self.assertIn('pattern="[^@\\s]+@([Ll][Uu][Tt]|[Ll][Aa][Bb])\\.[Ff][Ii]"', page)
+        self.assertIn('pattern="(?=.*\\p{Nd})(?=.*\\p{Ll})(?=.*\\p{Lu}).{8,}"', page)
+        self.assertIn('maxlength="50"', page)
+        self.assertIn('data-mismatch=', page)

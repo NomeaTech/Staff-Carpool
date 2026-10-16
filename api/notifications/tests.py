@@ -1,4 +1,13 @@
+import json
 from datetime import timedelta
+from io import StringIO
+from unittest.mock import patch
+
+from cryptography.hazmat.primitives import serialization
+from django.core.management import call_command
+from py_vapid import Vapid01
+from py_vapid.utils import b64urlencode
+from pywebpush import WebPushException
 
 from django.core import mail
 from django.test import RequestFactory, TestCase, override_settings
@@ -8,7 +17,7 @@ from django.utils import timezone
 from home.tests import make_ride, make_user
 from test_app.models import Ride, RideRequest
 from . import services
-from .models import ESSENTIAL, Kind, Notification
+from .models import ESSENTIAL, Kind, Notification, PushSubscription
 
 
 @override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
@@ -182,3 +191,117 @@ class NotificationViewTests(TestCase):
     def test_logged_out(self):
         self.client.logout()
         self.assertEqual(self.client.get(reverse("notifications_poll")).status_code, 302)
+
+
+PUSH_KEYS = {"VAPID_PUBLIC_KEY": "BPublicKeyForTests", "VAPID_PRIVATE_KEY": "private-key-for-tests"}
+SUBSCRIPTION = {
+    "endpoint": "https://push.example.com/send/abc123",
+    "keys": {"p256dh": "BKeyP256dh", "auth": "authsecret"},
+}
+
+
+@override_settings(**PUSH_KEYS)
+class PushSubscriptionTests(TestCase):
+    def setUp(self):
+        self.user = make_user("Aino", "Mäkinen")
+        self.client.force_login(self.user)
+
+    def subscribe(self, data=SUBSCRIPTION):
+        return self.client.post(reverse("push_subscribe"), json.dumps(data), content_type="application/json")
+
+    def test_subscribing_and_unsubscribing(self):
+        self.assertEqual(self.subscribe().status_code, 200)
+        subscription = self.user.push_subscriptions.get()
+        self.assertEqual(subscription.as_subscription_info(), SUBSCRIPTION)
+
+        # Sending it again (on every visit) keeps one
+        self.subscribe()
+        self.assertEqual(PushSubscription.objects.count(), 1)
+
+        self.client.post(reverse("push_unsubscribe"), json.dumps({"endpoint": SUBSCRIPTION["endpoint"]}), content_type="application/json")
+        self.assertFalse(PushSubscription.objects.exists())
+
+    def test_a_device_moves_to_the_account_that_turned_it_on(self):
+        self.subscribe()
+        other = make_user("Jamie", "Saarinen")
+        self.client.force_login(other)
+        self.subscribe()
+        self.assertEqual(PushSubscription.objects.get().user, other)
+
+    def test_bad_subscriptions_are_refused(self):
+        for data in ({}, {"endpoint": "http://not-https.example.com"}, {"endpoint": "https://x", "keys": {}}):
+            self.assertEqual(self.subscribe(data).status_code, 400)
+        self.assertEqual(self.client.post(reverse("push_subscribe"), "not json", content_type="application/json").status_code, 400)
+        self.client.logout()
+        self.assertEqual(self.subscribe().status_code, 302)
+
+    def test_pages_get_the_public_key_and_the_switch(self):
+        page = self.client.get(reverse("account")).content.decode()
+        self.assertIn('data-public-key="BPublicKeyForTests"', page)
+        self.assertIn('id="push-settings"', page)
+        self.assertNotIn("private-key-for-tests", page)
+
+    @override_settings(VAPID_PUBLIC_KEY="", VAPID_PRIVATE_KEY="")
+    def test_without_keys_push_is_off(self):
+        page = self.client.get(reverse("account")).content.decode()
+        self.assertNotIn("push-config", page)
+        self.assertNotIn('id="push-settings"', page)
+
+
+@override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend", **PUSH_KEYS)
+class PushDeliveryTests(TestCase):
+    def setUp(self):
+        self.driver = make_user("Aino", "Mäkinen")
+        self.ride = make_ride(self.driver)
+        self.phone = PushSubscription.objects.create(user=self.driver, endpoint="https://push.example.com/1", p256dh="k", auth="a")
+        self.laptop = PushSubscription.objects.create(user=self.driver, endpoint="https://push.example.com/2", p256dh="k", auth="a")
+
+    def notify(self):
+        with self.captureOnCommitCallbacks(execute=True):
+            services.send(RequestFactory().get("/"), self.driver, Kind.REQUEST_RECEIVED, self.ride, name="Jamie S.")
+
+    @patch("notifications.push.webpush")
+    def test_each_device_gets_it(self, webpush):
+        self.notify()
+        self.assertEqual(webpush.call_count, 2)
+        call = webpush.call_args.kwargs
+        payload = json.loads(call["data"])
+        self.assertEqual(payload["title"], "New ride request")
+        self.assertIn("Jamie S. would like to join your ride", payload["message"])
+        self.assertTrue(payload["url"].startswith("/app/notifications/"))
+        self.assertIn("android-chrome-192x192.png", payload["icon"])
+        self.assertEqual(call["vapid_private_key"], "private-key-for-tests")
+        self.assertTrue(call["vapid_claims"]["sub"].startswith("mailto:"))
+        self.phone.refresh_from_db()
+        self.assertIsNotNone(self.phone.last_used_at)
+
+    @patch("notifications.push.webpush")
+    def test_gone_devices_are_forgotten(self, webpush):
+        gone = WebPushException("Gone", response=type("Response", (), {"status_code": 410})())
+        webpush.side_effect = [gone, None]
+        self.notify()
+        self.assertEqual(list(PushSubscription.objects.all()), [self.laptop])
+
+    @patch("notifications.push.webpush", side_effect=WebPushException("Server error", response=type("Response", (), {"status_code": 500})()))
+    def test_failures_do_not_stop_other_channels(self, webpush):
+        self.notify()
+        self.assertEqual(PushSubscription.objects.count(), 2)
+        # The email was still sent, and the notification saved
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(self.driver.notifications.count(), 1)
+
+    @override_settings(VAPID_PUBLIC_KEY="", VAPID_PRIVATE_KEY="")
+    @patch("notifications.push.webpush")
+    def test_without_keys_nothing_is_pushed(self, webpush):
+        self.notify()
+        webpush.assert_not_called()
+
+
+class PushKeyCommandTests(TestCase):
+    def test_keys_work_with_pywebpush(self):
+        out = StringIO()
+        call_command("generate_vapid_keys", stdout=out)
+        lines = dict(line.split("=", 1) for line in out.getvalue().splitlines() if "=" in line and not line.startswith("#"))
+        vapid = Vapid01.from_string(lines["VAPID_PRIVATE_KEY"])
+        public = vapid.public_key.public_bytes(serialization.Encoding.X962, serialization.PublicFormat.UncompressedPoint)
+        self.assertEqual(b64urlencode(public), lines["VAPID_PUBLIC_KEY"])

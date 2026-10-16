@@ -194,6 +194,11 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    # A number, a lower case and an upper case letter, as the password fields
+    # check in the browser
+    {
+        'NAME': 'accounts.validators.CharacterMixValidator',
+    },
 ]
 
 # Internationalization
@@ -260,6 +265,14 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "LUT Kyyti <noreply@kyyti.n
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 # Where messages from the contact page are sent
 CONTACT_EMAIL = "jubeen.sharbaf@lut.fi"
+
+# PWA push notifications (notifications/push.py). Generate the keys with
+# "python manage.py generate_vapid_keys" and put them in .env. Without them,
+# push notifications are turned off (the app still shows notifications).
+VAPID_PUBLIC_KEY = os.getenv("VAPID_PUBLIC_KEY", "")
+VAPID_PRIVATE_KEY = os.getenv("VAPID_PRIVATE_KEY", "")
+# Who the push services can contact about the notifications sent
+VAPID_SUBJECT = os.getenv("VAPID_SUBJECT", f"mailto:{CONTACT_EMAIL}")
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 CRISPY_TEMPLATE_PACK = "tailwind"

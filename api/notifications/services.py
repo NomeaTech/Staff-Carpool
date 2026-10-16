@@ -8,21 +8,11 @@ CHANNELS.
 
 Channels
 --------
-A channel is a function channel(request, notification). Email is the only
-one so far: it sends the notification if the recipient wants emails of its
-kind (User.wants_email: all notifications, or only essential ones).
-
-To add PWA push notifications later:
-1. Store the browser's push subscriptions (a PushSubscription model with
-   the user, endpoint and keys), saved from the service worker's
-   pushManager.subscribe() through a new view.
-2. Write push_channel(request, notification) that sends
-   notification.as_payload() to each of the recipient's subscriptions
-   (e.g. with pywebpush and VAPID keys), and add it to CHANNELS.
-3. In static/js/serviceworker.js, show the payload with
-   self.registration.showNotification() on "push", and open its "url" on
-   "notificationclick".
-The payload is the same one the pop-ups already use.
+A channel is a function channel(request, notification):
+- email_channel sends it if the recipient wants emails of its kind
+  (User.wants_email: all notifications, or only essential ones)
+- push.push_channel sends it as a push notification to each device the
+  recipient turned them on for (see notifications/push.py)
 
 Channels run once the change that caused the notification is saved
 (transaction.on_commit), and not at all if it is rolled back.
@@ -39,6 +29,7 @@ from django.urls import reverse
 
 from accounts.privacy import display_name
 from .models import Kind, Notification
+from .push import push_channel
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +58,7 @@ def email_channel(request, notification):
 
 
 # Each is called as channel(request, notification), see the module's docstring
-CHANNELS = [email_channel]
+CHANNELS = [email_channel, push_channel]
 
 
 def send(request, recipient, kind, ride=None, **data):

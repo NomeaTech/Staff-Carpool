@@ -139,6 +139,21 @@
                 {% endfor %}
                 <p class="label whitespace-normal">{% trans "Emails about your account, such as confirming your email address or resetting your password, are always sent." %}</p>
               </fieldset>
+              {% if push_public_key %}
+              {# Filled in by static/js/push.js, which knows what this device can do #}
+              <div id="push-settings" class="rounded-field border border-base-300 p-3 mt-3 grid gap-2"
+                   data-on="{% trans "On: notifications appear on this device even when LUT Kyyti is closed." %}"
+                   data-off="{% trans "Get notifications on this device even when LUT Kyyti is closed." %}"
+                   data-ios="{% trans "On iPhone and iPad, add LUT Kyyti to your Home Screen first (Share, then Add to Home Screen) and open it from there to turn on notifications." %}"
+                   data-unsupported="{% trans "This browser can't show push notifications. You'll still see them in the app and by email." %}"
+                   data-denied="{% trans "Notifications are blocked for LUT Kyyti in this browser. Allow them in the browser's site settings to turn them on." %}"
+                   data-error="{% trans "Push notifications could not be turned on. Please try again." %}"
+                   data-turn-on="{% trans "Turn on" %}" data-turn-off="{% trans "Turn off" %}">
+                <strong class="text-sm">{% trans "Push notifications on this device" %}</strong>
+                <p class="text-xs text-base-content/60" data-push-status>{% trans "Checking what this device can do…" %}</p>
+                <div><button type="button" class="btn btn-sm" data-push-toggle hidden></button></div>
+              </div>
+              {% endif %}
             </div>
           </section>
 

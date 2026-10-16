@@ -7,18 +7,47 @@ from django.db import models
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
+# Only LUT and LAB addresses can sign up or be changed to
+ALLOWED_EMAIL_DOMAINS = ("lut.fi", "lab.fi")
+# The same in the browser (the pattern attribute has no case-insensitive flag)
+EMAIL_PATTERN = r"[^@\s]+@([Ll][Uu][Tt]|[Ll][Aa][Bb])\.[Ff][Ii]"
+# Passwords: at least 8 characters (MinimumLengthValidator), with a number, a
+# lower case and an upper case letter (accounts.validators.CharacterMixValidator)
+PASSWORD_MIN_LENGTH = 8
+PASSWORD_PATTERN = r"(?=.*\p{Nd})(?=.*\p{Ll})(?=.*\p{Lu}).{8,}"
+NAME_MAX_LENGTH = 50
+
+def email_domain_allowed(email):
+    return email.rsplit("@", 1)[-1].lower() in ALLOWED_EMAIL_DOMAINS
+
 class CustomUserCreationForm(AdminUserCreationForm):
+    error_messages = {
+        **AdminUserCreationForm.error_messages,
+        "password_mismatch": _("The passwords don't match. Type the same password in both fields."),
+    }
+
     def __init__(self, *args, **kwargs):
         super(AdminUserCreationForm, self).__init__(*args, **kwargs)
+
+    def validate_password_for_user(self, user, **kwargs):
+        # What is wrong with the password is shown under the password field,
+        # not under "confirm password" as Django does
+        kwargs["password_field_name"] = "password1"
+        super().validate_password_for_user(user, **kwargs)
 
     email = forms.EmailField(
         max_length=254,
         help_text=_('Required. Enter a valid email address.'),
+        error_messages={
+            "required": _("Enter your LUT or LAB email address."),
+            "invalid": _("Enter a valid email address, e.g. firstname.lastname@lut.fi."),
+        },
         widget=forms.EmailInput(attrs={
             'class': 'input validator w-full',
             'placeholder': _("Email Address *"),
             'autocomplete': 'email',
-            'pattern': '.*@(lab|lut)\.fi',
+            'pattern': EMAIL_PATTERN,
+            'title': _("Your LUT or LAB email address, ending in @lut.fi or @lab.fi"),
         })
     )
 
@@ -31,21 +60,31 @@ class CustomUserCreationForm(AdminUserCreationForm):
     )
 
     first_name = forms.CharField(
-        max_length=50,
+        max_length=NAME_MAX_LENGTH,
+        error_messages={
+            "required": _("Enter your first name."),
+            "max_length": _("Your first name can be at most %(limit_value)s characters."),
+        },
         widget=forms.TextInput(
             attrs={
                 'class': 'input validator col-span-3 w-full',
                 'placeholder': _("First Name *"),
+                'autocomplete': 'given-name',
             }
         )
     )
 
     last_name = forms.CharField(
-        max_length=50,
+        max_length=NAME_MAX_LENGTH,
+        error_messages={
+            "required": _("Enter your last name."),
+            "max_length": _("Your last name can be at most %(limit_value)s characters."),
+        },
         widget=forms.TextInput(
             attrs={
                 'class': 'input validator col-span-3 w-full',
                 'placeholder': _("Last Name *"),
+                'autocomplete': 'family-name',
             }
         )
     )
@@ -65,29 +104,29 @@ class CustomUserCreationForm(AdminUserCreationForm):
     )
 
     password1 = forms.CharField(
-        widget=forms.TextInput(
+        strip=False,
+        error_messages={"required": _("Choose a password.")},
+        widget=forms.PasswordInput(
             attrs={
                 'class': 'input validator col-span-3 w-full',
                 'placeholder': _("Password *"),
                 'autocomplete': 'new-password',
-                'type': 'password',
-                'minlength': 8,
-                'pattern': '(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}',
-                'title': _('Must be more than 8 characters, including number, lowercase letter, uppercase letter'),
+                'minlength': PASSWORD_MIN_LENGTH,
+                'pattern': PASSWORD_PATTERN,
+                'title': _("At least 8 characters, including a number, a lower case letter and an upper case letter"),
             }
         )
     )
 
     password2 = forms.CharField(
-        widget=forms.TextInput(
+        strip=False,
+        error_messages={"required": _("Type your password again to confirm it.")},
+        widget=forms.PasswordInput(
             attrs={
                 'class': 'input validator col-span-3 w-full',
                 'placeholder': _("Confirm Password *"),
                 'autocomplete': 'new-password',
-                'type': 'password',
-                'minlength': 8,
-                'pattern': '(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}',
-                'title': _('Must be more than 8 characters, including number, lowercase letter, uppercase letter *'),
+                'title': _("The same password again"),
             }
         )
     )
@@ -131,7 +170,12 @@ class SignUpForm(CustomUserCreationForm):
     unconfirmed_user = None
 
     def clean_email(self):
-        email = self.cleaned_data["email"]
+        # Saved in lower case: addresses are not case-sensitive in practice
+        email = self.cleaned_data["email"].strip().lower()
+        if not email_domain_allowed(email):
+            raise forms.ValidationError(
+                _("Use your LUT or LAB email address (ending in @lut.fi or @lab.fi)."), code="domain",
+            )
         existing = User.objects.filter(email__iexact=email).first()
         if existing and existing.email_confirmed_at is None:
             self.unconfirmed_user = existing
@@ -140,7 +184,10 @@ class SignUpForm(CustomUserCreationForm):
                 code="unconfirmed",
             )
         if existing:
-            raise forms.ValidationError(_("An account with this email address already exists."), code="unique")
+            raise forms.ValidationError(
+                _("An account with this email address already exists. Log in, or reset your password if you have forgotten it."),
+                code="unique",
+            )
         return email
 
 class CustomUserChangeForm(UserChangeForm):
@@ -287,9 +334,6 @@ class DeleteAccountForm(forms.Form):
         return password
 
 
-# Only LUT and LAB addresses can be used (as on the sign up page)
-ALLOWED_EMAIL_DOMAINS = ("lut.fi", "lab.fi")
-
 class EmailChangeForm(forms.Form):
     """Asks to change the account's email address (accounts/email_change.py)."""
     new_email = forms.EmailField(max_length=254)
@@ -302,7 +346,7 @@ class EmailChangeForm(forms.Form):
     def clean_new_email(self):
         # Saved in lower case: addresses are not case-sensitive in practice
         email = self.cleaned_data["new_email"].strip().lower()
-        if email.rsplit("@", 1)[-1] not in ALLOWED_EMAIL_DOMAINS:
+        if not email_domain_allowed(email):
             raise forms.ValidationError(_("Use your LUT or LAB email address (ending in @lut.fi or @lab.fi)."), code="domain")
         if email == self.user.email.lower():
             raise forms.ValidationError(_("This is already your email address."), code="same")

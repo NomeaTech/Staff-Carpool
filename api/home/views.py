@@ -281,7 +281,8 @@ def search_rides(form_clean):
     # Distance terms that are added together to order the results
     direct_distances = []
     route_distances = []
-    rides = Ride.objects.select_related("driver")
+    # Rides that have already left (Ride.objects.upcoming) are not shown
+    rides = Ride.objects.upcoming().select_related("driver")
 
     if start_json:
         sl = start_json["location"]
