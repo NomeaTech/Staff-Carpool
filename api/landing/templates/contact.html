@@ -37,6 +37,8 @@
             {% for error in form.message.errors %}<p class="text-error text-sm">{{ error }}</p>{% endfor %}
         </fieldset>
         {{ form.turnstile }}
+        {# Cloudflare's widget is 300 px wide; on the narrowest phones use its compact size #}
+        <script>if (matchMedia("(max-width: 359px)").matches) document.getElementById("id_turnstile").dataset.size = "compact";</script>
         {% for error in form.turnstile.errors %}
         <div role="alert" class="alert alert-error alert-soft w-full"><span>{{ error }}</span></div>
         {% endfor %}

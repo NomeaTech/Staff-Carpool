@@ -10,14 +10,11 @@
 
 {% block content %}
 
-<section class="place-content-center">
-    <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-150 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
-        <div class="card-body">
-            <h2 class="flex text-center card-title">
-                {% trans "You are offline" %}
-            </h2>
-        </div>
-      </div>
-</section>
+<div class="card bg-base-100 shadow-sm">
+    <div class="card-body items-center text-center">
+        <h2 class="card-title">{% trans "You are offline" %}</h2>
+        <p class="text-base-content/70">{% trans "Check your internet connection and try again." %}</p>
+    </div>
+</div>
 
 {% endblock %}
