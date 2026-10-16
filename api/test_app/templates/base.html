@@ -34,9 +34,14 @@
         }
     </script>
     <!-- <h1><a href="/">Campus Ride</a></h1> -->
+    {% comment %}
+      Phones: the card starts near the top, with room around it for its
+      shadow. Larger screens: centred, without pushing the top of a card
+      taller than the screen out of reach (my-auto rather than items-center).
+    {% endcomment %}
     <div class="container mx-auto">
-        <section class="flex items-center justify-center h-screen">    
-            <main>
+        <section class="flex justify-center min-h-screen px-4 py-6 sm:py-12">
+            <main class="w-full max-w-96 sm:my-auto">
     {% endcache %}
                 {% block content %}
                 {% endblock %}

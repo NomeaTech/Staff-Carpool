@@ -270,8 +270,11 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Turbo's loading bar, shown when a page takes more than 100 ms */
+/* Turbo's loading bar, shown when a page takes more than 100 ms. Below the
+   iPhone's status bar (viewport-fit=cover, see app.html), where iOS blurs
+   the page and the bar would be hard to see. */
 .turbo-progress-bar {
+  top: env(safe-area-inset-top, 0px) !important;
   height: 3px;
   background-color: var(--color-primary);
 }

@@ -24,7 +24,7 @@
     });
 </script>
 
-<section class="flex flex-col w-full pt-5 lg:pt-20 h-screen overflow-scroll scrollbar-hide">
+<section class="flex flex-col w-full pt-[calc(1.25rem+env(safe-area-inset-top))] lg:pt-20 h-screen overflow-scroll scrollbar-hide">
     <form id="search-form" class="flex z-2 justify-center mx-2" action="/app/search/" method="post">
         {% csrf_token %}
         

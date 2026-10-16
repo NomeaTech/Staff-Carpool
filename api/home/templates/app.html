@@ -9,9 +9,9 @@
     {% progressive_web_app_meta %}
     {% include "_favicons.html" %}
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta meta name="viewport" content= "width=device-width, user-scalable=no" />
+    {# viewport-fit=cover: the app draws under the iPhone's status bar and home indicator; the env(safe-area-inset-*) paddings keep content clear of them #}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <script src="{% static "js/funcs.js" %}?v={{ STATIC_VERSION }}"></script>
     {% tailwind_css %}
@@ -51,7 +51,8 @@
       <div class="drawer-side">
         <label for="my-drawer-5" aria-label="close sidebar" class="drawer-overlay"></label>
         
-        <div class="flex place-content-between menu bg-base-200 min-h-full w-80 p-4">
+        {# Reaches the top of the screen, behind the status bar; its contents start below it #}
+        <div class="flex place-content-between menu bg-base-200 min-h-full w-80 p-4 pt-[calc(1rem+env(safe-area-inset-top))] pb-[calc(1rem+env(safe-area-inset-bottom))]">
           <!-- Sidebar content here -->
           
           <div>
@@ -128,7 +129,7 @@
       </div>
     </div>
     {% with page=request.resolver_match.url_name %}
-    <div class="z-5 hidden navbar fixed bg-base-100 border-b border-base-300 lg:flex px-6">
+    <div class="z-5 hidden navbar fixed bg-base-100 border-b border-base-300 lg:flex px-6 pt-[env(safe-area-inset-top)]">
         <div class="navbar-start">
           <a href="{% url 'home' %}" class="btn btn-ghost text-xl px-2">
             {% include "_logo.html" with width="40px" %}
@@ -168,7 +169,7 @@
 
 <!-- dock for mobile view, navbar for desktop view -->
     {# Taller than daisyUI's dock, with room under each label for the current page's bar (dock-active), which would otherwise cross the label #}
-    <div class="dock lg:hidden pb-3 border-t border-base-300 z-5 h-[calc(4.75rem+env(safe-area-inset-bottom))] *:mb-0! *:pb-2.5">
+    <div class="dock lg:hidden border-t border-base-300 z-5 pb-[max(0.75rem,env(safe-area-inset-bottom))] h-[calc(4rem+max(0.75rem,env(safe-area-inset-bottom)))] *:mb-0! *:pb-2.5">
         <a href="{% url 'home' %}" class="{% if page == 'home' %}dock-active text-primary{% endif %}">
           {% include "_icon.html" with name="home" class="size-6" %}
           <span class="dock-label">{% trans "Home" %}</span>
@@ -196,7 +197,7 @@
     {% endwith %}
 
     {% if messages %}
-    <div class="toast toast-top toast-center z-50 mt-2 lg:mt-16" id="messages">
+    <div class="toast toast-top toast-center z-50 mt-[calc(0.5rem+env(safe-area-inset-top))] lg:mt-16" id="messages">
       {% for message in messages %}
       <div role="alert" class="alert {% if message.tags == 'error' %}alert-error{% elif message.tags == 'success' %}alert-success{% else %}alert-info{% endif %} shadow-md">
         <span>{{ message }}</span>
@@ -205,7 +206,10 @@
     </div>
     <script>setTimeout(() => document.getElementById("messages")?.remove(), 6000);</script>
     {% endif %}
-    <div class="toast toast-end toast-bottom z-50 mb-20 lg:mb-2" id="notification-toasts" aria-live="polite"></div>
+    {# Above the dock, which is 4rem + the home indicator's space tall #}
+    <div class="toast toast-end toast-bottom z-50 mb-[calc(4.5rem+max(0.75rem,env(safe-area-inset-bottom)))] lg:mb-2" id="notification-toasts" aria-live="polite"></div>
+    {# Behind the iPhone's status bar (viewport-fit=cover), so that pages scroll under it as in apps #}
+    <div class="fixed inset-x-0 top-0 z-4 h-[env(safe-area-inset-top)] bg-base-200 lg:hidden" aria-hidden="true"></div>
     {% if push_public_key %}
     {# Push notifications on this device (static/js/push.js, notifications/push.py) #}
     <div hidden id="push-config" data-public-key="{{ push_public_key }}" data-csrf="{{ csrf_token }}"
