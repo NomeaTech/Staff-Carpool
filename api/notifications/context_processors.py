@@ -23,3 +23,8 @@ def notifications(request):
         "unread_notification_count": unread_notification_count,
         "push_public_key": push.enabled() and settings.VAPID_PUBLIC_KEY,
     }
+
+
+def static_version(request):
+    """STATIC_VERSION, for the ?v= of the app's script URLs (see settings)."""
+    return {"STATIC_VERSION": settings.STATIC_VERSION}

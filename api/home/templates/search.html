@@ -5,6 +5,8 @@
 {% load static %}
 
 {% block title %}{% trans "Find a ride" %} | LUT Kyyti{% endblock %}
+{# Google Maps inputs don't work in a copy of the page: going back reloads it, and it shows the last search again from the browser history #}
+{% block head %}<meta name="turbo-cache-control" content="no-cache">{% endblock %}
 {% block content %}
 {{ campuses|json_script:"campus-data" }}
 
@@ -15,7 +17,7 @@
     
     // Resolves once the From and To inputs have been created
     window.searchFormReady = new Promise((resolve) => {
-        window.addEventListener("load", () => resolve(Promise.all([
+        onPageReady(() => resolve(Promise.all([
             autocomplete_init("div-autocomplete-start", "start", "From", "{% trans "Select a start location from the list" %}", true),
             destination_init("div-autocomplete-destination", "campus-data", "To", "{% trans "Other destination" %}", "{% trans "Select a destination from the list" %}", true),
         ])));

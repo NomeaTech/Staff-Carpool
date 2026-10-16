@@ -256,3 +256,22 @@
   * the scope of this path.
   */
 @source "../../../**/*.{html,py,js}";
+
+/* No view transitions (cross-fades) between pages: in Firefox they made the
+   new page appear about 220 ms later (measured with Turbo), which loses the
+   point of changing pages without reloading them. */
+
+/* A tap shows at once: links and buttons dim while pressed. (:where keeps
+   it weaker than any class, so components can style it their own way.) */
+:where(a[href], button, [role="button"], label[for]):active {
+  opacity: 0.7;
+}
+:where(a[href], button, [role="button"], label[for]) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Turbo's loading bar, shown when a page takes more than 100 ms */
+.turbo-progress-bar {
+  height: 3px;
+  background-color: var(--color-primary);
+}

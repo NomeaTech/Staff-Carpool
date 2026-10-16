@@ -1,4 +1,5 @@
 import json
+import uuid
 
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -68,7 +69,15 @@ def open_notification(request, notification_id):
 @login_required
 @require_POST
 def mark_all_read(request):
-    unread(request.user).update(read_at=timezone.now())
+    """Marks all notifications read, or only those about the ride in ?ride= / POST ride."""
+    notifications = unread(request.user)
+    ride = request.POST.get("ride")
+    if ride:
+        try:
+            notifications = notifications.filter(ride=uuid.UUID(ride))
+        except ValueError:
+            return JsonResponse({"error": "Not a ride"}, status=400)
+    notifications.update(read_at=timezone.now())
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         return JsonResponse({"unread": 0})
     return redirect(request.POST.get("next") or "notifications")

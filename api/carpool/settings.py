@@ -132,6 +132,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'notifications.context_processors.notifications',
+                'notifications.context_processors.static_version',
             ],
         },
     },
@@ -221,6 +222,20 @@ LOCALE_PATHS = [
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Added to the URLs of the app's scripts (?v=...), so that a new release has
+# new URLs: the service worker keeps static files (static/js/serviceworker.js),
+# and with DEBUG on, they keep their names when they change. It is the
+# version bump-my-version keeps in pyproject.toml (git ship bumps it).
+def _app_version():
+    import tomllib
+    try:
+        with open(BASE_DIR / "pyproject.toml", "rb") as file:
+            return tomllib.load(file)["tool"]["bumpversion"]["current_version"]
+    except (OSError, KeyError, tomllib.TOMLDecodeError):
+        return "0"
+
+STATIC_VERSION = _app_version()
 STATIC_ROOT = os.getenv("STATIC_ROOT")
 
 # collectstatic adds a hash of each file's contents to its name (funcs.js ->

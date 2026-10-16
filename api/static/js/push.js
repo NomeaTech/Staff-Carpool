@@ -7,11 +7,12 @@
 //
 // On every page, the subscription is sent again once per visit while push
 // is on, as browsers can renew subscriptions by themselves.
+//
+// Loaded once from <head>; each page is set up on "turbo:load"
+// (static/js/turbo-setup.js). The page's #push-config, present when push
+// notifications are on, has the server's public key and addresses.
 (function () {
-    const config = document.getElementById("push-config");
-    if (!config) {
-        return;
-    }
+    let config = null;
     const supported = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
     const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     const installed = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
@@ -107,8 +108,7 @@
     }
 
     // The switch on the profile page
-    const panel = document.getElementById("push-settings");
-    if (panel) {
+    function setUpSwitch(panel) {
         const status = panel.querySelector("[data-push-status]");
         const button = panel.querySelector("[data-push-toggle]");
 
@@ -164,6 +164,24 @@
         render();
     }
 
-    sync().catch(() => {});
+    // Sets up the page being shown
+    function setUpPage() {
+        config = document.getElementById("push-config");
+        if (!config) {
+            return;
+        }
+        const panel = document.getElementById("push-settings");
+        if (panel) {
+            setUpSwitch(panel);
+        }
+        sync().catch(() => {});
+    }
+
+    // "turbo:load" comes for the first page too; without Turbo, set up once
+    if (window.Turbo) {
+        document.addEventListener("turbo:load", setUpPage);
+    } else {
+        document.addEventListener("DOMContentLoaded", setUpPage);
+    }
     window.kyytiPush = { enable, disable };
 })();

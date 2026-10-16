@@ -4,6 +4,7 @@ from io import StringIO
 from unittest.mock import patch
 
 from cryptography.hazmat.primitives import serialization
+from django.conf import settings
 from django.core.management import call_command
 from py_vapid import Vapid01
 from py_vapid.utils import b64urlencode
@@ -305,3 +306,59 @@ class PushKeyCommandTests(TestCase):
         vapid = Vapid01.from_string(lines["VAPID_PRIVATE_KEY"])
         public = vapid.public_key.public_bytes(serialization.Encoding.X962, serialization.PublicFormat.UncompressedPoint)
         self.assertEqual(b64urlencode(public), lines["VAPID_PUBLIC_KEY"])
+
+
+class FasterPagesTests(TestCase):
+    """Turbo Drive and what pages need for it (static/js/turbo-setup.js)."""
+
+    def setUp(self):
+        self.user = make_user("Aino", "Mäkinen")
+        self.client.force_login(self.user)
+        self.ride = make_ride(self.user)
+
+    def test_layout_loads_turbo_and_no_jquery(self):
+        page = self.client.get(reverse("home")).content.decode()
+        self.assertIn("turbo-8.0.23.umd.min.js", page)
+        self.assertIn('<meta name="turbo-root" content="/app">', page)
+        self.assertIn(f"turbo-setup.js?v={settings.STATIC_VERSION}", page)
+        self.assertNotIn("jquery", page.lower())
+        self.assertNotIn("js.cookie", page)
+        # Loaded once from <head>, not again with every page shown
+        body = page[page.index("<body"):]
+        self.assertNotIn("notifications.js", body)
+        self.assertNotIn("push.js", body)
+
+    def test_pages_with_widgets_are_not_kept_for_going_back(self):
+        for url in (reverse("search"), reverse("add"), reverse("edit_ride", args=[self.ride.pk]), reverse("account")):
+            with self.subTest(url=url):
+                self.assertContains(self.client.get(url), '<meta name="turbo-cache-control" content="no-cache">')
+        self.assertNotContains(self.client.get(reverse("home")), "turbo-cache-control")
+
+    def test_a_ride_loaded_early_marks_its_notifications_read_when_shown(self):
+        notification = Notification.objects.create(recipient=self.user, kind=Kind.RIDE_UPDATED, ride=self.ride, data={"name": "X"})
+        url = reverse("ride_detail", args=[self.ride.pk])
+
+        # Loaded early (a link hovered or touched): not read yet
+        response = self.client.get(url, HTTP_X_SEC_PURPOSE="prefetch")
+        notification.refresh_from_db()
+        self.assertFalse(notification.is_read)
+        self.assertContains(response, f'data.append("ride", "{self.ride.pk}")')
+
+        # The page, once shown, marks them read
+        self.client.post(reverse("notifications_mark_all_read"), {"ride": str(self.ride.pk)}, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        notification.refresh_from_db()
+        self.assertTrue(notification.is_read)
+
+    def test_marking_one_rides_notifications_read(self):
+        other_ride = make_ride(self.user)
+        mine = Notification.objects.create(recipient=self.user, kind=Kind.RIDE_UPDATED, ride=self.ride, data={})
+        other = Notification.objects.create(recipient=self.user, kind=Kind.RIDE_UPDATED, ride=other_ride, data={})
+        self.client.post(reverse("notifications_mark_all_read"), {"ride": str(self.ride.pk)}, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        mine.refresh_from_db(); other.refresh_from_db()
+        self.assertTrue(mine.is_read)
+        self.assertFalse(other.is_read)
+        self.assertEqual(self.client.post(reverse("notifications_mark_all_read"), {"ride": "nope"}).status_code, 400)
+
+    def test_notification_links_are_not_loaded_early(self):
+        Notification.objects.create(recipient=self.user, kind=Kind.RIDE_UPDATED, ride=self.ride, data={"name": "X"})
+        self.assertContains(self.client.get(reverse("notifications")), 'data-turbo-prefetch="false"')
