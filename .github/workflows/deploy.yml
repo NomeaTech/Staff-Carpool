@@ -30,8 +30,10 @@ jobs:
           cd ${{ secrets.PROJECT_PATH }}
 
           # Every file must be writable by the deploy user, or git and npm
-          # fail with "insufficient permission" / EACCES.
-          not_owned=$(find . ! -user "$(id -un)" -print -quit)
+          # fail with "insufficient permission" / EACCES. Python's __pycache__
+          # folders are left out: git ignores them, and they are made by
+          # whoever runs a command (e.g. "sudo python manage.py ...").
+          not_owned=$(find . -name __pycache__ -prune -o ! -user "$(id -un)" -print -quit)
           if [ -n "$not_owned" ]; then
             echo "::error::Files in the project are not owned by $(id -un) (e.g. $not_owned). Run once on the server: sudo chown -R $(id -un): ${{ secrets.PROJECT_PATH }}"
             exit 1
