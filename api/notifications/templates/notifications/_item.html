@@ -2,7 +2,7 @@
   One notification: opening it marks it read and goes to its ride.
 {% endcomment %}
 <li>
-  <a href="{% url 'open_notification' notification.pk %}" class="flex items-start gap-3 rounded-field p-2.5 hover:bg-base-200 {% if not notification.is_read %}bg-primary/5{% endif %}">
+  <a href="{% url 'open_notification' notification.pk %}" data-turbo-prefetch="false" class="flex items-start gap-3 rounded-field p-2.5 hover:bg-base-200 {% if not notification.is_read %}bg-primary/5{% endif %}">
     <span class="grid place-items-center size-9 rounded-full shrink-0 {{ notification.icon_class }}">{% include "_icon.html" with name=notification.icon class="size-5" %}</span>
     <span class="min-w-0 grow">
       <span class="flex items-center gap-2">

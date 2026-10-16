@@ -279,6 +279,19 @@
   </div>
 </section>
 
+{% if mark_read_when_shown %}
+{# This page was loaded early (turbo-setup.js) and is now shown: its notifications are seen (see ride_detail) #}
+<script>
+  (function () {
+    const data = new FormData();
+    data.append("ride", "{{ ride.id }}");
+    fetch("{% url 'notifications_mark_all_read' %}", {
+      method: "POST", body: data,
+      headers: { "X-CSRFToken": "{{ csrf_token }}", "X-Requested-With": "XMLHttpRequest" },
+    }).then(() => window.kyytiNotifications?.poll());
+  })();
+</script>
+{% endif %}
 <script>
   document.querySelectorAll("form[data-confirm]").forEach((form) => {
     form.addEventListener("submit", (event) => { if (!confirm(form.dataset.confirm)) event.preventDefault(); });

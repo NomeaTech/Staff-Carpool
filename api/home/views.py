@@ -96,8 +96,14 @@ def ride_detail(request, ride_id):
     user = request.user
     is_driver = ride.driver_id == user.id
 
-    # Seeing the ride is seeing what its notifications were about
-    Notification.objects.filter(recipient=user, ride=ride, read_at__isnull=True).update(read_at=timezone.now())
+    # Seeing the ride is seeing what its notifications were about. A page
+    # loaded early by Turbo (when a link is hovered or touched) may never be
+    # seen: it marks them read itself once shown (ride_detail.html).
+    unread = Notification.objects.filter(recipient=user, ride=ride, read_at__isnull=True)
+    loaded_early = request.headers.get("X-Sec-Purpose") == "prefetch"
+    mark_read_when_shown = loaded_early and unread.exists()
+    if not loaded_early:
+        unread.update(read_at=timezone.now())
 
     context = {
         "ride": ride,
@@ -107,6 +113,7 @@ def ride_detail(request, ride_id):
         "is_upcoming": Ride.objects.upcoming().filter(pk=ride.pk).exists(),
         "vias": ride.via_points.all(),
         "share_url": request.build_absolute_uri(reverse("ride_detail", args=[ride.pk])),
+        "mark_read_when_shown": mark_read_when_shown,
     }
 
     if is_driver:

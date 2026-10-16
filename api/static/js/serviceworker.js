@@ -32,9 +32,13 @@ self.addEventListener("install", event => {
     )
 });
 
-// Clear cache on activate
+// Static files the app has loaded: CSS, scripts, fonts, images
+var RUNTIME_CACHE = "kyyti-static-v1";
+
+// Clear cache on activate, and start loading pages while the service worker
+// starts up (navigation preload)
 self.addEventListener('activate', event => {
-    event.waitUntil(
+    event.waitUntil(Promise.all([
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames
@@ -42,22 +46,68 @@ self.addEventListener('activate', event => {
                     .filter(cacheName => (cacheName !== staticCacheName))
                     .map(cacheName => caches.delete(cacheName))
             );
-        })
-    );
+        }),
+        self.registration.navigationPreload ? self.registration.navigationPreload.enable() : null,
+        self.clients.claim(),
+    ]));
 });
 
-// Serve from Cache
+// - Pages are always loaded from the network, so their data is up to date
+//   (the offline page when there is no connection).
+// - Static files are shown at once from the device and refreshed in the
+//   background. The app's scripts have the release in their URLs (?v=,
+//   see STATIC_VERSION in settings), so a new release loads them anew.
+// - Anything else (fetches, form posts) goes to the network as it is.
 self.addEventListener("fetch", event => {
-    event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                return response || fetch(event.request);
-            })
-            .catch(() => {
-                return caches.match('/offline/');
-            })
-    )
+    const request = event.request;
+    const url = new URL(request.url);
+    if (request.method !== "GET") {
+        return;
+    }
+    if (request.mode === "navigate") {
+        event.respondWith((async () => {
+            try {
+                return (await event.preloadResponse) || await fetch(request);
+            } catch {
+                return (await caches.match("/offline/")) || Response.error();
+            }
+        })());
+        return;
+    }
+    if (url.origin === self.location.origin && url.pathname.startsWith("/static/")) {
+        event.respondWith(staleWhileRevalidate(event));
+    }
 });
+
+async function staleWhileRevalidate(event) {
+    const request = event.request;
+    const cache = await caches.open(RUNTIME_CACHE);
+    const cached = await caches.match(request);
+    const refresh = fetch(request).then(async response => {
+        if (response.ok && response.type === "basic") {
+            await cache.put(request, response.clone());
+            await forgetOtherVersions(cache, request.url);
+        }
+        return response;
+    });
+    if (cached) {
+        // Refreshed after the response, without holding it up
+        event.waitUntil(refresh.catch(() => {}));
+        return cached;
+    }
+    return refresh;
+}
+
+// Removes the copies of the same file with another ?v= (an older release)
+async function forgetOtherVersions(cache, url) {
+    const kept = new URL(url);
+    for (const request of await cache.keys()) {
+        const other = new URL(request.url);
+        if (other.pathname === kept.pathname && other.search !== kept.search) {
+            await cache.delete(request);
+        }
+    }
+}
 // Push notifications (notifications/push.py). The payload is a notification
 // (Notification.as_payload) with its icon. It is always shown, even while
 // the app is open (Safari stops push notifications for sites that receive

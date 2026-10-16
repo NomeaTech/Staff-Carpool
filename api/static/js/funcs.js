@@ -1,6 +1,18 @@
+// Runs fn once the page's elements are there: at once on pages shown by
+// Turbo (static/js/turbo-setup.js), after the page is parsed on others.
+// For page scripts, instead of window "load" or "DOMContentLoaded", which
+// only come for the first page.
+function onPageReady(fn) {
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", fn, { once: true });
+    } else {
+        fn();
+    }
+}
+
 // initial_place: a place (as in via_json) to start with, e.g. when editing a ride
 function viaAdd(initial_place = null) {
-    count = $("#div-via").children().length;
+    count = document.getElementById("div-via").children.length;
     if (count > 7) {
         return
     }
@@ -23,7 +35,7 @@ function viaAdd(initial_place = null) {
         initial_place && typeof initial_place === "object" ? initial_place : null);
 
     if (count >= 7) {
-        $("#add_via").prop("disabled", true);
+        document.getElementById("add_via").disabled = true;
     }
 }
 
@@ -37,9 +49,8 @@ function viaRemove(element) {
         collectorDiv.setAttribute("hidden", "");
     }
 
-    count = $("#div-via").length
-    if (count < 8) {
-        $("#add_via").prop("disabled", false);
+    if (document.getElementById("div-via").children.length < 8) {
+        document.getElementById("add_via").disabled = false;
     }
 }
 
@@ -129,29 +140,26 @@ function updateMinDateTime(value) {
     returning_at.min = value;
 }
 
-// $(function(){
-//     $('.options').change(function(){
-//         console.log(this);
-//         var requiredCheckboxes = $('.options :checkbox[required]');
-//         requiredCheckboxes.change(function(){
-//             if(this.is(':checked')) {
-//                 requiredCheckboxes.removeAttr('required');
-//             } else {
-//                 requiredCheckboxes.attr('required', 'required');
-//             }
-//         });
-//     });
-// });
+// The add ride page's transport options: one of them must be chosen, so they
+// are all required until one is
+function updateTransportRequired() {
+    const options = document.querySelectorAll(".options");
+    const chosen = [...options].some((option) => option.checked);
+    for (const option of options) {
+        option.required = !chosen;
+    }
+}
 
-$(function(){
-    var requiredCheckboxes = $('.options');
-    requiredCheckboxes.change(function(){
-        if(requiredCheckboxes.is(':checked')) {
-            requiredCheckboxes.removeAttr('required');
-        } else {
-            requiredCheckboxes.attr('required', '');
-        }
-    });
+// Listened for on the document rather than on the elements, so that they
+// also work on pages shown by Turbo (which replaces the page's elements)
+document.addEventListener("change", (event) => {
+    if (event.target.matches(".options")) {
+        updateTransportRequired();
+    }
+    // Choosing a language in the side menu switches to it
+    if (event.target.id === "id_language") {
+        event.target.form.submit();
+    }
 });
 
 function enableMaxPassengerField(checkbox) {
@@ -168,11 +176,7 @@ function enableMaxPassengerField(checkbox) {
     }
 }
 
-$(function() {
-    $('#id_language').on('change', function() {
-        $("#id_lang_form").submit();
-    });
-});
+
 
 function debounce(func, delay) {
     let timer;

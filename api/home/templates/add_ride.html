@@ -4,6 +4,8 @@
 {% load i18n %}
 
 {% block title %}{% if editing %}{% trans "Edit ride" %}{% else %}{% trans "Post a ride" %}{% endif %} | LUT Kyyti{% endblock %}
+{# The Google Maps inputs do not work in a copy of the page, so going back reloads it #}
+{% block head %}<meta name="turbo-cache-control" content="no-cache">{% endblock %}
 {% block content %}
 {{ campuses|json_script:"campus-data" }}
 {# The places the location pickers start with: the ride's when editing, the posted ones after a failed post #}
@@ -19,7 +21,7 @@
 <div class="content-center w-full h-screen lg:pt-20 pt-5 pb-20 overflow-scroll scrollbar-hide">
     <script>
         // Set form to same state after reload
-        window.onload = function() {
+        onPageReady(function() {
             recurranceRadio = document.getElementsByClassName("recurrance");
             returnRadio = document.getElementsByClassName("return");
             for (var i = 0; i < 2; i++) {
@@ -35,7 +37,7 @@
             enableMaxPassengerField(document.getElementById("id_offer"));
             enableOtherField(document.getElementById("id_other"));
             // At least one option must be chosen (see funcs.js)
-            $(".options").first().trigger("change");
+            updateTransportRequired();
 
             const places = JSON.parse(document.getElementById("initial-places").textContent) || {};
             for (const via of places.vias || []) {
@@ -43,7 +45,7 @@
             }
             autocomplete_init("div-autocomplete-start", "start", "From", "{% trans "Select a start location" %}", false, places.start);
             destination_init("div-autocomplete-destination", "campus-data", "To", "{% trans "Other destination" %}", "{% trans "Select a destination" %}", false, places.destination);
-        };
+        });
     </script>
 
     <div class="card bg-base-100 w-96 max-w-[calc(100%-1rem)] shadow-sm font-display my-2 mx-auto">

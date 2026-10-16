@@ -10,8 +10,7 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         {% include "_favicons.html" %}
         <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/icons/apple-touch-icon.png' %}">
-        <script src="{% static "js/jquery-4.0.0.js" %}"></script>
-        <script src="{% static "js/funcs.js" %}"></script>
+        <script src="{% static "js/funcs.js" %}?v={{ STATIC_VERSION }}"></script>
         {% tailwind_css %}
     </head>
     <div class="z-5 fixed max-xl:collapse lg:mb-48 bg-base-100 shadow-sm w-full rounded-md xl:flex xl:justify-center">

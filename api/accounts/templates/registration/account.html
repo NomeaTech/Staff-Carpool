@@ -2,6 +2,8 @@
 {% load i18n privacy static widget_tweaks %}
 
 {% block title %}{% trans "Profile & settings" %} | LUT Kyyti{% endblock %}
+{# The photo cropper does not work in a copy of the page, so going back reloads it #}
+{% block head %}<meta name="turbo-cache-control" content="no-cache">{% endblock %}
 
 {% block content %}
 <section class="h-screen w-full overflow-y-auto pt-7 lg:pt-24 pb-28 lg:pb-10">
