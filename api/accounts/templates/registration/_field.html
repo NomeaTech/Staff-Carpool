@@ -1,0 +1,23 @@
+{% load widget_tweaks %}{% comment %}
+  A form field with what is wrong with it underneath:
+  - hint: shown by daisyUI while the browser finds the value invalid
+  - field.errors: the server's errors, after posting (the field is outlined in red)
+{% endcomment %}
+<div class="col-span-3">
+  {% with hint_id=field.auto_id|add:"-hint" errors_id=field.auto_id|add:"-errors" %}
+  {% if field.errors %}
+    {% render_field field class+="input-error" aria-invalid="true" aria-describedby=errors_id %}
+  {% elif hint %}
+    {% render_field field aria-describedby=hint_id %}
+  {% else %}
+    {{ field }}
+  {% endif %}
+  {# The server's errors replace the hint, rather than repeating it #}
+  {% if hint and not field.errors %}<p class="hidden validator-hint ml-3" id="{{ hint_id }}">{{ hint }}</p>{% endif %}
+  {% if field.errors %}
+    <ul class="text-error text-sm ml-3 mt-1" id="{{ errors_id }}">
+      {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+    </ul>
+  {% endif %}
+  {% endwith %}
+</div>

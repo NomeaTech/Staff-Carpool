@@ -3,9 +3,9 @@
 //
 // While the app is open, it asks the server for new notifications every
 // POLL_INTERVAL (and when the tab is shown again), and shows each one as a
-// pop-up. With PWA push notifications, the service worker can hand pushed
-// payloads to window.kyytiNotifications.show() instead (the same payloads,
-// Notification.as_payload), and the polling can stay as a fallback.
+// pop-up. On devices with push notifications on (static/js/push.js), the
+// service worker shows them as system notifications and tells this page, so
+// they are not shown again as pop-ups.
 (function () {
     const root = document.querySelector("[data-notifications]");
     if (!root) {
@@ -17,6 +17,8 @@
     const TOAST_TIME = 8 * 1000;
     // Notifications newer than this have not been shown yet
     let since = root.dataset.since;
+    // Notifications already shown (as pop-ups or push notifications)
+    const shown = new Set();
     let menuStale = true;
 
     function setUnread(count) {
@@ -74,6 +76,10 @@
     // A pop-up for a notification (a payload from Notification.as_payload).
     // Its text is set as text, so names and messages cannot add markup.
     function show(notification) {
+        if (shown.has(notification.id)) {
+            return;
+        }
+        shown.add(notification.id);
         const link = document.createElement("a");
         link.href = notification.url;
         link.className = "alert bg-base-100 border border-base-300 shadow-lg items-start w-80 max-w-[calc(100vw-2rem)] whitespace-normal";
@@ -119,6 +125,18 @@
         }
     }
 
+    // A push notification arrived (static/js/serviceworker.js): the system
+    // has shown it, so only update the bell
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.addEventListener("message", (event) => {
+            if (event.data && event.data.type === "kyyti-notification") {
+                shown.add(event.data.notification.id);
+                menuStale = true;
+                poll();
+            }
+        });
+    }
+
     setInterval(poll, POLL_INTERVAL);
     document.addEventListener("visibilitychange", () => {
         if (!document.hidden) {
@@ -126,6 +144,5 @@
         }
     });
 
-    // For PWA push later: the service worker can pass pushed payloads to show()
     window.kyytiNotifications = { show, poll };
 })();

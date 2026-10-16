@@ -214,6 +214,20 @@ class PageTests(TestCase):
         self.assertEqual(len(response.context["upcoming"]), 1)
         self.assertEqual(len(response.context["past"]), 1)
 
+    def test_search_leaves_out_past_rides(self):
+        self.client.force_login(self.passenger)
+        response = self.client.post(reverse("search"), {})
+        # setUp made one upcoming and one past ride
+        self.assertEqual([ride.pk for ride in response.context["page"]], [self.ride.pk])
+
+        # A return trip whose return is still ahead is still shown
+        returning = make_ride(self.driver, leaving_at_date_time="2000-01-01T08:00", one_way=False,
+                              returning_at_date_time="2099-01-01T16:00")
+        recurring = make_ride(self.driver, one_time=False, monday_check=True, monday_leaving_at_time="07:30",
+                              leaving_at_date_time="")
+        found = {ride.pk for ride in self.client.post(reverse("search"), {}).context["page"]}
+        self.assertEqual(found, {self.ride.pk, returning.pk, recurring.pk})
+
     def test_search_results_use_display_names(self):
         self.client.force_login(self.passenger)
         response = self.client.post(reverse("search"), {})

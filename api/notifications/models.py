@@ -118,3 +118,26 @@ class Notification(models.Model):
             "created_at": self.created_at.isoformat(),
             "read": self.is_read,
         }
+
+
+class PushSubscription(models.Model):
+    """
+    A browser or installed app that receives the user's notifications as
+    push notifications (notifications/push.py). Saved when the user turns
+    them on, on each device separately.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="push_subscriptions")
+    # The push service's address for this browser, and its encryption keys
+    endpoint = models.TextField(unique=True)
+    p256dh = models.CharField(max_length=200)
+    auth = models.CharField(max_length=100)
+    user_agent = models.CharField(max_length=300, blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_used_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user} ({self.user_agent[:40]})"
+
+    def as_subscription_info(self):
+        return {"endpoint": self.endpoint, "keys": {"p256dh": self.p256dh, "auth": self.auth}}

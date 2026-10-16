@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import JsonResponse
@@ -7,7 +9,7 @@ from django.utils.dateparse import parse_datetime
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
-from .models import Notification
+from .models import Notification, PushSubscription
 
 # How many the bell's menu shows
 MENU_SIZE = 8
@@ -70,3 +72,44 @@ def mark_all_read(request):
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         return JsonResponse({"unread": 0})
     return redirect(request.POST.get("next") or "notifications")
+
+
+@login_required
+@require_POST
+def push_subscribe(request):
+    """
+    Saves this device's push subscription (static/js/push.js), as sent by
+    the browser's PushSubscription.toJSON(). A device that was turned on
+    for another account moves to this one.
+    """
+    try:
+        data = json.loads(request.body)
+        endpoint, keys = data["endpoint"], data["keys"]
+        p256dh, auth = keys["p256dh"], keys["auth"]
+    except (ValueError, KeyError, TypeError):
+        return JsonResponse({"error": "Not a push subscription"}, status=400)
+    if not (isinstance(endpoint, str) and endpoint.startswith("https://") and isinstance(p256dh, str) and isinstance(auth, str)):
+        return JsonResponse({"error": "Not a push subscription"}, status=400)
+
+    PushSubscription.objects.update_or_create(
+        endpoint=endpoint,
+        defaults={
+            "user": request.user,
+            "p256dh": p256dh,
+            "auth": auth,
+            "user_agent": request.headers.get("User-Agent", "")[:300],
+        },
+    )
+    return JsonResponse({"subscribed": True})
+
+
+@login_required
+@require_POST
+def push_unsubscribe(request):
+    """Forgets this device's push subscription (static/js/push.js)."""
+    try:
+        endpoint = json.loads(request.body)["endpoint"]
+    except (ValueError, KeyError, TypeError):
+        return JsonResponse({"error": "No endpoint"}, status=400)
+    request.user.push_subscriptions.filter(endpoint=endpoint).delete()
+    return JsonResponse({"subscribed": False})

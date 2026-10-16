@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-12 19:42+0300\n"
+"POT-Creation-Date: 2026-10-16 14:07+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,72 +18,184 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: test_app/models.py:180
-msgid "Mon"
-msgstr ""
-
-#: test_app/models.py:181
-msgid "Tue"
-msgstr ""
-
-#: test_app/models.py:182
-msgid "Wed"
-msgstr ""
-
-#: test_app/models.py:183
-msgid "Thu"
-msgstr ""
-
-#: test_app/models.py:184
-msgid "Fri"
-msgstr ""
-
-#: test_app/models.py:185
-msgid "Sat"
-msgstr ""
-
-#: test_app/models.py:186
-msgid "Sun"
-msgstr ""
-
-#: test_app/models.py:192
-msgid "Everyday"
-msgstr ""
-
-#: test_app/models.py:194
-msgid "Weekdays"
-msgstr ""
-
-#: test_app/models.py:196
-msgid "Weekends"
-msgstr ""
-
-#: test_app/models.py:240
+#: test_app/forms.py:15 test_app/models.py:311
 msgid "Monday"
 msgstr ""
 
-#: test_app/models.py:241
+#: test_app/forms.py:16 test_app/models.py:312
 msgid "Tuesday"
 msgstr ""
 
-#: test_app/models.py:242
+#: test_app/forms.py:17 test_app/models.py:313
 msgid "Wednesday"
 msgstr ""
 
-#: test_app/models.py:243
+#: test_app/forms.py:18 test_app/models.py:314
 msgid "Thursday"
 msgstr ""
 
-#: test_app/models.py:244
+#: test_app/forms.py:19 test_app/models.py:315
 msgid "Friday"
 msgstr ""
 
-#: test_app/models.py:245
+#: test_app/forms.py:20 test_app/models.py:316
 msgid "Saturday"
 msgstr ""
 
-#: test_app/models.py:246
+#: test_app/forms.py:21 test_app/models.py:317
 msgid "Sunday"
+msgstr ""
+
+#: test_app/forms.py:99
+msgid "One-time"
+msgstr ""
+
+#: test_app/forms.py:99 test_app/templates/ride_detail.html:93
+msgid "Recurring"
+msgstr ""
+
+#: test_app/forms.py:101
+msgid "Choose whether the ride is one-time or recurring."
+msgstr ""
+
+#: test_app/forms.py:104
+msgid "One-way"
+msgstr ""
+
+#: test_app/forms.py:104 test_app/templates/ride_detail.html:87
+msgid "Return"
+msgstr ""
+
+#: test_app/forms.py:106
+msgid "Choose whether the ride is one-way or has a return journey."
+msgstr ""
+
+#: test_app/forms.py:143
+msgid "Choose each stop on the way from the list of suggestions."
+msgstr ""
+
+#: test_app/forms.py:147
+#, python-format
+msgid "A ride can have at most %(count)s stops on the way."
+msgstr ""
+
+#: test_app/forms.py:152
+msgid "Choose at least one way of travelling."
+msgstr ""
+
+#: test_app/forms.py:156
+msgid "Describe the other way of travelling."
+msgstr ""
+
+#: test_app/forms.py:165
+msgid "Enter how many passengers you can take."
+msgstr ""
+
+#: test_app/forms.py:168
+#, python-format
+msgid "Enter a number of passengers from 1 to %(max)s."
+msgstr ""
+
+#: test_app/forms.py:173
+#, python-format
+msgid ""
+"%(count)s passengers have already joined. Remove passengers before lowering "
+"the seats below that."
+msgstr ""
+
+#: test_app/forms.py:198
+msgid "Enter the date and time the ride leaves."
+msgstr ""
+
+#: test_app/forms.py:200
+msgid "The ride cannot leave in the past."
+msgstr ""
+
+#: test_app/forms.py:209
+msgid "Enter the date and time of the return journey."
+msgstr ""
+
+#: test_app/forms.py:211
+msgid "The return journey must be after the departure."
+msgstr ""
+
+#: test_app/forms.py:217
+msgid "Choose at least one day for a recurring ride."
+msgstr ""
+
+#: test_app/forms.py:227
+#, python-format
+msgid "Enter the time the ride leaves on %(day)s."
+msgstr ""
+
+#: test_app/forms.py:236
+#, python-format
+msgid "Enter the time of the return journey on %(day)s."
+msgstr ""
+
+#: test_app/forms.py:238
+#, python-format
+msgid "The return journey on %(day)s must be after the departure."
+msgstr ""
+
+#: test_app/forms.py:285
+msgid "Choose a start location from the list."
+msgstr ""
+
+#: test_app/forms.py:286
+msgid "Choose a destination from the list."
+msgstr ""
+
+#: test_app/models.py:162 test_app/models.py:263
+msgid "Everyday"
+msgstr ""
+
+#: test_app/models.py:164 test_app/models.py:265
+msgid "Weekdays"
+msgstr ""
+
+#: test_app/models.py:166 test_app/models.py:267
+msgid "Weekends"
+msgstr ""
+
+#: test_app/models.py:167 test_app/models.py:251
+msgid "Mon"
+msgstr ""
+
+#: test_app/models.py:167 test_app/models.py:252
+msgid "Tue"
+msgstr ""
+
+#: test_app/models.py:167 test_app/models.py:253
+msgid "Wed"
+msgstr ""
+
+#: test_app/models.py:167 test_app/models.py:254
+msgid "Thu"
+msgstr ""
+
+#: test_app/models.py:167 test_app/models.py:255
+msgid "Fri"
+msgstr ""
+
+#: test_app/models.py:167 test_app/models.py:256
+msgid "Sat"
+msgstr ""
+
+#: test_app/models.py:167 test_app/models.py:257
+msgid "Sun"
+msgstr ""
+
+#: test_app/models.py:407
+msgid "Pending"
+msgstr ""
+
+#: test_app/models.py:408
+msgid "Accepted"
+msgstr ""
+
+#: test_app/models.py:409
+msgid "Declined"
 msgstr ""
 
 #: test_app/templates/offline-new.html:9
@@ -94,61 +206,342 @@ msgstr ""
 msgid "You are offline"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:37
-msgid "Delete Trip"
+#: test_app/templates/ride_detail.html:12
+msgid "Back to ride search"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:91
-msgid "Ride Options"
+#: test_app/templates/ride_detail.html:17
+msgid "Ride details"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:138
-msgid "Delete this trip?"
+#: test_app/templates/ride_detail.html:21
+msgid "Past ride"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:25
+#, python-format
+msgid "Recurring · %(days)s"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:26
+msgid "One-way trip"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:26
+msgid "Return trip"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:35
+msgid "Route & departure"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:41
+#: test_app/templates/ride_detail.html:78
+msgid "Departure"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:51
+msgid "Stop on the way · time to be agreed"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:62
+msgid "Destination"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:62
+#, python-format
+msgid "returning %(time)s"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:68
+msgid ""
+"Pickup and drop-off points should be agreed before the trip. Passing near a "
+"place does not guarantee a convenient stop."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:75
+msgid "Trip information"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:82
+msgid "Available seats"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:83
+msgid "Not specified"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:86
+msgid "Trip type"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:87
+msgid "One way"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:92
+msgid "Frequency"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:93
+msgid "One-time trip"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:95
+msgid "Schedule"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:102
+msgid "Return journey"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:105
+msgid "Transport"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:107
+msgid "Posted"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:116
+msgid "Additional information from the poster"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:124
+msgid "Safety & arrangements"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:125
+msgid ""
+"Confirm the meeting point, departure time, and any costs before travelling. "
+"Avoid sharing sensitive personal information publicly."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:126
+msgid "View safety guidance"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:135
+msgid "Ride posted by"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:139
+msgid "you"
 msgstr ""
 
 #: test_app/templates/ride_detail.html:140
-msgid "The trip will be removed for everyone and cannot be restored."
+msgid "Verified LUT/LAB account"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:143
-#, python-format
+#: test_app/templates/ride_detail.html:146
+msgid "Contact details shared with you:"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:149
 msgid ""
-"%(counter)s passenger has joined this trip. Let them know you are cancelling."
-msgid_plural ""
-"%(counter)s passengers have joined this trip. Let them know you are "
-"cancelling."
+"The driver has not shared any contact details. Check the ride's notes for "
+"how to get in touch."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:152
+msgid "Accepted passengers see your name and the contact details you share."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:152
+msgid "Privacy settings"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:154
+msgid "Contact details are shared once the driver accepts your request."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:162
+msgid "Manage your ride"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:164
+msgid "Requests"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:177
+msgid "The ride is full"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:177
+msgid "Accept"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:178
+msgid "Decline"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:182
+msgid "No requests waiting for an answer."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:186
+msgid "Passengers"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:194
+msgid "Remove this passenger from the ride?"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:196
+msgid "Remove"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:202
+msgid "This passenger has not shared any contact details."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:206
+msgid "Nobody has joined yet."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:211
+msgid "Edit ride"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:212
+msgid "Delete ride"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:219
+msgid "Join this ride"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:222
+msgid "This ride has already taken place."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:224
+msgid "All seats on this ride are taken."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:225
+msgid "Ride full"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:228
+#, python-format
+msgid "There is currently %(counter)s seat available."
+msgid_plural "There are currently %(counter)s seats available."
 msgstr[0] ""
 msgstr[1] ""
 
-#: test_app/templates/ride_detail.html:148
-#: test_app/templates/ride_detail.html:158
+#: test_app/templates/ride_detail.html:229
+msgid ""
+"Send a request to the driver. Your seat is confirmed once they accept it."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:234
+msgid "Message to the driver (optional)"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:235
+msgid "Hi, could I join from Kouvola?"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:236
+msgid ""
+"Only the driver sees your message. Don't include sensitive personal "
+"information."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:238
+msgid "Request to join"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:242
+msgid ""
+"Your request is awaiting a response from the driver. You will get an email "
+"when they answer."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:245
+msgid "Withdraw request"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:249
+msgid ""
+"Your request has been accepted. Agree on the meeting point and time with the "
+"driver using the contact details above."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:251
+msgid "Leave this ride? The driver will be notified."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:253
+msgid "Leave ride"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:257
+msgid "The driver declined your request for this ride."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:259
+msgid "Find another ride"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:267
+msgid "Share this ride"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:268
+msgid "Only signed-in LUT Kyyti members can open the link."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:270
+msgid "Link copied"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:271
+msgid "Copy link"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:299
+msgid "Delete this trip?"
+msgstr ""
+
+#: test_app/templates/ride_detail.html:301
+msgid "The trip will be removed for everyone and cannot be restored."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:304
+msgid "Everyone who has joined or requested to join will be notified by email."
+msgstr ""
+
+#: test_app/templates/ride_detail.html:309
+#: test_app/templates/ride_detail.html:319
 msgid "Cancel"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:153
+#: test_app/templates/ride_detail.html:314
 msgid "Delete trip"
 msgstr ""
 
-#: test_app/transport.py:28
+#: test_app/transport.py:31
 msgid "Ride offer"
 msgstr ""
 
-#: test_app/transport.py:36
+#: test_app/transport.py:40
 msgid "Request"
 msgstr ""
 
-#: test_app/transport.py:44
+#: test_app/transport.py:49
 msgid "Train"
 msgstr ""
 
-#: test_app/transport.py:52
+#: test_app/transport.py:58
 msgid "Bus"
 msgstr ""
 
-#: test_app/transport.py:60
+#: test_app/transport.py:67
 msgid "Taxi"
 msgstr ""
 
-#: test_app/transport.py:68
+#: test_app/transport.py:76
 msgid "Other"
 msgstr ""

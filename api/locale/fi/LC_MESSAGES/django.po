@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 21:34+0300\n"
+"POT-Creation-Date: 2026-10-16 14:07+0300\n"
 "PO-Revision-Date: 2026-07-01 16:50+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,10 +19,137 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
-#: carpool/settings.py:206
+#: carpool/settings.py:213
 msgid "English"
 msgstr "Englanti"
 
-#: carpool/settings.py:207
+#: carpool/settings.py:214
 msgid "Finnish"
 msgstr "Suomi"
+
+#: notifications/models.py:15
+msgid "New ride request"
+msgstr ""
+
+#: notifications/models.py:16
+msgid "Ride request withdrawn"
+msgstr ""
+
+#: notifications/models.py:17
+msgid "Passenger left"
+msgstr ""
+
+#: notifications/models.py:19
+msgid "Request accepted"
+msgstr ""
+
+#: notifications/models.py:20
+msgid "Request declined"
+msgstr ""
+
+#: notifications/models.py:21
+msgid "Removed from a ride"
+msgstr ""
+
+#: notifications/models.py:22
+msgid "Ride changed"
+msgstr ""
+
+#: notifications/models.py:23
+msgid "Ride cancelled"
+msgstr ""
+
+#: notifications/models.py:39
+#, python-format
+msgid "%(name)s would like to join your ride %(route)s."
+msgstr ""
+
+#: notifications/models.py:40
+#, python-format
+msgid "%(name)s withdrew their request to join your ride %(route)s."
+msgstr ""
+
+#: notifications/models.py:41
+#, python-format
+msgid "%(name)s left your ride %(route)s. Their seat is free again."
+msgstr ""
+
+#: notifications/models.py:42
+#, python-format
+msgid "%(name)s accepted your request to join %(route)s."
+msgstr ""
+
+#: notifications/models.py:43
+#, python-format
+msgid "%(name)s declined your request to join %(route)s."
+msgstr ""
+
+#: notifications/models.py:44
+#, python-format
+msgid "%(name)s removed you from the ride %(route)s."
+msgstr ""
+
+#: notifications/models.py:45
+#, python-format
+msgid "%(name)s changed the ride %(route)s. Check the new details."
+msgstr ""
+
+#: notifications/models.py:46
+#, python-format
+msgid "%(name)s cancelled the ride %(route)s."
+msgstr ""
+
+#: notifications/templates/notifications/_item.html:10
+msgid "Unread"
+msgstr ""
+
+#: notifications/templates/notifications/_item.html:14
+#, python-format
+msgid "%(time)s ago"
+msgstr ""
+
+#: notifications/templates/notifications/_menu.html:5
+#: notifications/templates/notifications/list.html:4
+#: notifications/templates/notifications/list.html:12
+msgid "Notifications"
+msgstr ""
+
+#: notifications/templates/notifications/_menu.html:9
+#: notifications/templates/notifications/list.html:17
+msgid "Mark all as read"
+msgstr ""
+
+#: notifications/templates/notifications/_menu.html:18
+#: notifications/templates/notifications/list.html:29
+msgid ""
+"No notifications yet. You'll be notified here about your ride requests and "
+"rides."
+msgstr ""
+
+#: notifications/templates/notifications/_menu.html:20
+msgid "See all notifications"
+msgstr ""
+
+#: notifications/templates/notifications/list.html:11
+msgid "Your account"
+msgstr ""
+
+#: notifications/templates/notifications/list.html:36
+msgid "Previous page"
+msgstr ""
+
+#: notifications/templates/notifications/list.html:37
+#, python-format
+msgid "Page %(number)s of %(total)s"
+msgstr ""
+
+#: notifications/templates/notifications/list.html:38
+msgid "Next page"
+msgstr ""
+
+#: notifications/templates/notifications/list.html:43
+#, python-format
+msgid ""
+"Choose which notifications are also emailed to you in your <a "
+"href=\"%(account_url)s#notifications\" class=\"link\">settings</a>."
+msgstr ""
