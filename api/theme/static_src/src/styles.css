@@ -306,3 +306,19 @@
   transform: scale(0.88);
   transition: none;
 }
+
+/* In the installed app (home screen, standalone), links and buttons act like
+   an app's: holding one does not open Safari's link preview or menu, and they
+   cannot be dragged. The app's controls cannot be selected as text either;
+   other text, e.g. a ride's details, still can. In the browser, links keep
+   their usual long-press menu. */
+@media (display-mode: standalone) {
+  :where(a[href], a[href] img, button, [role="button"], label[for], .btn) {
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
+  }
+  :where(.dock, .navbar, .menu, .btn, button, [role="button"]) {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
