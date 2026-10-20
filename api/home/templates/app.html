@@ -14,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <script src="{% static "js/funcs.js" %}?v={{ STATIC_VERSION }}"></script>
-    {% tailwind_css %}
+    {% tailwind_css v=TAILWIND_CSS_VERSION %}
     {% comment %}
       Turbo Drive (static/js/turbo-setup.js): links within /app/ change the
       page without reloading it, and pages are loaded early when a link is

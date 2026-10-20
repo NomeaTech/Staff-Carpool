@@ -280,10 +280,12 @@
 }
 
 /* Mobile dock: a tap shows at once. While pressed, the item gets a soft
-   background and its icon shrinks a little; once tapped, it stays chosen
-   (.dock-pressed, static/js/turbo-setup.js) while its page loads. daisyUI's
-   hover dimming is turned off on touch screens, where hover sticks after a
-   tap. (Outside @layer, so these come before daisyUI's dock styles.) */
+   background and its icon shrinks a little. Once tapped, it shows as the
+   chosen tab while its page loads: static/js/turbo-setup.js sets
+   data-dock-pending on <html> to its position (1-5) until the new page is
+   shown. daisyUI's hover dimming is turned off on touch screens, where hover
+   sticks after a tap. (Outside @layer, so these come before daisyUI's and
+   Tailwind's styles.) */
 @media (hover: none) {
   .dock > *:hover {
     opacity: 1;
@@ -295,18 +297,49 @@
 .dock > * > :first-child {
   transition: transform 0.15s ease-out;
 }
+/* While a tapped tab's page loads, the current page's tab is not chosen... */
+html[data-dock-pending] .dock > .dock-active {
+  color: var(--color-base-content);
+}
+html[data-dock-pending] .dock > .dock-active::after {
+  width: calc(0.25rem * 6);
+  background-color: transparent;
+}
+/* ...and the tapped one is, and stays pressed */
+html[data-dock-pending="1"] .dock > :nth-child(1),
+html[data-dock-pending="2"] .dock > :nth-child(2),
+html[data-dock-pending="3"] .dock > :nth-child(3),
+html[data-dock-pending="4"] .dock > :nth-child(4),
+html[data-dock-pending="5"] .dock > :nth-child(5) {
+  color: var(--color-primary);
+}
+html[data-dock-pending="1"] .dock > :nth-child(1)::after,
+html[data-dock-pending="2"] .dock > :nth-child(2)::after,
+html[data-dock-pending="3"] .dock > :nth-child(3)::after,
+html[data-dock-pending="4"] .dock > :nth-child(4)::after,
+html[data-dock-pending="5"] .dock > :nth-child(5)::after {
+  width: calc(0.25rem * 10);
+  background-color: currentcolor;
+}
 .dock > *:active,
-.dock > .dock-pressed {
+html[data-dock-pending="1"] .dock > :nth-child(1),
+html[data-dock-pending="2"] .dock > :nth-child(2),
+html[data-dock-pending="3"] .dock > :nth-child(3),
+html[data-dock-pending="4"] .dock > :nth-child(4),
+html[data-dock-pending="5"] .dock > :nth-child(5) {
   /* A grey that shows on both themes' backgrounds */
   background-color: rgb(128 128 128 / 0.15);
   transition: none;
 }
 .dock > *:active > :first-child,
-.dock > .dock-pressed > :first-child {
+html[data-dock-pending="1"] .dock > :nth-child(1) > :first-child,
+html[data-dock-pending="2"] .dock > :nth-child(2) > :first-child,
+html[data-dock-pending="3"] .dock > :nth-child(3) > :first-child,
+html[data-dock-pending="4"] .dock > :nth-child(4) > :first-child,
+html[data-dock-pending="5"] .dock > :nth-child(5) > :first-child {
   transform: scale(0.88);
   transition: none;
 }
-
 /* In the installed app (home screen, standalone), links and buttons act like
    an app's: holding one does not open Safari's link preview or menu, and they
    cannot be dragged. The app's controls cannot be selected as text either;

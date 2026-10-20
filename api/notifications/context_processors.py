@@ -1,3 +1,5 @@
+import os
+
 from django.conf import settings
 
 from . import push
@@ -26,5 +28,26 @@ def notifications(request):
 
 
 def static_version(request):
-    """STATIC_VERSION, for the ?v= of the app's script URLs (see settings)."""
-    return {"STATIC_VERSION": settings.STATIC_VERSION}
+    """
+    STATIC_VERSION, for the ?v= of the app's script URLs (see settings), and
+    TAILWIND_CSS_VERSION, for the stylesheet's: when it was last built.
+
+    django-tailwind's own ?v= is the current time with DEBUG on, so each page
+    linked a "new" stylesheet: Turbo then waited to load it before showing
+    the page (and kept adding it to <head>).
+    """
+    return {"STATIC_VERSION": settings.STATIC_VERSION, "TAILWIND_CSS_VERSION": tailwind_css_version()}
+
+
+_tailwind_css_file = None
+
+def tailwind_css_version():
+    global _tailwind_css_file
+    if _tailwind_css_file is None:
+        from django.contrib.staticfiles import finders
+        from tailwind import get_config
+        _tailwind_css_file = finders.find(get_config("TAILWIND_CSS_PATH")) or ""
+    try:
+        return int(os.path.getmtime(_tailwind_css_file))
+    except OSError:
+        return settings.STATIC_VERSION

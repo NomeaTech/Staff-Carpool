@@ -44,32 +44,31 @@
         }, { passive: true, capture: true });
     }
 
-    // The mobile dock: the tapped tab shows as chosen at once (and stays
-    // pressed, .dock-pressed in styles.css) while its page loads, as in apps.
-    // The page's copy for going back keeps the tab it was shown with.
-    let restoreDock = null;
+    // The mobile dock: the tapped tab shows as chosen at once while its page
+    // loads, as in apps. It is marked on <html> (data-dock-pending, see
+    // styles.css) rather than on the dock: Turbo's copies of pages for going
+    // back are of <head> and <body>, so the mark never ends up in one, and
+    // nothing has to be undone before Turbo makes a copy.
+    const root = document.documentElement;
     document.addEventListener("click", (event) => {
         const item = event.target.closest && event.target.closest(".dock > a[href]");
         if (!item || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
             return;
         }
-        const tabs = [...item.parentElement.children];
-        const classes = tabs.map((tab) => tab.className);
-        restoreDock = () => tabs.forEach((tab, i) => { tab.className = classes[i]; });
-        for (const tab of tabs) {
-            tab.classList.remove("dock-active", "text-primary");
-        }
-        item.classList.add("dock-active", "text-primary", "dock-pressed");
+        root.dataset.dockPending = [...item.parentElement.children].indexOf(item) + 1;
     }, true);
-    document.addEventListener("turbo:load", () => {
-        restoreDock = null;
-    });
+    // The new page shows its own tab (also when it is a copy shown first)
+    function clearDockPending() {
+        delete root.dataset.dockPending;
+    }
+    for (const type of ["turbo:render", "turbo:load", "turbo:fetch-request-error"]) {
+        document.addEventListener(type, clearDockPending);
+    }
+    window.addEventListener("pageshow", clearDockPending);
 
     // Before keeping a copy of the page for going back: close what is open
     // and remove messages that should not show again
     document.addEventListener("turbo:before-cache", () => {
-        restoreDock?.();
-        restoreDock = null;
         const drawer = document.getElementById("my-drawer-5");
         if (drawer) {
             drawer.checked = false;
