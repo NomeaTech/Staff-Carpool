@@ -44,9 +44,32 @@
         }, { passive: true, capture: true });
     }
 
+    // The mobile dock: the tapped tab shows as chosen at once (and stays
+    // pressed, .dock-pressed in styles.css) while its page loads, as in apps.
+    // The page's copy for going back keeps the tab it was shown with.
+    let restoreDock = null;
+    document.addEventListener("click", (event) => {
+        const item = event.target.closest && event.target.closest(".dock > a[href]");
+        if (!item || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            return;
+        }
+        const tabs = [...item.parentElement.children];
+        const classes = tabs.map((tab) => tab.className);
+        restoreDock = () => tabs.forEach((tab, i) => { tab.className = classes[i]; });
+        for (const tab of tabs) {
+            tab.classList.remove("dock-active", "text-primary");
+        }
+        item.classList.add("dock-active", "text-primary", "dock-pressed");
+    }, true);
+    document.addEventListener("turbo:load", () => {
+        restoreDock = null;
+    });
+
     // Before keeping a copy of the page for going back: close what is open
     // and remove messages that should not show again
     document.addEventListener("turbo:before-cache", () => {
+        restoreDock?.();
+        restoreDock = null;
         const drawer = document.getElementById("my-drawer-5");
         if (drawer) {
             drawer.checked = false;

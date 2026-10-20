@@ -278,3 +278,31 @@
   height: 3px;
   background-color: var(--color-primary);
 }
+
+/* Mobile dock: a tap shows at once. While pressed, the item gets a soft
+   background and its icon shrinks a little; once tapped, it stays chosen
+   (.dock-pressed, static/js/turbo-setup.js) while its page loads. daisyUI's
+   hover dimming is turned off on touch screens, where hover sticks after a
+   tap. (Outside @layer, so these come before daisyUI's dock styles.) */
+@media (hover: none) {
+  .dock > *:hover {
+    opacity: 1;
+  }
+}
+.dock > * {
+  transition: background-color 0.15s ease-out, color 0.15s ease-out;
+}
+.dock > * > :first-child {
+  transition: transform 0.15s ease-out;
+}
+.dock > *:active,
+.dock > .dock-pressed {
+  /* A grey that shows on both themes' backgrounds */
+  background-color: rgb(128 128 128 / 0.15);
+  transition: none;
+}
+.dock > *:active > :first-child,
+.dock > .dock-pressed > :first-child {
+  transform: scale(0.88);
+  transition: none;
+}
