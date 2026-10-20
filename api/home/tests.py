@@ -1,4 +1,5 @@
 from io import BytesIO
+import re
 import json
 from unittest import skipUnless
 from unittest.mock import patch
@@ -722,3 +723,29 @@ class TransportIconTests(TestCase):
         positions = [page.index(f'aria-label="{label}" title="{label}"') for label in labels]
         self.assertEqual(positions, sorted(positions))
         self.assertIn("grid-cols-[repeat(3,max-content)]", page)
+
+
+class MorePageTests(TestCase):
+    """The mobile dock's More tab (the side menu's contents as a page)."""
+
+    def setUp(self):
+        self.user = make_user("Aino", "Mäkinen")
+        self.client.force_login(self.user)
+
+    def test_page_has_the_menu(self):
+        page = self.client.get(reverse("more")).content.decode()
+        for url in (reverse("account"), reverse("notifications"), reverse("my_rides"), reverse("faq"),
+                    reverse("safety"), reverse("contact"), reverse("privacy-policy"), reverse("terms-of-use"),
+                    reverse("logout"), reverse("set_language")):
+            self.assertIn(f'"{url}"', page)
+        self.assertIn('id="more-theme-switch"', page)
+        self.assertIn(f"version {settings.STATIC_VERSION}", page)
+
+    def test_dock_more_tab(self):
+        dock = lambda url: re.search(r'<div class="dock.*?</div>\s*</div>', self.client.get(url).content.decode(), re.S).group(0)
+        more = f'<a href="{reverse("more")}" class="dock-active text-primary">'
+        for url in (reverse("more"), reverse("account"), reverse("notifications")):
+            self.assertIn(more, dock(url))
+        self.assertNotIn(more, dock(reverse("home")))
+        # The More tab is a link now, not the side menu's toggle
+        self.assertNotIn('<label for="my-drawer-5" class="', dock(reverse("home")))

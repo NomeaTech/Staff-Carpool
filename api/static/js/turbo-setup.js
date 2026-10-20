@@ -22,8 +22,6 @@
     // Forms are posted as usual: Django shows forms with errors again with
     // a 200 response, which Turbo would not show
     Turbo.config.forms.mode = "off";
-    // Show the loading bar soon, so a slow page still answers the tap at once
-    Turbo.config.drive.progressBarDelay = 100;
 
     // Turbo loads a link's page early when the mouse is over it (after
     // 100 ms, so that passing over links does not load them all). On touch

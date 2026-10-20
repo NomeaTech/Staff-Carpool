@@ -113,16 +113,11 @@ function switchTimes(times, radio) {
     }
 }
 
-function updateTheme(checked) {
-    localStorage.setItem("theme", "dark");
-    document.documentElement.setAttribute('data-theme', 'dark');
-
-    if (checked) {
-        localStorage.setItem("theme", "dark");
-        document.documentElement.setAttribute('data-theme', 'dark');
-    } else
-        localStorage.setItem("theme", "light");
-        document.documentElement.setAttribute('data-theme', 'light');
+// The theme switches (side menu, More page, account pages): dark when checked
+function updateTheme(dark) {
+    const theme = dark ? "dark" : "light";
+    localStorage.setItem("theme", theme);
+    document.documentElement.setAttribute("data-theme", theme);
 }
 
 function loadTheme() {
@@ -156,8 +151,8 @@ document.addEventListener("change", (event) => {
     if (event.target.matches(".options")) {
         updateTransportRequired();
     }
-    // Choosing a language in the side menu switches to it
-    if (event.target.id === "id_language") {
+    // Choosing a language (side menu, More page) switches to it
+    if (event.target.matches("[data-language-select]")) {
         event.target.form.submit();
     }
 });
