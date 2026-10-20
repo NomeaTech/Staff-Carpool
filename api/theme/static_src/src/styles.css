@@ -277,6 +277,20 @@
   display: none !important;
 }
 
+/* The app's pages scroll inside a container (see app.html):
+   - h-app: as tall as the visible screen. 100dvh leaves out mobile browsers'
+     toolbars, which 100vh (h-screen) includes in iOS Safari, so the end of a
+     page could be behind the toolbar. (All browsers since 2022 have dvh.)
+   - pb-dock: room at the bottom for the mobile dock, which is 4rem plus the
+     space for the iPhone's home indicator (the dock's classes in app.html),
+     and a 1.5rem gap. Pages add lg:pb-* for desktop, where there is no dock. */
+@utility h-app {
+  height: 100dvh;
+}
+@utility pb-dock {
+  padding-bottom: calc(5.5rem + max(0.75rem, env(safe-area-inset-bottom)));
+}
+
 /* Mobile dock: a tap shows at once. While pressed, the item gets a soft
    background and its icon shrinks a little. Once tapped, it shows as the
    chosen tab while its page loads: static/js/turbo-setup.js sets
