@@ -16,7 +16,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="{% static "js/funcs.js" %}?v={{ STATIC_VERSION }}"></script>
-    {% tailwind_css %}
+    {% tailwind_css v=TAILWIND_CSS_VERSION %}
     {% endcache %}
 </head>
 <!-- <body class="bg-gray-50 text-black font-serif leading-normal tracking-normal"> -->
