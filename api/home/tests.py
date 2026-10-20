@@ -742,10 +742,17 @@ class MorePageTests(TestCase):
         self.assertIn(f"version {settings.STATIC_VERSION}", page)
 
     def test_dock_more_tab(self):
-        dock = lambda url: re.search(r'<div class="dock.*?</div>\s*</div>', self.client.get(url).content.decode(), re.S).group(0)
+        dock = lambda url: re.search(r'<div id="app-dock".*?</div>\s*</div>', self.client.get(url).content.decode(), re.S).group(0)
         more = f'<a href="{reverse("more")}" class="dock-active text-primary">'
         for url in (reverse("more"), reverse("account"), reverse("notifications")):
             self.assertIn(more, dock(url))
         self.assertNotIn(more, dock(reverse("home")))
         # The More tab is a link now, not the side menu's toggle
         self.assertNotIn('<label for="my-drawer-5" class="', dock(reverse("home")))
+
+    def test_pages_name_their_dock_tab(self):
+        # static/js/turbo-setup.js chooses the tab from <body data-dock-tab>
+        tabs = {"home": "1", "search": "2", "add": "3", "my_rides": "4", "more": "5", "account": "5",
+                "notifications": "5"}
+        for name, tab in tabs.items():
+            self.assertContains(self.client.get(reverse(name)), f'data-dock-tab="{tab}"', msg_prefix=name)

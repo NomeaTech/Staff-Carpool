@@ -31,7 +31,10 @@
     {% block head %}{% endblock %}
 </head>
 
-<body class=" flex bg-base-200 justify-content-center h-full">
+{% with page=request.resolver_match.url_name %}
+{# data-dock-tab: the dock tab (1-5) of this page, which static/js/turbo-setup.js shows as chosen #}
+<body class=" flex bg-base-200 justify-content-center h-full" data-dock-tab="{% if page == 'home' %}1{% elif page == 'search' %}2{% elif page == 'add' %}3{% elif page == 'my_rides' %}4{% elif page == 'more' or page == 'account' or page == 'notifications' %}5{% else %}0{% endif %}">
+{% endwith %}
     {% cache 86400 app_body_top using="templates" %}
     <script>
       theme = localStorage["theme"];
@@ -169,7 +172,8 @@
 
 <!-- dock for mobile view, navbar for desktop view -->
     {# Taller than daisyUI's dock, with room under each label for the current page's bar (dock-active), which would otherwise cross the label #}
-    <div class="dock lg:hidden border-t border-base-300 z-5 pb-[max(0.75rem,env(safe-area-inset-bottom))] h-[calc(4rem+max(0.75rem,env(safe-area-inset-bottom)))] *:mb-0! *:pb-2.5">
+    {# Kept on screen across page changes (data-turbo-permanent); see static/js/turbo-setup.js #}
+    <div id="app-dock" data-turbo-permanent class="dock lg:hidden border-t border-base-300 z-5 pb-[max(0.75rem,env(safe-area-inset-bottom))] h-[calc(4rem+max(0.75rem,env(safe-area-inset-bottom)))] *:mb-0! *:pb-2.5">
         <a href="{% url 'home' %}" class="{% if page == 'home' %}dock-active text-primary{% endif %}">
           {% include "_icon.html" with name="home" class="size-6" %}
           <span class="dock-label">{% trans "Home" %}</span>

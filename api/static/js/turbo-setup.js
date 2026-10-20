@@ -42,27 +42,103 @@
         }, { passive: true, capture: true });
     }
 
-    // The mobile dock: the tapped tab shows as chosen at once while its page
-    // loads, as in apps. It is marked on <html> (data-dock-pending, see
-    // styles.css) rather than on the dock: Turbo's copies of pages for going
-    // back are of <head> and <body>, so the mark never ends up in one, and
-    // nothing has to be undone before Turbo makes a copy.
-    const root = document.documentElement;
-    document.addEventListener("click", (event) => {
-        const item = event.target.closest && event.target.closest(".dock > a[href]");
-        if (!item || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+    // The mobile dock (#app-dock) stays on screen across page changes:
+    // with data-turbo-permanent, Turbo keeps the same element rather than
+    // the new page's (or a copy's, when going back). So:
+    // - a tapped tab is pressed from the moment it is touched until its
+    //   page is shown, and then fades back (.dock-pressed in styles.css);
+    // - which tab is chosen comes from each page's <body data-dock-tab>,
+    //   set by the server, never from a copy of an older dock.
+    let pressedTab = null;
+    let visiting = false;
+
+    function dockTabs() {
+        const dock = document.getElementById("app-dock");
+        return dock ? [...dock.children] : [];
+    }
+
+    function choose(position) {
+        dockTabs().forEach((tab, i) => {
+            const chosen = i + 1 === position;
+            tab.classList.toggle("dock-active", chosen);
+            tab.classList.toggle("text-primary", chosen);
+        });
+    }
+
+    function release() {
+        pressedTab?.classList.remove("dock-pressed");
+        pressedTab = null;
+    }
+
+    document.addEventListener("pointerdown", (event) => {
+        const tab = event.target.closest && event.target.closest("#app-dock > a[href]");
+        if (!tab || event.button !== 0) {
             return;
         }
-        root.dataset.dockPending = [...item.parentElement.children].indexOf(item) + 1;
+        release();
+        pressedTab = tab;
+        tab.classList.add("dock-pressed");
+    }, { passive: true, capture: true });
+    // Scrolling or moving the finger off: not a tap
+    document.addEventListener("pointercancel", release, true);
+    document.addEventListener("pointerup", () => {
+        // A press that does not become a page change (e.g. a long press)
+        const tab = pressedTab;
+        setTimeout(() => {
+            if (tab && tab === pressedTab && !visiting) {
+                release();
+            }
+        }, 500);
     }, true);
-    // The new page shows its own tab (also when it is a copy shown first)
-    function clearDockPending() {
-        delete root.dataset.dockPending;
-    }
-    for (const type of ["turbo:render", "turbo:load", "turbo:fetch-request-error"]) {
-        document.addEventListener(type, clearDockPending);
-    }
-    window.addEventListener("pageshow", clearDockPending);
+
+    document.addEventListener("click", (event) => {
+        const tab = event.target.closest && event.target.closest("#app-dock > a[href]");
+        if (!tab) {
+            return;
+        }
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            release();
+            return;
+        }
+        visiting = true;
+        if (tab !== pressedTab) {
+            // e.g. chosen with the keyboard
+            release();
+            pressedTab = tab;
+            tab.classList.add("dock-pressed");
+        }
+        choose(dockTabs().indexOf(tab) + 1);
+    }, true);
+
+    // Before a page (or a copy of one) is shown: its tab is chosen, and the
+    // unread dot is the page's
+    document.addEventListener("turbo:before-render", (event) => {
+        const newBody = event.detail.newBody;
+        choose(Number(newBody.dataset.dockTab));
+        const dot = newBody.querySelector("#app-dock [data-unread-dot]");
+        const liveDot = document.querySelector("#app-dock [data-unread-dot]");
+        if (dot && liveDot) {
+            liveDot.classList.toggle("hidden", dot.classList.contains("hidden"));
+        }
+    });
+    // Once shown, the pressed tab fades back. Not before: Turbo moves the
+    // dock into the new page, and a moved element starts without its
+    // earlier look, so there would be nothing to fade from. Reading its
+    // style first gives it that look in its new place.
+    document.addEventListener("turbo:render", () => {
+        if (pressedTab) {
+            getComputedStyle(pressedTab.firstElementChild).transform;
+            getComputedStyle(pressedTab).backgroundColor;
+        }
+        release();
+        visiting = false;
+    });
+    // A page change that failed: back to the page's own tab
+    document.addEventListener("turbo:fetch-request-error", () => {
+        choose(Number(document.body.dataset.dockTab));
+        release();
+        visiting = false;
+    });
 
     // Before keeping a copy of the page for going back: close what is open
     // and remove messages that should not show again
