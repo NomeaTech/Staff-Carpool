@@ -1,0 +1,92 @@
+{% extends "app.html" %}
+{% load i18n privacy %}
+
+{% block title %}{% trans "More" %} | LUT Kyyti{% endblock %}
+
+{% block content %}
+{% comment %}
+  The mobile dock's More tab: the side menu's contents as a page (desktop
+  keeps the side menu, opened from the navbar).
+{% endcomment %}
+<section class="h-screen w-full overflow-y-auto pt-[calc(1.75rem+env(safe-area-inset-top))] lg:pt-24 pb-28 lg:pb-10">
+  <div class="max-w-xl mx-auto px-4 grid gap-5">
+    <h1 class="text-3xl font-bold tracking-tight">{% trans "More" %}</h1>
+
+    <a href="{% url 'account' %}" class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body flex-row items-center gap-4 p-4">
+        {% avatar user "w-14" "text-lg" %}
+        <span class="min-w-0 grow">
+          <span class="block font-bold text-lg truncate">{{ user.first_name }} {{ user.last_name }}</span>
+          <span class="block text-sm text-base-content/60">{% trans "Profile & settings" %}</span>
+        </span>
+        {% include "_icon.html" with name="chevron" class="size-5 text-base-content/40" %}
+      </div>
+    </a>
+
+    <section class="card bg-base-100 border border-base-300 shadow-sm">
+      <ul class="menu w-full p-2 text-base">
+        <li>
+          <a href="{% url 'notifications' %}" class="py-3">
+            {% include "_icon.html" with name="bell" %}
+            <span class="grow">{% trans "Notifications" %}</span>
+            {% with count=unread_notification_count %}<span class="badge badge-sm badge-error {% if not count %}hidden{% endif %}" data-unread-badge>{% if count > 9 %}9+{% else %}{{ count }}{% endif %}</span>{% endwith %}
+            {% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'my_rides' %}" class="py-3">
+            {% include "_icon.html" with name="calendar" %}
+            <span class="grow">{% trans "My rides" %}</span>
+            {% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card bg-base-100 border border-base-300 shadow-sm">
+      <ul class="menu w-full p-2 text-base">
+        <li>
+          <label class="py-3 cursor-pointer">
+            {% include "_icon.html" with name="moon" %}
+            <span class="grow">{% trans "Dark mode" %}</span>
+            <input id="more-theme-switch" type="checkbox" class="toggle toggle-primary toggle-sm" onchange="updateTheme(this.checked)">
+            {# Inline, so it also runs on pages shown by Turbo #}
+            <script>document.getElementById("more-theme-switch").checked = localStorage["theme"] == "dark";</script>
+          </label>
+        </li>
+        <li>
+          <form action="{% url 'set_language' %}" method="post" data-no-submit-shortcut class="py-2">
+            {% csrf_token %}
+            <input name="next" type="hidden" value="{{ request.get_full_path }}">
+            {% include "_icon.html" with name="globe" %}
+            <label for="more-language" class="grow">{% trans "Language" %}</label>
+            {% get_current_language as LANGUAGE_CODE %}{% get_available_languages as LANGUAGES %}{% get_language_info_list for LANGUAGES as languages %}
+            <select id="more-language" data-language-select class="select select-sm w-auto" name="language">
+              {% for language in languages %}
+              <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>{{ language.name_local|capfirst }}</option>
+              {% endfor %}
+            </select>
+          </form>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card bg-base-100 border border-base-300 shadow-sm">
+      <ul class="menu w-full p-2 text-base">
+        <li><a href="{% url 'faq' %}" class="py-3">{% include "_icon.html" with name="help" %}<span class="grow">{% trans "Help & FAQ" %}</span>{% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}</a></li>
+        <li><a href="{% url 'safety' %}" class="py-3">{% include "_icon.html" with name="shield" %}<span class="grow">{% trans "Safety tips" %}</span>{% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}</a></li>
+        <li><a href="{% url 'contact' %}" class="py-3">{% include "_icon.html" with name="email" %}<span class="grow">{% trans "Contact" %}</span>{% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}</a></li>
+        <li><a href="{% url 'privacy-policy' %}" class="py-3">{% include "_icon.html" with name="lock" %}<span class="grow">{% trans "Privacy policy" %}</span>{% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}</a></li>
+        <li><a href="{% url 'terms-of-use' %}" class="py-3">{% include "_icon.html" with name="document" %}<span class="grow">{% trans "Terms of use" %}</span>{% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}</a></li>
+      </ul>
+    </section>
+
+    <form action="{% url 'logout' %}" method="post">
+      {% csrf_token %}
+      <button class="btn btn-outline btn-error w-full" type="submit">{% include "_icon.html" with name="logout" %}{% trans "Log out" %}</button>
+    </form>
+
+    <p class="text-center text-xs text-base-content/50">{% blocktrans with version=STATIC_VERSION %}LUT Kyyti, version {{ version }}{% endblocktrans %}</p>
+  </div>
+</section>
+{% endblock %}

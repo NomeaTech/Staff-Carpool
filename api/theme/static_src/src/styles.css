@@ -270,13 +270,11 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Turbo's loading bar, shown when a page takes more than 100 ms. Below the
-   iPhone's status bar (viewport-fit=cover, see app.html), where iOS blurs
-   the page and the bar would be hard to see. */
+/* No loading bar for Turbo's page changes: the tapped button already shows
+   that its page is loading (see the dock's styles below). Turbo has no
+   setting to turn it off, so it is hidden. */
 .turbo-progress-bar {
-  top: env(safe-area-inset-top, 0px) !important;
-  height: 3px;
-  background-color: var(--color-primary);
+  display: none !important;
 }
 
 /* Mobile dock: a tap shows at once. While pressed, the item gets a soft

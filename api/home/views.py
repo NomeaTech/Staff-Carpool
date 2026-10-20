@@ -66,6 +66,11 @@ def home(request):
 HOME_RIDES = 4
 
 @login_required
+def more(request):
+    """The More tab of the mobile dock: account, settings and help (the side menu on desktop)."""
+    return render(request, "more.html")
+
+@login_required
 def my_rides(request):
     rides = Ride.objects.all()
     context = {

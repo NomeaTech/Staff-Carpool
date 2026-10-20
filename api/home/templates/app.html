@@ -106,7 +106,7 @@
               {% csrf_token %}
               <input name="next" type="hidden" value="{{ redirect_to }}">
               {% cache 86400 app_language_select LANGUAGE_CODE using="templates" %}
-              <select id="id_language" class="select w-full" name="language">
+              <select id="id_language" data-language-select class="select w-full" name="language">
                 <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
                   {% get_available_languages as LANGUAGES %}
                   {% get_language_info_list for LANGUAGES as languages %}
@@ -123,7 +123,7 @@
               {% csrf_token %}
               <button class="btn btn-warning w-full" type="submit">Log Out</button>
             </form>
-    <p class="col-span-3">Version: 0.23.5</p>
+    <p class="col-span-3">Version: 0.23.6</p>
           </div>
         </div>
       </div>
@@ -186,13 +186,14 @@
           {% include "_icon.html" with name="calendar" class="size-6" %}
           <span class="dock-label">{% trans "My rides" %}</span>
         </a>
-        <label for="my-drawer-5" class="{% if page == 'account' %}dock-active text-primary{% endif %}">
+        {# The More page; also the chosen tab on the pages it leads to. (On desktop, the navbar opens the side menu.) #}
+        <a href="{% url 'more' %}" class="{% if page == 'more' or page == 'account' or page == 'notifications' %}dock-active text-primary{% endif %}">
           <div class="indicator">
             {% avatar user "w-6" "text-[0.6rem]" %}
             <span class="status status-error indicator-item {% if not unread_notification_count %}hidden{% endif %}" data-unread-dot aria-label="{% trans "Unread notifications" %}"></span>
           </div>
           <span class="dock-label">{% trans "More" %}</span>
-        </label>
+        </a>
     </div>
     {% endwith %}
 

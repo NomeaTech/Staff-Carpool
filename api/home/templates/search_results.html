@@ -34,7 +34,7 @@
                             {# Which icons, and how big: test_app/transport.py icon_layout #}
                             {% for option in ride.icons.options %}
                                 <span class="grid place-items-center {{ ride.icons.box_class }} rounded-md {{ option.bg_class }} text-base-100" role="img" aria-label="{{ option.label }}" title="{{ option.label }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="{{ option.viewbox }}" fill="currentColor" class="{{ ride.icons.icon_class }}" aria-hidden="true">{{ option.icon }}</svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="{{ option.viewbox }}" fill="currentColor" class="{{ ride.icons.icon_class }} overflow-visible" aria-hidden="true">{{ option.icon }}</svg>
                                 </span>
                             {% endfor %}
                         </div>
