@@ -28,9 +28,9 @@
     </header>
 
     <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(285px,1fr)] gap-5 items-start">
-      <div class="grid gap-5">
+      <div class="contents lg:grid lg:gap-5">
 
-        <section class="card bg-base-100 border border-base-300 shadow-sm">
+        <section class="card bg-base-100 border border-base-300 shadow-sm order-2 lg:order-none">
           <div class="card-body p-5 sm:p-6">
             <h2 class="card-title text-lg mb-2">{% trans "Route & departure" %}</h2>
             <ul class="timeline timeline-vertical timeline-compact timeline-snap-icon -ms-2">
@@ -70,7 +70,7 @@
           </div>
         </section>
 
-        <section class="card bg-base-100 border border-base-300 shadow-sm">
+        <section class="card bg-base-100 border border-base-300 shadow-sm order-3 lg:order-none">
           <div class="card-body p-5 sm:p-6">
             <h2 class="card-title text-lg mb-2">{% trans "Trip information" %}</h2>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -111,7 +111,7 @@
         </section>
 
         {% if ride.note %}
-        <section class="card bg-base-100 border border-base-300 shadow-sm">
+        <section class="card bg-base-100 border border-base-300 shadow-sm order-4 lg:order-none">
           <div class="card-body p-5 sm:p-6">
             <h2 class="card-title text-lg mb-1">{% trans "Additional information from the poster" %}</h2>
             <p class="whitespace-pre-line">{{ ride.note }}</p>
@@ -119,7 +119,7 @@
         </section>
         {% endif %}
 
-        <section class="card bg-base-100 border border-base-300 shadow-sm">
+        <section class="card bg-base-100 border border-base-300 shadow-sm order-6 lg:order-none">
           <div class="card-body p-5 sm:p-6">
             <h2 class="card-title text-lg mb-1">{% trans "Safety & arrangements" %}</h2>
             <p class="text-sm text-base-content/60">{% trans "Confirm the meeting point, departure time, and any costs before travelling. Avoid sharing sensitive personal information publicly." %}</p>
@@ -128,9 +128,12 @@
         </section>
       </div>
 
-      {# On phones the ride's poster and the join/manage card come first #}
-      <aside class="grid gap-5 order-first lg:order-none">
-        <section class="card bg-base-100 border border-base-300 shadow-sm">
+      {% comment %}
+        The two columns are only for desktops: on phones their sections are all
+        in one column, in the order of their order- classes.
+      {% endcomment %}
+      <aside class="contents lg:grid lg:gap-5">
+        <section class="card bg-base-100 border border-base-300 shadow-sm order-1 lg:order-none">
           <div class="card-body p-5 sm:p-6">
             <h2 class="card-title text-lg mb-2">{% trans "Ride posted by" %}</h2>
             <div class="flex items-center gap-3">
@@ -157,7 +160,7 @@
         </section>
 
         {% if is_driver %}
-        <section id="requests" class="card bg-base-100 border border-base-300 shadow-sm scroll-mt-24">
+        <section id="requests" class="card bg-base-100 border border-base-300 shadow-sm order-5 lg:order-none scroll-mt-24">
           <div class="card-body p-5 sm:p-6">
             <h2 class="card-title text-lg mb-2">{% trans "Manage your ride" %}</h2>
 
@@ -214,7 +217,7 @@
           </div>
         </section>
         {% else %}
-        <section class="card bg-base-100 border border-base-300 shadow-sm">
+        <section class="card bg-base-100 border border-base-300 shadow-sm order-5 lg:order-none">
           <div class="card-body p-5 sm:p-6">
             <h2 class="card-title text-lg mb-1">{% trans "Join this ride" %}</h2>
             {% if not own_request %}
@@ -262,7 +265,7 @@
         </section>
         {% endif %}
 
-        <section class="card bg-base-100 border border-base-300 shadow-sm">
+        <section class="card bg-base-100 border border-base-300 shadow-sm order-7 lg:order-none">
           <div class="card-body p-5 sm:p-6">
             <h2 class="card-title text-lg mb-1">{% trans "Share this ride" %}</h2>
             <p class="text-xs text-base-content/60">{% trans "Only signed-in LUT Kyyti members can open the link." %}</p>
