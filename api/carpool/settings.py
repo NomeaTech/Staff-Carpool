@@ -362,9 +362,11 @@ PWA_SPLASH_SCREENS = [
     (1024, 1366, 2),  # iPad Pro 12.9"
     (1032, 1376, 2),  # iPad Pro 13" (M4)
 ]
+# ?v=: iOS and browsers keep launch images they have loaded, so a new release
+# gives them new URLs
 PWA_APP_SPLASH_SCREEN = [
     {
-        'src': f'/static/images/splash/splash-{width * ratio}x{height * ratio}.png',
+        'src': f'/static/images/splash/splash-{width * ratio}x{height * ratio}.png?v={STATIC_VERSION}',
         'media': f'(device-width: {width}px) and (device-height: {height}px) '
                  f'and (-webkit-device-pixel-ratio: {ratio}) and (orientation: portrait)',
     }
