@@ -1,0 +1,6 @@
+{% comment %}
+  The logo of the start-up screen, which _splash.html shows and
+  manage.py make_splash draws into the iOS launch images, so that both are
+  the same. The logo's shapes only fill x 0-53.59 and y 0-71.22 of its box,
+  so this box, the same size, has them in the middle.
+{% endcomment %}{% include "_logo.html" with width=width|default:"128px" viewbox="-9.12 -0.305 71.83 71.83" %}
