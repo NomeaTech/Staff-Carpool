@@ -113,11 +113,13 @@ function switchTimes(times, radio) {
     }
 }
 
-// The theme switches (side menu, More page, account pages): dark when checked
+// The theme switches (side menu, More page, account pages): dark when checked.
+// The theme is only data-theme; the other switches on the page follow the one used.
 function updateTheme(dark) {
     const theme = dark ? "dark" : "light";
     localStorage.setItem("theme", theme);
     document.documentElement.setAttribute("data-theme", theme);
+    document.querySelectorAll("#theme-switcher, #more-theme-switch").forEach((s) => s.checked = dark);
 }
 
 function loadTheme() {
