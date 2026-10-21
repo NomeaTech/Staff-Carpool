@@ -97,15 +97,25 @@ TRANSPORT_OPTIONS = [
 
 
 # Icons shown on a search result card, in the top row of the card: one or two
-# bigger icons, or up to all six smaller ones in three columns and two rows.
+# bigger icons, or up to all six. Three or more are bigger in one row when the
+# row is wide enough (a container query on the card's top row), otherwise
+# smaller in three columns and two rows. The widths leave room for the "Your
+# ride" or "On the way" badge beside the icons (about 5.5rem).
 # Columns, box and icon sizes by the number of icons (Tailwind classes,
 # written out in full so that Tailwind finds them). The columns are only as
 # wide as the boxes, so that the boxes sit next to each other.
 ICON_SIZES = {
     1: ("grid-cols-[max-content]", "size-12", "size-8"),                   # 48 px, like two
     2: ("grid-cols-[repeat(2,max-content)]", "size-12", "size-8"),         # 48 px, side by side
+    # 48 px in one row when there is room, otherwise 36 px, 3 x 2
+    3: ("grid-cols-[repeat(3,max-content)]", "size-9 @min-[15.5rem]:size-12", "size-6 @min-[15.5rem]:size-8"),
+    4: ("grid-cols-[repeat(3,max-content)] @min-[19rem]:grid-cols-[repeat(4,max-content)]",
+        "size-9 @min-[19rem]:size-12", "size-6 @min-[19rem]:size-8"),
+    5: ("grid-cols-[repeat(3,max-content)] @min-[22.5rem]:grid-cols-[repeat(5,max-content)]",
+        "size-9 @min-[22.5rem]:size-12", "size-6 @min-[22.5rem]:size-8"),
+    6: ("grid-cols-[repeat(3,max-content)] @min-[25.75rem]:grid-cols-[repeat(6,max-content)]",
+        "size-9 @min-[25.75rem]:size-12", "size-6 @min-[25.75rem]:size-8"),
 }
-ICON_GRID = ("grid-cols-[repeat(3,max-content)]", "size-9", "size-6")      # 36 px, 3 x 2
 
 
 @dataclass(frozen=True)
@@ -125,4 +135,4 @@ def icon_layout(options, filters=()):
     prioritized = set(filters)
     order = [option.field for option in TRANSPORT_OPTIONS]
     options = sorted(options, key=lambda option: (option.field not in prioritized, order.index(option.field)))
-    return IconLayout(options, *ICON_SIZES.get(len(options), ICON_GRID))
+    return IconLayout(options, *ICON_SIZES.get(len(options), ICON_SIZES[1]))

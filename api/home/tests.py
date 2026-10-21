@@ -719,7 +719,9 @@ class TransportIconTests(TestCase):
         self.assertEqual(self.layout("bus", "taxi")[1], "size-12")
         for count in range(3, 7):
             fields = ["offer", "request", "train", "bus", "taxi", "other"][:count]
-            self.assertEqual(self.layout(*fields)[1], "size-9")
+            # Smaller in a 3 x 2 grid, unless the card is wide enough for one row
+            self.assertTrue(self.layout(*fields)[1].startswith("size-9 @min-["))
+            self.assertTrue(self.layout(*fields)[1].endswith("]:size-12"))
 
     def test_all_options_are_shown_offers_and_requests_first(self):
         everything = ("offer", "request", "train", "bus", "taxi", "other")
