@@ -24,7 +24,7 @@
     </a>
 
     <section class="card bg-base-100 border border-base-300 shadow-sm">
-      <ul class="menu w-full p-2 text-base">
+      <ul class="menu menu-soft w-full p-2 text-base [&_li>*]:rounded-full">
         <li>
           <a href="{% url 'notifications' %}" class="py-3">
             {% include "_icon.html" with name="bell" %}
@@ -44,7 +44,7 @@
     </section>
 
     <section class="card bg-base-100 border border-base-300 shadow-sm">
-      <ul class="menu w-full p-2 text-base">
+      <ul class="menu menu-soft w-full p-2 text-base [&_li>*]:rounded-full">
         <li>
           <label class="py-3 cursor-pointer">
             {% include "_icon.html" with name="moon" %}
@@ -55,13 +55,15 @@
           </label>
         </li>
         <li>
-          <form action="{% url 'set_language' %}" method="post" data-no-submit-shortcut class="py-2">
+          {# The whole row is the select (daisyUI's, with its own picker): it spans the row, under the row's icon and name #}
+          <form action="{% url 'set_language' %}" method="post" data-no-submit-shortcut class="relative py-3 has-focus-visible:bg-base-content/10">
             {% csrf_token %}
             <input name="next" type="hidden" value="{{ request.get_full_path }}">
-            {% include "_icon.html" with name="globe" %}
-            <label for="more-language" class="grow">{% trans "Language" %}</label>
             {% get_current_language as LANGUAGE_CODE %}{% get_available_languages as LANGUAGES %}{% get_language_info_list for LANGUAGES as languages %}
-            <select id="more-language" data-language-select class="select select-sm w-auto" name="language">
+            {% include "_icon.html" with name="globe" class="size-5 relative z-1 pointer-events-none" %}
+            <span class="grow relative z-1 pointer-events-none">{% trans "Language" %}</span>
+            <select id="more-language" data-language-select name="language" aria-label="{% trans "Language" %}"
+              class="select select-ghost absolute inset-0 size-full max-w-none rounded-full pl-32 justify-end text-right [text-align-last:right] text-base text-base-content/60 cursor-pointer bg-transparent outline-none select-pill">
               {% for language in languages %}
               <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>{{ language.name_local|capfirst }}</option>
               {% endfor %}
@@ -72,7 +74,7 @@
     </section>
 
     <section class="card bg-base-100 border border-base-300 shadow-sm">
-      <ul class="menu w-full p-2 text-base">
+      <ul class="menu menu-soft w-full p-2 text-base [&_li>*]:rounded-full">
         <li><a href="{% url 'faq' %}" class="py-3">{% include "_icon.html" with name="help" %}<span class="grow">{% trans "Help & FAQ" %}</span>{% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}</a></li>
         <li><a href="{% url 'safety' %}" class="py-3">{% include "_icon.html" with name="shield" %}<span class="grow">{% trans "Safety tips" %}</span>{% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}</a></li>
         <li><a href="{% url 'contact' %}" class="py-3">{% include "_icon.html" with name="email" %}<span class="grow">{% trans "Contact" %}</span>{% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}</a></li>
@@ -83,7 +85,7 @@
 
     <form action="{% url 'logout' %}" method="post">
       {% csrf_token %}
-      <button class="btn btn-outline btn-error w-full" type="submit">{% include "_icon.html" with name="logout" %}{% trans "Log out" %}</button>
+      <button class="btn btn-outline btn-error w-full rounded-full" type="submit">{% include "_icon.html" with name="logout" %}{% trans "Log out" %}</button>
     </form>
 
     <p class="text-center text-xs text-base-content/50">{% blocktrans with version=STATIC_VERSION %}LUT Kyyti, version {{ version }}{% endblocktrans %}</p>
