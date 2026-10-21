@@ -18,7 +18,7 @@
     });
 </script>
 
-<div class="content-center w-full h-app lg:pt-20 pt-[calc(1.25rem+env(safe-area-inset-top))] pb-dock lg:pb-10 overflow-scroll scrollbar-hide">
+<div class="flex flex-col w-full h-app lg:pt-20 pt-[calc(1.25rem+env(safe-area-inset-top))] pb-dock lg:pb-10 overflow-scroll scrollbar-hide">
     <script>
         // Set form to same state after reload
         onPageReady(function() {
@@ -48,7 +48,7 @@
         });
     </script>
 
-    <div class="card bg-base-100 w-96 max-w-[calc(100%-1rem)] shadow-sm font-display my-2 mx-auto">
+    <div class="card bg-base-100 w-96 max-w-[calc(100%-1rem)] shadow-sm font-display my-auto mx-auto">
         <div class="card-body">
             <div class="">
                 <h2 class="card-title mb-0 mt-0 mb-4">{% if editing %}{% trans "Edit ride" %}{% else %}{% trans "Add ride" %}{% endif %}</h2>
