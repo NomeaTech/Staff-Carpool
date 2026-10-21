@@ -32,7 +32,7 @@
       </a>
     </nav>
 
-    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr)_minmax(310px,1fr)] gap-5 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
       <div class="grid gap-5">
 
         {% if pending_requests %}
@@ -114,14 +114,15 @@
           </div>
         </section>
 
-        <div role="note" class="alert alert-soft items-start text-xs">
-          {% include "_icon.html" with name="alert" class="size-5" %}
-          <span>
-            {% url 'faq' as faq_url %}{% url 'safety' as safety_url %}
-            {% blocktrans %}New to LUT Kyyti? Read our <a href="{{ faq_url }}" class="link link-primary">FAQ</a> and <a href="{{ safety_url }}" class="link link-primary">safety tips</a> before your first shared trip.{% endblocktrans %}
-          </span>
-        </div>
       </div>
+    </div>
+
+    <div role="note" class="alert alert-soft justify-center text-center text-xs mt-5 max-w-2xl mx-auto">
+      {% include "_icon.html" with name="alert" class="size-5" %}
+      <span>
+        {% url 'faq' as faq_url %}{% url 'safety' as safety_url %}
+        {% blocktrans %}New to LUT Kyyti? Read our <a href="{{ faq_url }}" class="link link-primary">FAQ</a> and <a href="{{ safety_url }}" class="link link-primary">safety tips</a> before your first shared trip.{% endblocktrans %}
+      </span>
     </div>
 
     {% include "_page_footer.html" %}
