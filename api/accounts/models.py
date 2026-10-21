@@ -6,7 +6,6 @@ from django.core.files.storage import FileSystemStorage
 from PIL import Image, ImageCms, ImageOps
 from django.utils.translation import gettext_lazy as _
 import uuid
-# from test_app.models import Address
 from django.contrib.auth.models import AbstractUser, UserManager as BaseUserManager
 from django.utils import timezone
 
@@ -94,7 +93,6 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
 
     pfp = models.ImageField(upload_to=PHOTO_FOLDER, storage=photo_storage, blank=True, null=True)
-    address = models.ForeignKey('test_app.Address', on_delete=models.CASCADE, null=True, blank=True)
     phone = models.CharField(blank=True, null=True)
 
     # Privacy, see accounts/privacy.py. People sharing a ride (the driver and

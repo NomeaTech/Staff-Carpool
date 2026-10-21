@@ -23,7 +23,7 @@ class CustomUserAdmin(UserAdmin):
     # UserAdmin fieldsets (which start with the username) are replaced
     fieldsets = (
         (None, {"fields": ("email", "pending_email", "password")}),
-        (_("Personal info"), {"fields": ("first_name", "last_name", "phone", "address", "pfp")}),
+        (_("Personal info"), {"fields": ("first_name", "last_name", "phone", "pfp")}),
         (
             _("Privacy and notifications"),
             {"fields": ("name_visibility", "show_photo", "share_email", "share_phone", "email_notifications")},
@@ -43,7 +43,7 @@ class CustomUserAdmin(UserAdmin):
                 "fields": ("email", "first_name", "last_name", "usable_password", "password1", "password2"),
             },
         ),
-        (None, {"fields": ("phone", "address", "pfp")}),
+        (None, {"fields": ("phone", "pfp")}),
     )
 
     def save_model(self, request, obj, form, change):

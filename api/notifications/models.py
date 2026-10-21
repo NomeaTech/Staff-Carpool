@@ -66,7 +66,7 @@ class Notification(models.Model):
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notifications")
     kind = models.CharField(max_length=30, choices=Kind.choices)
     # Kept when the ride is deleted (e.g. "ride cancelled"); data has its route
-    ride = models.ForeignKey("test_app.Ride", on_delete=models.SET_NULL, null=True, blank=True, related_name="notifications")
+    ride = models.ForeignKey("rides.Ride", on_delete=models.SET_NULL, null=True, blank=True, related_name="notifications")
     # The details shown, as they were when it was sent: name, route, message
     data = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)

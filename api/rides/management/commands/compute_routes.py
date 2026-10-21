@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from test_app.models import Ride
-from test_app.routes import build_route
+from rides.models import Ride
+from rides.routes import build_route
 
 
 class Command(BaseCommand):

@@ -12,17 +12,6 @@ import uuid
 
 from .transport import TRANSPORT_OPTIONS
 
-class Address(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    country = models.CharField(max_length=200)
-    city = models.CharField(max_length=200)
-    postcode = models.CharField(max_length=200)
-    street = models.CharField(max_length=200)
-    number = models.CharField(max_length=200)
-
-    def __str__(self):
-        return f"{self.country}, {self.city}, {self.postcode}, {self.street} {self.number}"
-
 class RideQuerySet(models.QuerySet):
     def upcoming(self):
         """Recurring rides, and one-time rides that have not left (or returned) yet."""
@@ -79,7 +68,7 @@ class Ride(models.Model):
     destination_location = models.PointField(geography=True, blank=True, null=True)
 
     # Driving route from start through the vias to the destination, in metres
-    # (EPSG:3067). Used to find rides passing by on the way; see test_app/routes.py
+    # (EPSG:3067). Used to find rides passing by on the way; see rides/routes.py
     route = models.LineStringField(srid=3067, blank=True, null=True)
 
     # deprecated
@@ -129,6 +118,7 @@ class Ride(models.Model):
     sunday_returning_at_time = models.CharField(blank=True)
 
     note = models.TextField(blank=True, default="", help_text="Any kind of note for passengers")
+    price = models.CharField(max_length=100, blank=True, default="", help_text="Optional price for passengers, e.g. \"€10 per passenger\"")
     private = models.CharField(default=False)
 
     created_at = models.DateTimeField("date added", auto_now_add=True)

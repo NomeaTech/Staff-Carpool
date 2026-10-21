@@ -28,7 +28,7 @@
             <div class="card-body p-5 gap-4">
                 <div class="@container flex items-start justify-between gap-3">
                     <div class="grid {{ ride.icons.grid_class }} gap-1.5">
-                        {# Which icons, and how big: test_app/transport.py icon_layout #}
+                        {# Which icons, and how big: rides/transport.py icon_layout #}
                         {% for option in ride.icons.options %}
                             <span class="grid place-items-center {{ ride.icons.box_class }} rounded-field {{ option.bg_class }} {{ option.content_class }}" role="img" aria-label="{{ option.label }}" title="{{ option.label }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="{{ option.viewbox }}" fill="currentColor" class="{{ ride.icons.icon_class }} overflow-visible" aria-hidden="true">{{ option.icon }}</svg>

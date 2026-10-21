@@ -5,14 +5,13 @@ from accounts.privacy import contact_details
 from notifications import services as notifications
 from notifications.models import Notification
 from django.http import HttpResponseRedirect
-from test_app.models import Ride, RideRequest, Via
-from test_app.routes import build_route, as_route_point
-from test_app.transport import TRANSPORT_OPTIONS, icon_layout
+from rides.models import Ride, RideRequest, Via
+from rides.routes import build_route, as_route_point
+from rides.transport import TRANSPORT_OPTIONS, icon_layout
 from django.contrib.auth.decorators import login_required
-from test_app.models import Ride
 from .forms import SearchForm
 from .campuses import CAMPUSES
-from test_app.forms import RideForm, WEEKDAYS as WEEKDAY_NAMES, clean_place
+from rides.forms import RideForm, WEEKDAYS as WEEKDAY_NAMES, clean_place
 import logging
 from django.utils.translation import gettext_lazy as _
 from django.http import JsonResponse

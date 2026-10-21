@@ -4,8 +4,7 @@ import json
 from django import forms
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from .models import Address, Ride
-from django.forms import modelformset_factory
+from .models import Ride
 
 # Dates and times are stored as datetime-local / time input strings
 DATE_TIME_FORMAT = "%Y-%m-%dT%H:%M"
@@ -59,26 +58,6 @@ def parse_time(value):
     except ValueError:
         return None
     return None if parsed.tzinfo else parsed.replace(second=0, microsecond=0)
-
-class AddressForm(forms.ModelForm):
-    class Meta:
-        model = Address
-        fields = (
-            "country",
-            "city",
-            "postcode",
-            "street",
-            "number"
-        )
-
-# class AddressCharForm(forms.ModelForm):
-#     class Meta:
-#         model = AddressChar
-#         fields = ("address")
-
-# AddressFormSet = modelformset_factory(
-#     AddressChar, fields=("address"),
-# )
 
 class RideForm(forms.ModelForm):
     """
@@ -278,6 +257,7 @@ class RideForm(forms.ModelForm):
             "sunday_leaving_at_time",
             "sunday_returning_at_time",
             "note",
+            "price",
             # "test",
             # "private",
         )

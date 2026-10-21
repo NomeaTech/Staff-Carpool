@@ -75,3 +75,7 @@ def privacy_policy(request):
 @login_required
 def how_it_works(request):
     return render(request, "how-it-works.html")
+
+def offline(request):
+    """Shown by the service worker (serviceworker.js) when there is no connection."""
+    return render(request, "offline.html")

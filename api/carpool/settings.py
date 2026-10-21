@@ -87,6 +87,7 @@ INSTALLED_APPS = [
     'accounts',
     'notifications',
     'landing',
+    'rides',
     'test_app.apps.TestAppConfig',
     # 3rd party
     'corsheaders',
