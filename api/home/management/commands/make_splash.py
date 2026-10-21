@@ -1,6 +1,6 @@
 """
 Draws the iOS launch images listed in settings.PWA_APP_SPLASH_SCREEN: the LUT
-logo of templates/_logo.html, PWA_SPLASH_LOGO_WIDTH CSS px wide, in the middle
+logo of templates/_splash_logo.html, PWA_SPLASH_LOGO_WIDTH CSS px wide, in the middle
 of the screen on PWA_APP_BACKGROUND_COLOR. Needs rsvg-convert (librsvg).
 
     python manage.py make_splash
@@ -29,7 +29,7 @@ class Command(BaseCommand):
 
         for width, height, ratio in settings.PWA_SPLASH_SCREENS:
             size = settings.PWA_SPLASH_LOGO_WIDTH * ratio
-            svg = render_to_string("_logo.html", {"width": f"{size}px"})
+            svg = render_to_string("_splash_logo.html", {"width": f"{size}px"})
             png = subprocess.run(
                 ["rsvg-convert", "--width", str(size), "--height", str(size)],
                 input=svg.encode(), capture_output=True, check=True,
