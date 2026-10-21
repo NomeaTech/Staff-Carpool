@@ -1,0 +1,71 @@
+{% comment %}
+  Start-up animation, at the top of app.html's <body>. When the home screen
+  app starts, iOS shows a launch image (PWA_APP_SPLASH_SCREEN in settings):
+  the LUT logo, PWA_SPLASH_LOGO_WIDTH (128) px wide, in the middle of the
+  screen on PWA_APP_BACKGROUND_COLOR. This covers the page with the same
+  picture, so the change from the launch image to the page is not seen, and
+  when the page has loaded, the logo shrinks a little, then zooms past the
+  viewer while the cover fades away.
+
+  It plays once each time the app starts: not in a browser tab, nor on later
+  pages (Turbo runs this again on every page, and form posts load whole pages).
+{% endcomment %}
+<style>
+  #splash {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2147483647;
+    align-items: center;
+    justify-content: center;
+    background: #fcfbec; /* PWA_APP_BACKGROUND_COLOR */
+  }
+  #splash svg { will-change: transform, opacity; }
+  .splash-on #splash { display: flex; }
+  /* Taps reach the page as soon as it shows through */
+  .splash-out #splash { pointer-events: none; animation: splash-fade 450ms ease-in 250ms both; }
+  .splash-out #splash svg { animation: splash-zoom 700ms cubic-bezier(0.55, 0, 0.25, 1) both; }
+  @keyframes splash-zoom {
+    0% { transform: scale(1); }
+    25% { transform: scale(0.86); }
+    75% { opacity: 1; }
+    100% { transform: scale(14); opacity: 0; }
+  }
+  @keyframes splash-fade { to { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .splash-out #splash { animation: splash-fade 250ms ease-out both; }
+    .splash-out #splash svg { animation: none; }
+  }
+</style>
+<script>
+  (function () {
+    var root = document.documentElement;
+    var standalone = navigator.standalone === true || matchMedia("(display-mode: standalone)").matches;
+    if (!standalone || root.classList.contains("splash-on")) return;
+    try {
+      if (sessionStorage["splashShown"]) return;
+      sessionStorage["splashShown"] = "1";
+    } catch (e) {
+      return;
+    }
+    root.classList.add("splash-on");
+
+    function done() {
+      root.classList.remove("splash-on", "splash-out");
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+      requestAnimationFrame(function () {
+        root.classList.add("splash-out");
+        var splash = document.getElementById("splash");
+        splash.addEventListener("animationend", function (event) {
+          if (event.target === splash) done();
+        });
+        // In case the animation never ends, e.g. when the app is in the background
+        setTimeout(done, 1500);
+      });
+    });
+  })();
+</script>
+<div id="splash" aria-hidden="true">
+  {% include "_logo.html" with width="128px" %}
+</div>

@@ -302,7 +302,9 @@ PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js', 'serviceworker.js'
 PWA_APP_NAME = 'LUT Kyyti'
 PWA_APP_DESCRIPTION = "Ride sharing app for LUT staff"
 PWA_APP_THEME_COLOR = "#FFFFFF"
-PWA_APP_BACKGROUND_COLOR = '#F8F8F8'
+# The launch screen's colour: the app's page background (base-200 of the light
+# theme in theme/static_src/src/styles.css). home/templates/_splash.html uses it too.
+PWA_APP_BACKGROUND_COLOR = '#FCFBEC'
 PWA_APP_DISPLAY = 'standalone'
 PWA_APP_SCOPE = '/app/'
 PWA_APP_ORIENTATION = 'portrait'
@@ -328,11 +330,45 @@ PWA_APP_ICONS_APPLE = [
         'sizes': '180x180',
     }
 ]
+# iOS launch images: iOS shows the one whose media query matches the screen
+# exactly, so each iPhone and iPad screen needs its own. Screens are (width,
+# height, pixel ratio), in CSS px in portrait. The images are the LUT logo,
+# PWA_SPLASH_LOGO_WIDTH CSS px wide, in the middle; draw them anew with
+#   python manage.py make_splash
+# after changing these. home/templates/_splash.html draws the logo at the same
+# size and place, and animates it away when the app has loaded.
+PWA_SPLASH_LOGO_WIDTH = 128
+PWA_SPLASH_SCREENS = [
+    (320, 568, 2),    # iPhone SE (1st)
+    (375, 667, 2),    # iPhone 6-8, SE (2nd, 3rd)
+    (414, 736, 3),    # iPhone 6-8 Plus
+    (375, 812, 3),    # iPhone X, XS, 11 Pro, 12 mini, 13 mini
+    (414, 896, 2),    # iPhone XR, 11
+    (414, 896, 3),    # iPhone XS Max, 11 Pro Max
+    (390, 844, 3),    # iPhone 12, 13, 14, 16e
+    (428, 926, 3),    # iPhone 12, 13 Pro Max, 14 Plus
+    (393, 852, 3),    # iPhone 14 Pro, 15, 15 Pro, 16
+    (430, 932, 3),    # iPhone 14 Pro Max, 15 Plus, 15 Pro Max, 16 Plus
+    (402, 874, 3),    # iPhone 16 Pro, 17, 17 Pro
+    (440, 956, 3),    # iPhone 16 Pro Max, 17 Pro Max
+    (420, 912, 3),    # iPhone Air
+    (744, 1133, 2),   # iPad mini (6th, 7th)
+    (768, 1024, 2),   # iPad 9.7", iPad mini (5th)
+    (810, 1080, 2),   # iPad 10.2"
+    (820, 1180, 2),   # iPad Air (4th, 5th), iPad (10th, 11th)
+    (834, 1112, 2),   # iPad Air (3rd), iPad Pro 10.5"
+    (834, 1194, 2),   # iPad Pro 11"
+    (834, 1210, 2),   # iPad Pro 11" (M4)
+    (1024, 1366, 2),  # iPad Pro 12.9"
+    (1032, 1376, 2),  # iPad Pro 13" (M4)
+]
 PWA_APP_SPLASH_SCREEN = [
     {
-        'src': '/static/images/icons/splash-640x1136.png',
-        'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
+        'src': f'/static/images/splash/splash-{width * ratio}x{height * ratio}.png',
+        'media': f'(device-width: {width}px) and (device-height: {height}px) '
+                 f'and (-webkit-device-pixel-ratio: {ratio}) and (orientation: portrait)',
     }
+    for width, height, ratio in PWA_SPLASH_SCREENS
 ]
 PWA_APP_DIR = 'ltr'
 PWA_APP_LANG = 'en-US'
