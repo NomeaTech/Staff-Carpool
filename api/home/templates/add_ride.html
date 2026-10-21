@@ -21,6 +21,10 @@
 <section class="h-app w-full overflow-y-auto pt-[calc(1.75rem+env(safe-area-inset-top))] lg:pt-24 pb-dock lg:pb-10">
   {# One column: kept narrow (tablets); two columns from lg #}
   <div class="max-w-2xl lg:max-w-6xl mx-auto px-4 lg:px-7">
+    {# Looked up here, so that the script below is plain JavaScript to editors #}
+    {% trans "Select a start location" as start_hint %}
+    {% trans "Other destination" as other_destination_label %}
+    {% trans "Select a destination" as destination_hint %}
     <script>
         // Set form to same state after reload
         onPageReady(function() {
@@ -45,8 +49,8 @@
             for (const via of places.vias || []) {
                 viaAdd(via);
             }
-            autocomplete_init("div-autocomplete-start", "start", "From", "{% trans "Select a start location" %}", false, places.start);
-            destination_init("div-autocomplete-destination", "campus-data", "To", "{% trans "Other destination" %}", "{% trans "Select a destination" %}", false, places.destination);
+            autocomplete_init("div-autocomplete-start", "start", "From", "{{ start_hint|escapejs }}", false, places.start);
+            destination_init("div-autocomplete-destination", "campus-data", "To", "{{ other_destination_label|escapejs }}", "{{ destination_hint|escapejs }}", false, places.destination);
         });
     </script>
 

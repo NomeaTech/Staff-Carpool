@@ -10,6 +10,10 @@
 {% block content %}
 {{ campuses|json_script:"campus-data" }}
 
+{# Looked up here, so that the script below is plain JavaScript to editors #}
+{% trans "Select a start location from the list" as start_hint %}
+{% trans "Other destination" as other_destination_label %}
+{% trans "Select a destination from the list" as destination_hint %}
 <script>
     (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
         key: "{{ GOOGLE_MAPS_API_KEY }}"
@@ -18,8 +22,8 @@
     // Resolves once the From and To inputs have been created
     window.searchFormReady = new Promise((resolve) => {
         onPageReady(() => resolve(Promise.all([
-            autocomplete_init("div-autocomplete-start", "start", "From", "{% trans "Select a start location from the list" %}", true),
-            destination_init("div-autocomplete-destination", "campus-data", "To", "{% trans "Other destination" %}", "{% trans "Select a destination from the list" %}", true),
+            autocomplete_init("div-autocomplete-start", "start", "From", "{{ start_hint|escapejs }}", true),
+            destination_init("div-autocomplete-destination", "campus-data", "To", "{{ other_destination_label|escapejs }}", "{{ destination_hint|escapejs }}", true),
         ])));
     });
 </script>
