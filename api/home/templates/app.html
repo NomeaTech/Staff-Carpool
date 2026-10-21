@@ -127,21 +127,21 @@
               {% csrf_token %}
               <button class="btn btn-warning w-full" type="submit">Log Out</button>
             </form>
-    <p class="col-span-3">Version: 0.23.12</p>
+    <p class="col-span-3">Version: 0.23.13</p>
           </div>
         </div>
       </div>
     </div>
     {% with page=request.resolver_match.url_name %}
     <div class="z-5 hidden navbar fixed bg-base-100 border-b border-base-300 lg:flex px-6 pt-[env(safe-area-inset-top)]">
-        <div class="navbar-start">
+        <div class="navbar-start w-auto shrink-0">
           <a href="{% url 'home' %}" class="btn btn-ghost text-xl px-2">
             {% include "_logo.html" with width="40px" %}
             <span class="leading-none text-2xl font-bold tracking-tight">{% trans "LUT Kyyti" %}</span>
           </a>
         </div>
         <div class="navbar-end gap-2 w-auto grow">
-          <ul class="menu menu-horizontal gap-1 font-semibold text-base">
+          <ul class="menu menu-horizontal flex-nowrap whitespace-nowrap gap-1 font-semibold text-base">
             {% comment %}
               My rides and Help are in the side menu (and My rides in the mobile dock).
               The current page is not highlighted; hovering a link turns it green.

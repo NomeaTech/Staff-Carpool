@@ -7,11 +7,11 @@
 <section class="h-app w-full overflow-y-auto pt-[calc(1.75rem+env(safe-area-inset-top))] lg:pt-24 pb-dock lg:pb-10">
   <div class="max-w-6xl mx-auto px-4 lg:px-7">
 
-    <header class="mb-7">
-      <!-- <p class="text-xs font-bold uppercase tracking-widest text-primary mb-2">{% trans "Your dashboard" %}</p> -->
-      <h1 class="text-3xl font-bold tracking-tight mb-1">{% blocktrans with name=user.first_name %}Welcome back, {{ name }}!{% endblocktrans %}</h1>
+    <!-- <header class="mb-7">
+      <p class="text-xs font-bold uppercase tracking-widest text-primary mb-2">{% trans "Your dashboard" %}</p>
+      <h1 class="text-3xl font-bold tracking-tight mb-1">{% blocktrans with name=user.first_name %}Welcome back, {{ name }}{% endblocktrans %}</h1>
       <p class="text-base-content/60">{% trans "Share your commute. Make every journey count." %}</p>
-    </header>
+    </header> -->
 
     <nav class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5 mb-7" aria-label="{% trans "Main actions" %}">
       <a href="{% url 'search' %}" class="card card-side bg-primary text-primary-content items-center gap-4 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">

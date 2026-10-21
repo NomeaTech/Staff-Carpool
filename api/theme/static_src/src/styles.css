@@ -337,3 +337,48 @@
     user-select: none;
   }
 }
+
+/* Placeholder text has one colour everywhere, also in Safari (Tailwind's
+   base styles leave Safari's own grey). The "To" select (destination_init in
+   static/js/funcs.js) shows its placeholder option in the same colour until a
+   destination is chosen; the options in its list keep the normal colour. */
+.input::placeholder,
+.select:has(> option[value=""]:checked) {
+  color: color-mix(in oklab, var(--color-base-content) 50%, transparent);
+}
+.select:has(> option[value=""]:checked) > option {
+  color: var(--color-base-content);
+}
+
+/* Menus marked menu-soft (the More page) darken a pressed row with the same
+   shade as hovering it, instead of daisyUI's dark neutral, so every row looks
+   the same whether it is a link, a switch or the language select. */
+.menu-soft {
+  --menu-active-bg: color-mix(in oklab, var(--color-base-content) 10%, transparent);
+  --menu-active-fg: var(--color-base-content);
+}
+
+/* A see-through select-ghost in a pill row (the More page's language): its
+   picker gets its own background, a clear border and a deep shadow so it
+   stands out from the card it opens over, and pill-shaped options to match
+   the rounded rows. The chosen language is shown by a tinted option instead
+   of the browser's checkmark. */
+.select-pill::picker(select) {
+  color: var(--color-base-content);
+  background-color: var(--color-base-100);
+  border-color: color-mix(in oklab, var(--color-base-content) 15%, transparent);
+  box-shadow: 0 16px 40px -8px oklch(0% 0 0 / 0.3), 0 4px 12px -4px oklch(0% 0 0 / 0.2);
+}
+.select-pill option {
+  border-radius: 9999px;
+  padding-inline: 1rem;
+  text-align: left;
+  text-align-last: auto;
+}
+.select-pill option::checkmark {
+  display: none;
+}
+.select-pill option:checked {
+  background-color: color-mix(in oklab, var(--color-base-content) 10%, transparent);
+  font-weight: 600;
+}
