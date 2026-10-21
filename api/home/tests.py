@@ -14,7 +14,7 @@ from django.utils import timezone
 from PIL import Image
 
 from accounts.models import User
-from test_app.models import Ride, RideRequest, Via
+from rides.models import Ride, RideRequest, Via
 
 
 def make_user(first, last, **fields):
@@ -614,6 +614,23 @@ class RideFormChecksTests(TestCase):
         self.assert_refused(self.post(max_passengers="0"), "Enter a number of passengers from 1 to 100.")
         self.assert_refused(self.post(max_passengers="101"), "Enter a number of passengers from 1 to 100.")
 
+    def test_price_and_note_are_only_shown_when_filled_in(self, _route):
+        self.post(price=" €10 per passenger ", note="Room for luggage")
+        ride = Ride.objects.get()
+        self.assertEqual(ride.price, "€10 per passenger")
+        page = self.client.get(reverse("ride_detail", args=[ride.pk]))
+        self.assertContains(page, "€10 per passenger")
+        self.assertContains(page, "Room for luggage")
+
+        ride.delete()
+        self.post(price="  ", note="")
+        ride = Ride.objects.get()
+        self.assertEqual(ride.price, "")
+        page = self.client.get(reverse("ride_detail", args=[ride.pk]))
+        self.assertNotContains(page, ">Price<")
+        self.assertNotContains(page, "Additional information from the poster")
+        self.assertContains(self.client.get(reverse("edit_ride", args=[ride.pk])), 'id="id_price"')
+
 
 @override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
 @patch("home.views.build_route", return_value=None)
@@ -707,10 +724,10 @@ class EditRideTests(TestCase):
 
 
 class TransportIconTests(TestCase):
-    """Which transport icons a search result shows (test_app/transport.py icon_layout)."""
+    """Which transport icons a search result shows (rides/transport.py icon_layout)."""
 
     def layout(self, *fields, filters=()):
-        from test_app.transport import TRANSPORT_OPTIONS, icon_layout
+        from rides.transport import TRANSPORT_OPTIONS, icon_layout
         layout = icon_layout([option for option in TRANSPORT_OPTIONS if option.field in fields], filters)
         return [option.field for option in layout.options], layout.box_class
 

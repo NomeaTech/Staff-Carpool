@@ -24,7 +24,6 @@ urlpatterns = [
     path('rosetta/', include('rosetta.urls')),
     path('app/', include('home.urls')),
     path("i18n/", include("django.conf.urls.i18n")),
-    path('', include('test_app.urls')),
     path('', include('landing.urls')),
     path('', include('pwa.urls')),
     # Browsers and other tools ask for /favicon.ico when a page names no icon

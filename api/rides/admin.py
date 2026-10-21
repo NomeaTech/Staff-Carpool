@@ -12,13 +12,11 @@ from django.template.response import TemplateResponse
 from django.utils import timezone
 
 from home.campuses import CAMPUSES
-from .models import *
+from .models import Ride, RideRequest, Via
 from .routes import ROUTE_SRID
 from .test_places import PLACES
 from .transport import TRANSPORT_OPTIONS
 
-# admin.site.register(Profile)
-admin.site.register(Address)
 class ViaInline(admin.TabularInline):
     model = Via
     extra = 0
@@ -50,6 +48,9 @@ NOTES = [
     "Train tickets bought in advance, join me!",
     "Happy to share the taxi fare",
 ]
+
+
+PRICES = ["", "", "", "Free", "€5 per passenger", "€10 per passenger", "€15 per passenger", "Split the fuel costs"]
 
 
 class GenerateRidesForm(forms.Form):
@@ -109,6 +110,7 @@ def random_ride(driver):
         one_time=random.random() < 0.6,
         one_way=random.random() < 0.5,
         note=random.choice(NOTES),
+        price=random.choice(PRICES),
     )
     # Straight lines instead of the driving route, so no Routes API requests are made
     points = [point(p) for p in [start, *vias, destination]]
@@ -161,7 +163,7 @@ class RideAdmin(admin.ModelAdmin):
     def generate_test_rides(self, request, queryset):
         form = GenerateRidesForm(request.POST if "apply" in request.POST else None)
         if not form.is_valid():
-            return TemplateResponse(request, "admin/test_app/ride/generate_test_rides.html", {
+            return TemplateResponse(request, "admin/rides/ride/generate_test_rides.html", {
                 **self.admin_site.each_context(request),
                 "title": "Generate random test rides",
                 "opts": self.model._meta,

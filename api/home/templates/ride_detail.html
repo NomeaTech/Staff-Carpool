@@ -104,6 +104,10 @@
               {% endif %}
               <dt class="text-base-content/60">{% trans "Transport" %}</dt>
               <dd class="font-semibold">{% for option in ride.transport_options %}{{ option.label }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if ride.other and ride.other_field %} ({{ ride.other_field }}){% endif %}</dd>
+              {% if ride.price %}
+              <dt class="text-base-content/60">{% trans "Price" %}</dt>
+              <dd class="font-semibold break-words">{{ ride.price }}</dd>
+              {% endif %}
               <dt class="text-base-content/60">{% trans "Posted" %}</dt>
               <dd class="font-semibold">{{ ride.created_at|date:"j F Y" }}</dd>
             </dl>

@@ -16,7 +16,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 
 from notifications import services as notifications
-from test_app.models import RideRequest
+from rides.models import RideRequest
 from .forms import SignUpForm, UserLoginForm, ProfileForm, SettingsForm, PhotoForm, DeleteAccountForm, EmailChangeForm, PHOTO_MAX_UPLOAD, photo_too_large
 from . import email_change
 from .confirmation import send_confirmation, token_generator

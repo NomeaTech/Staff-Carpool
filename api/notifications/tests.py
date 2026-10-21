@@ -16,7 +16,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from home.tests import make_ride, make_user
-from test_app.models import Ride, RideRequest
+from rides.models import Ride, RideRequest
 from . import services
 from .models import ESSENTIAL, Kind, Notification, PushSubscription
 
