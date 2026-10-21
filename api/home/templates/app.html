@@ -36,6 +36,7 @@
 <body class=" flex bg-base-200 justify-content-center h-full" data-dock-tab="{% if page == 'home' %}1{% elif page == 'search' %}2{% elif page == 'add' %}3{% elif page == 'my_rides' %}4{% elif page == 'more' or page == 'account' or page == 'notifications' %}5{% else %}0{% endif %}">
 {% endwith %}
     {% cache 86400 app_body_top using="templates" %}
+    {% include "_splash.html" %}
     <script>
       theme = localStorage["theme"];
       document.documentElement.setAttribute("data-theme", theme);
@@ -126,7 +127,7 @@
               {% csrf_token %}
               <button class="btn btn-warning w-full" type="submit">Log Out</button>
             </form>
-    <p class="col-span-3">Version: 0.23.8</p>
+    <p class="col-span-3">Version: 0.23.9</p>
           </div>
         </div>
       </div>

@@ -11,10 +11,7 @@ var filesToCache = [
     '/static/images/icons/favicon-32x32.png',
     '/static/images/icons/apple-touch-icon.png',
     '/static/images/icons/android-chrome-192x192.png',
-    '/static/images/icons/android-chrome-384x384.png',
-    '/static/images/icons/splash-640x1136.png',
-    '/static/images/icons/splash-750x1334.png',
-    '/static/images/icons/splash-1334x750.png'
+    '/static/images/icons/android-chrome-384x384.png'
 ];
 
 // Cache on install. Each file is cached on its own: with cache.addAll() one
