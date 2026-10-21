@@ -1,50 +1,35 @@
 {% extends "base.html" %}
 
-{% load tailwind_filters %}
-{% load crispy_forms_tags %}
 {% load widget_tweaks %}
-{% load tailwind_tags %}
 {% load i18n %}
 
 {% block title %}{% trans "Log in" %} | LUT Kyyti{% endblock %}
 {% block content %}
 
-<div>
-  <div class="card bg-base-100 w-full shadow-sm font-display">
-      <div class="card-body">
-        <div class="flex flex-nowrap mb-4 justify-between">
-          <h2 class="card-title mb-0 mt-0">{% trans "Login" %}</h2>
-          <span class="flex">            
-
-            {% include "registration/_theme_switcher.html" %}
-
-          </span>
-        </div>
-        <form method="post">
-          {% csrf_token %}
-          <div class="grid grid-cols-3 gap-4">
-            
-            {{ form.username|append_attr:"required"}}
-
-            {{ form.password|append_attr:"required"}}
-            
-            {% if form.unconfirmed_email %}
-              {% for error in form.non_field_errors %}<div role="alert" class="col-span-3 text-error">{{ error }}</div>{% endfor %}
-            {% elif form.errors %}
-              <div class="col-span-3" style="color:var(--color-error)">{% trans "Enter a valid email and password" %}</div>
-            {% else %}
-              <div class="hidden validator-hint col-span-3">{% trans "Enter a valid email and password" %}</div>
-            {% endif %}
-
-            <button type="submit" class="btn btn-md btn-primary col-span-2 hover:">{% trans "Login" %}</button> 
-            <a href="{% url 'signup' %}" class="btn btn-md btn-secondary col-span-1 col-start-3">{% trans "Sign up" %}</a>  
-            <a href="{% url 'password_reset' %}" class="btn btn-sm btn-ghost col-span-3">{% trans "Password Reset" %}</a>
-          </div>
-        </form>
-        {% if form.unconfirmed_email %}
-          <div class="mt-2">{% include "registration/_resend_confirmation.html" with email=form.unconfirmed_email %}</div>
-        {% endif %}
+<div class="card bg-base-100 border border-base-300 shadow-sm">
+  <div class="card-body p-6 sm:p-8 gap-4">
+    <h1 class="text-2xl font-bold tracking-tight">{% trans "Log in" %}</h1>
+    <form method="post" class="grid gap-3">
+      {% csrf_token %}
+      {% include "registration/_field.html" with field=form.username %}
+      <div>
+        {% include "registration/_field.html" with field=form.password %}
+        <a href="{% url 'password_reset' %}" class="link link-primary link-hover text-sm font-semibold inline-block mt-2">{% trans "Password Reset" %}</a>
       </div>
-    </div>
+
+      {% if form.unconfirmed_email %}
+        {% for error in form.non_field_errors %}<div role="alert" class="text-error text-sm">{{ error }}</div>{% endfor %}
+      {% elif form.errors %}
+        <div role="alert" class="text-error text-sm">{% trans "Enter a valid email and password" %}</div>
+      {% endif %}
+
+      <button type="submit" class="btn btn-primary w-full mt-2">{% trans "Login" %}</button>
+    </form>
+    {% if form.unconfirmed_email %}
+      {% include "registration/_resend_confirmation.html" with email=form.unconfirmed_email %}
+    {% endif %}
+    <div class="divider my-0"></div>
+    <a href="{% url 'signup' %}" class="btn btn-outline btn-primary w-full">{% trans "Sign up" %}</a>
+  </div>
 </div>
 {% endblock %}

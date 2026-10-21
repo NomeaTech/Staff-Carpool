@@ -39,9 +39,20 @@
       shadow. Larger screens: centred, without pushing the top of a card
       taller than the screen out of reach (my-auto rather than items-center).
     {% endcomment %}
+    {% comment %}
+      Above the card: the app's name, linking to the landing page, and the
+      theme switch (the account pages have no navbar).
+    {% endcomment %}
     <div class="container mx-auto">
         <section class="flex justify-center min-h-screen px-4 py-6 sm:py-12">
-            <main class="w-full max-w-96 sm:my-auto">
+            <main class="w-full max-w-md sm:my-auto">
+                <div class="flex items-center justify-between gap-3 mb-5">
+                    <a href="{% url 'landing' %}" class="flex items-center gap-2">
+                        {% include "_logo.html" with width="40px" %}
+                        <span class="text-2xl font-bold tracking-tight">LUT Kyyti</span>
+                    </a>
+                    {% include "registration/_theme_switcher.html" %}
+                </div>
     {% endcache %}
                 {% block content %}
                 {% endblock %}

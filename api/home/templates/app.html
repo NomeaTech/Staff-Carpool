@@ -127,7 +127,7 @@
               {% csrf_token %}
               <button class="btn btn-warning w-full" type="submit">Log Out</button>
             </form>
-    <p class="col-span-3">Version: 0.23.14</p>
+    <p class="col-span-3">Version: 0.24.0</p>
           </div>
         </div>
       </div>
@@ -147,8 +147,8 @@
               The current page is not highlighted; hovering a link turns it green.
             {% endcomment %}
             <li><a href="{% url 'home' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Home" %}{% include "_icon.html" with name="home" class="size-6" %}</a></li>
-            <li><a href="{% url 'search' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Find a ride" %}{% include "_icon.html" with name="search" class="size-6" %}</a></li>
-            <li><a href="{% url 'add' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Post a ride" %}{% include "_icon.html" with name="car" class="size-6" %}</a></li>
+            <li><a href="{% url 'search' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Find" %}{% include "_icon.html" with name="search" class="size-6" %}</a></li>
+            <li><a href="{% url 'add' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Post" %}{% include "_icon.html" with name="car" class="size-6" %}</a></li>
           </ul>
           {# The bell's menu is fetched when it opens; see static/js/notifications.js #}
           {% with count=unread_notification_count %}

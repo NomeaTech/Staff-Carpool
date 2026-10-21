@@ -7,7 +7,7 @@ from notifications.models import Notification
 from django.http import HttpResponseRedirect
 from test_app.models import Ride, RideRequest, Via
 from test_app.routes import build_route, as_route_point
-from test_app.transport import FILTER_OPTIONS, icon_layout
+from test_app.transport import TRANSPORT_OPTIONS, icon_layout
 from django.contrib.auth.decorators import login_required
 from test_app.models import Ride
 from .forms import SearchForm
@@ -21,6 +21,8 @@ from django.db.models.functions import Least
 from django.db import transaction
 from django.core.paginator import Paginator
 import os
+import operator
+from functools import reduce
 import requests
 from django.views.decorators.cache import never_cache
 import json
@@ -243,7 +245,11 @@ SEARCH_PAGE_SIZE = 12
 @login_required
 @never_cache
 def search(request):
-    context = {"GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"), "campuses": CAMPUSES}
+    context = {
+        "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"), "campuses": CAMPUSES,
+        # The filters' icons and colours, by field
+        "transport": {option.field: option for option in TRANSPORT_OPTIONS},
+    }
 
     # Opening the page shows all rides, the same as searching without filters
     search_form = SearchForm(request.POST if request.method == "POST" else {})
@@ -253,7 +259,7 @@ def search(request):
         rides = search_rides(search_form.cleaned_data)
         page = Paginator(rides, SEARCH_PAGE_SIZE).get_page(request.POST.get("page"))
         # The icons of the options the search is filtered by come first
-        filters = [name for name in FILTER_OPTIONS if search_form.cleaned_data.get(name)]
+        filters = transport_filters(search_form.cleaned_data)
         for ride in page:
             ride.icons = icon_layout(ride.transport_options(), filters)
         context["page"] = page
@@ -264,6 +270,10 @@ def search(request):
         return render(request, "search_results.html", context)
 
     return render(request, "search.html", context)
+
+def transport_filters(form_clean):
+    """The ways of travelling (Ride fields) ticked in the search form."""
+    return [option.field for option in TRANSPORT_OPTIONS if form_clean.get(option.field)]
 
 # How far a ride may start or end from the searched start or destination to
 # count as a matching ride. Rides further away that pass by on their route are
@@ -343,12 +353,10 @@ def search_rides(form_clean):
         )
         on_the_way &= Q(start_position__lt=F("destination_position")) | Q(one_way=False)
 
-    if form_clean["offer"]:
-        rides = rides.filter(offer=True)
-    if form_clean["request"]:
-        rides = rides.filter(request=True)
-    if form_clean["other"]:
-        rides = rides.filter(Q(other=True) | Q(train=True) | Q(bus=True) | Q(taxi=True))
+    # Rides with any of the ticked ways of travelling
+    filters = transport_filters(form_clean)
+    if filters:
+        rides = rides.filter(reduce(operator.or_, (Q(**{field: True}) for field in filters)))
     if form_clean["date"]:
         rides = rides.filter(on_date(form_clean["date"]))
 
@@ -472,6 +480,8 @@ def render_ride_form(request, ride_form, ride):
         "editing": not ride._state.adding,
         "day_list": days,
         "initial_places": initial_places(ride_form, ride),
+        # The transport choices' icons and colours, by field
+        "transport": {option.field: option for option in TRANSPORT_OPTIONS},
         "GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY"), "campuses": CAMPUSES,
     }
     return render(request, "add_ride.html", context)

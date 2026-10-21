@@ -24,51 +24,50 @@
     });
 </script>
 
-<section class="flex flex-col w-full pt-[calc(1.25rem+env(safe-area-inset-top))] lg:pt-20 pb-dock lg:pb-10 h-app overflow-scroll scrollbar-hide">
-    <form id="search-form" class="flex z-2 justify-center mx-2" action="/app/search/" method="post">
-        {% csrf_token %}
-        
-        <div class="card border-solid border-2 border-primary bg-base-100 shadow-sm lg:w-200 z-10 justify-center">
-            <div class="card-body">
-                <div class="flex flex-wrap pb-4 place-content-center gap-4">
-                    <div class="badge shadow-md py-5 px-2">
-                        <label class="label">
-                            <input name="offer" type="checkbox" class="checkbox before:delay-0 before:duration-100" />
-                            {% trans "Offer car ride" %}
-                        </label>
-                    </div>
-                    <div class="badge shadow-md py-5 px-2">
-                        <label class="label">
-                            <input name="request" type="checkbox" class="checkbox before:delay-0 before:duration-100" />
-                            {% trans "Request car ride" %}
-                        </label>
-                    </div>
-                    <div class="badge shadow-md py-5 px-2">
-                        <label class="label">
-                            <input name="other" type="checkbox" class="checkbox before:delay-0 before:duration-100" />
-                            {% trans "Train, bus, taxi, other" %}
-                        </label>
-                    </div>
-                </div>
-                <div class="grid md:grid-cols-7 grid-cols-2 gap-4 h-full">
-                    <div id="div-autocomplete-start" class="col-span-2 w-full skeleton rounded-field"></div>
-                    <div id="div-autocomplete-destination" class="col-span-2 w-full skeleton rounded-field"></div>
-                    <!-- <input type="search" name="start" placeholder="{% trans "From" %}" class="input col-span-2 w-full" id="id_search_query">
-                    <input type="search" name="destination" placeholder="{% trans "To" %}" class="input col-span-2 w-full" id="id_search_query"> -->
-                    <input type="date" name="date" aria-label="{% trans "Date" %}" class="input col-span-2 w-full">
-                    <input class="btn btn-primary md:col-span-1 col-span-2" type="submit" value="{% trans "Search" %}">
-                </div>
-
-            </div>
+<section class="h-app w-full overflow-y-auto pt-[calc(1.75rem+env(safe-area-inset-top))] lg:pt-24 pb-dock lg:pb-10">
+  <div class="max-w-6xl mx-auto px-4 lg:px-7">
+    <form id="search-form" class="card bg-base-100 border border-base-300 shadow-sm mb-5" action="/app/search/" method="post">
+      {% csrf_token %}
+      <div class="card-body p-5 sm:p-6 gap-4">
+        <h2 class="card-title text-lg">{% trans "Find a ride" %}</h2>
+        {# The ways of travelling to show: rides with any of the ticked ones, or all rides when none is ticked #}
+        <div class="flex flex-wrap gap-2">
+          {% trans "Offer car ride" as offer_label %}{% trans "Request car ride" as request_label %}{% trans "Train" as train_label %}{% trans "Bus" as bus_label %}{% trans "Taxi" as taxi_label %}{% trans "Other" as other_label %}
+          {% include "_search_filter.html" with option=transport.offer label=offer_label %}
+          {% include "_search_filter.html" with option=transport.request label=request_label %}
+          {% include "_search_filter.html" with option=transport.train label=train_label %}
+          {% include "_search_filter.html" with option=transport.bus label=bus_label %}
+          {% include "_search_filter.html" with option=transport.taxi label=taxi_label %}
+          {% include "_search_filter.html" with option=transport.other label=other_label %}
         </div>
+        <div class="grid gap-3 md:grid-cols-[1fr_1fr_1fr_auto] md:items-end">
+          <fieldset class="fieldset py-0">
+            <legend class="fieldset-legend">{% trans "From" %}</legend>
+            <div id="div-autocomplete-start" class="w-full skeleton h-12 rounded-field"></div>
+          </fieldset>
+          <fieldset class="fieldset py-0">
+            <legend class="fieldset-legend">{% trans "To" %}</legend>
+            <div id="div-autocomplete-destination" class="w-full skeleton h-12 rounded-field"></div>
+          </fieldset>
+          <fieldset class="fieldset py-0">
+            <legend class="fieldset-legend">{% trans "Date" %}</legend>
+            <input type="date" name="date" aria-label="{% trans "Date" %}" class="input w-full h-12">
+          </fieldset>
+          <button class="btn btn-primary h-12" type="submit">{% include "_icon.html" with name="search" %}{% trans "Search" %}</button>
+        </div>
+      </div>
     </form>
-    <div id="search-results" aria-live="polite" class="flex flex-wrap self-center max-w-full 2xl:w-380 xl:w-300 md:w-200 pt-5 col-span-1 xl:px-0 justify-center">
-        {% include "search_results.html" %}
+
+    <div id="search-results" aria-live="polite" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {% include "search_results.html" %}
     </div>
+
+    {% include "_page_footer.html" %}
+  </div>
 </section>
 
 <template id="search-error">
-    <p class="basis-full text-center text-error">{% trans "Search failed, please try again." %}</p>
+  <p class="col-span-full text-center text-error">{% trans "Search failed, please try again." %}</p>
 </template>
 
 <script>
@@ -108,7 +107,7 @@
 
         function snapshotForm() {
             return {
-                checks: Object.fromEntries(["offer", "request", "other"].map((name) => [name, form.elements[name].checked])),
+                checks: Object.fromEntries([...form.querySelectorAll('input[type="checkbox"]')].map((check) => [check.name, check.checked])),
                 date: form.elements.date.value,
                 start: placeState(document.getElementById("div-autocomplete-start")),
                 destination: {
@@ -120,7 +119,10 @@
 
         async function restoreForm(saved) {
             for (const [name, checked] of Object.entries(saved.checks)) {
-                form.elements[name].checked = checked;
+                // Searches saved before a filter was renamed may name one that is gone
+                if (form.elements[name]) {
+                    form.elements[name].checked = checked;
+                }
             }
             form.elements.date.value = saved.date;
             setPlace(document.getElementById("div-autocomplete-start"), saved.start);

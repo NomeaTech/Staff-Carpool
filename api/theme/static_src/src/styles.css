@@ -383,9 +383,20 @@
   font-weight: 600;
 }
 
-/* @tailwindcss/forms draws a checkmark on every checked checkbox; a daisyUI
-   toggle (e.g. the More page's dark mode switch) is a checkbox too, but shows
-   its state with its knob, so it gets no checkmark. */
-.toggle {
+/* @tailwindcss/forms draws a checkmark on every checked checkbox and a dot on
+   every checked radio button. A daisyUI toggle (e.g. the More page's dark mode
+   switch) is a checkbox too, but shows its state with its knob, and a tab made
+   of a radio button (the add ride page's schedule) with its background, so
+   they get neither. */
+.toggle,
+.tab:is(input[type="radio"]) {
   background-image: none;
+}
+/* It also paints unticked checkboxes and radio buttons white, which daisyUI
+   leaves see-through: white boxes on the dark theme's cards. */
+.checkbox:not(:checked, :indeterminate),
+.radio:not(:checked),
+.toggle:not(:checked),
+.tab:is(input[type="radio"]):not(:checked) {
+  background-color: transparent;
 }

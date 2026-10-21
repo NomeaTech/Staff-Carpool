@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 14:07+0300\n"
+"POT-Creation-Date: 2026-10-21 17:34+0300\n"
 "PO-Revision-Date: 2026-07-01 16:50+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,11 +19,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
-#: carpool/settings.py:213
+#: carpool/settings.py:214
 msgid "English"
 msgstr "Englanti"
 
-#: carpool/settings.py:214
+#: carpool/settings.py:215
 msgid "Finnish"
 msgstr "Suomi"
 
