@@ -1,11 +1,11 @@
-{# Light/dark theme toggle shown in the header of the account pages #}
-<label class="swap swap-rotate">
+{# Light/dark theme toggle shown above the card of the account pages (base.html) #}
+<label class="swap swap-rotate btn btn-ghost btn-circle">
   <!-- this hidden checkbox controls the state -->
   <input hidden id="theme-switcher" type="checkbox" onchange="updateTheme(this.checked)" />
 
   <!-- sun icon -->
   <svg
-    class="swap-off h-10 w-10 fill-current"
+    class="swap-off size-6 fill-current"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24">
     <path
@@ -14,7 +14,7 @@
 
   <!-- moon icon -->
   <svg
-    class="swap-on h-10 w-10 fill-current"
+    class="swap-on size-6 fill-current"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24">
     <path

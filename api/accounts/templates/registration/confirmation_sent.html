@@ -12,6 +12,6 @@
   <p>{% blocktrans %}We've sent a confirmation link to <strong>{{ email }}</strong>. Open it to start using your account.{% endblocktrans %}</p>
 {% endif %}
 <p class="text-base-content/70">{% trans "If you don't receive an email within a few minutes, check your spam folder or send a new link." %}</p>
-<div class="mt-2">{% include "registration/_resend_confirmation.html" %}</div>
+<div>{% include "registration/_resend_confirmation.html" %}</div>
 <a href="{% url 'login' %}" class="btn btn-sm btn-ghost w-full">{% trans "Back to login" %}</a>
 {% endblock %}

@@ -1,0 +1,14 @@
+{% comment %}
+  One of the search page's filters (option: a TransportOption) as a pill with
+  its icon. As on the add ride page, the checkbox is hidden and the icon's
+  circle shows it: outlined in the option's colour while unticked, filled with
+  it once ticked.
+{% endcomment %}
+<label class="group relative flex items-center gap-2 rounded-full border border-base-300 py-1 ps-1 pe-3 text-sm font-semibold cursor-pointer select-none transition hover:border-primary/40 has-checked:border-primary has-checked:bg-primary/10 has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary"
+       style="--tile: var(--color-{{ option.field }}); --tile-content: var(--color-{{ option.field }}-content)">
+  <input name="{{ option.field }}" type="checkbox" class="sr-only">
+  <span class="grid place-items-center size-7 shrink-0 rounded-full border-2 border-(--tile) text-[color-mix(in_oklab,var(--tile)_70%,var(--color-base-content))] transition group-has-checked:bg-(--tile) group-has-checked:text-(--tile-content)">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="{{ option.viewbox }}" fill="currentColor" class="size-4 overflow-visible" aria-hidden="true">{{ option.icon }}</svg>
+  </span>
+  {{ label }}
+</label>

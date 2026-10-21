@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 14:07+0300\n"
+"POT-Creation-Date: 2026-10-21 17:34+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -202,8 +202,12 @@ msgstr ""
 msgid "Offline"
 msgstr ""
 
-#: test_app/templates/offline-new.html:17
+#: test_app/templates/offline-new.html:15
 msgid "You are offline"
+msgstr ""
+
+#: test_app/templates/offline-new.html:16
+msgid "Check your internet connection and try again."
 msgstr ""
 
 #: test_app/templates/ride_detail.html:12
@@ -501,47 +505,47 @@ msgstr ""
 msgid "Copy link"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:299
+#: test_app/templates/ride_detail.html:312
 msgid "Delete this trip?"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:301
+#: test_app/templates/ride_detail.html:314
 msgid "The trip will be removed for everyone and cannot be restored."
 msgstr ""
 
-#: test_app/templates/ride_detail.html:304
+#: test_app/templates/ride_detail.html:317
 msgid "Everyone who has joined or requested to join will be notified by email."
 msgstr ""
 
-#: test_app/templates/ride_detail.html:309
-#: test_app/templates/ride_detail.html:319
+#: test_app/templates/ride_detail.html:322
+#: test_app/templates/ride_detail.html:332
 msgid "Cancel"
 msgstr ""
 
-#: test_app/templates/ride_detail.html:314
+#: test_app/templates/ride_detail.html:327
 msgid "Delete trip"
 msgstr ""
 
-#: test_app/transport.py:31
+#: test_app/transport.py:38
 msgid "Ride offer"
 msgstr ""
 
-#: test_app/transport.py:40
+#: test_app/transport.py:48
 msgid "Request"
 msgstr ""
 
-#: test_app/transport.py:49
+#: test_app/transport.py:58
 msgid "Train"
 msgstr ""
 
-#: test_app/transport.py:58
+#: test_app/transport.py:68
 msgid "Bus"
 msgstr ""
 
-#: test_app/transport.py:67
+#: test_app/transport.py:78
 msgid "Taxi"
 msgstr ""
 
-#: test_app/transport.py:76
+#: test_app/transport.py:88
 msgid "Other"
 msgstr ""

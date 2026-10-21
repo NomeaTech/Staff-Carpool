@@ -229,6 +229,22 @@ class PageTests(TestCase):
         found = {ride.pk for ride in self.client.post(reverse("search"), {}).context["page"]}
         self.assertEqual(found, {self.ride.pk, returning.pk, recurring.pk})
 
+    def test_search_shows_rides_with_any_ticked_way_of_travelling(self):
+        bus = make_ride(self.driver, offer=False, bus=True)
+        train_and_taxi = make_ride(self.driver, offer=False, train=True, taxi=True)
+        self.client.force_login(self.passenger)
+
+        def found(*filters):
+            response = self.client.post(reverse("search"), {name: "on" for name in filters})
+            return {ride.pk for ride in response.context["page"]}
+
+        self.assertEqual(found("bus"), {bus.pk})
+        self.assertEqual(found("bus", "taxi"), {bus.pk, train_and_taxi.pk})
+        self.assertEqual(found("offer"), {self.ride.pk})
+        self.assertEqual(found("other"), set())
+        # Nothing ticked shows every way of travelling
+        self.assertEqual(found(), {self.ride.pk, bus.pk, train_and_taxi.pk})
+
     def test_search_results_use_display_names(self):
         self.client.force_login(self.passenger)
         response = self.client.post(reverse("search"), {})
@@ -543,7 +559,7 @@ class AddRideScheduleTests(TestCase):
                              note="Room for luggage")
         self.assertContains(response, 'value="recurring" checked')
         self.assertContains(response, 'value="twoWay" checked')
-        self.assertContains(response, 'id="id_monday_check" name="monday_check" type="checkbox" class="checkbox" checked')
+        self.assertContains(response, 'id="id_monday_check" name="monday_check" type="checkbox" class="checkbox checkbox-sm checkbox-primary" checked')
         self.assertContains(response, 'value="07:30"')
         self.assertContains(response, "Room for luggage")
 
@@ -632,7 +648,7 @@ class EditRideTests(TestCase):
         self.assertContains(response, 'value="2099-10-14T07:30"')
         self.assertContains(response, 'value="oneTime" checked')
         self.assertContains(response, 'onchange="enableMaxPassengerField(this)" checked')
-        self.assertContains(response, 'max="100" class="input" value="3"')
+        self.assertContains(response, 'max="100" class="input w-full" value="3"')
         places = response.context["initial_places"]
         self.assertEqual((places["start"]["displayName"], places["destination"]["displayName"]), ("Lappeenranta", "Lahti"))
         self.assertEqual([via["displayName"] for via in places["vias"]], ["Kouvola"])
@@ -699,11 +715,11 @@ class TransportIconTests(TestCase):
         return [option.field for option in layout.options], layout.box_class
 
     def test_fewer_icons_are_bigger(self):
-        self.assertEqual(self.layout("bus")[1], "size-16")
-        self.assertEqual(self.layout("bus", "taxi")[1], "size-16")
+        self.assertEqual(self.layout("bus")[1], "size-12")
+        self.assertEqual(self.layout("bus", "taxi")[1], "size-12")
         for count in range(3, 7):
             fields = ["offer", "request", "train", "bus", "taxi", "other"][:count]
-            self.assertEqual(self.layout(*fields)[1], "size-[2.625rem]")
+            self.assertEqual(self.layout(*fields)[1], "size-9")
 
     def test_all_options_are_shown_offers_and_requests_first(self):
         everything = ("offer", "request", "train", "bus", "taxi", "other")
@@ -712,13 +728,14 @@ class TransportIconTests(TestCase):
 
     def test_filtered_options_come_first(self):
         everything = ("offer", "request", "train", "bus", "taxi", "other")
-        self.assertEqual(self.layout(*everything, filters=["other"])[0], ["train", "bus", "taxi", "other", "offer", "request"])
+        self.assertEqual(self.layout(*everything, filters=["train", "bus", "taxi", "other"])[0], ["train", "bus", "taxi", "other", "offer", "request"])
+        self.assertEqual(self.layout(*everything, filters=["bus"])[0], ["bus", "offer", "request", "train", "taxi", "other"])
         self.assertEqual(self.layout(*everything, filters=["request"])[0], ["request", "offer", "train", "bus", "taxi", "other"])
 
     def test_search_results_show_every_option(self):
         self.client.force_login(make_user("Aino", "Mäkinen"))
         make_ride(User.objects.get(), request=True, train=True, bus=True, taxi=True, other=True)
-        page = self.client.post(reverse("search"), {"other": "on"}).content.decode()
+        page = self.client.post(reverse("search"), {"train": "on", "bus": "on", "taxi": "on", "other": "on"}).content.decode()
         labels = ["Train", "Bus", "Taxi", "Other", "Ride offer", "Request"]
         positions = [page.index(f'aria-label="{label}" title="{label}"') for label in labels]
         self.assertEqual(positions, sorted(positions))

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 14:07+0300\n"
+"POT-Creation-Date: 2026-10-21 17:34+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,8 +31,8 @@ msgid "Please complete the human verification."
 msgstr ""
 
 #: landing/templates/contact.html:6 landing/templates/contact.html:12
-#: landing/templates/index.html:140 landing/templates/landing.html:51
-#: landing/templates/landing.html:89
+#: landing/templates/index.html:140 landing/templates/landing.html:50
+#: landing/templates/landing.html:88
 msgid "Contact"
 msgstr ""
 
@@ -54,12 +54,12 @@ msgstr ""
 msgid "Message *"
 msgstr ""
 
-#: landing/templates/contact.html:43
+#: landing/templates/contact.html:45
 msgid "Send"
 msgstr ""
 
 #: landing/templates/faq.html:6 landing/templates/index.html:88
-#: landing/templates/landing.html:47 landing/templates/landing.html:85
+#: landing/templates/landing.html:46 landing/templates/landing.html:84
 msgid "FAQ"
 msgstr ""
 
@@ -748,7 +748,7 @@ msgid ""
 msgstr ""
 
 #: landing/templates/how-it-works.html:6 landing/templates/index.html:27
-#: landing/templates/landing.html:43 landing/templates/landing.html:81
+#: landing/templates/landing.html:42 landing/templates/landing.html:80
 msgid "How it works"
 msgstr ""
 
@@ -757,7 +757,7 @@ msgid "Under Construction"
 msgstr ""
 
 #: landing/templates/impact.html:6 landing/templates/index.html:38
-#: landing/templates/landing.html:45 landing/templates/landing.html:83
+#: landing/templates/landing.html:44 landing/templates/landing.html:82
 msgid "Impact"
 msgstr ""
 
@@ -948,28 +948,28 @@ msgstr ""
 msgid "Questions, feedback, or ideas for improving LUT Kyyti? Contact us!"
 msgstr ""
 
-#: landing/templates/landing.html:49 landing/templates/landing.html:87
+#: landing/templates/landing.html:48 landing/templates/landing.html:86
 #: landing/templates/safety.html:6
 msgid "Safety"
 msgstr ""
 
-#: landing/templates/landing.html:57 landing/templates/landing.html:92
+#: landing/templates/landing.html:56 landing/templates/landing.html:91
 msgid "Find a ride"
 msgstr ""
 
-#: landing/templates/landing.html:58 landing/templates/landing.html:94
+#: landing/templates/landing.html:57 landing/templates/landing.html:93
 msgid "Log in / Join"
 msgstr ""
 
-#: landing/templates/landing.html:132
+#: landing/templates/landing.html:131
 msgid "Privacy policy"
 msgstr ""
 
-#: landing/templates/landing.html:133
+#: landing/templates/landing.html:132
 msgid "Terms of use"
 msgstr ""
 
-#: landing/templates/landing.html:136
+#: landing/templates/landing.html:135
 msgid "LUT Kyyti is operated by LUT University."
 msgstr ""
 
