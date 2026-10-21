@@ -266,7 +266,10 @@
           <div class="card-body p-5 sm:p-6">
             <h2 class="card-title text-lg mb-1">{% trans "Share this ride" %}</h2>
             <p class="text-xs text-base-content/60">{% trans "Only signed-in LUT Kyyti members can open the link." %}</p>
-            <div class="rounded-field bg-base-200 px-3 py-2 text-xs break-all mt-2">{{ share_url }}</div>
+            {# On desktops the link stays on one line, its text shrunk to fit the box. In Noto Sans a link's characters are at most 0.51em wide on average, so it fits in 0.53em per character #}
+            <div class="@container rounded-field bg-base-200 px-3 py-2 text-xs break-all lg:break-normal mt-2">
+              <span class="lg:whitespace-nowrap lg:text-[length:min(0.75rem,100cqi/(var(--chars)*0.53))]" style="--chars: {{ share_url|length }}">{{ share_url }}</span>
+            </div>
             <button class="btn btn-outline btn-sm w-full mt-3" type="button" id="copy-link" data-url="{{ share_url }}" data-copied="{% trans "Link copied" %}">
               {% include "_icon.html" with name="link" class="size-4" %}{% trans "Copy link" %}
             </button>
