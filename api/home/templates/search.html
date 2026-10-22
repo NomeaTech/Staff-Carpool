@@ -36,7 +36,7 @@
         <!-- <h2 class="card-title text-lg">{% trans "Find a ride" %}</h2> -->
         {# The ways of travelling to show: rides with any of the ticked ones, or all rides when none is ticked #}
         <div class="flex flex-wrap gap-2">
-          {% trans "Offer car ride" as offer_label %}{% trans "Request car ride" as request_label %}{% trans "Train" as train_label %}{% trans "Bus" as bus_label %}{% trans "Taxi" as taxi_label %}{% trans "Other" as other_label %}
+          {% trans "Offer a car ride" as offer_label %}{% trans "Request a car ride" as request_label %}{% trans "Train" as train_label %}{% trans "Bus" as bus_label %}{% trans "Taxi" as taxi_label %}{% trans "Other" as other_label %}
           {% include "_search_filter.html" with option=transport.offer label=offer_label %}
           {% include "_search_filter.html" with option=transport.request label=request_label %}
           {% include "_search_filter.html" with option=transport.train label=train_label %}
@@ -71,7 +71,7 @@
 </section>
 
 <template id="search-error">
-  <p class="col-span-full text-center text-error">{% trans "Search failed, please try again." %}</p>
+  <p class="col-span-full text-center text-error">{% trans "Search failed. Please try again." %}</p>
 </template>
 
 <script>

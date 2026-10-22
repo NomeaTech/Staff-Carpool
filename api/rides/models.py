@@ -178,7 +178,7 @@ class Ride(models.Model):
         """Short summary of a recurring ride's days, e.g. "Weekdays" or "Mon, Wed"."""
         day_filter = self.day_filter()
         if all(day_filter):
-            return _("Everyday")
+            return _("Every day")
         if all(day_filter[:5]) and not any(day_filter[5:7]):
             return _("Weekdays")
         if all(day_filter[5:7]) and not any(day_filter[:5]):
@@ -279,7 +279,7 @@ class Ride(models.Model):
 
 
             if all(day_filter):
-                schedule_string = template.format(_("Everyday"))
+                schedule_string = template.format(_("Every day"))
             elif all(day_filter[:5]) and not any(day_filter[5:7]):
                 schedule_string = template.format(_("Weekdays"))
             elif all(day_filter[5:7]) and not any(day_filter[:5]):

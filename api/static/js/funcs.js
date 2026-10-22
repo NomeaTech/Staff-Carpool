@@ -72,7 +72,7 @@ function enableOtherField(checkbox) {
 
 }
 
-function changeRecurrance(radio) {
+function changeRecurrence(radio) {
     div1 = document.getElementById('div-one-time');
     div2 = document.getElementById('div-recurring');
 
