@@ -1,0 +1,4 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=recipient.first_name %}Hi {{ name }},{% endblocktrans %}
+
+{% blocktrans %}{{ name }} removed you from the group {{ group }}.{% endblocktrans %}
+{% include "emails/_footer.txt" %}{% endautoescape %}

@@ -92,6 +92,8 @@ def ride_details(ride):
         "price": bool(ride.price),
         "note": bool(ride.note),
         "destination_campus": campus(ride.destination_json),
+        # How many groups it was posted to; 0 is everyone
+        "groups": ride.groups.count() if ride.groups_only else 0,
     }
     leaving_at = ride.leaving_at()
     if leaving_at:

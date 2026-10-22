@@ -21,6 +21,20 @@ class Kind(models.TextChoices):
     PASSENGER_REMOVED = "passenger_removed", _("Removed from a ride")
     RIDE_UPDATED = "ride_updated", _("Ride changed")
     RIDE_CANCELLED = "ride_cancelled", _("Ride cancelled")
+    # To drivers of rides posted only to groups that are all gone
+    RIDE_HIDDEN = "ride_hidden", _("Ride no longer shown")
+    # Groups (groups/services.py). To admins:
+    GROUP_JOIN_REQUESTED = "group_join_requested", _("Request to join a group")
+    # To members, and people asking to join:
+    GROUP_JOIN_ACCEPTED = "group_join_accepted", _("Joined a group")
+    GROUP_JOIN_DECLINED = "group_join_declined", _("Group request declined")
+    GROUP_REMOVED = "group_removed", _("Removed from a group")
+    GROUP_ADMIN_GRANTED = "group_admin_granted", _("You are now a group admin")
+    # When a group has no admin who can act and the member becomes one
+    GROUP_ADMIN_HANDED_OVER = "group_admin_handed_over", _("You are now a group admin")
+    GROUP_DELETED = "group_deleted", _("Group deleted")
+    # When its last member left
+    GROUP_CLOSED = "group_closed", _("Group closed")
 
 
 # Notifications about changes to a trip the user is part of. Users who
@@ -32,9 +46,18 @@ ESSENTIAL = {
     Kind.PASSENGER_REMOVED,
     Kind.RIDE_UPDATED,
     Kind.RIDE_CANCELLED,
+    Kind.RIDE_HIDDEN,
+    Kind.GROUP_JOIN_ACCEPTED,
+    Kind.GROUP_JOIN_DECLINED,
+    Kind.GROUP_REMOVED,
+    Kind.GROUP_ADMIN_GRANTED,
+    Kind.GROUP_ADMIN_HANDED_OVER,
+    Kind.GROUP_DELETED,
+    Kind.GROUP_CLOSED,
 }
 
-# What each kind says. %(name)s is the other person, %(route)s the ride.
+# What each kind says. %(name)s is the other person, %(route)s the ride,
+# %(group)s the group.
 MESSAGES = {
     Kind.REQUEST_RECEIVED: _("%(name)s would like to join your ride %(route)s."),
     Kind.REQUEST_WITHDRAWN: _("%(name)s withdrew their request to join your ride %(route)s."),
@@ -44,6 +67,15 @@ MESSAGES = {
     Kind.PASSENGER_REMOVED: _("%(name)s removed you from the ride %(route)s."),
     Kind.RIDE_UPDATED: _("%(name)s changed the ride %(route)s. Check the new details."),
     Kind.RIDE_CANCELLED: _("%(name)s cancelled the ride %(route)s."),
+    Kind.RIDE_HIDDEN: _("Your ride %(route)s was only shown to %(group)s, which you are no longer in, so nobody can find it now. Edit the ride to choose who sees it."),
+    Kind.GROUP_JOIN_REQUESTED: _("%(name)s would like to join %(group)s."),
+    Kind.GROUP_JOIN_ACCEPTED: _("%(name)s accepted you into %(group)s. You can now see the rides posted to it."),
+    Kind.GROUP_JOIN_DECLINED: _("%(name)s declined your request to join %(group)s."),
+    Kind.GROUP_REMOVED: _("%(name)s removed you from %(group)s."),
+    Kind.GROUP_ADMIN_GRANTED: _("%(name)s made you an admin of %(group)s. You can now answer requests to join it."),
+    Kind.GROUP_ADMIN_HANDED_OVER: _("You are now an admin of %(group)s, as it had no admin left who could answer requests to join. You have been a member the longest. You can hand the role over to someone else on the group's page."),
+    Kind.GROUP_DELETED: _("%(name)s deleted the group %(group)s."),
+    Kind.GROUP_CLOSED: _("The group %(group)s was closed, as its last member left. Your request to join it was cancelled."),
 }
 
 
@@ -58,7 +90,19 @@ STYLES = {
     Kind.PASSENGER_REMOVED: ("x", "bg-error/15 text-error"),
     Kind.RIDE_UPDATED: ("calendar", "bg-info/20 text-info-content"),
     Kind.RIDE_CANCELLED: ("x", "bg-error/15 text-error"),
+    Kind.RIDE_HIDDEN: ("alert", "bg-warning/25 text-warning-content"),
+    Kind.GROUP_JOIN_REQUESTED: ("user", "bg-secondary/15 text-secondary"),
+    Kind.GROUP_JOIN_ACCEPTED: ("check", "bg-success/25 text-success-content"),
+    Kind.GROUP_JOIN_DECLINED: ("x", "bg-error/15 text-error"),
+    Kind.GROUP_REMOVED: ("x", "bg-error/15 text-error"),
+    Kind.GROUP_ADMIN_GRANTED: ("shield", "bg-info/20 text-info-content"),
+    Kind.GROUP_ADMIN_HANDED_OVER: ("shield", "bg-warning/25 text-warning-content"),
+    Kind.GROUP_DELETED: ("x", "bg-base-300 text-base-content/70"),
+    Kind.GROUP_CLOSED: ("x", "bg-base-300 text-base-content/70"),
 }
+
+# Kinds about a group, which lead to the group's page
+GROUP_KINDS = {kind for kind in Kind if kind.startswith("group_")}
 
 
 class Notification(models.Model):
@@ -67,6 +111,8 @@ class Notification(models.Model):
     kind = models.CharField(max_length=30, choices=Kind.choices)
     # Kept when the ride is deleted (e.g. "ride cancelled"); data has its route
     ride = models.ForeignKey("rides.Ride", on_delete=models.SET_NULL, null=True, blank=True, related_name="notifications")
+    # Kept when the group is deleted; data has its name
+    group = models.ForeignKey("groups.Group", on_delete=models.SET_NULL, null=True, blank=True, related_name="notifications")
     # The details shown, as they were when it was sent: name, route, message
     data = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
@@ -99,12 +145,19 @@ class Notification(models.Model):
     def message(self):
         """The notification's text, in the current language."""
         # The lazy texts are translated when turned into a string
-        return str(MESSAGES[Kind(self.kind)]) % {"name": self.data.get("name", ""), "route": self.data.get("route", "")}
+        return str(MESSAGES[Kind(self.kind)]) % {
+            "name": self.data.get("name", ""), "route": self.data.get("route", ""), "group": self.data.get("group", ""),
+        }
 
     def url(self):
-        """Where opening it leads: its ride, if the ride still exists."""
+        """Where opening it leads: its group or ride, if it still exists."""
+        if self.kind in GROUP_KINDS:
+            gone = self.kind in (Kind.GROUP_DELETED, Kind.GROUP_CLOSED)
+            return reverse("group_detail", args=[self.group_id]) if self.group_id and not gone else None
         if self.kind == Kind.RIDE_CANCELLED or not self.ride_id:
             return None
+        if self.kind == Kind.RIDE_HIDDEN:
+            return reverse("edit_ride", args=[self.ride_id])
         return reverse("ride_detail", args=[self.ride_id])
 
     def as_payload(self):

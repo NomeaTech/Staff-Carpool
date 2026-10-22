@@ -271,6 +271,26 @@
       <h3 id="delete-account-title" class="font-bold">{% trans "Delete your account?" %}</h3>
     </div>
     <p class="py-4 text-sm">{% trans "Your account, your profile photo, the rides you have posted and your ride requests are deleted permanently. People who joined or requested your rides are notified that they are cancelled." %}</p>
+    {% if group_effects %}
+      {# The groups the user is the only admin of (groups.services.without) #}
+      <div role="alert" class="alert alert-warning alert-soft items-start text-sm mb-4">
+        {% include "_icon.html" with name="alert" class="size-5" %}
+        <div class="grid gap-1">
+          <strong>{% trans "You are the only admin of these groups:" %}</strong>
+          <ul class="list-disc ps-4">
+            {% for effect in group_effects %}
+              <li>
+                <a href="{% url 'group_detail' effect.group.pk %}" class="link font-semibold">{{ effect.group.name }}</a>:
+                {% if effect.closes %}{% trans "you are its last member, so it will be deleted." %}
+                {% elif effect.successor %}{% blocktrans with name=effect.successor.user|display_name %}{{ name }} will become its admin, as the longest-standing member.{% endblocktrans %}
+                {% else %}{% trans "none of its members have used LUT Kyyti lately; the first to come back will become its admin." %}{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+          <span>{% trans "To choose someone else, hand the admin role over on the group's page first." %}</span>
+        </div>
+      </div>
+    {% endif %}
     <form method="post" id="delete-account-form" data-no-submit-shortcut>
       {% csrf_token %}
       <input type="hidden" name="form" value="delete">

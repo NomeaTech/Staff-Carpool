@@ -1,0 +1,6 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=recipient.first_name %}Hi {{ name }},{% endblocktrans %}
+
+{% blocktrans %}{{ name }} made you an admin of the group {{ group }}. You can now accept or decline requests to join it, and make other members admins.{% endblocktrans %}
+
+{{ url }}
+{% include "emails/_footer.txt" %}{% endautoescape %}

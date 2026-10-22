@@ -16,6 +16,7 @@ urlpatterns = [
     path("rides/", my_rides, name="my_rides"),
     path("more/", more, name="more"),
     path("notifications/", include("notifications.urls")),
+    path("groups/", include("groups.urls")),
     path("search/", search, name="search"),
     path("add/", add_ride, name="add"),
     path("digitrans/autocomplete/", digitrans_autocomplete_proxy, name="digitrans_autocomplete_proxy")

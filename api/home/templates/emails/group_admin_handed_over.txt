@@ -1,0 +1,7 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=recipient.first_name %}Hi {{ name }},{% endblocktrans %}
+
+{% blocktrans %}You are now an admin of the group {{ group }}. Its admins have left or have not used LUT Kyyti for a long time, and you have been a member the longest, so requests to join it now come to you.{% endblocktrans %}
+
+{% trans "If you would rather not, you can hand the role over to another member on the group's page:" %}
+{{ url }}
+{% include "emails/_footer.txt" %}{% endautoescape %}

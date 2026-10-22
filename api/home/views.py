@@ -32,7 +32,8 @@ from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from accounts.models import User
 from activity import events
-from activity.models import Kind
+from activity.models import Event, Kind
+from datetime import datetime, time, timedelta
 from django.db import IntegrityError, transaction
 from django.db.models import Exists, OuterRef
 import uuid
@@ -53,8 +54,9 @@ def home(request):
         ride__in=upcoming, ride__driver=user, status=RideRequest.Status.PENDING
     ).select_related("ride", "passenger")
 
+    # Rides posted to groups are shown with the user's groups instead
     recent_rides = (
-        upcoming.exclude(driver=user)
+        upcoming.visible_to(user).exclude(driver=user).filter(groups_only=False)
         .with_seats_taken()
         .order_by("-created_at")[:4]
     )
@@ -64,8 +66,58 @@ def home(request):
         "pending_requests": pending_requests,
         "recent_rides": recent_rides,
         "show_welcome": user.welcomed_at is None,
+        **group_summary(user, upcoming),
     }
     return render(request, "home.html", context)
+
+# How many rides in the user's groups the home page shows
+HOME_GROUP_RIDES = 5
+# Without an earlier visit, rides posted this long ago count as new
+NEW_WITHOUT_VISIT = timedelta(days=7)
+
+def group_summary(user, upcoming):
+    """
+    The home page's groups section: the user's groups, each with the rides
+    posted to it since the user's last visit (and, for admins, the requests
+    to join waiting), and the latest upcoming rides others posted to them.
+    """
+    from groups.models import Membership
+    memberships = list(Membership.objects.active().filter(user=user).select_related("group").order_by("group__name"))
+    if not memberships:
+        return {"group_memberships": []}
+    # The user's last visit before today (activity/middleware.py)
+    today = timezone.make_aware(datetime.combine(timezone.localdate(), time.min))
+    last_visit = (Event.objects.filter(user=user, kind=Kind.ACTIVE, created_at__lt=today)
+                  .order_by("-created_at").values_list("created_at", flat=True).first())
+    new_since = last_visit or timezone.now() - NEW_WITHOUT_VISIT
+
+    group_ids = {m.group_id for m in memberships}
+    in_my_groups = Ride.groups.through.objects.filter(ride=OuterRef("pk"), group__in=group_ids)
+    rides = list(
+        upcoming.filter(Exists(in_my_groups)).exclude(driver=user).select_related("driver")
+        .prefetch_related("groups").with_seats_taken().order_by("-created_at")
+    )
+    new_counts = {}
+    for ride in rides:
+        ride.is_new = ride.created_at > new_since
+        # Only the user's own groups are named
+        ride.my_groups = [group for group in ride.groups.all() if group.pk in group_ids]
+        for group in ride.my_groups:
+            new_counts[group.pk] = new_counts.get(group.pk, 0) + ride.is_new
+
+    waiting = dict(
+        Membership.objects.pending().filter(group__in=[m.group_id for m in memberships if m.is_admin])
+        .values("group").annotate(n=Count("pk")).values_list("group", "n")
+    )
+    for membership in memberships:
+        membership.new_rides = new_counts.get(membership.group_id, 0)
+        membership.waiting = waiting.get(membership.group_id, 0)
+    return {
+        "group_memberships": memberships,
+        "group_rides": rides[:HOME_GROUP_RIDES],
+        "group_rides_more": len(rides) > HOME_GROUP_RIDES,
+        "new_group_rides": sum(ride.is_new for ride in rides),
+    }
 
 @login_required
 @require_POST
@@ -114,6 +166,11 @@ def ride_detail(request, ride_id):
     user = request.user
     is_driver = ride.driver_id == user.id
 
+    # A ride posted to groups the user is not in (e.g. from a shared link):
+    # say which groups to join, without showing the ride
+    if not Ride.objects.visible_to(user).filter(pk=ride.pk).exists():
+        return render(request, "ride_not_shown.html", {"groups": ride.groups.all()}, status=403)
+
     # Seeing the ride is seeing what its notifications were about. A page
     # loaded early by Turbo (when a link is hovered or touched) may never be
     # seen: it marks them read itself once shown (ride_detail.html).
@@ -132,6 +189,7 @@ def ride_detail(request, ride_id):
         "vias": ride.via_points.all(),
         "share_url": request.build_absolute_uri(reverse("ride_detail", args=[ride.pk])),
         "mark_read_when_shown": mark_read_when_shown,
+        "ride_groups": ride.groups.all() if ride.groups_only else None,
     }
 
     if is_driver:
@@ -163,7 +221,7 @@ def ride_detail(request, ride_id):
 @login_required
 @require_POST
 def request_ride(request, ride_id):
-    ride = get_object_or_404(Ride.objects.upcoming().with_seats_taken(), pk=ride_id)
+    ride = get_object_or_404(Ride.objects.upcoming().visible_to(request.user).with_seats_taken(), pk=ride_id)
     message = request.POST.get("message", "").strip()[:500]
 
     if ride.driver_id == request.user.id:
@@ -291,7 +349,7 @@ def search(request):
     context["form"] = search_form
 
     if search_form.is_valid():
-        rides = search_rides(search_form.cleaned_data)
+        rides = search_rides(search_form.cleaned_data, request.user)
         page = Paginator(rides, SEARCH_PAGE_SIZE).get_page(request.POST.get("page"))
         # The icons of the options the search is filtered by come first
         filters = transport_filters(search_form.cleaned_data)
@@ -336,9 +394,10 @@ DIRECT_RADIUS = D(km=10)
 # shown as a ride that could pick the searcher up / drop them off on the way
 ON_THE_WAY_RADIUS = D(km=5)
 
-def search_rides(form_clean):
+def search_rides(form_clean, user):
     """
-    Build the search query. Nothing is fetched until it is evaluated.
+    Build the search query, of the rides user may see (groups/models.py).
+    Nothing is fetched until it is evaluated.
 
     Each ride is annotated with on_the_way:
     - False: the ride starts near the searched start and ends near the searched
@@ -357,7 +416,7 @@ def search_rides(form_clean):
     direct_distances = []
     route_distances = []
     # Rides that have already left (Ride.objects.upcoming) are not shown
-    rides = Ride.objects.upcoming().select_related("driver")
+    rides = Ride.objects.upcoming().visible_to(user).select_related("driver")
 
     if start_json:
         sl = start_json["location"]
@@ -459,7 +518,9 @@ def ride_form_page(request, ride):
     # (A new ride already has its UUID, so ride.pk does not tell them apart)
     editing = not ride._state.adding
     if request.method != "POST":
-        return render_ride_form(request, RideForm(instance=ride), ride)
+        # ?audience=groups: offering a ride from the home page's groups section
+        initial = {"audience": "groups"} if not editing and request.GET.get("audience") == "groups" else {}
+        return render_ride_form(request, RideForm(instance=ride, initial=initial), ride)
 
     # Before checking the form, which copies the posted values onto the ride
     old_places = place_signature(ride) if editing else None
@@ -501,6 +562,7 @@ def save_ride(ride_form):
 
     with transaction.atomic():
         ride.save()
+        ride_form.save_m2m()
         ride.via_points.all().delete()
         Via.objects.bulk_create([
             Via(ride=ride, order=order, via_json=via, location=point(via))

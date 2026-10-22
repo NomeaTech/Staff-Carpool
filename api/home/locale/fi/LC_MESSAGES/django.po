@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-23 00:50+0300\n"
+"POT-Creation-Date: 2026-10-23 01:35+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,15 +38,15 @@ msgstr ""
 msgid "Mikkeli campus"
 msgstr ""
 
-#: home/templates/_page_footer.html:4 home/templates/more.html:80
+#: home/templates/_page_footer.html:4 home/templates/more.html:87
 msgid "Contact"
 msgstr ""
 
-#: home/templates/_page_footer.html:5 home/templates/more.html:82
+#: home/templates/_page_footer.html:5 home/templates/more.html:89
 msgid "Terms of use"
 msgstr ""
 
-#: home/templates/_page_footer.html:6 home/templates/more.html:81
+#: home/templates/_page_footer.html:6 home/templates/more.html:88
 msgid "Privacy policy"
 msgstr ""
 
@@ -101,7 +101,7 @@ msgid "Details"
 msgstr ""
 
 #: home/templates/add_ride.html:6 home/templates/add_ride.html:74
-#: home/templates/ride_detail.html:219
+#: home/templates/ride_detail.html:226
 msgid "Edit ride"
 msgstr ""
 
@@ -174,7 +174,7 @@ msgstr ""
 msgid "From"
 msgstr ""
 
-#: home/templates/add_ride.html:121 home/templates/ride_detail.html:204
+#: home/templates/add_ride.html:121 home/templates/ride_detail.html:211
 msgid "Remove"
 msgstr ""
 
@@ -186,7 +186,7 @@ msgstr ""
 msgid "Add a stop"
 msgstr ""
 
-#: home/templates/add_ride.html:140 home/templates/ride_detail.html:95
+#: home/templates/add_ride.html:140 home/templates/ride_detail.html:102
 msgid "Schedule"
 msgstr ""
 
@@ -198,12 +198,12 @@ msgstr ""
 msgid "One-time"
 msgstr ""
 
-#: home/templates/add_ride.html:146 home/templates/ride_detail.html:93
+#: home/templates/add_ride.html:146 home/templates/ride_detail.html:100
 msgid "Recurring"
 msgstr ""
 
 #: home/templates/add_ride.html:150 home/templates/add_ride.html:153
-#: home/templates/ride_detail.html:87
+#: home/templates/ride_detail.html:94
 msgid "Return"
 msgstr ""
 
@@ -229,36 +229,68 @@ msgstr ""
 msgid "%(day)s: returning at"
 msgstr ""
 
-#: home/templates/add_ride.html:236
+#: home/templates/add_ride.html:236 home/templates/add_ride.html:239
+msgid "Who can see this ride"
+msgstr ""
+
+#: home/templates/add_ride.html:242
+msgid "Everyone"
+msgstr ""
+
+#: home/templates/add_ride.html:242
+msgid "All LUT Kyyti members can find it"
+msgstr ""
+
+#: home/templates/add_ride.html:246
+msgid "Only my groups"
+msgstr ""
+
+#: home/templates/add_ride.html:246
+msgid "Only members of the groups you choose can find it"
+msgstr ""
+
+#: home/templates/add_ride.html:250 home/templates/more.html:46
+msgid "Groups"
+msgstr ""
+
+#: home/templates/add_ride.html:257
+msgid "You are not in any groups."
+msgstr ""
+
+#: home/templates/add_ride.html:257
+msgid "Make or join one"
+msgstr ""
+
+#: home/templates/add_ride.html:271
 msgid "Price and note for passengers"
 msgstr ""
 
-#: home/templates/add_ride.html:239 home/templates/ride_detail.html:108
+#: home/templates/add_ride.html:274 home/templates/ride_detail.html:115
 msgid "Price"
 msgstr ""
 
-#: home/templates/add_ride.html:239 home/templates/add_ride.html:243
+#: home/templates/add_ride.html:274 home/templates/add_ride.html:278
 msgid "(optional)"
 msgstr ""
 
-#: home/templates/add_ride.html:240
+#: home/templates/add_ride.html:275
 msgid "e.g. €10 per passenger"
 msgstr ""
 
-#: home/templates/add_ride.html:243
+#: home/templates/add_ride.html:278
 msgid "Note"
 msgstr ""
 
-#: home/templates/add_ride.html:247 home/templates/ride_detail.html:333
-#: home/templates/ride_detail.html:343
+#: home/templates/add_ride.html:282 home/templates/ride_detail.html:340
+#: home/templates/ride_detail.html:350
 msgid "Cancel"
 msgstr ""
 
-#: home/templates/add_ride.html:248
+#: home/templates/add_ride.html:283
 msgid "Save changes"
 msgstr ""
 
-#: home/templates/add_ride.html:248
+#: home/templates/add_ride.html:283
 msgid "Add ride"
 msgstr ""
 
@@ -304,6 +336,14 @@ msgid ""
 "in your settings: %(account_url)s"
 msgstr ""
 
+#: home/templates/emails/group_admin_granted.txt:1
+#: home/templates/emails/group_admin_handed_over.txt:1
+#: home/templates/emails/group_closed.txt:1
+#: home/templates/emails/group_deleted.txt:1
+#: home/templates/emails/group_join_accepted.txt:1
+#: home/templates/emails/group_join_declined.txt:1
+#: home/templates/emails/group_join_requested.txt:1
+#: home/templates/emails/group_removed.txt:1
 #: home/templates/emails/passenger_left.txt:1
 #: home/templates/emails/passenger_removed.txt:1
 #: home/templates/emails/request_accepted.txt:1
@@ -311,9 +351,69 @@ msgstr ""
 #: home/templates/emails/request_received.txt:1
 #: home/templates/emails/request_withdrawn.txt:1
 #: home/templates/emails/ride_cancelled.txt:1
+#: home/templates/emails/ride_hidden.txt:1
 #: home/templates/emails/ride_updated.txt:1
 #, python-format
 msgid "Hi %(name)s,"
+msgstr ""
+
+#: home/templates/emails/group_admin_granted.txt:3
+#, python-format
+msgid ""
+"%(name)s made you an admin of the group %(group)s. You can now accept or "
+"decline requests to join it, and make other members admins."
+msgstr ""
+
+#: home/templates/emails/group_admin_handed_over.txt:3
+#, python-format
+msgid ""
+"You are now an admin of the group %(group)s. Its admins have left or have "
+"not used LUT Kyyti for a long time, and you have been a member the longest, "
+"so requests to join it now come to you."
+msgstr ""
+
+#: home/templates/emails/group_admin_handed_over.txt:5
+msgid ""
+"If you would rather not, you can hand the role over to another member on the "
+"group's page:"
+msgstr ""
+
+#: home/templates/emails/group_closed.txt:3
+#, python-format
+msgid ""
+"The group %(group)s was closed, as its last member left. Your request to "
+"join it was cancelled."
+msgstr ""
+
+#: home/templates/emails/group_deleted.txt:3
+#, python-format
+msgid "%(name)s deleted the group %(group)s."
+msgstr ""
+
+#: home/templates/emails/group_join_accepted.txt:3
+#, python-format
+msgid ""
+"%(name)s accepted you into the group %(group)s. You can now see the rides "
+"posted to it, and post rides to it yourself."
+msgstr ""
+
+#: home/templates/emails/group_join_declined.txt:3
+#, python-format
+msgid "%(name)s declined your request to join the group %(group)s."
+msgstr ""
+
+#: home/templates/emails/group_join_requested.txt:3
+#, python-format
+msgid "%(name)s would like to join your group %(group)s."
+msgstr ""
+
+#: home/templates/emails/group_join_requested.txt:5
+msgid "Accept or decline the request on the group's page:"
+msgstr ""
+
+#: home/templates/emails/group_removed.txt:3
+#, python-format
+msgid "%(name)s removed you from the group %(group)s."
 msgstr ""
 
 #: home/templates/emails/passenger_left.txt:3
@@ -366,6 +466,18 @@ msgstr ""
 msgid ""
 "%(name)s has cancelled the ride %(route)s. You can look for another ride on "
 "LUT Kyyti."
+msgstr ""
+
+#: home/templates/emails/ride_hidden.txt:3
+#, python-format
+msgid ""
+"Your ride %(route)s was only shown to the group %(group)s, which you are no "
+"longer in, so nobody can find it now. The people who already joined or asked "
+"to join it can still see it."
+msgstr ""
+
+#: home/templates/emails/ride_hidden.txt:5
+msgid "Edit the ride to choose who sees it:"
 msgstr ""
 
 #: home/templates/emails/ride_updated.txt:3
@@ -481,7 +593,7 @@ msgid ""
 "Before your first shared trip, take a moment to read these:"
 msgstr ""
 
-#: home/templates/home.html:145 home/templates/more.html:78
+#: home/templates/home.html:145 home/templates/more.html:85
 msgid "Help & FAQ"
 msgstr ""
 
@@ -489,7 +601,7 @@ msgstr ""
 msgid "How rides, requests and seats work"
 msgstr ""
 
-#: home/templates/home.html:155 home/templates/more.html:79
+#: home/templates/home.html:155 home/templates/more.html:86
 msgid "Safety tips"
 msgstr ""
 
@@ -513,19 +625,19 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: home/templates/more.html:51
+#: home/templates/more.html:58
 msgid "Dark mode"
 msgstr ""
 
-#: home/templates/more.html:64 home/templates/more.html:65
+#: home/templates/more.html:71 home/templates/more.html:72
 msgid "Language"
 msgstr ""
 
-#: home/templates/more.html:88
+#: home/templates/more.html:95
 msgid "Log out"
 msgstr ""
 
-#: home/templates/more.html:91
+#: home/templates/more.html:98
 #, python-format
 msgid "LUT Kyyti, version %(version)s"
 msgstr ""
@@ -565,290 +677,316 @@ msgstr ""
 msgid "Past ride"
 msgstr ""
 
-#: home/templates/ride_detail.html:25
+#: home/templates/ride_detail.html:27
+msgid ""
+"Nobody can find this ride: it was only shown to groups you are no longer in, "
+"or that were deleted."
+msgstr ""
+
+#: home/templates/ride_detail.html:27
+msgid "Choose who sees it"
+msgstr ""
+
+#: home/templates/ride_detail.html:32
 #, python-format
 msgid "Recurring · %(days)s"
 msgstr ""
 
-#: home/templates/ride_detail.html:26
+#: home/templates/ride_detail.html:33
 msgid "One-way trip"
 msgstr ""
 
-#: home/templates/ride_detail.html:26 home/templates/search_results.html:58
+#: home/templates/ride_detail.html:33 home/templates/search_results.html:58
 msgid "Return trip"
 msgstr ""
 
-#: home/templates/ride_detail.html:35
+#: home/templates/ride_detail.html:42
 msgid "Route & departure"
 msgstr ""
 
-#: home/templates/ride_detail.html:41 home/templates/ride_detail.html:78
+#: home/templates/ride_detail.html:48 home/templates/ride_detail.html:85
 msgid "Departure"
 msgstr ""
 
-#: home/templates/ride_detail.html:51
+#: home/templates/ride_detail.html:58
 msgid "Stop on the way · time to be agreed"
 msgstr ""
 
-#: home/templates/ride_detail.html:62
+#: home/templates/ride_detail.html:69
 msgid "Destination"
 msgstr ""
 
-#: home/templates/ride_detail.html:62
+#: home/templates/ride_detail.html:69
 #, python-format
 msgid "returning %(time)s"
 msgstr ""
 
-#: home/templates/ride_detail.html:68
+#: home/templates/ride_detail.html:75
 msgid ""
 "Pickup and drop-off points should be agreed before the trip. Passing near a "
 "place does not guarantee a convenient stop."
 msgstr ""
 
-#: home/templates/ride_detail.html:75
+#: home/templates/ride_detail.html:82
 msgid "Trip information"
 msgstr ""
 
-#: home/templates/ride_detail.html:82
+#: home/templates/ride_detail.html:89
 msgid "Available seats"
 msgstr ""
 
-#: home/templates/ride_detail.html:83
+#: home/templates/ride_detail.html:90
 msgid "Not specified"
 msgstr ""
 
-#: home/templates/ride_detail.html:86
+#: home/templates/ride_detail.html:93
 msgid "Trip type"
 msgstr ""
 
-#: home/templates/ride_detail.html:87
+#: home/templates/ride_detail.html:94
 msgid "One way"
 msgstr ""
 
-#: home/templates/ride_detail.html:92
+#: home/templates/ride_detail.html:99
 msgid "Frequency"
 msgstr ""
 
-#: home/templates/ride_detail.html:93
+#: home/templates/ride_detail.html:100
 msgid "One-time trip"
 msgstr ""
 
-#: home/templates/ride_detail.html:102
+#: home/templates/ride_detail.html:109
 msgid "Return journey"
 msgstr ""
 
-#: home/templates/ride_detail.html:105
+#: home/templates/ride_detail.html:112
 msgid "Transport"
 msgstr ""
 
-#: home/templates/ride_detail.html:111
+#: home/templates/ride_detail.html:118
 msgid "Posted"
 msgstr ""
 
-#: home/templates/ride_detail.html:120
+#: home/templates/ride_detail.html:127
 msgid "Additional information from the poster"
 msgstr ""
 
-#: home/templates/ride_detail.html:128
+#: home/templates/ride_detail.html:135
 msgid "Safety & arrangements"
 msgstr ""
 
-#: home/templates/ride_detail.html:129
+#: home/templates/ride_detail.html:136
 msgid ""
 "Confirm the meeting point, departure time, and any costs before travelling. "
 "Avoid sharing sensitive personal information publicly."
 msgstr ""
 
-#: home/templates/ride_detail.html:130
+#: home/templates/ride_detail.html:137
 msgid "View safety guidance"
 msgstr ""
 
-#: home/templates/ride_detail.html:143
+#: home/templates/ride_detail.html:150
 msgid "Ride posted by"
 msgstr ""
 
-#: home/templates/ride_detail.html:147
+#: home/templates/ride_detail.html:154
 msgid "you"
 msgstr ""
 
-#: home/templates/ride_detail.html:148
+#: home/templates/ride_detail.html:155
 msgid "Verified LUT/LAB account"
 msgstr ""
 
-#: home/templates/ride_detail.html:154
+#: home/templates/ride_detail.html:161
 msgid "Contact details shared with you:"
 msgstr ""
 
-#: home/templates/ride_detail.html:157
+#: home/templates/ride_detail.html:164
 msgid ""
 "The driver has not shared any contact details. Check the ride's notes for "
 "how to get in touch."
 msgstr ""
 
-#: home/templates/ride_detail.html:160
+#: home/templates/ride_detail.html:167
 msgid "Accepted passengers see your name and the contact details you share."
 msgstr ""
 
-#: home/templates/ride_detail.html:160
+#: home/templates/ride_detail.html:167
 msgid "Privacy settings"
 msgstr ""
 
-#: home/templates/ride_detail.html:162
+#: home/templates/ride_detail.html:169
 msgid "Contact details are shared once the driver accepts your request."
 msgstr ""
 
-#: home/templates/ride_detail.html:170
+#: home/templates/ride_detail.html:177
 msgid "Manage your ride"
 msgstr ""
 
-#: home/templates/ride_detail.html:172
+#: home/templates/ride_detail.html:179
 msgid "Requests"
 msgstr ""
 
-#: home/templates/ride_detail.html:185
+#: home/templates/ride_detail.html:192
 msgid "The ride is full"
 msgstr ""
 
-#: home/templates/ride_detail.html:185
+#: home/templates/ride_detail.html:192
 msgid "Accept"
 msgstr ""
 
-#: home/templates/ride_detail.html:186
+#: home/templates/ride_detail.html:193
 msgid "Decline"
 msgstr ""
 
-#: home/templates/ride_detail.html:190
+#: home/templates/ride_detail.html:197
 msgid "No requests waiting for an answer."
 msgstr ""
 
-#: home/templates/ride_detail.html:194
+#: home/templates/ride_detail.html:201
 msgid "Passengers"
 msgstr ""
 
-#: home/templates/ride_detail.html:202
+#: home/templates/ride_detail.html:209
 msgid "Remove this passenger from the ride?"
 msgstr ""
 
-#: home/templates/ride_detail.html:210
+#: home/templates/ride_detail.html:217
 msgid "This passenger has not shared any contact details."
 msgstr ""
 
-#: home/templates/ride_detail.html:214
+#: home/templates/ride_detail.html:221
 msgid "Nobody has joined yet."
 msgstr ""
 
-#: home/templates/ride_detail.html:220
+#: home/templates/ride_detail.html:227
 msgid "Delete ride"
 msgstr ""
 
-#: home/templates/ride_detail.html:227
+#: home/templates/ride_detail.html:234
 msgid "Join this ride"
 msgstr ""
 
-#: home/templates/ride_detail.html:230
+#: home/templates/ride_detail.html:237
 msgid "This ride has already taken place."
 msgstr ""
 
-#: home/templates/ride_detail.html:232
+#: home/templates/ride_detail.html:239
 msgid "All seats on this ride are taken."
 msgstr ""
 
-#: home/templates/ride_detail.html:233
+#: home/templates/ride_detail.html:240
 msgid "Ride full"
 msgstr ""
 
-#: home/templates/ride_detail.html:236
+#: home/templates/ride_detail.html:243
 #, python-format
 msgid "There is currently %(counter)s seat available."
 msgid_plural "There are currently %(counter)s seats available."
 msgstr[0] ""
 msgstr[1] ""
 
-#: home/templates/ride_detail.html:237
+#: home/templates/ride_detail.html:244
 msgid ""
 "Send a request to the driver. Your seat is confirmed once they accept it."
 msgstr ""
 
-#: home/templates/ride_detail.html:242
+#: home/templates/ride_detail.html:249
 msgid "Message to the driver (optional)"
 msgstr ""
 
-#: home/templates/ride_detail.html:243
+#: home/templates/ride_detail.html:250
 msgid "Hi, could I join from Kouvola?"
 msgstr ""
 
-#: home/templates/ride_detail.html:244
+#: home/templates/ride_detail.html:251
 msgid ""
 "Only the driver sees your message. Don't include sensitive personal "
 "information."
 msgstr ""
 
-#: home/templates/ride_detail.html:246
+#: home/templates/ride_detail.html:253
 msgid "Request to join"
 msgstr ""
 
-#: home/templates/ride_detail.html:250
+#: home/templates/ride_detail.html:257
 msgid ""
 "Your request is awaiting a response from the driver. You will get an email "
 "when they answer."
 msgstr ""
 
-#: home/templates/ride_detail.html:253
+#: home/templates/ride_detail.html:260
 msgid "Withdraw request"
 msgstr ""
 
-#: home/templates/ride_detail.html:257
+#: home/templates/ride_detail.html:264
 msgid ""
 "Your request has been accepted. Agree on the meeting point and time with the "
 "driver using the contact details above."
 msgstr ""
 
-#: home/templates/ride_detail.html:259
+#: home/templates/ride_detail.html:266
 msgid "Leave this ride? The driver will be notified."
 msgstr ""
 
-#: home/templates/ride_detail.html:261
+#: home/templates/ride_detail.html:268
 msgid "Leave ride"
 msgstr ""
 
-#: home/templates/ride_detail.html:265
+#: home/templates/ride_detail.html:272
 msgid "The driver declined your request for this ride."
 msgstr ""
 
-#: home/templates/ride_detail.html:267
+#: home/templates/ride_detail.html:274 home/templates/ride_not_shown.html:29
 msgid "Find another ride"
 msgstr ""
 
-#: home/templates/ride_detail.html:275
+#: home/templates/ride_detail.html:282
 msgid "Share this ride"
 msgstr ""
 
-#: home/templates/ride_detail.html:276
+#: home/templates/ride_detail.html:283
 msgid "Only signed-in LUT Kyyti members can open the link."
 msgstr ""
 
-#: home/templates/ride_detail.html:281
+#: home/templates/ride_detail.html:288
 msgid "Link copied"
 msgstr ""
 
-#: home/templates/ride_detail.html:282
+#: home/templates/ride_detail.html:289
 msgid "Copy link"
 msgstr ""
 
-#: home/templates/ride_detail.html:323
+#: home/templates/ride_detail.html:330
 msgid "Delete this trip?"
 msgstr ""
 
-#: home/templates/ride_detail.html:325
+#: home/templates/ride_detail.html:332
 msgid "The trip will be removed for everyone and cannot be restored."
 msgstr ""
 
-#: home/templates/ride_detail.html:328
+#: home/templates/ride_detail.html:335
 msgid "Everyone who has joined or requested to join will be notified by email."
 msgstr ""
 
-#: home/templates/ride_detail.html:338
+#: home/templates/ride_detail.html:345
 msgid "Delete trip"
+msgstr ""
+
+#: home/templates/ride_not_shown.html:4
+msgid "Ride for group members"
+msgstr ""
+
+#: home/templates/ride_not_shown.html:16
+msgid "This ride is only shown to group members"
+msgstr ""
+
+#: home/templates/ride_not_shown.html:18
+msgid "Ask to join one of these groups to see it:"
+msgstr ""
+
+#: home/templates/ride_not_shown.html:27
+msgid "Its groups no longer exist, so nobody can see it."
 msgstr ""
 
 #: home/templates/search.html:14
@@ -911,79 +1049,79 @@ msgstr ""
 msgid "Next page"
 msgstr ""
 
-#: home/views.py:170
+#: home/views.py:176
 msgid "You cannot request to join your own ride."
 msgstr ""
 
-#: home/views.py:172
+#: home/views.py:178
 msgid "This ride has no free seats left."
 msgstr ""
 
-#: home/views.py:179
+#: home/views.py:185
 msgid "Request sent. You will be notified when the driver responds."
 msgstr ""
 
-#: home/views.py:201
+#: home/views.py:207
 msgid "You have left the ride."
 msgstr ""
 
-#: home/views.py:205
+#: home/views.py:211
 msgid "Your request was withdrawn."
 msgstr ""
 
-#: home/views.py:226
+#: home/views.py:232
 msgid "The ride is full. Increase its seats or remove a passenger first."
 msgstr ""
 
-#: home/views.py:232
+#: home/views.py:238
 msgid ""
 "Request accepted. You can now see the passenger's shared contact details."
 msgstr ""
 
-#: home/views.py:242
+#: home/views.py:248
 msgid "The passenger was removed from the ride."
 msgstr ""
 
-#: home/views.py:245
+#: home/views.py:251
 msgid "Request declined."
 msgstr ""
 
-#: home/views.py:267
+#: home/views.py:273
 msgid "The ride was deleted."
 msgstr ""
 
-#: home/views.py:474
+#: home/views.py:481
 msgid "The ride could not be saved. Please try again."
 msgstr ""
 
-#: home/views.py:490
+#: home/views.py:497
 msgid "The ride was updated."
 msgstr ""
 
-#: home/views.py:516
+#: home/views.py:524
 msgid "Mon"
 msgstr ""
 
-#: home/views.py:516
+#: home/views.py:524
 msgid "Tue"
 msgstr ""
 
-#: home/views.py:516
+#: home/views.py:524
 msgid "Wed"
 msgstr ""
 
-#: home/views.py:516
+#: home/views.py:524
 msgid "Thu"
 msgstr ""
 
-#: home/views.py:516
+#: home/views.py:524
 msgid "Fri"
 msgstr ""
 
-#: home/views.py:516
+#: home/views.py:524
 msgid "Sat"
 msgstr ""
 
-#: home/views.py:516
+#: home/views.py:524
 msgid "Sun"
 msgstr ""

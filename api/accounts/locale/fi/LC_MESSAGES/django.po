@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-23 00:50+0300\n"
+"POT-Creation-Date: 2026-10-23 01:35+0300\n"
 "PO-Revision-Date: 2026-06-27 19:05+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -106,7 +106,7 @@ msgstr ""
 msgid "Last Name *"
 msgstr ""
 
-#: accounts/forms.py:103 accounts/stats.py:524
+#: accounts/forms.py:103 accounts/stats.py:530
 msgid "Phone"
 msgstr ""
 
@@ -216,7 +216,7 @@ msgstr ""
 msgid "Period"
 msgstr ""
 
-#: accounts/stats.py:60 accounts/stats.py:211
+#: accounts/stats.py:60 accounts/stats.py:217
 msgid "All time"
 msgstr ""
 
@@ -292,11 +292,11 @@ msgstr ""
 msgid "Joined"
 msgstr ""
 
-#: accounts/stats.py:136 accounts/stats.py:246
+#: accounts/stats.py:136 accounts/stats.py:252
 msgid "Email confirmed"
 msgstr ""
 
-#: accounts/stats.py:137 accounts/stats.py:591
+#: accounts/stats.py:137 accounts/stats.py:597
 #, fuzzy
 #| msgid "Login"
 msgid "Last login"
@@ -318,7 +318,7 @@ msgstr ""
 msgid "Has a photo"
 msgstr ""
 
-#: accounts/stats.py:142 accounts/stats.py:609
+#: accounts/stats.py:142 accounts/stats.py:615
 msgid "Has a phone number"
 msgstr ""
 
@@ -346,19 +346,19 @@ msgstr ""
 msgid "Push devices"
 msgstr ""
 
-#: accounts/stats.py:149 accounts/stats.py:381 accounts/stats.py:463
+#: accounts/stats.py:149 accounts/stats.py:387 accounts/stats.py:469
 msgid "Rides posted"
 msgstr ""
 
-#: accounts/stats.py:150 accounts/stats.py:382
+#: accounts/stats.py:150 accounts/stats.py:388
 msgid "Requests made"
 msgstr ""
 
-#: accounts/stats.py:151 accounts/stats.py:254
+#: accounts/stats.py:151 accounts/stats.py:260
 msgid "Requests accepted"
 msgstr ""
 
-#: accounts/stats.py:152 accounts/stats.py:442
+#: accounts/stats.py:152 accounts/stats.py:448
 msgid "Requests declined"
 msgstr ""
 
@@ -390,8 +390,8 @@ msgstr ""
 msgid "Days active"
 msgstr ""
 
-#: accounts/stats.py:161 accounts/stats.py:294 accounts/stats.py:401
-#: accounts/stats.py:405 accounts/stats.py:462
+#: accounts/stats.py:161 accounts/stats.py:300 accounts/stats.py:407
+#: accounts/stats.py:411 accounts/stats.py:468
 msgid "Searches"
 msgstr ""
 
@@ -407,18 +407,18 @@ msgstr ""
 msgid "Requests withdrawn or rides left"
 msgstr ""
 
-#: accounts/stats.py:205
+#: accounts/stats.py:211
 msgid "The activity log has no events yet."
 msgstr ""
 
-#: accounts/stats.py:206
+#: accounts/stats.py:212
 #, python-format
 msgid "From the activity log, which starts on %(date)s."
 msgstr ""
 
-#: accounts/stats.py:244 accounts/stats.py:372 accounts/stats.py:374
-#: accounts/stats.py:432 accounts/stats.py:517 accounts/stats.py:593
-#: accounts/stats.py:617 accounts/stats.py:625
+#: accounts/stats.py:250 accounts/stats.py:378 accounts/stats.py:380
+#: accounts/stats.py:438 accounts/stats.py:523 accounts/stats.py:599
+#: accounts/stats.py:623 accounts/stats.py:631
 #: accounts/templates/admin/accounts/user_stats.html:185
 #: accounts/templates/admin/accounts/user_stats.html:202
 #, fuzzy
@@ -426,477 +426,477 @@ msgstr ""
 msgid "Users"
 msgstr "Käyttäjätunnus"
 
-#: accounts/stats.py:245 accounts/stats.py:375
+#: accounts/stats.py:251 accounts/stats.py:381
 msgid "New sign-ups"
 msgstr ""
 
-#: accounts/stats.py:247
+#: accounts/stats.py:253
 #, python-format
 msgid "%(count)s of %(total)s users"
 msgstr ""
 
-#: accounts/stats.py:248
+#: accounts/stats.py:254
 msgid "Active in the last 30 days"
 msgstr ""
 
-#: accounts/stats.py:249
+#: accounts/stats.py:255
 #, python-format
 msgid "%(count)s in the last 7 days"
 msgstr ""
 
-#: accounts/stats.py:250
+#: accounts/stats.py:256
 msgid "Drivers"
 msgstr ""
 
-#: accounts/stats.py:251
+#: accounts/stats.py:257
 #, python-format
 msgid "%(count)s ride posted"
 msgid_plural "%(count)s rides posted"
 msgstr[0] ""
 msgstr[1] ""
 
-#: accounts/stats.py:252
+#: accounts/stats.py:258
 msgid "Passengers"
 msgstr ""
 
-#: accounts/stats.py:253
+#: accounts/stats.py:259
 #, python-format
 msgid "%(count)s request made"
 msgid_plural "%(count)s requests made"
 msgstr[0] ""
 msgstr[1] ""
 
-#: accounts/stats.py:255
+#: accounts/stats.py:261
 #, python-format
 msgid "of %(count)s answered requests"
 msgstr ""
 
-#: accounts/stats.py:256
+#: accounts/stats.py:262
 msgid "Median time to answer"
 msgstr ""
 
-#: accounts/stats.py:257
+#: accounts/stats.py:263
 msgid "from request to accepted or declined"
 msgstr ""
 
-#: accounts/stats.py:291
+#: accounts/stats.py:297
 msgid "Stickiness"
 msgstr ""
 
-#: accounts/stats.py:292
+#: accounts/stats.py:298
 #, python-format
 msgid "%(daily)s active a day on average, %(monthly)s in the last 30 days"
 msgstr ""
 
-#: accounts/stats.py:295
+#: accounts/stats.py:301
 #, python-format
 msgid "%(percent)s %% found no rides"
 msgstr ""
 
-#: accounts/stats.py:296
+#: accounts/stats.py:302
 msgid "Searchers who asked to join"
 msgstr ""
 
-#: accounts/stats.py:297
+#: accounts/stats.py:303
 #, python-format
 msgid "of %(count)s users who searched"
 msgstr ""
 
-#: accounts/stats.py:298
+#: accounts/stats.py:304
 msgid "Seats filled"
 msgstr ""
 
-#: accounts/stats.py:299
+#: accounts/stats.py:305
 #, python-format
 msgid "of %(count)s seats offered in car rides"
 msgstr ""
 
-#: accounts/stats.py:300
+#: accounts/stats.py:306
 msgid "Car rides without requests"
 msgstr ""
 
-#: accounts/stats.py:301
+#: accounts/stats.py:307
 #, python-format
 msgid "%(count)s of %(total)s rides offered"
 msgstr ""
 
-#: accounts/stats.py:302
+#: accounts/stats.py:308
 msgid "Trips called off"
 msgstr ""
 
-#: accounts/stats.py:303
+#: accounts/stats.py:309
 #, python-format
 msgid ""
 "%(requests)s requests withdrawn, passengers left or removed; %(rides)s rides "
 "with passengers cancelled"
 msgstr ""
 
-#: accounts/stats.py:305
+#: accounts/stats.py:311
 msgid "Have shared a ride"
 msgstr ""
 
-#: accounts/stats.py:306
+#: accounts/stats.py:312
 #, python-format
 msgid "%(count)s users have driven or been a passenger with someone"
 msgstr ""
 
-#: accounts/stats.py:307
+#: accounts/stats.py:313
 msgid "Accounts deleted"
 msgstr ""
 
-#: accounts/stats.py:308
+#: accounts/stats.py:314
 #, python-format
 msgid "after %(days)s days as a member (median)"
 msgstr ""
 
-#: accounts/stats.py:362 accounts/stats.py:389
+#: accounts/stats.py:368 accounts/stats.py:395
 msgid "week"
 msgstr ""
 
-#: accounts/stats.py:362 accounts/stats.py:389
+#: accounts/stats.py:368 accounts/stats.py:395
 msgid "month"
-msgstr ""
-
-#: accounts/stats.py:373
-#, python-format
-msgid "All users who had joined by the end of each %(unit)s"
-msgstr ""
-
-#: accounts/stats.py:376
-#, python-format
-msgid "Accounts created each %(unit)s"
-msgstr ""
-
-#: accounts/stats.py:377
-msgid "Sign-ups"
-msgstr ""
-
-#: accounts/stats.py:378
-msgid "Rides and requests"
 msgstr ""
 
 #: accounts/stats.py:379
 #, python-format
+msgid "All users who had joined by the end of each %(unit)s"
+msgstr ""
+
+#: accounts/stats.py:382
+#, python-format
+msgid "Accounts created each %(unit)s"
+msgstr ""
+
+#: accounts/stats.py:383
+msgid "Sign-ups"
+msgstr ""
+
+#: accounts/stats.py:384
+msgid "Rides and requests"
+msgstr ""
+
+#: accounts/stats.py:385
+#, python-format
 msgid "Rides posted and requests to join a ride made each %(unit)s"
 msgstr ""
 
-#: accounts/stats.py:393 accounts/stats.py:397
+#: accounts/stats.py:399 accounts/stats.py:403
 msgid "Active users"
 msgstr ""
 
-#: accounts/stats.py:394
+#: accounts/stats.py:400
 #, python-format
 msgid ""
 "Users who used the app, and who searched for rides, each %(unit)s. %(log)s"
 msgstr ""
 
-#: accounts/stats.py:399
+#: accounts/stats.py:405
 msgid "Searched"
 msgstr ""
 
-#: accounts/stats.py:402
+#: accounts/stats.py:408
 #, python-format
 msgid ""
 "Searches each %(unit)s, and those that found no rides: demand that is not met"
 msgstr ""
 
-#: accounts/stats.py:406
+#: accounts/stats.py:412
 msgid "Found no rides"
 msgstr ""
 
-#: accounts/stats.py:422
+#: accounts/stats.py:428
 msgid "Signed up"
 msgstr ""
 
-#: accounts/stats.py:423
+#: accounts/stats.py:429
 msgid "Confirmed the email address"
 msgstr ""
 
-#: accounts/stats.py:424
+#: accounts/stats.py:430
 msgid "Searched or opened a ride"
 msgstr ""
 
-#: accounts/stats.py:425
+#: accounts/stats.py:431
 msgid "Posted a ride or asked to join one"
 msgstr ""
 
-#: accounts/stats.py:426
+#: accounts/stats.py:432
 msgid "Shared a ride"
 msgstr ""
 
-#: accounts/stats.py:428
+#: accounts/stats.py:434
 msgid "From sign-up to sharing a ride"
 msgstr ""
 
-#: accounts/stats.py:429
+#: accounts/stats.py:435
 msgid ""
 "Users who joined in the period, by how far they got. Searching and opening "
 "rides is from the activity log."
 msgstr ""
 
-#: accounts/stats.py:441
+#: accounts/stats.py:447
 msgid "Requests withdrawn"
 msgstr ""
 
-#: accounts/stats.py:441
+#: accounts/stats.py:447
 msgid "Passengers who left"
 msgstr ""
 
-#: accounts/stats.py:442
+#: accounts/stats.py:448
 msgid "Passengers removed"
 msgstr ""
 
-#: accounts/stats.py:443
+#: accounts/stats.py:449
 msgid "Rides cancelled with passengers"
 msgstr ""
 
-#: accounts/stats.py:445
+#: accounts/stats.py:451
 msgid "Trips that fell through"
 msgstr ""
 
-#: accounts/stats.py:446
+#: accounts/stats.py:452
 #, python-format
 msgid "In the period. %(log)s"
 msgstr ""
 
-#: accounts/stats.py:448
+#: accounts/stats.py:454
 msgid "Times"
 msgstr ""
 
-#: accounts/stats.py:458
+#: accounts/stats.py:464
 msgid "Campuses: searches and rides"
 msgstr ""
 
-#: accounts/stats.py:459
+#: accounts/stats.py:465
 msgid ""
 "Searches for rides to each campus, and rides posted to it, in the period"
 msgstr ""
 
-#: accounts/stats.py:468
+#: accounts/stats.py:474
 msgid "Same day"
 msgstr ""
 
-#: accounts/stats.py:468
+#: accounts/stats.py:474
 msgid "The day before"
 msgstr ""
 
-#: accounts/stats.py:468
+#: accounts/stats.py:474
 msgid "2–7 days before"
 msgstr ""
 
-#: accounts/stats.py:468
+#: accounts/stats.py:474
 msgid "Over a week before"
 msgstr ""
 
-#: accounts/stats.py:476
+#: accounts/stats.py:482
 msgid "How far ahead rides are posted"
 msgstr ""
 
-#: accounts/stats.py:477
+#: accounts/stats.py:483
 msgid "One-time rides posted in the period, by how long before leaving"
 msgstr ""
 
-#: accounts/stats.py:478 accounts/stats.py:579
+#: accounts/stats.py:484 accounts/stats.py:585
 #: accounts/templates/admin/accounts/user_stats.html:166
 msgid "Rides"
 msgstr ""
 
-#: accounts/stats.py:483
+#: accounts/stats.py:489
 msgid "Time of day"
 msgstr ""
 
-#: accounts/stats.py:484
+#: accounts/stats.py:490
 #, python-format
 msgid "Things done in the app by hour (Finnish time). %(log)s"
 msgstr ""
 
-#: accounts/stats.py:486 accounts/stats.py:494
+#: accounts/stats.py:492 accounts/stats.py:500
 msgid "Actions"
 msgstr ""
 
-#: accounts/stats.py:491
+#: accounts/stats.py:497
 msgid "Mon"
 msgstr ""
 
-#: accounts/stats.py:491
+#: accounts/stats.py:497
 msgid "Tue"
 msgstr ""
 
-#: accounts/stats.py:491
+#: accounts/stats.py:497
 msgid "Wed"
 msgstr ""
 
-#: accounts/stats.py:491
+#: accounts/stats.py:497
 msgid "Thu"
 msgstr ""
 
-#: accounts/stats.py:491
+#: accounts/stats.py:497
 msgid "Fri"
 msgstr ""
 
-#: accounts/stats.py:491
+#: accounts/stats.py:497
 msgid "Sat"
 msgstr ""
 
-#: accounts/stats.py:491
+#: accounts/stats.py:497
 msgid "Sun"
 msgstr ""
 
-#: accounts/stats.py:492
+#: accounts/stats.py:498
 msgid "Day of the week"
 msgstr ""
 
-#: accounts/stats.py:493
+#: accounts/stats.py:499
 #, python-format
 msgid "Things done in the app by day of the week. %(log)s"
 msgstr ""
 
-#: accounts/stats.py:500
+#: accounts/stats.py:506
 msgid "Searched for rides"
 msgstr ""
 
-#: accounts/stats.py:501
+#: accounts/stats.py:507
 msgid "Opened a ride"
 msgstr ""
 
-#: accounts/stats.py:502
+#: accounts/stats.py:508
 msgid "Asked to join a ride"
 msgstr ""
 
-#: accounts/stats.py:503
+#: accounts/stats.py:509
 msgid "Posted a ride"
 msgstr ""
 
-#: accounts/stats.py:504
+#: accounts/stats.py:510
 msgid "Answered a request"
 msgstr ""
 
-#: accounts/stats.py:505
+#: accounts/stats.py:511
 msgid "Opened a notification"
 msgstr ""
 
-#: accounts/stats.py:506
+#: accounts/stats.py:512
 msgid "Turned push notifications on"
 msgstr ""
 
-#: accounts/stats.py:507
+#: accounts/stats.py:513
 msgid "Changed the profile or photo"
 msgstr ""
 
-#: accounts/stats.py:508
+#: accounts/stats.py:514
 msgid "Changed the settings"
 msgstr ""
 
-#: accounts/stats.py:513
+#: accounts/stats.py:519
 msgid "What people use"
 msgstr ""
 
-#: accounts/stats.py:514
+#: accounts/stats.py:520
 #, python-format
 msgid "Share of the %(count)s users active in the period, in per cent. %(log)s"
 msgstr ""
 
-#: accounts/stats.py:522
+#: accounts/stats.py:528
 msgid "Phone or computer"
 msgstr ""
 
-#: accounts/stats.py:523
+#: accounts/stats.py:529
 msgid "Days the app was used, by the device it was first used on that day"
 msgstr ""
 
-#: accounts/stats.py:524
+#: accounts/stats.py:530
 msgid "Computer"
 msgstr ""
 
-#: accounts/stats.py:525
+#: accounts/stats.py:531
 msgid "Days"
 msgstr ""
 
-#: accounts/stats.py:567
+#: accounts/stats.py:573
 msgid "Requests by answer"
 msgstr ""
 
-#: accounts/stats.py:568
+#: accounts/stats.py:574
 msgid "Requests made in the period, by their answer now"
 msgstr ""
 
-#: accounts/stats.py:571
+#: accounts/stats.py:577
 msgid "Requests"
 msgstr ""
 
-#: accounts/stats.py:576
+#: accounts/stats.py:582
 msgid "Rides by way of travelling"
 msgstr ""
 
-#: accounts/stats.py:577
+#: accounts/stats.py:583
 msgid "Rides posted in the period; a ride can have several"
 msgstr ""
 
-#: accounts/stats.py:590
+#: accounts/stats.py:596
 msgid "Last 7 days"
 msgstr ""
 
-#: accounts/stats.py:590
+#: accounts/stats.py:596
 msgid "8–30 days ago"
 msgstr ""
 
-#: accounts/stats.py:590
+#: accounts/stats.py:596
 msgid "31–90 days ago"
 msgstr ""
 
-#: accounts/stats.py:590
+#: accounts/stats.py:596
 msgid "Over 90 days ago"
 msgstr ""
 
-#: accounts/stats.py:590
+#: accounts/stats.py:596
 msgid "Never"
 msgstr ""
 
-#: accounts/stats.py:592
+#: accounts/stats.py:598
 msgid "When each user last logged in, counted from today"
 msgstr ""
 
-#: accounts/stats.py:609
+#: accounts/stats.py:615
 msgid "Has a profile photo"
 msgstr ""
 
-#: accounts/stats.py:609
+#: accounts/stats.py:615
 msgid "Shows the photo"
 msgstr ""
 
-#: accounts/stats.py:610
+#: accounts/stats.py:616
 msgid "Shares the email address"
 msgstr ""
 
-#: accounts/stats.py:610
+#: accounts/stats.py:616
 msgid "Shares the phone number"
 msgstr ""
 
-#: accounts/stats.py:611
+#: accounts/stats.py:617
 msgid "Gets all notifications by email"
 msgstr ""
 
-#: accounts/stats.py:611
+#: accounts/stats.py:617
 msgid "Has push notifications on"
 msgstr ""
 
-#: accounts/stats.py:612
+#: accounts/stats.py:618
 msgid "Has seen the welcome popup"
 msgstr ""
 
-#: accounts/stats.py:614
+#: accounts/stats.py:620
 msgid "Profiles and settings"
 msgstr ""
 
-#: accounts/stats.py:615
+#: accounts/stats.py:621
 msgid "Share of users, in per cent"
 msgstr ""
 
-#: accounts/stats.py:622
+#: accounts/stats.py:628
 msgid "Name shown to others"
 msgstr ""
 
-#: accounts/stats.py:623
+#: accounts/stats.py:629
 msgid "What other members see of each user's name"
 msgstr ""
 
@@ -1260,7 +1260,7 @@ msgid "Log out"
 msgstr ""
 
 #: accounts/templates/registration/account.html:230
-#: accounts/templates/registration/account.html:285
+#: accounts/templates/registration/account.html:305
 msgid "Delete account"
 msgstr ""
 
@@ -1288,10 +1288,10 @@ msgstr ""
 
 #: accounts/templates/registration/account.html:260
 #: accounts/templates/registration/account.html:264
-#: accounts/templates/registration/account.html:284
-#: accounts/templates/registration/account.html:288
-#: accounts/templates/registration/account.html:321
-#: accounts/templates/registration/account.html:325
+#: accounts/templates/registration/account.html:304
+#: accounts/templates/registration/account.html:308
+#: accounts/templates/registration/account.html:341
+#: accounts/templates/registration/account.html:345
 #: accounts/templates/registration/password_change_form.html:31
 msgid "Cancel"
 msgstr ""
@@ -1311,30 +1311,54 @@ msgid ""
 "are notified that they are cancelled."
 msgstr ""
 
-#: accounts/templates/registration/account.html:278
+#: accounts/templates/registration/account.html:279
+msgid "You are the only admin of these groups:"
+msgstr ""
+
+#: accounts/templates/registration/account.html:284
+msgid "you are its last member, so it will be deleted."
+msgstr ""
+
+#: accounts/templates/registration/account.html:285
+#, python-format
+msgid "%(name)s will become its admin, as the longest-standing member."
+msgstr ""
+
+#: accounts/templates/registration/account.html:286
+msgid ""
+"none of its members have used LUT Kyyti lately; the first to come back will "
+"become its admin."
+msgstr ""
+
+#: accounts/templates/registration/account.html:290
+msgid ""
+"To choose someone else, hand the admin role over on the group's page first."
+msgstr ""
+
+#: accounts/templates/registration/account.html:298
 msgid "Enter your password to confirm"
 msgstr ""
 
-#: accounts/templates/registration/account.html:309
+#: accounts/templates/registration/account.html:329
 msgid "Frame your photo"
 msgstr ""
 
-#: accounts/templates/registration/account.html:310
+#: accounts/templates/registration/account.html:330
 msgid ""
 "Drag the photo to place your face inside the circle. Zoom with the slider, "
 "the mouse wheel or by pinching."
 msgstr ""
 
-#: accounts/templates/registration/account.html:312
+#: accounts/templates/registration/account.html:332
 msgid "Your new photo"
 msgstr ""
 
-#: accounts/templates/registration/account.html:315
-#: accounts/templates/registration/account.html:317
+#: accounts/templates/registration/account.html:335
+#: accounts/templates/registration/account.html:337
 msgid "Zoom"
 msgstr ""
 
-#: accounts/templates/registration/account.html:322
+#: accounts/templates/registration/account.html:342
 msgid "Save photo"
 msgstr ""
 
@@ -1745,50 +1769,50 @@ msgid ""
 "letter."
 msgstr ""
 
-#: accounts/views.py:99
+#: accounts/views.py:100
 msgid "Your email address is confirmed. Welcome to LUT Kyyti!"
 msgstr ""
 
-#: accounts/views.py:141
+#: accounts/views.py:142
 msgid "Your profile was saved."
 msgstr ""
 
-#: accounts/views.py:147
+#: accounts/views.py:148
 msgid "Your settings were saved."
 msgstr ""
 
-#: accounts/views.py:152
+#: accounts/views.py:153
 msgid "Your photo was changed."
 msgstr ""
 
-#: accounts/views.py:159
+#: accounts/views.py:160
 msgid "Your photo was removed."
 msgstr ""
 
-#: accounts/views.py:164
+#: accounts/views.py:165
 #, python-format
 msgid ""
 "We sent a confirmation link to %(email)s. Your email address changes once "
 "you open it."
 msgstr ""
 
-#: accounts/views.py:168
+#: accounts/views.py:169
 #, python-format
 msgid "We sent a new confirmation link to %(email)s."
 msgstr ""
 
-#: accounts/views.py:170
+#: accounts/views.py:171
 msgid ""
 "A link was sent less than a minute ago. Wait a moment before asking for a "
 "new one."
 msgstr ""
 
-#: accounts/views.py:174
+#: accounts/views.py:175
 #, python-format
 msgid "The email change was cancelled. Your address stays %(email)s."
 msgstr ""
 
-#: accounts/views.py:240
+#: accounts/views.py:243
 #, python-format
 msgid "Your email address is now %(email)s."
 msgstr ""

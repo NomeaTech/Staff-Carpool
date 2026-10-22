@@ -1,0 +1,7 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=recipient.first_name %}Hi {{ name }},{% endblocktrans %}
+
+{% blocktrans %}Your ride {{ route }} was only shown to the group {{ group }}, which you are no longer in, so nobody can find it now. The people who already joined or asked to join it can still see it.{% endblocktrans %}
+
+{% trans "Edit the ride to choose who sees it:" %}
+{{ url }}
+{% include "emails/_footer.txt" %}{% endautoescape %}
