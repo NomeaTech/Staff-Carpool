@@ -232,6 +232,41 @@
         </section>
 
         <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5 sm:p-6">
+            <h2 class="card-title text-lg mb-1">{% trans "Who can see this ride" %}</h2>
+            {# Everyone, or only members of some of the driver's groups (groups/models.py) #}
+            {% with audience=ride_form.audience.value|default:"everyone" groups=ride_form.groups %}
+            <div class="grid gap-2" role="radiogroup" aria-label="{% trans "Who can see this ride" %}">
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input type="radio" name="audience" value="everyone" class="radio radio-primary radio-sm mt-0.5" {% if audience != "groups" %}checked{% endif %} onchange="showRideGroups()">
+                <span><strong class="block text-sm">{% trans "Everyone" %}</strong><span class="text-xs text-base-content/60">{% trans "All LUT Kyyti members can find it" %}</span></span>
+              </label>
+              <label class="flex items-start gap-3 {% if groups.field.queryset.exists %}cursor-pointer{% else %}opacity-60{% endif %}">
+                <input type="radio" name="audience" value="groups" class="radio radio-primary radio-sm mt-0.5" {% if audience == "groups" %}checked{% endif %} {% if not groups.field.queryset.exists and audience != "groups" %}disabled{% endif %} onchange="showRideGroups()">
+                <span><strong class="block text-sm">{% trans "Only my groups" %}</strong><span class="text-xs text-base-content/60">{% trans "Only members of the groups you choose can find it" %}</span></span>
+              </label>
+            </div>
+            <fieldset id="ride-groups" class="fieldset py-0 ps-7 {% if audience != "groups" %}hidden{% endif %}">
+              <legend class="sr-only">{% trans "Groups" %}</legend>
+              {% for choice in groups %}
+                <label class="flex items-center gap-2 text-sm cursor-pointer">{{ choice.tag }} {{ choice.choice_label }}</label>
+              {% endfor %}
+              {% for error in groups.errors %}<p class="text-error text-sm">{{ error }}</p>{% endfor %}
+            </fieldset>
+            {% if not groups.field.queryset.exists %}
+              <p class="text-xs text-base-content/60">{% trans "You are not in any groups." %} <a href="{% url 'groups' %}" class="link link-primary">{% trans "Make or join one" %}</a></p>
+            {% endif %}
+            {% endwith %}
+            <script>
+              function showRideGroups() {
+                  const groups = document.forms.RideForm.audience.value === "groups";
+                  document.getElementById("ride-groups").classList.toggle("hidden", !groups);
+              }
+            </script>
+          </div>
+        </section>
+
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
           <div class="card-body p-5 sm:p-6 @container">
             <h2 class="card-title text-lg mb-1">{% trans "Price and note for passengers" %}</h2>
             {# Both are optional, and only shown on the ride's page when filled in #}

@@ -52,7 +52,8 @@ class Kind(models.TextChoices):
 
     # Drivers. RIDE_POSTED data: transport, one_time, one_way, seats, vias,
     # price, note (whether there is one), days_ahead (one-time rides),
-    # days_a_week (recurring rides), destination_campus
+    # days_a_week (recurring rides), destination_campus, groups (how many
+    # groups it was posted to, 0 for everyone)
     RIDE_POSTED = "ride_posted", _("Posted a ride")
     # data: places (whether the start, stops or destination changed)
     RIDE_EDITED = "ride_edited", _("Changed a ride")
@@ -69,6 +70,11 @@ class Kind(models.TextChoices):
     # data: hours (since the request was made)
     REQUEST_WITHDRAWN = "request_withdrawn", _("Withdrew a request")
     PASSENGER_LEFT = "passenger_left", _("Left a ride")
+
+    # Groups (groups/services.py)
+    GROUP_CREATED = "group_created", _("Made a group")
+    GROUP_JOINED = "group_joined", _("Joined a group")
+    GROUP_LEFT = "group_left", _("Left a group")
 
     # Notifications. NOTIFICATION_OPENED data: kind, minutes (after it was sent)
     NOTIFICATION_OPENED = "notification_opened", _("Opened a notification")

@@ -1,0 +1,221 @@
+{% extends "app.html" %}
+{% load i18n privacy widget_tweaks %}
+
+{% block title %}{{ group.name }} | LUT Kyyti{% endblock %}
+
+{% block content %}
+{% comment %}
+  A group's page (groups.views.group_detail). Every form posts an "action"
+  to this page. Members' names follow accounts/privacy.py, as everywhere.
+{% endcomment %}
+<section class="h-app w-full overflow-y-auto pt-[calc(1.75rem+env(safe-area-inset-top))] lg:pt-24 pb-dock lg:pb-10">
+  <div class="max-w-3xl mx-auto px-4 lg:px-7 grid gap-5">
+
+    <div class="text-xs">
+      <a href="{% url 'groups' %}" class="link link-hover text-base-content/60">← {% trans "All groups" %}</a>
+    </div>
+
+    <header class="grid gap-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-xs font-bold uppercase tracking-widest text-primary">{% trans "Group" %}</span>
+        {% if is_admin %}<span class="badge badge-soft badge-primary badge-sm">{% trans "You are an admin" %}</span>
+        {% elif is_member %}<span class="badge border-0 bg-success/30 text-success-content badge-sm">{% trans "Member" %}</span>
+        {% elif membership %}<span class="badge badge-soft badge-secondary badge-sm">{% trans "Requested" %}</span>{% endif %}
+      </div>
+      <h1 class="text-3xl font-bold tracking-tight break-words">{{ group.name }}</h1>
+      {% if group.description %}<p class="text-base-content/70 whitespace-pre-line">{{ group.description }}</p>{% endif %}
+      <p class="text-sm text-base-content/60">
+        {% blocktrans count counter=member_count %}{{ counter }} member{% plural %}{{ counter }} members{% endblocktrans %}
+        {% if admins %} · {% trans "Admins:" %} {% for admin in admins %}{{ admin.user|display_name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% endif %}
+      </p>
+    </header>
+
+    {% if not is_member %}
+      <section class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-5 sm:p-6 gap-3">
+          {% if membership %}
+            <p class="text-sm">{% trans "You asked to join this group. An admin will accept or decline your request, and you will be notified." %}</p>
+            <form method="post">{% csrf_token %}<input type="hidden" name="action" value="cancel">
+              <button class="btn btn-outline btn-sm" type="submit">{% trans "Withdraw request" %}</button>
+            </form>
+          {% else %}
+            <p class="text-sm">{% trans "Rides posted to this group are only shown to its members. Ask to join, and one of its admins will accept or decline you." %}</p>
+            <form method="post">{% csrf_token %}<input type="hidden" name="action" value="join">
+              <button class="btn btn-primary btn-sm" type="submit">{% trans "Ask to join" %}</button>
+            </form>
+          {% endif %}
+        </div>
+      </section>
+    {% endif %}
+
+    {% if is_admin and requests %}
+      <section class="card bg-base-100 border border-warning/50 shadow-sm">
+        <div class="card-body p-5 sm:p-6">
+          <h2 class="card-title text-lg mb-2">{% trans "Requests to join" %}</h2>
+          <ul class="grid gap-3">
+            {% for request_ in requests %}
+              <li class="flex flex-wrap items-center justify-between gap-3">
+                <span class="flex items-center gap-3 min-w-0">
+                  {% avatar request_.user "w-9" "text-xs" %}
+                  <span class="min-w-0">
+                    <span class="block font-semibold truncate">{{ request_.user|display_name }}</span>
+                    <span class="block text-xs text-base-content/60">{% blocktrans with time=request_.requested_at|timesince %}{{ time }} ago{% endblocktrans %}</span>
+                  </span>
+                </span>
+                <form method="post" class="flex gap-2">
+                  {% csrf_token %}<input type="hidden" name="membership" value="{{ request_.pk }}">
+                  <button class="btn btn-success btn-sm" name="action" value="accept" type="submit">{% trans "Accept" %}</button>
+                  <button class="btn btn-outline btn-error btn-sm" name="action" value="decline" type="submit">{% trans "Decline" %}</button>
+                </form>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </section>
+    {% endif %}
+
+    {% if is_member %}
+      <section class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-5 sm:p-6">
+          <h2 class="card-title text-lg mb-2">{% trans "Rides posted to this group" %}</h2>
+          {% if rides %}
+            <ul class="grid gap-2">
+              {% for ride in rides %}
+                <li>
+                  <a href="{% url 'ride_detail' ride.pk %}" class="flex items-center justify-between gap-3 rounded-field border border-base-300 p-3 hover:border-primary/40">
+                    <span class="min-w-0">
+                      <span class="block font-semibold truncate">{{ ride.route_name }}</span>
+                      <span class="flex flex-wrap gap-3 text-xs text-base-content/60">{% include "_ride_when.html" %}</span>
+                    </span>
+                    <span class="text-xs text-base-content/60 whitespace-nowrap">{{ ride.driver|display_name }}</span>
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-sm text-base-content/60">{% trans "No upcoming rides have been posted to this group." %} <a href="{% url 'add' %}" class="link link-primary">{% trans "Offer a ride" %}</a></p>
+          {% endif %}
+        </div>
+      </section>
+
+      <section class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-5 sm:p-6">
+          <h2 class="card-title text-lg mb-2">{% trans "Members" %}</h2>
+          <ul class="grid gap-1">
+            {% for member, can_act in members %}
+              <li class="flex items-center justify-between gap-3 rounded-field p-2 {% if member.pk == membership.pk %}bg-primary/5{% endif %}">
+                <span class="flex items-center gap-3 min-w-0">
+                  {% avatar member.user "w-9" "text-xs" %}
+                  <span class="min-w-0">
+                    <span class="block font-semibold truncate">{{ member.user|display_name }}{% if member.pk == membership.pk %} <span class="font-normal text-base-content/60">({% trans "you" %})</span>{% endif %}</span>
+                    <span class="flex flex-wrap gap-1 mt-0.5">
+                      {% if member.is_admin %}<span class="badge badge-soft badge-primary badge-xs">{% trans "Admin" %}</span>{% endif %}
+                      {% if is_admin and not can_act %}<span class="badge badge-ghost badge-xs" title="{% trans "Blocked, email address not confirmed, or not seen for a long time. Away admins do not count as admins who can answer requests." %}">{% trans "Away" %}</span>{% endif %}
+                    </span>
+                  </span>
+                </span>
+                {% if is_admin and member.pk != membership.pk and not member.is_admin %}
+                  <div class="dropdown dropdown-end">
+                    <button type="button" tabindex="0" class="btn btn-ghost btn-sm btn-circle" aria-label="{% blocktrans with name=member.user|display_name %}Manage {{ name }}{% endblocktrans %}">{% include "_icon.html" with name="menu" class="size-4" %}</button>
+                    <form method="post" tabindex="0" class="dropdown-content menu bg-base-100 rounded-box border border-base-300 shadow-lg z-10 w-56 p-2">
+                      {% csrf_token %}<input type="hidden" name="membership" value="{{ member.pk }}">
+                      {% if can_act %}
+                        <li><button name="action" value="make_admin" type="submit">{% trans "Make admin" %}</button></li>
+                        <li><button name="action" value="hand_over" type="submit">{% trans "Hand over my admin role" %}</button></li>
+                      {% endif %}
+                      <li><button name="action" value="remove" type="submit" class="text-error">{% trans "Remove from group" %}</button></li>
+                    </form>
+                  </div>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+          <button class="btn btn-outline btn-error btn-sm mt-4 justify-self-start" type="button" onclick="document.getElementById('leave-group-modal').showModal()">{% trans "Leave group" %}</button>
+        </div>
+      </section>
+    {% endif %}
+
+    {% if is_admin %}
+      <section class="card bg-base-100 border border-base-300 shadow-sm">
+        <div class="card-body p-5 sm:p-6">
+          <h2 class="card-title text-lg mb-2">{% trans "Group settings" %}</h2>
+          <form method="post" class="grid gap-1">
+            {% csrf_token %}<input type="hidden" name="action" value="edit">
+            <fieldset class="fieldset py-0">
+              <legend class="fieldset-legend">{% trans "Name" %}</legend>
+              {% render_field edit_form.name class="input w-full" required="" %}
+              {% for error in edit_form.name.errors %}<p class="text-error text-sm">{{ error }}</p>{% endfor %}
+            </fieldset>
+            <fieldset class="fieldset py-0">
+              <legend class="fieldset-legend">{% trans "Description" %}</legend>
+              {% render_field edit_form.description class="textarea w-full" rows="3" %}
+            </fieldset>
+            <button class="btn btn-primary btn-sm mt-2 justify-self-start" type="submit">{% trans "Save" %}</button>
+          </form>
+          <div class="divider my-2"></div>
+          <div class="grid gap-3 text-sm">
+            {% if only_admin %}
+              <p class="text-base-content/70">{% trans "You are the only admin. To stop being one, hand the role over to a member from the member list." %}</p>
+            {% else %}
+              <form method="post">{% csrf_token %}<input type="hidden" name="action" value="step_down">
+                <button class="link link-primary link-hover font-semibold" type="submit">{% trans "Stop being an admin" %} →</button>
+              </form>
+            {% endif %}
+            <button class="link link-error link-hover font-semibold text-start" type="button" onclick="document.getElementById('delete-group-modal').showModal()">{% trans "Delete group" %} →</button>
+          </div>
+        </div>
+      </section>
+
+      <dialog id="delete-group-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="delete-group-title">
+        <div class="modal-box">
+          <div role="alert" class="alert alert-error alert-soft">
+            {% include "_icon.html" with name="alert" class="size-6" %}
+            <h3 id="delete-group-title" class="font-bold">{% blocktrans with name=group.name %}Delete {{ name }}?{% endblocktrans %}</h3>
+          </div>
+          <p class="py-4 text-sm">{% trans "The group is deleted for everyone, and its members are told. Rides posted only to it are no longer shown to anyone until their drivers choose again; people who already joined them keep their seats." %}</p>
+          <form method="post" id="delete-group-form">{% csrf_token %}<input type="hidden" name="action" value="delete"></form>
+          <div class="modal-action">
+            <form method="dialog"><button class="btn" autofocus>{% trans "Cancel" %}</button></form>
+            <button class="btn btn-error" type="submit" form="delete-group-form">{% trans "Delete group" %}</button>
+          </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>{% trans "Cancel" %}</button></form>
+      </dialog>
+    {% endif %}
+
+    {% if is_member %}
+      <dialog id="leave-group-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="leave-group-title">
+        <div class="modal-box">
+          <h3 id="leave-group-title" class="text-lg font-bold">{% blocktrans with name=group.name %}Leave {{ name }}?{% endblocktrans %}</h3>
+          <form method="post" id="leave-group-form" class="grid gap-3 py-4 text-sm">
+            {% csrf_token %}<input type="hidden" name="action" value="leave">
+            <p>{% trans "You will no longer see rides posted only to this group, except those you have joined. Rides you posted to it are taken off it." %}</p>
+            {% if is_admin and last_member %}
+              <div role="alert" class="alert alert-warning alert-soft">{% trans "You are the last member, so the group will be deleted." %}</div>
+            {% elif is_admin and only_admin %}
+              {% if successors %}
+                <fieldset class="fieldset py-0">
+                  <legend class="fieldset-legend">{% trans "You are the only admin. Who should take over?" %}</legend>
+                  <select id="leave-successor" name="successor" class="select w-full">
+                    {% for successor in successors %}<option value="{{ successor.pk }}">{{ successor.user|display_name }}</option>{% endfor %}
+                  </select>
+                  <p class="label whitespace-normal">{% trans "The member who has been in the group longest comes first." %}</p>
+                </fieldset>
+              {% else %}
+                <div role="alert" class="alert alert-warning alert-soft">{% trans "You are the only admin, and no other member has used LUT Kyyti lately. The first of them to come back becomes admin." %}</div>
+              {% endif %}
+            {% endif %}
+          </form>
+          <div class="modal-action">
+            <form method="dialog"><button class="btn" autofocus>{% trans "Cancel" %}</button></form>
+            <button class="btn btn-error" type="submit" form="leave-group-form">{% trans "Leave group" %}</button>
+          </div>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>{% trans "Cancel" %}</button></form>
+      </dialog>
+    {% endif %}
+
+    {% include "_page_footer.html" %}
+  </div>
+</section>
+{% endblock %}

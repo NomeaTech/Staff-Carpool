@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-23 00:50+0300\n"
+"POT-Creation-Date: 2026-10-23 01:35+0300\n"
 "PO-Revision-Date: 2026-07-01 16:50+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,129 +19,520 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
-#: activity/models.py:24
+#: activity/models.py:25
 msgid "Used the app"
 msgstr ""
 
-#: activity/models.py:27
+#: activity/models.py:28
 msgid "Signed up"
 msgstr ""
 
-#: activity/models.py:28
+#: activity/models.py:29
 msgid "Confirmed the email address"
 msgstr ""
 
-#: activity/models.py:29
+#: activity/models.py:30
 msgid "Logged in"
 msgstr ""
 
-#: activity/models.py:30
+#: activity/models.py:31
 msgid "Logged out"
 msgstr ""
 
-#: activity/models.py:31
+#: activity/models.py:32
 msgid "Saw the welcome popup"
 msgstr ""
 
-#: activity/models.py:33
+#: activity/models.py:34
 msgid "Changed the profile"
 msgstr ""
 
-#: activity/models.py:35
+#: activity/models.py:36
 msgid "Changed the settings"
 msgstr ""
 
-#: activity/models.py:36
+#: activity/models.py:37
 msgid "Added a photo"
 msgstr ""
 
-#: activity/models.py:37
+#: activity/models.py:38
 msgid "Removed the photo"
 msgstr ""
 
-#: activity/models.py:38
+#: activity/models.py:39
 msgid "Asked to change the email address"
 msgstr ""
 
-#: activity/models.py:39
+#: activity/models.py:40
 msgid "Changed the email address"
 msgstr ""
 
-#: activity/models.py:42
+#: activity/models.py:43
 msgid "Deleted the account"
 msgstr ""
 
-#: activity/models.py:48
+#: activity/models.py:49
 msgid "Searched for rides"
 msgstr ""
 
-#: activity/models.py:50
+#: activity/models.py:51
 msgid "Opened a ride"
 msgstr ""
 
-#: activity/models.py:55
+#: activity/models.py:57
 msgid "Posted a ride"
 msgstr ""
 
-#: activity/models.py:57
+#: activity/models.py:59
 msgid "Changed a ride"
 msgstr ""
 
-#: activity/models.py:60
+#: activity/models.py:62
 msgid "Deleted a ride"
 msgstr ""
 
-#: activity/models.py:62
+#: activity/models.py:64
 msgid "Accepted a request"
 msgstr ""
 
-#: activity/models.py:63
+#: activity/models.py:65
 msgid "Declined a request"
 msgstr ""
 
-#: activity/models.py:64
+#: activity/models.py:66
 msgid "Removed a passenger"
 msgstr ""
 
-#: activity/models.py:67
+#: activity/models.py:69
 msgid "Asked to join a ride"
 msgstr ""
 
-#: activity/models.py:69
+#: activity/models.py:71
 msgid "Withdrew a request"
 msgstr ""
 
-#: activity/models.py:70
+#: activity/models.py:72
 msgid "Left a ride"
 msgstr ""
 
-#: activity/models.py:73
+#: activity/models.py:75
+msgid "Made a group"
+msgstr ""
+
+#: activity/models.py:76 notifications/models.py:29
+msgid "Joined a group"
+msgstr ""
+
+#: activity/models.py:77
+msgid "Left a group"
+msgstr ""
+
+#: activity/models.py:80
 msgid "Opened a notification"
 msgstr ""
 
-#: activity/models.py:74
+#: activity/models.py:81
 msgid "Marked notifications read"
 msgstr ""
 
-#: activity/models.py:75
+#: activity/models.py:82
 msgid "Turned push notifications on"
 msgstr ""
 
-#: activity/models.py:76
+#: activity/models.py:83
 msgid "Turned push notifications off"
 msgstr ""
 
-#: activity/models.py:98
+#: activity/models.py:105
 msgid "deleted user"
 msgstr ""
 
-#: carpool/settings.py:223
+#: carpool/settings.py:228
 msgid "English"
 msgstr "Englanti"
 
-#: carpool/settings.py:224
+#: carpool/settings.py:229
 msgid "Finnish"
 msgstr "Suomi"
+
+#: groups/admin.py:22
+msgid "admin"
+msgstr ""
+
+#: groups/admin.py:26
+msgid "Has no admin who can act"
+msgstr ""
+
+#: groups/admin.py:51
+msgid "members"
+msgstr ""
+
+#: groups/admin.py:55
+msgid "admins"
+msgstr ""
+
+#: groups/admin.py:59
+msgid "requests to join"
+msgstr ""
+
+#: groups/forms.py:17
+msgid "Enter a name for the group."
+msgstr ""
+
+#: groups/forms.py:20
+#, python-format
+msgid "There is already a group called %(name)s. Choose another name."
+msgstr ""
+
+#: groups/models.py:32
+msgid "name"
+msgstr ""
+
+#: groups/models.py:33
+msgid "description"
+msgstr ""
+
+#: groups/models.py:86
+msgid "Asked to join"
+msgstr ""
+
+#: groups/models.py:87 groups/models.py:90
+#: groups/templates/groups/detail.html:22
+msgid "Member"
+msgstr ""
+
+#: groups/models.py:91 groups/templates/groups/detail.html:112
+#: groups/templates/groups/list.html:35
+msgid "Admin"
+msgstr ""
+
+#: groups/services.py:129
+#, python-format
+msgid ""
+"%(name)s cannot be made an admin, as they have not used their account lately."
+msgstr ""
+
+#: groups/services.py:142
+msgid "You are the only admin. Choose someone to hand the role over to."
+msgstr ""
+
+#: groups/services.py:162
+msgid "Admins cannot remove other admins. An admin can step down themselves."
+msgstr ""
+
+#: groups/templates/groups/detail.html:15
+msgid "All groups"
+msgstr ""
+
+#: groups/templates/groups/detail.html:20
+msgid "Group"
+msgstr ""
+
+#: groups/templates/groups/detail.html:21
+msgid "You are an admin"
+msgstr ""
+
+#: groups/templates/groups/detail.html:23 groups/templates/groups/list.html:46
+msgid "Requested"
+msgstr ""
+
+#: groups/templates/groups/detail.html:28 groups/templates/groups/list.html:30
+#: groups/templates/groups/list.html:76
+#, python-format
+msgid "%(counter)s member"
+msgid_plural "%(counter)s members"
+msgstr[0] ""
+msgstr[1] ""
+
+#: groups/templates/groups/detail.html:29
+msgid "Admins:"
+msgstr ""
+
+#: groups/templates/groups/detail.html:37
+msgid ""
+"You asked to join this group. An admin will accept or decline your request, "
+"and you will be notified."
+msgstr ""
+
+#: groups/templates/groups/detail.html:39
+msgid "Withdraw request"
+msgstr ""
+
+#: groups/templates/groups/detail.html:42
+msgid ""
+"Rides posted to this group are only shown to its members. Ask to join, and "
+"one of its admins will accept or decline you."
+msgstr ""
+
+#: groups/templates/groups/detail.html:44
+msgid "Ask to join"
+msgstr ""
+
+#: groups/templates/groups/detail.html:54
+msgid "Requests to join"
+msgstr ""
+
+#: groups/templates/groups/detail.html:62
+#: notifications/templates/notifications/_item.html:14
+#, python-format
+msgid "%(time)s ago"
+msgstr ""
+
+#: groups/templates/groups/detail.html:67
+msgid "Accept"
+msgstr ""
+
+#: groups/templates/groups/detail.html:68
+msgid "Decline"
+msgstr ""
+
+#: groups/templates/groups/detail.html:80
+msgid "Rides posted to this group"
+msgstr ""
+
+#: groups/templates/groups/detail.html:96
+msgid "No upcoming rides have been posted to this group."
+msgstr ""
+
+#: groups/templates/groups/detail.html:96
+msgid "Offer a ride"
+msgstr ""
+
+#: groups/templates/groups/detail.html:103
+msgid "Members"
+msgstr ""
+
+#: groups/templates/groups/detail.html:110
+msgid "you"
+msgstr ""
+
+#: groups/templates/groups/detail.html:113
+msgid ""
+"Blocked, email address not confirmed, or not seen for a long time. Away "
+"admins do not count as admins who can answer requests."
+msgstr ""
+
+#: groups/templates/groups/detail.html:113
+msgid "Away"
+msgstr ""
+
+#: groups/templates/groups/detail.html:119
+#, python-format
+msgid "Manage %(name)s"
+msgstr ""
+
+#: groups/templates/groups/detail.html:123
+msgid "Make admin"
+msgstr ""
+
+#: groups/templates/groups/detail.html:124
+msgid "Hand over my admin role"
+msgstr ""
+
+#: groups/templates/groups/detail.html:126
+msgid "Remove from group"
+msgstr ""
+
+#: groups/templates/groups/detail.html:133
+#: groups/templates/groups/detail.html:211
+msgid "Leave group"
+msgstr ""
+
+#: groups/templates/groups/detail.html:141
+msgid "Group settings"
+msgstr ""
+
+#: groups/templates/groups/detail.html:145 groups/templates/groups/list.html:97
+msgid "Name"
+msgstr ""
+
+#: groups/templates/groups/detail.html:150
+#: groups/templates/groups/list.html:102
+msgid "Description"
+msgstr ""
+
+#: groups/templates/groups/detail.html:153
+msgid "Save"
+msgstr ""
+
+#: groups/templates/groups/detail.html:158
+msgid ""
+"You are the only admin. To stop being one, hand the role over to a member "
+"from the member list."
+msgstr ""
+
+#: groups/templates/groups/detail.html:161
+msgid "Stop being an admin"
+msgstr ""
+
+#: groups/templates/groups/detail.html:164
+#: groups/templates/groups/detail.html:179
+msgid "Delete group"
+msgstr ""
+
+#: groups/templates/groups/detail.html:173
+#, python-format
+msgid "Delete %(name)s?"
+msgstr ""
+
+#: groups/templates/groups/detail.html:175
+msgid ""
+"The group is deleted for everyone, and its members are told. Rides posted "
+"only to it are no longer shown to anyone until their drivers choose again; "
+"people who already joined them keep their seats."
+msgstr ""
+
+#: groups/templates/groups/detail.html:178
+#: groups/templates/groups/detail.html:182
+#: groups/templates/groups/detail.html:210
+#: groups/templates/groups/detail.html:214
+#: groups/templates/groups/list.html:108 groups/templates/groups/list.html:112
+#: rides/templates/admin/rides/ride/generate_test_rides.html:23
+msgid "Cancel"
+msgstr ""
+
+#: groups/templates/groups/detail.html:189
+#, python-format
+msgid "Leave %(name)s?"
+msgstr ""
+
+#: groups/templates/groups/detail.html:192
+msgid ""
+"You will no longer see rides posted only to this group, except those you "
+"have joined. Rides you posted to it are taken off it."
+msgstr ""
+
+#: groups/templates/groups/detail.html:194
+msgid "You are the last member, so the group will be deleted."
+msgstr ""
+
+#: groups/templates/groups/detail.html:198
+msgid "You are the only admin. Who should take over?"
+msgstr ""
+
+#: groups/templates/groups/detail.html:202
+msgid "The member who has been in the group longest comes first."
+msgstr ""
+
+#: groups/templates/groups/detail.html:205
+msgid ""
+"You are the only admin, and no other member has used LUT Kyyti lately. The "
+"first of them to come back becomes admin."
+msgstr ""
+
+#: groups/templates/groups/list.html:4
+msgid "Groups"
+msgstr ""
+
+#: groups/templates/groups/list.html:17
+msgid "Your groups"
+msgstr ""
+
+#: groups/templates/groups/list.html:19 groups/templates/groups/list.html:92
+msgid "New group"
+msgstr ""
+
+#: groups/templates/groups/list.html:22
+msgid ""
+"Post rides to a group to share them only with its members, e.g. your team or "
+"the people on your route."
+msgstr ""
+
+#: groups/templates/groups/list.html:34
+#, python-format
+msgid "%(counter)s request"
+msgid_plural "%(counter)s requests"
+msgstr[0] ""
+msgstr[1] ""
+
+#: groups/templates/groups/list.html:54
+msgid "You are not in any groups yet"
+msgstr ""
+
+#: groups/templates/groups/list.html:55
+msgid "Ask to join one below, or make your own."
+msgstr ""
+
+#: groups/templates/groups/list.html:63
+msgid "Find a group"
+msgstr ""
+
+#: groups/templates/groups/list.html:65
+msgid "Group name"
+msgstr ""
+
+#: groups/templates/groups/list.html:66
+msgid "Search"
+msgstr ""
+
+#: groups/templates/groups/list.html:80
+msgid "No groups match the search."
+msgstr ""
+
+#: groups/templates/groups/list.html:80
+msgid "There are no other groups yet."
+msgstr ""
+
+#: groups/templates/groups/list.html:93
+msgid ""
+"You will be its admin: you decide who can join, and can make other members "
+"admins."
+msgstr ""
+
+#: groups/templates/groups/list.html:102
+msgid "(optional)"
+msgstr ""
+
+#: groups/templates/groups/list.html:104
+msgid "Who the group is for, so the right people ask to join."
+msgstr ""
+
+#: groups/templates/groups/list.html:109
+msgid "Make group"
+msgstr ""
+
+#: groups/views.py:21
+#, python-format
+msgid "The group %(name)s was made. You are its admin."
+msgstr ""
+
+#: groups/views.py:82
+msgid "Request sent. You will be notified when an admin answers."
+msgstr ""
+
+#: groups/views.py:85
+msgid "Your request was withdrawn."
+msgstr ""
+
+#: groups/views.py:89
+#, python-format
+msgid "You left %(name)s."
+msgstr ""
+
+#: groups/views.py:95
+msgid "They are now an admin."
+msgstr ""
+
+#: groups/views.py:98
+msgid "You handed the admin role over."
+msgstr ""
+
+#: groups/views.py:101
+msgid "You are no longer an admin."
+msgstr ""
+
+#: groups/views.py:104
+msgid "The member was removed."
+msgstr ""
+
+#: groups/views.py:111
+msgid "The group was saved."
+msgstr ""
+
+#: groups/views.py:114
+#, python-format
+msgid "The group %(name)s was deleted."
+msgstr ""
 
 #: notifications/models.py:15
 msgid "New ride request"
@@ -175,53 +566,131 @@ msgstr ""
 msgid "Ride cancelled"
 msgstr ""
 
-#: notifications/models.py:39
+#: notifications/models.py:25
+msgid "Ride no longer shown"
+msgstr ""
+
+#: notifications/models.py:27
+msgid "Request to join a group"
+msgstr ""
+
+#: notifications/models.py:30
+msgid "Group request declined"
+msgstr ""
+
+#: notifications/models.py:31
+msgid "Removed from a group"
+msgstr ""
+
+#: notifications/models.py:32 notifications/models.py:34
+msgid "You are now a group admin"
+msgstr ""
+
+#: notifications/models.py:35
+msgid "Group deleted"
+msgstr ""
+
+#: notifications/models.py:37
+msgid "Group closed"
+msgstr ""
+
+#: notifications/models.py:62
 #, python-format
 msgid "%(name)s would like to join your ride %(route)s."
 msgstr ""
 
-#: notifications/models.py:40
+#: notifications/models.py:63
 #, python-format
 msgid "%(name)s withdrew their request to join your ride %(route)s."
 msgstr ""
 
-#: notifications/models.py:41
+#: notifications/models.py:64
 #, python-format
 msgid "%(name)s left your ride %(route)s. Their seat is free again."
 msgstr ""
 
-#: notifications/models.py:42
+#: notifications/models.py:65
 #, python-format
 msgid "%(name)s accepted your request to join %(route)s."
 msgstr ""
 
-#: notifications/models.py:43
+#: notifications/models.py:66
 #, python-format
 msgid "%(name)s declined your request to join %(route)s."
 msgstr ""
 
-#: notifications/models.py:44
+#: notifications/models.py:67
 #, python-format
 msgid "%(name)s removed you from the ride %(route)s."
 msgstr ""
 
-#: notifications/models.py:45
+#: notifications/models.py:68
 #, python-format
 msgid "%(name)s changed the ride %(route)s. Check the new details."
 msgstr ""
 
-#: notifications/models.py:46
+#: notifications/models.py:69
 #, python-format
 msgid "%(name)s cancelled the ride %(route)s."
 msgstr ""
 
-#: notifications/templates/notifications/_item.html:10
-msgid "Unread"
+#: notifications/models.py:70
+#, python-format
+msgid ""
+"Your ride %(route)s was only shown to %(group)s, which you are no longer in, "
+"so nobody can find it now. Edit the ride to choose who sees it."
 msgstr ""
 
-#: notifications/templates/notifications/_item.html:14
+#: notifications/models.py:71
 #, python-format
-msgid "%(time)s ago"
+msgid "%(name)s would like to join %(group)s."
+msgstr ""
+
+#: notifications/models.py:72
+#, python-format
+msgid ""
+"%(name)s accepted you into %(group)s. You can now see the rides posted to it."
+msgstr ""
+
+#: notifications/models.py:73
+#, python-format
+msgid "%(name)s declined your request to join %(group)s."
+msgstr ""
+
+#: notifications/models.py:74
+#, python-format
+msgid "%(name)s removed you from %(group)s."
+msgstr ""
+
+#: notifications/models.py:75
+#, python-format
+msgid ""
+"%(name)s made you an admin of %(group)s. You can now answer requests to join "
+"it."
+msgstr ""
+
+#: notifications/models.py:76
+#, python-format
+msgid ""
+"You are now an admin of %(group)s, as it had no admin left who could answer "
+"requests to join. You have been a member the longest. You can hand the role "
+"over to someone else on the group's page."
+msgstr ""
+
+#: notifications/models.py:77
+#, python-format
+msgid "%(name)s deleted the group %(group)s."
+msgstr ""
+
+#: notifications/models.py:78
+#, python-format
+msgid ""
+"The group %(group)s was closed, as its last member left. Your request to "
+"join it was cancelled."
+msgstr ""
+
+#: notifications/templates/notifications/_item.html:10
+msgid "Unread"
 msgstr ""
 
 #: notifications/templates/notifications/_menu.html:5
@@ -270,192 +739,200 @@ msgid ""
 "href=\"%(account_url)s#notifications\" class=\"link\">settings</a>."
 msgstr ""
 
-#: rides/forms.py:14 rides/models.py:301
+#: rides/forms.py:14 rides/models.py:330
 msgid "Monday"
 msgstr ""
 
-#: rides/forms.py:15 rides/models.py:302
+#: rides/forms.py:15 rides/models.py:331
 msgid "Tuesday"
 msgstr ""
 
-#: rides/forms.py:16 rides/models.py:303
+#: rides/forms.py:16 rides/models.py:332
 msgid "Wednesday"
 msgstr ""
 
-#: rides/forms.py:17 rides/models.py:304
+#: rides/forms.py:17 rides/models.py:333
 msgid "Thursday"
 msgstr ""
 
-#: rides/forms.py:18 rides/models.py:305
+#: rides/forms.py:18 rides/models.py:334
 msgid "Friday"
 msgstr ""
 
-#: rides/forms.py:19 rides/models.py:306
+#: rides/forms.py:19 rides/models.py:335
 msgid "Saturday"
 msgstr ""
 
-#: rides/forms.py:20 rides/models.py:307
+#: rides/forms.py:20 rides/models.py:336
 msgid "Sunday"
 msgstr ""
 
-#: rides/forms.py:78
+#: rides/forms.py:80
 msgid "One-time"
 msgstr ""
 
-#: rides/forms.py:78
+#: rides/forms.py:80
 msgid "Recurring"
 msgstr ""
 
-#: rides/forms.py:80
+#: rides/forms.py:82
 msgid "Choose whether the ride is one-time or recurring."
 msgstr ""
 
-#: rides/forms.py:83
+#: rides/forms.py:85
 msgid "One-way"
 msgstr ""
 
-#: rides/forms.py:83
+#: rides/forms.py:85
 msgid "Return"
 msgstr ""
 
-#: rides/forms.py:85
+#: rides/forms.py:87
 msgid "Choose whether the ride is one-way or has a return journey."
 msgstr ""
 
-#: rides/forms.py:122
+#: rides/forms.py:91
+msgid "Everyone"
+msgstr ""
+
+#: rides/forms.py:91
+msgid "Only my groups"
+msgstr ""
+
+#: rides/forms.py:139
 msgid "Choose each stop on the way from the list of suggestions."
 msgstr ""
 
-#: rides/forms.py:126
+#: rides/forms.py:143
 #, python-format
 msgid "A ride can have at most %(count)s stops on the way."
 msgstr ""
 
-#: rides/forms.py:131
+#: rides/forms.py:148
 msgid "Choose at least one way of travelling."
 msgstr ""
 
-#: rides/forms.py:135
+#: rides/forms.py:152
 msgid "Describe the other way of travelling."
 msgstr ""
 
-#: rides/forms.py:144
+#: rides/forms.py:161
 msgid "Enter how many passengers you can take."
 msgstr ""
 
-#: rides/forms.py:147
+#: rides/forms.py:164
 #, python-format
 msgid "Enter a number of passengers from 1 to %(max)s."
 msgstr ""
 
-#: rides/forms.py:152
+#: rides/forms.py:169
 #, python-format
 msgid ""
 "%(count)s passengers have already joined. Remove passengers before lowering "
 "the seats below that."
 msgstr ""
 
-#: rides/forms.py:177
+#: rides/forms.py:195
+msgid "Choose at least one of your groups, or show the ride to everyone."
+msgstr ""
+
+#: rides/forms.py:205
 msgid "Enter the date and time the ride leaves."
 msgstr ""
 
-#: rides/forms.py:179
+#: rides/forms.py:207
 msgid "The ride cannot leave in the past."
 msgstr ""
 
-#: rides/forms.py:188
+#: rides/forms.py:216
 msgid "Enter the date and time of the return journey."
 msgstr ""
 
-#: rides/forms.py:190
+#: rides/forms.py:218
 msgid "The return journey must be after the departure."
 msgstr ""
 
-#: rides/forms.py:196
+#: rides/forms.py:224
 msgid "Choose at least one day for a recurring ride."
 msgstr ""
 
-#: rides/forms.py:206
+#: rides/forms.py:234
 #, python-format
 msgid "Enter the time the ride leaves on %(day)s."
 msgstr ""
 
-#: rides/forms.py:215
+#: rides/forms.py:243
 #, python-format
 msgid "Enter the time of the return journey on %(day)s."
 msgstr ""
 
-#: rides/forms.py:217
+#: rides/forms.py:245
 #, python-format
 msgid "The return journey on %(day)s must be after the departure."
 msgstr ""
 
-#: rides/forms.py:265
+#: rides/forms.py:297
 msgid "Choose a start location from the list."
 msgstr ""
 
-#: rides/forms.py:266
+#: rides/forms.py:298
 msgid "Choose a destination from the list."
 msgstr ""
 
-#: rides/models.py:152 rides/models.py:253
+#: rides/models.py:181 rides/models.py:282
 msgid "Everyday"
 msgstr ""
 
-#: rides/models.py:154 rides/models.py:255
+#: rides/models.py:183 rides/models.py:284
 msgid "Weekdays"
 msgstr ""
 
-#: rides/models.py:156 rides/models.py:257
+#: rides/models.py:185 rides/models.py:286
 msgid "Weekends"
 msgstr ""
 
-#: rides/models.py:157 rides/models.py:241
+#: rides/models.py:186 rides/models.py:270
 msgid "Mon"
 msgstr ""
 
-#: rides/models.py:157 rides/models.py:242
+#: rides/models.py:186 rides/models.py:271
 msgid "Tue"
 msgstr ""
 
-#: rides/models.py:157 rides/models.py:243
+#: rides/models.py:186 rides/models.py:272
 msgid "Wed"
 msgstr ""
 
-#: rides/models.py:157 rides/models.py:244
+#: rides/models.py:186 rides/models.py:273
 msgid "Thu"
 msgstr ""
 
-#: rides/models.py:157 rides/models.py:245
+#: rides/models.py:186 rides/models.py:274
 msgid "Fri"
 msgstr ""
 
-#: rides/models.py:157 rides/models.py:246
+#: rides/models.py:186 rides/models.py:275
 msgid "Sat"
 msgstr ""
 
-#: rides/models.py:157 rides/models.py:247
+#: rides/models.py:186 rides/models.py:276
 msgid "Sun"
 msgstr ""
 
-#: rides/models.py:397
+#: rides/models.py:426
 msgid "Pending"
 msgstr ""
 
-#: rides/models.py:398
+#: rides/models.py:427
 msgid "Accepted"
 msgstr ""
 
-#: rides/models.py:399
+#: rides/models.py:428
 msgid "Declined"
 msgstr ""
 
 #: rides/templates/admin/rides/ride/generate_test_rides.html:6
 msgid "Home"
-msgstr ""
-
-#: rides/templates/admin/rides/ride/generate_test_rides.html:23
-msgid "Cancel"
 msgstr ""
 
 #: rides/transport.py:38

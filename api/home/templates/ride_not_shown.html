@@ -1,0 +1,34 @@
+{% extends "app.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Ride for group members" %} | LUT Kyyti{% endblock %}
+
+{% block content %}
+{% comment %}
+  A ride posted only to groups the user is not in (home.views.ride_detail),
+  e.g. opened from a shared link: which groups to ask to join.
+{% endcomment %}
+<section class="h-app w-full overflow-y-auto pt-[calc(1.75rem+env(safe-area-inset-top))] lg:pt-24 pb-dock lg:pb-10">
+  <div class="max-w-xl mx-auto px-4 grid gap-5">
+    <section class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 sm:p-6 gap-3">
+        {% include "_icon.html" with name="lock" class="size-8 text-primary" %}
+        <h1 class="card-title text-lg">{% trans "This ride is only shown to group members" %}</h1>
+        {% if groups %}
+          <p class="text-sm text-base-content/70">{% trans "Ask to join one of these groups to see it:" %}</p>
+          <ul class="grid gap-2">
+            {% for group in groups %}
+              <li><a href="{% url 'group_detail' group.pk %}" class="flex items-center justify-between gap-3 rounded-field border border-base-300 p-3 hover:border-primary/40">
+                <span class="font-semibold truncate">{{ group.name }}</span>{% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}
+              </a></li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-sm text-base-content/70">{% trans "Its groups no longer exist, so nobody can see it." %}</p>
+        {% endif %}
+        <a href="{% url 'search' %}" class="link link-primary text-sm font-semibold">{% trans "Find another ride" %} →</a>
+      </div>
+    </section>
+  </div>
+</section>
+{% endblock %}

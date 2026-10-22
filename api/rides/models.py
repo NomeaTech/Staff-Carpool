@@ -8,6 +8,7 @@ from dateutil import parser
 from dateutil.parser import ParserError
 from datetime import datetime
 from django.utils import formats
+from django.db.models import OuterRef
 import uuid
 
 from .transport import TRANSPORT_OPTIONS
@@ -26,6 +27,24 @@ class RideQuerySet(models.QuerySet):
 
     def past(self):
         return self.exclude(pk__in=self.upcoming().values("pk"))
+
+    def visible_to(self, user):
+        """
+        The rides user may see: rides posted to everyone, rides posted to a
+        group user is a member of, and rides user drives or has asked to
+        join (people keep seeing a ride they are part of, even after leaving
+        its group). See groups/models.py.
+        """
+        from groups.models import Membership
+        in_group = Ride.groups.through.objects.filter(
+            ride=OuterRef("pk"),
+            group__memberships__user=user,
+            group__memberships__status=Membership.Status.ACTIVE,
+        )
+        asked = RideRequest.objects.filter(ride=OuterRef("pk"), passenger=user)
+        return self.filter(
+            models.Q(groups_only=False) | models.Q(driver=user) | models.Exists(in_group) | models.Exists(asked)
+        )
 
     def with_seats_taken(self):
         return self.annotate(seats_taken=models.Count(
@@ -121,6 +140,12 @@ class Ride(models.Model):
     price = models.CharField(max_length=100, blank=True, default="", help_text="Optional price for passengers, e.g. \"€10 per passenger\"")
     private = models.CharField(default=False)
 
+    # Who sees the ride: everyone, or (groups_only) only the members of
+    # groups, which are some of the driver's groups. A groups_only ride whose
+    # groups are all gone is seen by nobody. See groups/models.py.
+    groups_only = models.BooleanField(default=False)
+    groups = models.ManyToManyField("groups.Group", blank=True, related_name="rides")
+
     created_at = models.DateTimeField("date added", auto_now_add=True)
 
     objects = RideQuerySet.as_manager()
@@ -130,6 +155,10 @@ class Ride(models.Model):
             return f"From: {self.start_json["displayName"]}, Destination: {self.destination_json["displayName"]}"
         else:
             return f"From: {self.start}, Destination: {self.destination}"
+
+    def is_hidden(self):
+        """A ride posted only to groups that are all gone: nobody but the people in it sees it."""
+        return self.groups_only and not self.groups.exists()
 
     def transport_options(self):
         """The ride's ways of travelling (car offer, request, train, ...) with their icons."""

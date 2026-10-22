@@ -35,7 +35,11 @@ logger = logging.getLogger(__name__)
 
 
 def absolute_url(request, path):
-    return f"{settings.SITE_URL}{path}" if settings.SITE_URL else request.build_absolute_uri(path)
+    # request is None for notifications sent outside a request, e.g. when a
+    # staff admin's change gives a group a new admin (groups/signals.py)
+    if settings.SITE_URL or request is None:
+        return f"{settings.SITE_URL}{path}"
+    return request.build_absolute_uri(path)
 
 
 def email_channel(request, notification):
@@ -61,15 +65,18 @@ def email_channel(request, notification):
 CHANNELS = [email_channel, push_channel]
 
 
-def send(request, recipient, kind, ride=None, **data):
+def send(request, recipient, kind, ride=None, group=None, **data):
     """
     Notifies recipient. data holds the details shown: "name" (the other
     person, as the recipient may see them) and anything the email needs.
-    The ride's route is added, so it is kept if the ride is deleted.
+    The ride's route and the group's name are added, so they are kept if
+    the ride or group is deleted.
     """
     if ride is not None:
         data.setdefault("route", ride.route_name())
-    notification = Notification.objects.create(recipient=recipient, kind=kind, ride=ride, data=data)
+    if group is not None:
+        data.setdefault("group", group.name)
+    notification = Notification.objects.create(recipient=recipient, kind=kind, ride=ride, group=group, data=data)
 
     def deliver():
         for channel in CHANNELS:
@@ -134,3 +141,43 @@ def active_requests(ride):
 
 def driver_name(ride, ride_request):
     return display_name(ride.driver, partner=ride_request.status == ride_request.Status.ACCEPTED)
+
+
+def ride_hidden(request, ride, group):
+    """To the driver of a ride posted only to groups, when the last of them is taken off it."""
+    send(request, ride.driver, Kind.RIDE_HIDDEN, ride, group=group)
+
+
+# Groups (groups/services.py). Group members see each other's names as
+# everyone else does; only ride partners see full names.
+
+def group_join_requested(request, admin, membership):
+    send(request, admin, Kind.GROUP_JOIN_REQUESTED, group=membership.group, name=display_name(membership.user))
+
+
+def group_join_answered(request, admin, membership, accepted):
+    kind = Kind.GROUP_JOIN_ACCEPTED if accepted else Kind.GROUP_JOIN_DECLINED
+    # A declined request is deleted, so the notification does not link to it
+    send(request, membership.user, kind, group=membership.group, name=display_name(admin))
+
+
+def group_member_removed(request, admin, membership):
+    send(request, membership.user, Kind.GROUP_REMOVED, group=membership.group, name=display_name(admin))
+
+
+def group_admin_granted(request, admin, membership):
+    send(request, membership.user, Kind.GROUP_ADMIN_GRANTED, group=membership.group, name=display_name(admin))
+
+
+def group_admin_handed_over(request, membership):
+    send(request, membership.user, Kind.GROUP_ADMIN_HANDED_OVER, group=membership.group)
+
+
+# Sent just before the group is deleted; the notification keeps its name
+
+def group_deleted(request, admin, recipient, group):
+    send(request, recipient, Kind.GROUP_DELETED, group=group, name=display_name(admin))
+
+
+def group_closed(request, recipient, group):
+    send(request, recipient, Kind.GROUP_CLOSED, group=group)

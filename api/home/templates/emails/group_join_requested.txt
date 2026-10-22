@@ -1,0 +1,7 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=recipient.first_name %}Hi {{ name }},{% endblocktrans %}
+
+{% blocktrans %}{{ name }} would like to join your group {{ group }}.{% endblocktrans %}
+
+{% trans "Accept or decline the request on the group's page:" %}
+{{ url }}
+{% include "emails/_footer.txt" %}{% endautoescape %}

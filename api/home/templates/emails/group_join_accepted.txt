@@ -1,0 +1,6 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=recipient.first_name %}Hi {{ name }},{% endblocktrans %}
+
+{% blocktrans %}{{ name }} accepted you into the group {{ group }}. You can now see the rides posted to it, and post rides to it yourself.{% endblocktrans %}
+
+{{ url }}
+{% include "emails/_footer.txt" %}{% endautoescape %}

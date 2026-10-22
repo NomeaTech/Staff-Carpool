@@ -19,7 +19,14 @@
           <span class="badge badge-sm {{ option.badge_class }}">{{ option.label }}</span>
         {% endfor %}
         {% if not is_upcoming %}<span class="badge badge-sm badge-ghost">{% trans "Past ride" %}</span>{% endif %}
+        {% for group in ride_groups %}<a href="{% url 'group_detail' group.pk %}" class="badge badge-sm badge-soft badge-secondary">{% include "_icon.html" with name="user" class="size-3" %}{{ group.name }}</a>{% endfor %}
       </div>
+      {% if is_driver and ride_groups is not None and not ride_groups %}
+        <div role="alert" class="alert alert-warning alert-soft text-sm my-3">
+          {% include "_icon.html" with name="alert" class="size-5" %}
+          <span>{% trans "Nobody can find this ride: it was only shown to groups you are no longer in, or that were deleted." %} <a href="{% url 'edit_ride' ride.pk %}" class="link font-semibold">{% trans "Choose who sees it" %}</a></span>
+        </div>
+      {% endif %}
       <h1 class="text-3xl font-bold tracking-tight mb-1 break-words">{{ ride.route_name }}</h1>
       <p class="text-base-content/60">
         {% if ride.one_time %}{{ ride.leaving_at|date:"l, j F Y" }}{% else %}{% blocktrans with days=ride.days %}Recurring · {{ days }}{% endblocktrans %}{% endif %}

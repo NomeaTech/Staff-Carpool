@@ -71,6 +71,8 @@ class RideForm(forms.ModelForm):
     - return rides also need a return date and time (one-time rides) or a
       return time on each chosen day (recurring rides), after the departure
     Values that do not apply to the chosen kind of ride are cleared.
+    The ride is shown to everyone, or only to members of some of the
+    driver's groups (audience and groups, see groups/models.py).
     add_ride.html marks the inputs that are needed as required, so that the
     browser asks for them before posting.
     """
@@ -85,13 +87,28 @@ class RideForm(forms.ModelForm):
         error_messages={"required": _("Choose whether the ride is one-way or has a return journey.")},
     )
 
+    audience = forms.TypedChoiceField(
+        choices=[("everyone", _("Everyone")), ("groups", _("Only my groups"))],
+        initial="everyone",
+        # Left out (e.g. by older pages), it is everyone, and not a change
+        required=False,
+        coerce=str,
+        empty_value="everyone",
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        from groups.models import Group, Membership
+        # Rides can only be posted to the driver's own groups
+        self.fields["groups"].queryset = Group.objects.filter(
+            memberships__user=self.instance.driver, memberships__status=Membership.Status.ACTIVE)
+        self.fields["groups"].required = False
         # An existing ride's choices, as the radio buttons' values (a new ride
         # already has its UUID, so instance.pk does not tell them apart)
         if not self.instance._state.adding:
             self.initial["one_time"] = "oneTime" if self.instance.one_time else "recurring"
             self.initial["one_way"] = "oneWay" if self.instance.one_way else "twoWay"
+            self.initial["audience"] = "groups" if self.instance.groups_only else "everyone"
 
     def clean_start_json(self):
         place = clean_place(self.cleaned_data.get("start_json"))
@@ -156,6 +173,7 @@ class RideForm(forms.ModelForm):
         data = super().clean()
         data["vias"] = self.clean_vias()
         self.clean_transport(data)
+        self.check_audience(data)
         one_time, one_way = data.get("one_time"), data.get("one_way")
         if one_time is None or one_way is None:
             return data
@@ -169,6 +187,16 @@ class RideForm(forms.ModelForm):
             self.clean_recurring_schedule(data, one_way)
             data["leaving_at_date_time"] = data["returning_at_date_time"] = ""
         return data
+
+    def check_audience(self, data):
+        # Not clean_audience, which Django would call for the audience field
+        groups_only = data.get("audience") == "groups"
+        if groups_only and not data.get("groups") and "groups" not in self.errors:
+            self.add_error("groups", _("Choose at least one of your groups, or show the ride to everyone."))
+        if not groups_only:
+            data["groups"] = []
+        # Not a form field of its own (Meta.fields), so it is set here
+        self.instance.groups_only = groups_only
 
     def clean_one_time_schedule(self, data, one_way):
         leaving = parse_date_time(data.get("leaving_at_date_time"))
@@ -258,9 +286,13 @@ class RideForm(forms.ModelForm):
             "sunday_returning_at_time",
             "note",
             "price",
+            "groups",
             # "test",
             # "private",
         )
+        widgets = {
+            "groups": forms.CheckboxSelectMultiple(attrs={"class": "checkbox checkbox-primary checkbox-sm"}),
+        }
         error_messages = {
             "start_json": {"required": _("Choose a start location from the list."), "invalid": _("Choose a start location from the list.")},
             "destination_json": {"required": _("Choose a destination from the list."), "invalid": _("Choose a destination from the list.")},

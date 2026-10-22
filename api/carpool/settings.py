@@ -55,6 +55,10 @@ METABASE_URL = os.getenv("METABASE_URL", "").rstrip("/")
 # After how many days the activity log's events (activity/models.py) are
 # kept without their user and ride. The app does it itself, once a day.
 ACTIVITY_ANONYMISE_DAYS = int(os.getenv("ACTIVITY_ANONYMISE_DAYS", 730))
+# A group admin who has not logged in or used the app for this many days no
+# longer counts as one who can answer requests to join, and the group gets
+# another admin (groups/services.py ensure_admin)
+GROUP_ADMIN_AWAY_DAYS = int(os.getenv("GROUP_ADMIN_AWAY_DAYS", 180))
 
 CSRF_TRUSTED_ORIGINS = ['https://kyyti.net', 'http://localhost:8120', 'https://static.cloudflareinsights.com']
 
@@ -94,6 +98,7 @@ INSTALLED_APPS = [
     'landing',
     'rides',
     'activity',
+    'groups',
     'test_app.apps.TestAppConfig',
     # 3rd party
     'corsheaders',

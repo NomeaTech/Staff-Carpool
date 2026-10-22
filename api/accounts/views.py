@@ -16,6 +16,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 
 from activity import events
+from groups import services as group_services
 from activity.models import Kind
 from notifications import services as notifications
 from rides.models import RideRequest
@@ -207,6 +208,8 @@ def account(request):
         "photo_form": photo_form,
         "delete_form": delete_form,
         "email_form": email_form,
+        # Groups the user is the only admin of, for the delete account dialog
+        "group_effects": group_services.without(user),
         "photo_max_upload": PHOTO_MAX_UPLOAD,
         "photo_too_large": photo_too_large(),
     }

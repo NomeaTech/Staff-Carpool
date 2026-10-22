@@ -40,6 +40,13 @@
             {% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}
           </a>
         </li>
+        <li>
+          <a href="{% url 'groups' %}" class="py-3">
+            {% include "_icon.html" with name="user" %}
+            <span class="grow">{% trans "Groups" %}</span>
+            {% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}
+          </a>
+        </li>
       </ul>
     </section>
 
