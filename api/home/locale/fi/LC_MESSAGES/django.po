@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-23 01:35+0300\n"
+"POT-Creation-Date: 2026-10-23 02:27+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,6 +36,67 @@ msgstr ""
 
 #: home/campuses.py:52
 msgid "Mikkeli campus"
+msgstr ""
+
+#: home/templates/_home_groups.html:12 home/templates/_home_groups.html:19
+msgid "Your groups"
+msgstr ""
+
+#: home/templates/_home_groups.html:13
+#, python-format
+msgid "%(counter)s new ride"
+msgid_plural "%(counter)s new rides"
+msgstr[0] ""
+msgstr[1] ""
+
+#: home/templates/_home_groups.html:15
+msgid "All groups"
+msgstr ""
+
+#: home/templates/_home_groups.html:25
+msgid "New rides since your last visit"
+msgstr ""
+
+#: home/templates/_home_groups.html:25
+#, python-format
+msgid "%(counter)s new"
+msgid_plural "%(counter)s new"
+msgstr[0] ""
+msgstr[1] ""
+
+#: home/templates/_home_groups.html:26
+msgid "Requests to join waiting for an admin"
+msgstr ""
+
+#: home/templates/_home_groups.html:26
+#, python-format
+msgid "%(counter)s to answer"
+msgid_plural "%(counter)s to answer"
+msgstr[0] ""
+msgstr[1] ""
+
+#: home/templates/_home_groups.html:38
+msgid "New"
+msgstr ""
+
+#: home/templates/_home_groups.html:42 home/templates/home.html:105
+#: home/templates/search_results.html:59
+#, python-format
+msgid "%(counter)s seat"
+msgid_plural "%(counter)s seats"
+msgstr[0] ""
+msgstr[1] ""
+
+#: home/templates/_home_groups.html:56
+msgid "Each group's page lists all of its rides."
+msgstr ""
+
+#: home/templates/_home_groups.html:59
+msgid "Nobody has posted an upcoming ride to your groups yet."
+msgstr ""
+
+#: home/templates/_home_groups.html:60
+msgid "Offer a ride to your groups"
 msgstr ""
 
 #: home/templates/_page_footer.html:4 home/templates/more.html:87
@@ -525,103 +586,106 @@ msgstr ""
 msgid "Post a trip and share your seats"
 msgstr ""
 
-#: home/templates/home.html:42
+#: home/templates/home.html:44
 msgid "Needs your attention"
 msgstr ""
 
-#: home/templates/home.html:43
+#: home/templates/home.html:45
 #, python-format
 msgid "%(counter)s pending"
 msgid_plural "%(counter)s pending"
 msgstr[0] ""
 msgstr[1] ""
 
-#: home/templates/home.html:50
+#: home/templates/home.html:52
 msgid "New ride request"
 msgstr ""
 
-#: home/templates/home.html:52
+#: home/templates/home.html:54
 #, python-format
 msgid "%(name)s would like to join your ride %(route)s"
 msgstr ""
 
-#: home/templates/home.html:54
+#: home/templates/home.html:56
 msgid "Review request"
 msgstr ""
 
-#: home/templates/home.html:66
+#: home/templates/home.html:68
 msgid "Your upcoming rides"
 msgstr ""
 
-#: home/templates/home.html:67 home/templates/home.html:91
+#: home/templates/home.html:69 home/templates/home.html:93
 msgid "View all"
 msgstr ""
 
-#: home/templates/home.html:78 home/templates/my_rides.html:25
+#: home/templates/home.html:80 home/templates/my_rides.html:25
 msgid "No upcoming rides yet"
 msgstr ""
 
-#: home/templates/home.html:79 home/templates/my_rides.html:26
+#: home/templates/home.html:81 home/templates/my_rides.html:26
 msgid ""
 "Find a ride for your next commute, or offer a seat on a trip you're already "
 "taking."
 msgstr ""
 
-#: home/templates/home.html:90
+#: home/templates/home.html:92
 msgid "Recently posted rides"
 msgstr ""
 
-#: home/templates/home.html:103 home/templates/search_results.html:59
-#, python-format
-msgid "%(counter)s seat"
-msgid_plural "%(counter)s seats"
-msgstr[0] ""
-msgstr[1] ""
-
-#: home/templates/home.html:112
+#: home/templates/home.html:114
 msgid "No other upcoming rides have been posted yet."
 msgstr ""
 
-#: home/templates/home.html:137
+#: home/templates/home.html:124
+msgid "Ride with people you know"
+msgstr ""
+
+#: home/templates/home.html:125
+msgid ""
+"Join a group, e.g. your team or the people on your route, and see the rides "
+"its members share."
+msgstr ""
+
+#: home/templates/home.html:151
 #, python-format
 msgid "Welcome to LUT Kyyti, %(name)s!"
 msgstr ""
 
-#: home/templates/home.html:138
+#: home/templates/home.html:152
 msgid ""
 "Find a ride to where you're going, or offer the empty seats in your car. "
 "Before your first shared trip, take a moment to read these:"
 msgstr ""
 
-#: home/templates/home.html:145 home/templates/more.html:85
+#: home/templates/home.html:159 home/templates/more.html:85
 msgid "Help & FAQ"
 msgstr ""
 
-#: home/templates/home.html:146
+#: home/templates/home.html:160
 msgid "How rides, requests and seats work"
 msgstr ""
 
-#: home/templates/home.html:155 home/templates/more.html:86
+#: home/templates/home.html:169 home/templates/more.html:86
 msgid "Safety tips"
 msgstr ""
 
-#: home/templates/home.html:156
+#: home/templates/home.html:170
 msgid "Sharing a ride safely"
 msgstr ""
 
-#: home/templates/home.html:165 home/templates/more.html:20
+#: home/templates/home.html:179 home/templates/more.html:20
 msgid "Profile & settings"
 msgstr ""
 
-#: home/templates/home.html:166
+#: home/templates/home.html:180
 msgid "Add a photo and choose what others see"
 msgstr ""
 
-#: home/templates/home.html:173
+#: home/templates/home.html:187
 msgid "Get started"
 msgstr ""
 
-#: home/templates/home.html:176
+#: home/templates/home.html:190
 msgid "Close"
 msgstr ""
 
@@ -1049,79 +1113,51 @@ msgstr ""
 msgid "Next page"
 msgstr ""
 
-#: home/views.py:176
+#: home/views.py:228
 msgid "You cannot request to join your own ride."
 msgstr ""
 
-#: home/views.py:178
+#: home/views.py:230
 msgid "This ride has no free seats left."
 msgstr ""
 
-#: home/views.py:185
+#: home/views.py:237
 msgid "Request sent. You will be notified when the driver responds."
 msgstr ""
 
-#: home/views.py:207
+#: home/views.py:259
 msgid "You have left the ride."
 msgstr ""
 
-#: home/views.py:211
+#: home/views.py:263
 msgid "Your request was withdrawn."
 msgstr ""
 
-#: home/views.py:232
+#: home/views.py:284
 msgid "The ride is full. Increase its seats or remove a passenger first."
 msgstr ""
 
-#: home/views.py:238
+#: home/views.py:290
 msgid ""
 "Request accepted. You can now see the passenger's shared contact details."
 msgstr ""
 
-#: home/views.py:248
+#: home/views.py:300
 msgid "The passenger was removed from the ride."
 msgstr ""
 
-#: home/views.py:251
+#: home/views.py:303
 msgid "Request declined."
 msgstr ""
 
-#: home/views.py:273
+#: home/views.py:325
 msgid "The ride was deleted."
 msgstr ""
 
-#: home/views.py:481
+#: home/views.py:535
 msgid "The ride could not be saved. Please try again."
 msgstr ""
 
-#: home/views.py:497
+#: home/views.py:551
 msgid "The ride was updated."
-msgstr ""
-
-#: home/views.py:524
-msgid "Mon"
-msgstr ""
-
-#: home/views.py:524
-msgid "Tue"
-msgstr ""
-
-#: home/views.py:524
-msgid "Wed"
-msgstr ""
-
-#: home/views.py:524
-msgid "Thu"
-msgstr ""
-
-#: home/views.py:524
-msgid "Fri"
-msgstr ""
-
-#: home/views.py:524
-msgid "Sat"
-msgstr ""
-
-#: home/views.py:524
-msgid "Sun"
 msgstr ""

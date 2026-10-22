@@ -38,6 +38,8 @@ class Kind(models.TextChoices):
     PHOTO_REMOVED = "photo_removed", _("Removed the photo")
     EMAIL_CHANGE_REQUESTED = "email_change_requested", _("Asked to change the email address")
     EMAIL_CHANGED = "email_changed", _("Changed the email address")
+    TWO_FACTOR_ON = "two_factor_on", _("Turned on two-step verification")
+    TWO_FACTOR_OFF = "two_factor_off", _("Turned off two-step verification")
     # Recorded without the user. data: domain, days (as a member), rides,
     # requests (made, ever)
     ACCOUNT_DELETED = "account_deleted", _("Deleted the account")

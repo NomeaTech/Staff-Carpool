@@ -109,8 +109,13 @@ INSTALLED_APPS = [
     'rosetta',
     'django_filters',
     "turnstile",
+    # Two-step verification (accounts/two_factor.py)
+    "django_otp",
+    "django_otp.plugins.otp_totp",
+    "django_otp.plugins.otp_static",
     # 1st party
-    'django.contrib.admin',
+    # The admin needs two-step verification (carpool/admin_site.py)
+    'carpool.apps.AdminConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -125,6 +130,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # request.user.is_verified(): logged in with two-step verification
+    'django_otp.middleware.OTPMiddleware',
     # Records each logged-in user's first visit of the day (activity/)
     'activity.middleware.DailyActivityMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -276,6 +283,9 @@ LOGOUT_REDIRECT_URL = "landing"
 AUTH_USER_MODEL = "accounts.User"
 
 AUTHENTICATION_BACKENDS = ['accounts.backends.EmailBackend']
+
+# The admin does not show the keys of users' authenticator apps
+OTP_ADMIN_HIDE_SENSITIVE_DATA = True
 
 # Email is sent through Resend's SMTP server, whose password is the API key.
 # Without a key (e.g. in development) emails are printed to the console.

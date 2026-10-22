@@ -1,0 +1,37 @@
+{% load i18n widget_tweaks %}{% comment %}
+  The code field of a CodeForm (accounts/two_factor.py): the 6 digits from the
+  authenticator app, in daisyUI's otp boxes, or with backup=True a backup
+  code. The boxes are drawn around one input, so phones can still fill in the
+  code and pasting works. A wrong code is cleared. Anything but digits is dropped as it is typed or
+  pasted, and the form is sent as soon as the 6th digit is in.
+{% endcomment %}
+<fieldset class="fieldset py-0">
+  <legend class="fieldset-legend">{{ label }}</legend>
+  {% if backup %}
+    {% render_field field class="input input-xl validator w-full text-center font-mono tracking-widest" placeholder="xxxx-xxxx" minlength="8" maxlength="9" required="" autofocus="" %}
+    {% if not field.errors %}<p class="validator-hint hidden">{% trans "8 letters and numbers, e.g. k3d9-x2mq" %}</p>{% endif %}
+  {% else %}
+    <div class="flex justify-center py-1">
+      <label class="otp otp-lg {% if field.errors %}otp-error{% else %}otp-primary{% endif %}">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+        {# The forms plugin's 1rem would put the digits out of line with the boxes #}
+        {% render_field field class="[font-size:inherit]" inputmode="numeric" pattern="\d{6}" minlength="6" required="" autofocus="" aria-label=label data-code-autosubmit="" %}
+      </label>
+    </div>
+  {% endif %}
+  {% for error in field.errors %}<div role="alert" class="alert alert-error alert-soft text-sm py-2 mt-1">{% include "_icon.html" with name="alert" class="size-5" %}<span>{{ error }}</span></div>{% endfor %}
+</fieldset>
+<script>
+  document.querySelectorAll("[data-code-autosubmit]").forEach(function (input) {
+    // A wrong code shown again is typed over, not edited
+    input.value = "";
+    input.addEventListener("input", function () {
+      const digits = input.value.replace(/\D/g, "").slice(0, 6);
+      if (digits !== input.value) input.value = digits;
+      if (digits.length === 6 && !input.form.dataset.sent) {
+        input.form.dataset.sent = "1";
+        input.form.requestSubmit();
+      }
+    });
+  });
+</script>

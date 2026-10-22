@@ -8,7 +8,7 @@ from django.utils import timezone
 
 from accounts.models import User
 from home.campuses import CAMPUSES
-from home.tests import make_ride, make_user
+from home.tests import make_ride, make_user, log_in_to_admin
 from rides.admin import TEST_RIDE_KEY, test_user
 from rides.models import Ride, RideRequest
 from .models import Event, Kind
@@ -52,7 +52,7 @@ class RecordingTests(TestCase):
 
     def test_admin_pages_are_not_a_visit(self):
         admin = make_user("Ada", "Admin", is_staff=True, is_superuser=True)
-        self.client.force_login(admin)
+        log_in_to_admin(self.client, admin)
         self.client.get(reverse("admin:index"))
         self.assertFalse(Event.objects.filter(kind=Kind.ACTIVE).exists())
 

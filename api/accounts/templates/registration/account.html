@@ -113,6 +113,37 @@
               </div>
               <a class="btn btn-outline btn-primary btn-sm" href="{% url 'password_change' %}">{% trans "Change password" %}</a>
             </div>
+            <div class="divider my-1"></div>
+            <div id="two-step" class="flex flex-wrap items-center justify-between gap-3 scroll-mt-24">
+              <div>
+                <strong class="flex items-center gap-2">
+                  {% trans "Two-step verification" %}
+                  {% if two_factor_on %}<span class="badge badge-success badge-sm">{% trans "On" %}</span>
+                  {% else %}<span class="badge badge-ghost badge-sm">{% trans "Off" %}</span>{% endif %}
+                </strong>
+                <span class="text-xs text-base-content/60">
+                  {% if two_factor_on %}
+                    {% blocktrans count count=backup_codes_left %}Logging in also needs a code from your authenticator app. {{ count }} backup code left.{% plural %}Logging in also needs a code from your authenticator app. {{ count }} backup codes left.{% endblocktrans %}
+                  {% else %}
+                    {% trans "Also ask for a code from an app on your phone when logging in, so your password alone isn't enough" %}
+                  {% endif %}
+                </span>
+              </div>
+              {% if two_factor_on %}
+                <div class="flex flex-wrap gap-2">
+                  <button class="btn btn-outline btn-primary btn-sm" type="button" onclick="document.getElementById('backup-codes-modal').showModal()">{% trans "New backup codes" %}</button>
+                  <button class="btn btn-ghost btn-sm text-error" type="button" onclick="document.getElementById('two-factor-off-modal').showModal()">{% trans "Turn off" %}</button>
+                </div>
+              {% else %}
+                <a class="btn btn-primary btn-sm" href="{% url 'two_factor_setup' %}">{% include "_icon.html" with name="shield" class="size-4" %}{% trans "Turn on" %}</a>
+              {% endif %}
+            </div>
+            {% if two_factor_on and backup_codes_left < 3 %}
+              <div role="alert" class="alert alert-warning alert-soft text-sm mt-2">
+                {% include "_icon.html" with name="alert" class="size-5" %}
+                <span>{% trans "You're running out of backup codes. Make new ones so you can still log in if you lose your phone." %}</span>
+              </div>
+            {% endif %}
           </div>
         </section>
       </div>
@@ -307,6 +338,52 @@
   </div>
   <form method="dialog" class="modal-backdrop"><button>{% trans "Cancel" %}</button></form>
 </dialog>
+{% if two_factor_on %}
+<dialog id="backup-codes-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="backup-codes-modal-title">
+  <div class="modal-box">
+    <h3 id="backup-codes-modal-title" class="text-lg font-bold">{% trans "Make new backup codes?" %}</h3>
+    <p class="text-sm text-base-content/70 mt-1">{% trans "You'll get 10 new codes, and the ones you have now stop working." %}</p>
+    <form method="post" id="backup-codes-form" class="mt-2">
+      {% csrf_token %}
+      <input type="hidden" name="form" value="backup_codes">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">{% trans "Enter your password to confirm" %}</legend>
+        {% render_field backup_codes_form.password class="input w-full" autocomplete="current-password" required="" %}
+        {% for error in backup_codes_form.password.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+      </fieldset>
+    </form>
+    <div class="modal-action">
+      <form method="dialog"><button class="btn">{% trans "Cancel" %}</button></form>
+      <button class="btn btn-primary" type="submit" form="backup-codes-form">{% trans "Make new codes" %}</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>{% trans "Cancel" %}</button></form>
+</dialog>
+
+<dialog id="two-factor-off-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="two-factor-off-title">
+  <div class="modal-box">
+    <div role="alert" class="alert alert-warning alert-soft">
+      {% include "_icon.html" with name="alert" class="size-6" %}
+      <h3 id="two-factor-off-title" class="font-bold">{% trans "Turn off two-step verification?" %}</h3>
+    </div>
+    <p class="py-4 text-sm">{% trans "Logging in will only need your password, and your authenticator app and backup codes stop working for LUT Kyyti. You can turn it on again at any time." %}</p>
+    <form method="post" id="two-factor-off-form" data-no-submit-shortcut>
+      {% csrf_token %}
+      <input type="hidden" name="form" value="two_factor_off">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">{% trans "Enter your password to confirm" %}</legend>
+        {% render_field two_factor_off_form.password class="input w-full" autocomplete="current-password" required="" %}
+        {% for error in two_factor_off_form.password.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+      </fieldset>
+    </form>
+    <div class="modal-action">
+      <form method="dialog"><button class="btn" autofocus>{% trans "Cancel" %}</button></form>
+      <button class="btn btn-error" type="submit" form="two-factor-off-form">{% trans "Turn off" %}</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>{% trans "Cancel" %}</button></form>
+</dialog>
+{% endif %}
 {% comment %}
   Photo framing dialog. Picking a photo opens it: the user moves and zooms
   the photo behind a fixed circle, and the square around the circle is sent
@@ -469,5 +546,11 @@
 {% endif %}
 {% if email_form.errors %}
 <script>document.getElementById("email-modal").showModal();</script>
+{% endif %}
+{% if backup_codes_form.errors %}
+<script>document.getElementById("backup-codes-modal").showModal();</script>
+{% endif %}
+{% if two_factor_off_form.errors %}
+<script>document.getElementById("two-factor-off-modal").showModal();</script>
 {% endif %}
 {% endblock %}

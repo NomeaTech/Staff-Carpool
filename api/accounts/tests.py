@@ -5,8 +5,11 @@ from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
+from django_otp.oath import TOTP
+from django_otp.plugins.otp_totp.models import TOTPDevice
 
-from home.tests import make_user
+from home.tests import make_user, log_in_to_admin
+from . import two_factor
 from .models import User
 
 
@@ -126,7 +129,7 @@ class EmailConfirmationTests(TestCase):
         superuser = User.objects.create_superuser(username="admin", email="admin@lut.fi", password="x")
         self.assertIsNotNone(superuser.email_confirmed_at)
 
-        self.client.force_login(superuser)
+        log_in_to_admin(self.client, superuser)
         self.client.post(reverse("admin:accounts_user_add"), {
             "email": "new@lut.fi", "first_name": "New", "last_name": "Member", "usable_password": "true",
             "password1": "Kyyti-Passw0rd", "password2": "Kyyti-Passw0rd",
@@ -318,7 +321,7 @@ class UserStatsTests(TestCase):
         User.objects.filter(pk=self.passenger.pk).update(email="jamie.saarinen@lab.fi")
         ride = make_ride(self.driver)
         RideRequest.objects.create(ride=ride, passenger=self.passenger, status=RideRequest.Status.ACCEPTED)
-        self.client.force_login(self.admin)
+        log_in_to_admin(self.client, self.admin)
 
     def csv_rows(self, **params):
         response = self.client.get(reverse("admin:accounts_user_stats_csv"), params)
@@ -410,12 +413,13 @@ class UserStatsTests(TestCase):
 
     def test_only_for_admins_who_can_view_users(self):
         staff = make_user("Sam", "Staff", is_staff=True)
-        self.client.force_login(staff)
+        log_in_to_admin(self.client, staff)
         self.assertEqual(self.client.get(reverse("admin:accounts_user_stats")).status_code, 403)
         self.assertEqual(self.client.get(reverse("admin:accounts_user_stats_csv")).status_code, 403)
         self.client.force_login(self.driver)
         self.assertRedirects(self.client.get(reverse("admin:accounts_user_stats")),
-                             f"{reverse('admin:login')}?next={reverse('admin:accounts_user_stats')}")
+                             f"{reverse('admin:login')}?next={reverse('admin:accounts_user_stats')}",
+                             fetch_redirect_response=False)
 
     def test_activity_log_numbers(self):
         from activity.models import Event, Kind
@@ -456,3 +460,150 @@ class UserStatsTests(TestCase):
         for chart in ("active", "searches", "funnel", "campuses", "hours", "features"):
             self.assertContains(page, f'data-chart="{chart}"')
         self.assertContains(page, "Retention")
+
+
+@override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
+class TwoFactorTests(TestCase):
+    """Two-step verification (accounts/two_factor.py)."""
+
+    def setUp(self):
+        self.user = make_user("Aino", "Mäkinen")
+
+    def app_code(self):
+        # A code is accepted once, so each test login can reuse the current one
+        device = TOTPDevice.objects.get(user=self.user)
+        TOTPDevice.objects.filter(pk=device.pk).update(last_t=-1)
+        return str(TOTP(device.bin_key).token()).zfill(6)
+
+    def wait_out(self):
+        """As if the wait after a wrong code had passed."""
+        TOTPDevice.objects.update(throttling_failure_timestamp=None)
+
+    def turn_on(self):
+        self.client.force_login(self.user)
+        self.client.get(reverse("two_factor_setup"))
+        self.client.post(reverse("two_factor_setup"), {"code": self.app_code()})
+        codes = self.client.get(reverse("backup_codes")).context["codes"]
+        self.client.logout()
+        return codes
+
+    def log_in(self, next=""):
+        url = reverse("login") + (f"?next={next}" if next else "")
+        return self.client.post(url, {"username": self.user.email, "password": "Passw0rd!x"})
+
+    def test_turning_on(self):
+        self.client.force_login(self.user)
+        self.assertContains(self.client.get(reverse("account")), reverse("two_factor_setup"))
+
+        page = self.client.get(reverse("two_factor_setup"))
+        self.assertContains(page, "otpauth://totp/LUT%20Kyyti%3Aaino%40lut.fi?secret=")
+        self.assertContains(page, "<svg")
+        # Reloading keeps the QR code already scanned
+        self.assertEqual(self.client.get(reverse("two_factor_setup")).context["secret"], page.context["secret"])
+
+        response = self.client.post(reverse("two_factor_setup"), {"code": "000000"})
+        self.assertContains(response, "That code is wrong.")
+        self.assertFalse(two_factor.enabled(self.user))
+
+        self.wait_out()
+        response = self.client.post(reverse("two_factor_setup"), {"code": self.app_code()})
+        self.assertRedirects(response, reverse("backup_codes"), fetch_redirect_response=False)
+        self.assertTrue(two_factor.enabled(self.user))
+        self.assertEqual(len(self.client.get(reverse("backup_codes")).context["codes"]), two_factor.BACKUP_CODES)
+        # Shown once
+        self.assertRedirects(self.client.get(reverse("backup_codes")), reverse("account"))
+        self.assertEqual(mail.outbox[-1].subject, "Two-step verification is on for your LUT Kyyti account")
+        self.assertRedirects(self.client.get(reverse("two_factor_setup")), reverse("account"))
+        self.assertContains(self.client.get(reverse("account")), "10 backup codes left")
+
+    def test_logging_in_needs_the_code(self):
+        self.turn_on()
+        self.assertRedirects(self.log_in(), reverse("login_code"))
+        # Not logged in yet
+        self.assertEqual(self.client.get(reverse("home")).status_code, 302)
+
+        response = self.client.post(reverse("login_code"), {"code": "000000"})
+        self.assertContains(response, "That code is wrong.")
+        self.wait_out()
+        response = self.client.post(reverse("login_code"), {"code": self.app_code()})
+        self.assertRedirects(response, reverse("home"), fetch_redirect_response=False)
+        self.assertEqual(self.client.get(reverse("home")).status_code, 200)
+
+    def test_where_the_user_was_going_is_kept(self):
+        self.turn_on()
+        self.log_in(next=reverse("my_rides"))
+        response = self.client.post(reverse("login_code"), {"code": self.app_code()})
+        self.assertRedirects(response, reverse("my_rides"), fetch_redirect_response=False)
+
+    def test_backup_codes_work_once(self):
+        code = self.turn_on()[0]
+        self.log_in()
+        self.assertContains(self.client.get(reverse("login_code"), {"backup": "1"}), "Backup code")
+        response = self.client.post(reverse("login_code") + "?backup=1", {"code": f" {code.upper()} "})
+        self.assertRedirects(response, reverse("home"), fetch_redirect_response=False)
+        self.assertEqual(two_factor.backup_codes_left(self.user), two_factor.BACKUP_CODES - 1)
+
+        self.client.logout()
+        self.log_in()
+        response = self.client.post(reverse("login_code") + "?backup=1", {"code": code})
+        self.assertContains(response, "wrong or has already been used")
+
+    def test_wrong_codes_make_the_user_wait(self):
+        self.turn_on()
+        self.log_in()
+        self.client.post(reverse("login_code"), {"code": "000000"})
+        response = self.client.post(reverse("login_code"), {"code": self.app_code()})
+        self.assertContains(response, "Too many wrong codes.")
+        self.assertEqual(self.client.get(reverse("home")).status_code, 302)
+
+    def test_the_code_page_needs_the_password_first(self):
+        self.assertRedirects(self.client.get(reverse("login_code")), reverse("login"))
+        self.turn_on()
+        self.log_in()
+        session = self.client.session
+        session[two_factor.SESSION_KEY]["at"] -= two_factor.LOGIN_TIMEOUT + 1
+        session.save()
+        self.assertRedirects(self.client.post(reverse("login_code"), {"code": self.app_code()}), reverse("login"))
+
+        self.log_in()
+        self.client.post(reverse("cancel_login_code"))
+        self.assertRedirects(self.client.get(reverse("login_code")), reverse("login"))
+
+    def test_turning_off_and_new_backup_codes_need_the_password(self):
+        old_codes = self.turn_on()
+        self.log_in()
+        self.client.post(reverse("login_code"), {"code": self.app_code()})
+
+        response = self.client.post(reverse("account"), {"form": "backup_codes", "backup_codes-password": "wrong"})
+        self.assertContains(response, "The password is incorrect.")
+        response = self.client.post(reverse("account"), {"form": "backup_codes", "backup_codes-password": "Passw0rd!x"})
+        self.assertRedirects(response, reverse("backup_codes"), fetch_redirect_response=False)
+        new_codes = self.client.get(reverse("backup_codes")).context["codes"]
+        self.assertFalse(set(old_codes) & set(new_codes))
+
+        response = self.client.post(reverse("account"), {"form": "two_factor_off", "two_factor_off-password": "wrong"})
+        self.assertTrue(two_factor.enabled(self.user))
+        response = self.client.post(reverse("account"), {"form": "two_factor_off", "two_factor_off-password": "Passw0rd!x"})
+        self.assertRedirects(response, reverse("account"))
+        self.assertFalse(two_factor.enabled(self.user))
+        self.assertEqual(two_factor.backup_codes_left(self.user), 0)
+        self.assertEqual(mail.outbox[-1].subject, "Two-step verification was turned off for your LUT Kyyti account")
+
+        self.client.logout()
+        self.assertRedirects(self.log_in(), reverse("home"), fetch_redirect_response=False)
+
+    def test_the_admin_needs_two_step_verification(self):
+        User.objects.filter(pk=self.user.pk).update(is_staff=True, is_superuser=True)
+        self.client.force_login(self.user)
+        admin_login = self.client.get(reverse("admin:index"), follow=True)
+        self.assertRedirects(admin_login, reverse("account") + "#two-step")
+        self.assertContains(admin_login, "Turn on two-step verification to use the admin.")
+
+        # Logged in before turning it on elsewhere: logs in again, with the code
+        self.turn_on()
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("admin:index"), follow=True)
+        self.assertRedirects(response, f"{reverse('login')}?next={reverse('admin:index')}")
+        self.assertRedirects(self.log_in(next=reverse("admin:index")), reverse("login_code"))
+        response = self.client.post(reverse("login_code"), {"code": self.app_code()})
+        self.assertRedirects(response, reverse("admin:index"))

@@ -1,0 +1,6 @@
+{% load i18n %}{# Where the user is in turning on two-step verification: step is 2 or 3 #}
+<ul class="steps w-full text-xs">
+  <li class="step step-primary">{% trans "Get an app" %}</li>
+  <li class="step step-primary">{% trans "Connect it" %}</li>
+  <li class="step {% if step == 3 %}step-primary{% endif %}">{% trans "Save backup codes" %}</li>
+</ul>

@@ -12,16 +12,18 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, ngettext
 from django.views.generic import CreateView
+from django_otp.plugins.otp_static.models import StaticDevice
 
 from activity import events
 from groups import services as group_services
 from activity.models import Kind
 from notifications import services as notifications
 from rides.models import RideRequest
-from .forms import SignUpForm, UserLoginForm, ProfileForm, SettingsForm, PhotoForm, DeleteAccountForm, EmailChangeForm, PHOTO_MAX_UPLOAD, photo_too_large
-from . import email_change
+from .forms import SignUpForm, UserLoginForm, ProfileForm, SettingsForm, PhotoForm, DeleteAccountForm, EmailChangeForm, PasswordConfirmForm, CodeForm, PHOTO_MAX_UPLOAD, photo_too_large
+from . import email_change, two_factor
+from .backends import EmailBackend
 from .confirmation import send_confirmation, token_generator
 from .models import User, delete_photo_file
 from .privacy import can_see_photo
@@ -111,10 +113,96 @@ class UserLoginView(LoginView):
     redirect_authenticated_user = True
 
     def get_redirect_url(self):
-        # Only follow ?next= to pages in the app, e.g. a shared ride. Logging
-        # in from the landing pages (?next=/, /faq, ...) goes to /app/home/.
+        # Only follow ?next= to pages in the app, e.g. a shared ride, and to
+        # the admin. Logging in from the landing pages (?next=/, /faq, ...)
+        # goes to /app/home/.
         url = super().get_redirect_url()
-        return url if url.startswith("/app/") else ""
+        return url if url.startswith(("/app/", "/admin/")) else ""
+
+    def form_valid(self, form):
+        # With two-step verification, the next page asks for the code
+        user = form.get_user()
+        if two_factor.enabled(user):
+            two_factor.begin_login(self.request, user, self.get_success_url())
+            return redirect("login_code")
+        return super().form_valid(form)
+
+def login_code(request):
+    """
+    The second step of logging in with two-step verification: a code from
+    the authenticator app, or (?backup=1) a backup code.
+    """
+    pending = two_factor.pending_login(request)
+    user = User.objects.filter(pk=pending["user"]).first() if pending else None
+    if user is None or not EmailBackend().user_can_authenticate(user):
+        two_factor.cancel_login(request)
+        return redirect("login")
+
+    backup = request.GET.get("backup") == "1"
+    form = CodeForm(request.POST or None)
+    if form.is_valid():
+        device, wait = two_factor.check_code(user, form.cleaned_data["code"])
+        if device:
+            two_factor.finish_login(request, user, device, pending["backend"])
+            if isinstance(device, StaticDevice):
+                messages.warning(request, _("You used a backup code. You have %(count)s left, and can make new ones on your profile page.")
+                                 % {"count": two_factor.backup_codes_left(user)})
+            return redirect(pending["next"])
+        if wait:
+            form.add_error("code", too_many_codes(wait))
+        elif backup:
+            form.add_error("code", _("That backup code is wrong or has already been used."))
+        else:
+            form.add_error("code", _("That code is wrong. Enter the code your app shows now."))
+    return render(request, "registration/login_code.html", {"form": form, "backup": backup})
+
+def too_many_codes(wait):
+    return ngettext(
+        "Too many wrong codes. Wait %(seconds)s second and try again.",
+        "Too many wrong codes. Wait %(seconds)s seconds and try again.",
+        wait) % {"seconds": wait}
+
+@require_POST
+def cancel_login_code(request):
+    two_factor.cancel_login(request)
+    return redirect("login")
+
+@login_required
+def two_factor_setup(request):
+    """Turning on two-step verification (accounts/two_factor.py)."""
+    if two_factor.enabled(request.user):
+        return redirect("account")
+    device = two_factor.setup_device(request.user)
+    form = CodeForm(request.POST or None)
+    if form.is_valid():
+        codes, wait = two_factor.confirm(request, device, form.cleaned_data["code"])
+        if codes:
+            events.record(Kind.TWO_FACTOR_ON, request.user)
+            email_change.send(_("Two-step verification is on for your LUT Kyyti account"), "two_factor_on",
+                              request.user.email, user=request.user)
+            return show_backup_codes(request, codes, setup=True)
+        form.add_error("code", too_many_codes(wait) if wait else
+                       _("That code is wrong. Check that you scanned this page's QR code, and enter the code your app shows now."))
+    url = two_factor.setup_url(device)
+    return render(request, "registration/two_factor_setup.html", {
+        "form": form,
+        "setup_url": url,
+        "qr_code": two_factor.qr_code(url),
+        "secret": two_factor.grouped(two_factor.secret(device)),
+    })
+
+def show_backup_codes(request, codes, setup=False):
+    # Kept in the session for the next page only, so reloading it does not show them again
+    request.session["backup_codes"] = {"codes": [two_factor.show_code(code) for code in codes], "setup": setup}
+    return redirect("backup_codes")
+
+@login_required
+def backup_codes(request):
+    """New backup codes, shown once."""
+    shown = request.session.pop("backup_codes", None)
+    if not shown:
+        return redirect("account")
+    return render(request, "registration/backup_codes.html", shown)
 
 def LogoutView(request):
     logout(request)
@@ -135,6 +223,8 @@ def account(request):
     photo_form = PhotoForm(*data("photo"), prefix="photo")
     delete_form = DeleteAccountForm(user, *data("delete"), prefix="delete")
     email_form = EmailChangeForm(user, *data("email"), prefix="email")
+    two_factor_off_form = PasswordConfirmForm(user, *data("two_factor_off"), prefix="two_factor_off")
+    backup_codes_form = PasswordConfirmForm(user, *data("backup_codes"), prefix="backup_codes")
 
     if posted == "profile" and profile_form.is_valid():
         profile_form.save()
@@ -174,6 +264,15 @@ def account(request):
         email_change.cancel(user)
         messages.success(request, _("The email change was cancelled. Your address stays %(email)s.") % {"email": user.email})
         return redirect("account")
+    if posted == "two_factor_off" and two_factor_off_form.is_valid():
+        two_factor.turn_off(user)
+        events.record(Kind.TWO_FACTOR_OFF, user)
+        email_change.send(_("Two-step verification was turned off for your LUT Kyyti account"), "two_factor_off",
+                          user.email, user=user, contact_url=email_change.absolute_url(request, reverse("contact")))
+        messages.success(request, _("Two-step verification is off. Logging in only needs your password."))
+        return redirect("account")
+    if posted == "backup_codes" and backup_codes_form.is_valid() and two_factor.enabled(user):
+        return show_backup_codes(request, two_factor.new_backup_codes(user))
     if posted == "delete" and delete_form.is_valid():
         with transaction.atomic():
             # Everyone in the rides the user drives is told they are
@@ -208,6 +307,10 @@ def account(request):
         "photo_form": photo_form,
         "delete_form": delete_form,
         "email_form": email_form,
+        "two_factor_off_form": two_factor_off_form,
+        "backup_codes_form": backup_codes_form,
+        "two_factor_on": two_factor.enabled(user),
+        "backup_codes_left": two_factor.backup_codes_left(user),
         # Groups the user is the only admin of, for the delete account dialog
         "group_effects": group_services.without(user),
         "photo_max_upload": PHOTO_MAX_UPLOAD,

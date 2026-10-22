@@ -323,7 +323,8 @@ class PhotoForm(forms.Form):
         user.save(update_fields=["pfp"])
 
 
-class DeleteAccountForm(forms.Form):
+class PasswordConfirmForm(forms.Form):
+    """The user's password, to confirm something done on the profile page."""
     password = forms.CharField(widget=forms.PasswordInput)
 
     def __init__(self, user, *args, **kwargs):
@@ -335,6 +336,19 @@ class DeleteAccountForm(forms.Form):
         if not self.user.check_password(password):
             raise forms.ValidationError(_("The password is incorrect."))
         return password
+
+
+class DeleteAccountForm(PasswordConfirmForm):
+    pass
+
+
+class CodeForm(forms.Form):
+    """A code from the authenticator app, or a backup code (accounts/two_factor.py)."""
+    code = forms.CharField(
+        max_length=20,
+        error_messages={"required": _("Enter the code.")},
+        widget=forms.TextInput(attrs={"autocomplete": "one-time-code", "autocapitalize": "off", "spellcheck": "false"}),
+    )
 
 
 class EmailChangeForm(forms.Form):

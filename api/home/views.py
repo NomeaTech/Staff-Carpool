@@ -575,8 +575,6 @@ def place_signature(ride):
     places = [ride.start_json, *(via.via_json for via in ride.via_points.all()), ride.destination_json]
     return [(place["location"]["lat"], place["location"]["lng"]) for place in places]
 
-DAY_LABELS = [_("Mon"), _("Tue"), _("Wed"), _("Thu"), _("Fri"), _("Sat"), _("Sun")]
-
 def render_ride_form(request, ride_form, ride):
     """
     The add or edit ride page. The places and schedule shown are the ones
@@ -590,7 +588,7 @@ def render_ride_form(request, ride_form, ride):
             "leaving": ride_form[f"{day}_leaving_at_time"].value() or "",
             "returning": ride_form[f"{day}_returning_at_time"].value() or "",
         }
-        for label, (day, _name) in zip(DAY_LABELS, WEEKDAY_NAMES)
+        for day, label in WEEKDAY_NAMES
     ]
     context = {
         "ride_form": ride_form,

@@ -1,0 +1,8 @@
+{% load i18n %}{% autoescape off %}{% trans "Hi" %} {{ user.first_name }},
+
+{% blocktrans %}Two-step verification was turned off for your LUT Kyyti account. Logging in now only needs your password.{% endblocktrans %}
+
+{% blocktrans %}If you didn't do this, change your password and contact us right away: {{ contact_url }}{% endblocktrans %}
+
+{% trans "The LUT Kyyti team" %}
+{% endautoescape %}
