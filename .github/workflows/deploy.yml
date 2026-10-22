@@ -39,11 +39,26 @@ jobs:
             exit 1
           fi
 
+          # npm install (which "tailwind install" ran) rewrote package-lock.json
+          # here, and the changed file then stopped the next pull. It always
+          # comes from the repository, so any change to it is undone.
+          git checkout -- api/theme/static_src/package-lock.json
+          # Any other changed file was edited on the server: stop rather than
+          # overwrite it, saying which files they are.
+          changed=$(git status --porcelain --untracked-files=no)
+          if [ -n "$changed" ]; then
+            echo "::error::Files were changed on the server, so the new code cannot be pulled. Commit them, or undo them with git checkout -- <file>:"
+            echo "$changed"
+            exit 1
+          fi
+
           git pull --ff-only origin testing
           source env/bin/activate
           cd api
           pip install -r requirements.txt
-          python manage.py tailwind install
+          # npm ci installs exactly what package-lock.json lists and never
+          # changes it, unlike npm install
+          npm ci --prefix theme/static_src
           python manage.py tailwind build
           python manage.py migrate --noinput
           # Store the driving route of rides that do not have one yet
