@@ -304,3 +304,155 @@ class SignUpValidationTests(TestCase):
         self.assertIn('pattern="(?=.*\\p{Nd})(?=.*\\p{Ll})(?=.*\\p{Lu}).{8,}"', page)
         self.assertIn('maxlength="50"', page)
         self.assertIn('data-mismatch=', page)
+
+
+class UserStatsTests(TestCase):
+    """The admin's user statistics (accounts/stats.py) and their CSV."""
+
+    def setUp(self):
+        from home.tests import make_ride
+        from rides.models import RideRequest
+        self.admin = make_user("Ada", "Admin", is_staff=True, is_superuser=True)
+        self.driver = make_user("Aino", "Mäkinen")
+        self.passenger = make_user("Jamie", "Saarinen")
+        User.objects.filter(pk=self.passenger.pk).update(email="jamie.saarinen@lab.fi")
+        ride = make_ride(self.driver)
+        RideRequest.objects.create(ride=ride, passenger=self.passenger, status=RideRequest.Status.ACCEPTED)
+        self.client.force_login(self.admin)
+
+    def csv_rows(self, **params):
+        response = self.client.get(reverse("admin:accounts_user_stats_csv"), params)
+        self.assertEqual(response["Content-Type"], "text/csv; charset=utf-8")
+        lines = response.content.decode("utf-8-sig").splitlines()
+        header = lines[0].split(",")
+        return {row["email"]: row for row in (dict(zip(header, line.split(","))) for line in lines[1:])}
+
+    def test_page_shows_numbers_charts_and_users(self):
+        response = self.client.get(reverse("admin:accounts_user_stats"))
+        self.assertContains(response, 'id="stats-charts"')
+        self.assertContains(response, 'data-chart="activity"')
+        self.assertContains(response, "jamie.saarinen@lab.fi")
+        self.assertContains(response, "Lappeenranta")
+        # The users list links to it
+        self.assertContains(self.client.get(reverse("admin:accounts_user_changelist")), reverse("admin:accounts_user_stats"))
+
+    def test_csv_counts_each_users_activity(self):
+        rows = self.csv_rows()
+        driver, passenger = rows[self.driver.email], rows["jamie.saarinen@lab.fi"]
+        self.assertEqual((driver["rides_posted"], driver["requests_received"], driver["requests_received_accepted"]), ("1", "1", "1"))
+        self.assertEqual((passenger["requests_made"], passenger["requests_accepted"], passenger["domain"]), ("1", "1", "lab.fi"))
+
+    def test_filters(self):
+        self.assertEqual(set(self.csv_rows(domain="lab.fi")), {"jamie.saarinen@lab.fi"})
+        # Activity before the period is not counted
+        from rides.models import Ride
+        Ride.objects.update(created_at=timezone.now() - timedelta(days=60))
+        self.assertEqual(self.csv_rows(period="30")[self.driver.email]["rides_posted"], "0")
+        self.assertEqual(self.csv_rows(period="90")[self.driver.email]["rides_posted"], "1")
+        # Users who joined after the period are left out
+        last_week = timezone.localdate() - timedelta(days=7)
+        self.assertEqual(self.csv_rows(period="custom", start=last_week, end=last_week), {})
+        # An invalid range shows an error and the defaults
+        response = self.client.get(reverse("admin:accounts_user_stats"), {"period": "custom", "start": "2026-02-01", "end": "2026-01-01"})
+        self.assertContains(response, "The start of the period is after its end.")
+
+    def test_test_user_and_test_rides_are_left_out(self):
+        from home.tests import make_ride
+        from notifications.models import Notification
+        from rides.admin import TEST_RIDE_KEY, test_user
+        from rides.models import RideRequest
+        from accounts.stats import StatsFilterForm, UserStats
+        tester = test_user()
+        place = {"displayName": "Imatra", TEST_RIDE_KEY: True, "location": {"lat": 61.2, "lng": 28.8}}
+        test_rides = [make_ride(tester), make_ride(self.driver, start_json=place)]
+        for ride in test_rides:
+            RideRequest.objects.create(ride=ride, passenger=self.passenger, status=RideRequest.Status.ACCEPTED)
+            Notification.objects.create(recipient=self.passenger, kind=Notification._meta.get_field("kind").choices[0][0], ride=ride)
+        # A notification without a ride still counts
+        Notification.objects.create(recipient=self.passenger, kind=Notification._meta.get_field("kind").choices[0][0])
+
+        rows = self.csv_rows()
+        self.assertNotIn(tester.email, rows)
+        self.assertEqual(rows[self.driver.email]["rides_posted"], "1")
+        self.assertEqual(rows[self.driver.email]["requests_received"], "1")
+        passenger = rows["jamie.saarinen@lab.fi"]
+        self.assertEqual((passenger["requests_made"], passenger["requests_accepted"], passenger["notifications_received"]), ("1", "1", "1"))
+
+        stats = UserStats(StatsFilterForm())
+        self.assertEqual(stats.users.count(), 3)
+        self.assertEqual(stats.rides.count(), 1)
+        self.assertEqual(stats.requests.count(), 1)
+        self.assertEqual([route[:2] for route in stats.top_routes()], [("Lappeenranta", "Lahti")])
+        self.assertNotContains(self.client.get(reverse("admin:accounts_user_stats")), tester.email)
+
+    def test_metabase_link_when_set(self):
+        self.assertNotContains(self.client.get(reverse("admin:accounts_user_stats")), "Open Metabase")
+        with self.settings(METABASE_URL="https://stats.example.fi"):
+            self.assertContains(self.client.get(reverse("admin:accounts_user_stats")), 'href="https://stats.example.fi"')
+
+    def test_analytics_views_leave_out_test_data_and_personal_details(self):
+        from django.db import connection
+        from home.tests import make_ride
+        from rides.admin import test_user
+        make_ride(test_user())
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT count(*) FROM analytics.users")
+            self.assertEqual(cursor.fetchone()[0], User.objects.count() - 1)
+            cursor.execute("SELECT count(*) FROM analytics.rides")
+            self.assertEqual(cursor.fetchone()[0], 1)
+            cursor.execute("SELECT * FROM analytics.users LIMIT 0")
+            columns = {column.name for column in cursor.description}
+        self.assertFalse(columns & {"email", "first_name", "last_name", "phone", "password"})
+
+    def test_sorting_and_unknown_sorts(self):
+        for sort in ("rides_posted", "-requests_made", "password", ""):
+            self.assertEqual(self.client.get(reverse("admin:accounts_user_stats"), {"sort": sort}).status_code, 200, sort)
+
+    def test_only_for_admins_who_can_view_users(self):
+        staff = make_user("Sam", "Staff", is_staff=True)
+        self.client.force_login(staff)
+        self.assertEqual(self.client.get(reverse("admin:accounts_user_stats")).status_code, 403)
+        self.assertEqual(self.client.get(reverse("admin:accounts_user_stats_csv")).status_code, 403)
+        self.client.force_login(self.driver)
+        self.assertRedirects(self.client.get(reverse("admin:accounts_user_stats")),
+                             f"{reverse('admin:login')}?next={reverse('admin:accounts_user_stats')}")
+
+    def test_activity_log_numbers(self):
+        from activity.models import Event, Kind
+        from accounts.stats import StatsFilterForm, UserStats
+        now = timezone.now()
+        User.objects.filter(pk=self.passenger.pk).update(date_joined=now - timedelta(days=70))
+        self.passenger.refresh_from_db()
+        for days_ago in (65, 40, 1):
+            Event.objects.create(user=self.passenger, kind=Kind.ACTIVE, data={"device": "mobile"},
+                                 created_at=now - timedelta(days=days_ago))
+        Event.objects.create(user=self.passenger, kind=Kind.SEARCHED, data={"results": 0, "destination_campus": "Lahti Mukkula campus"})
+        Event.objects.create(user=self.passenger, kind=Kind.SEARCHED, data={"results": 3})
+        Event.objects.create(user=self.driver, kind=Kind.REQUEST_DECLINED, data={"hours": 2})
+        Event.objects.create(user=None, kind=Kind.ACCOUNT_DELETED, data={"domain": "lut.fi", "days": 12, "rides": 0, "requests": 0})
+        # The log starts with the passenger's sign-up
+        Event.objects.create(user=self.passenger, kind=Kind.SIGNED_UP, created_at=now - timedelta(days=70))
+
+        stats = UserStats(StatsFilterForm())
+        tiles = {str(label): (value, str(note)) for label, value, note in stats.tiles()}
+        self.assertEqual(tiles["Searches"][0], 2)
+        self.assertIn("50 %", tiles["Searches"][1])
+        self.assertEqual(tiles["Searchers who asked to join"][0], "100 %")
+        self.assertEqual(tiles["Have shared a ride"][0], f"{round(100 * 2 / 3)} %")
+        self.assertEqual(tiles["Accounts deleted"][0], 1)
+        charts = {chart["id"]: chart for chart in stats.charts()}
+        self.assertEqual(charts["campuses"]["series"][0]["data"][1], 1)
+        self.assertEqual(charts["devices"]["series"][0]["data"], [3, 0])
+        self.assertEqual(charts["called_off"]["series"][0]["data"][2], 1)
+        # Joined 70 days ago: active in its 2nd month (days 30–59), not its 3rd (60–89 has not ended)
+        # (The others joined this month, and have no months to show yet)
+        [(_month, users, cells), (_older, passengers, passenger_cells)] = stats.retention()
+        self.assertEqual((users, cells), (2, [""] * 5))
+        self.assertEqual((passengers, passenger_cells[:3]), (1, ["100 %", "", ""]))
+
+        rows = self.csv_rows()
+        self.assertEqual((rows["jamie.saarinen@lab.fi"]["active_days"], rows["jamie.saarinen@lab.fi"]["searches"]), ("3", "2"))
+        page = self.client.get(reverse("admin:accounts_user_stats"))
+        for chart in ("active", "searches", "funnel", "campuses", "hours", "features"):
+            self.assertContains(page, f'data-chart="{chart}"')
+        self.assertContains(page, "Retention")

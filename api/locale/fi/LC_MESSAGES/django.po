@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 12:37+0300\n"
+"POT-Creation-Date: 2026-10-23 00:50+0300\n"
 "PO-Revision-Date: 2026-07-01 16:50+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,11 +19,127 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
-#: carpool/settings.py:215
+#: activity/models.py:24
+msgid "Used the app"
+msgstr ""
+
+#: activity/models.py:27
+msgid "Signed up"
+msgstr ""
+
+#: activity/models.py:28
+msgid "Confirmed the email address"
+msgstr ""
+
+#: activity/models.py:29
+msgid "Logged in"
+msgstr ""
+
+#: activity/models.py:30
+msgid "Logged out"
+msgstr ""
+
+#: activity/models.py:31
+msgid "Saw the welcome popup"
+msgstr ""
+
+#: activity/models.py:33
+msgid "Changed the profile"
+msgstr ""
+
+#: activity/models.py:35
+msgid "Changed the settings"
+msgstr ""
+
+#: activity/models.py:36
+msgid "Added a photo"
+msgstr ""
+
+#: activity/models.py:37
+msgid "Removed the photo"
+msgstr ""
+
+#: activity/models.py:38
+msgid "Asked to change the email address"
+msgstr ""
+
+#: activity/models.py:39
+msgid "Changed the email address"
+msgstr ""
+
+#: activity/models.py:42
+msgid "Deleted the account"
+msgstr ""
+
+#: activity/models.py:48
+msgid "Searched for rides"
+msgstr ""
+
+#: activity/models.py:50
+msgid "Opened a ride"
+msgstr ""
+
+#: activity/models.py:55
+msgid "Posted a ride"
+msgstr ""
+
+#: activity/models.py:57
+msgid "Changed a ride"
+msgstr ""
+
+#: activity/models.py:60
+msgid "Deleted a ride"
+msgstr ""
+
+#: activity/models.py:62
+msgid "Accepted a request"
+msgstr ""
+
+#: activity/models.py:63
+msgid "Declined a request"
+msgstr ""
+
+#: activity/models.py:64
+msgid "Removed a passenger"
+msgstr ""
+
+#: activity/models.py:67
+msgid "Asked to join a ride"
+msgstr ""
+
+#: activity/models.py:69
+msgid "Withdrew a request"
+msgstr ""
+
+#: activity/models.py:70
+msgid "Left a ride"
+msgstr ""
+
+#: activity/models.py:73
+msgid "Opened a notification"
+msgstr ""
+
+#: activity/models.py:74
+msgid "Marked notifications read"
+msgstr ""
+
+#: activity/models.py:75
+msgid "Turned push notifications on"
+msgstr ""
+
+#: activity/models.py:76
+msgid "Turned push notifications off"
+msgstr ""
+
+#: activity/models.py:98
+msgid "deleted user"
+msgstr ""
+
+#: carpool/settings.py:223
 msgid "English"
 msgstr "Englanti"
 
-#: carpool/settings.py:216
+#: carpool/settings.py:224
 msgid "Finnish"
 msgstr "Suomi"
 

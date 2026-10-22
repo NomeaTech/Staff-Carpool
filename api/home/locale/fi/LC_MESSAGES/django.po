@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-22 12:37+0300\n"
+"POT-Creation-Date: 2026-10-23 00:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -911,79 +911,79 @@ msgstr ""
 msgid "Next page"
 msgstr ""
 
-#: home/views.py:158
+#: home/views.py:170
 msgid "You cannot request to join your own ride."
 msgstr ""
 
-#: home/views.py:160
+#: home/views.py:172
 msgid "This ride has no free seats left."
 msgstr ""
 
-#: home/views.py:166
+#: home/views.py:179
 msgid "Request sent. You will be notified when the driver responds."
 msgstr ""
 
-#: home/views.py:186
+#: home/views.py:201
 msgid "You have left the ride."
 msgstr ""
 
-#: home/views.py:189
+#: home/views.py:205
 msgid "Your request was withdrawn."
 msgstr ""
 
-#: home/views.py:210
+#: home/views.py:226
 msgid "The ride is full. Increase its seats or remove a passenger first."
 msgstr ""
 
-#: home/views.py:215
+#: home/views.py:232
 msgid ""
 "Request accepted. You can now see the passenger's shared contact details."
 msgstr ""
 
-#: home/views.py:223
+#: home/views.py:242
 msgid "The passenger was removed from the ride."
 msgstr ""
 
-#: home/views.py:226
+#: home/views.py:245
 msgid "Request declined."
 msgstr ""
 
-#: home/views.py:240
+#: home/views.py:267
 msgid "The ride was deleted."
 msgstr ""
 
-#: home/views.py:429
+#: home/views.py:474
 msgid "The ride could not be saved. Please try again."
 msgstr ""
 
-#: home/views.py:444
+#: home/views.py:490
 msgid "The ride was updated."
 msgstr ""
 
-#: home/views.py:468
+#: home/views.py:516
 msgid "Mon"
 msgstr ""
 
-#: home/views.py:468
+#: home/views.py:516
 msgid "Tue"
 msgstr ""
 
-#: home/views.py:468
+#: home/views.py:516
 msgid "Wed"
 msgstr ""
 
-#: home/views.py:468
+#: home/views.py:516
 msgid "Thu"
 msgstr ""
 
-#: home/views.py:468
+#: home/views.py:516
 msgid "Fri"
 msgstr ""
 
-#: home/views.py:468
+#: home/views.py:516
 msgid "Sat"
 msgstr ""
 
-#: home/views.py:468
+#: home/views.py:516
 msgid "Sun"
 msgstr ""

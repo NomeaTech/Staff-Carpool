@@ -10,6 +10,8 @@ from django.utils.dateparse import parse_datetime
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
+from activity import events
+from activity.models import Kind
 from .models import Notification, PushSubscription
 
 # How many the bell's menu shows
@@ -63,6 +65,8 @@ def open_notification(request, notification_id):
     if not notification.is_read:
         notification.read_at = timezone.now()
         notification.save(update_fields=["read_at"])
+    minutes = round((timezone.now() - notification.created_at).total_seconds() / 60)
+    events.record(Kind.NOTIFICATION_OPENED, request.user, kind=notification.kind, minutes=minutes)
     return redirect(notification.url() or "notifications")
 
 
@@ -77,7 +81,8 @@ def mark_all_read(request):
             notifications = notifications.filter(ride=uuid.UUID(ride))
         except ValueError:
             return JsonResponse({"error": "Not a ride"}, status=400)
-    notifications.update(read_at=timezone.now())
+    if count := notifications.update(read_at=timezone.now()):
+        events.record(Kind.NOTIFICATIONS_READ, request.user, count=count)
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         return JsonResponse({"unread": 0})
     return redirect(request.POST.get("next") or "notifications")
@@ -100,7 +105,7 @@ def push_subscribe(request):
     if not (isinstance(endpoint, str) and endpoint.startswith("https://") and isinstance(p256dh, str) and isinstance(auth, str)):
         return JsonResponse({"error": "Not a push subscription"}, status=400)
 
-    PushSubscription.objects.update_or_create(
+    _subscription, created = PushSubscription.objects.update_or_create(
         endpoint=endpoint,
         defaults={
             "user": request.user,
@@ -109,6 +114,9 @@ def push_subscribe(request):
             "user_agent": request.headers.get("User-Agent", "")[:300],
         },
     )
+    # The browser sends it again on each visit; only turning it on is recorded
+    if created:
+        events.record(Kind.PUSH_ON, request.user)
     return JsonResponse({"subscribed": True})
 
 
@@ -120,5 +128,6 @@ def push_unsubscribe(request):
         endpoint = json.loads(request.body)["endpoint"]
     except (ValueError, KeyError, TypeError):
         return JsonResponse({"error": "No endpoint"}, status=400)
-    request.user.push_subscriptions.filter(endpoint=endpoint).delete()
+    if request.user.push_subscriptions.filter(endpoint=endpoint).delete()[0]:
+        events.record(Kind.PUSH_OFF, request.user)
     return JsonResponse({"subscribed": False})

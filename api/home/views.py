@@ -31,6 +31,8 @@ from django.contrib.gis.db.models.functions import Distance, LineLocatePoint
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from accounts.models import User
+from activity import events
+from activity.models import Kind
 from django.db import IntegrityError, transaction
 from django.db.models import Exists, OuterRef
 import uuid
@@ -69,7 +71,8 @@ def home(request):
 @require_POST
 def welcomed(request):
     """The welcome popup was shown (home.html), so it does not open again."""
-    User.objects.filter(pk=request.user.pk, welcomed_at=None).update(welcomed_at=timezone.now())
+    if User.objects.filter(pk=request.user.pk, welcomed_at=None).update(welcomed_at=timezone.now()):
+        events.record(Kind.WELCOMED, request.user)
     return HttpResponse(status=204)
 
 # How many of the user's upcoming rides the home page shows
@@ -146,6 +149,15 @@ def ride_detail(request, ride_id):
         if context["is_partner"]:
             context["driver_contacts"] = contact_details(ride.driver)
 
+    if not loaded_early:
+        if is_driver:
+            role = "driver"
+        elif context["is_partner"]:
+            role = "passenger"
+        else:
+            role = "requested" if context["own_request"] else "other"
+        events.record(Kind.RIDE_VIEWED, user, ride, role=role)
+
     return render(request, "ride_detail.html", context)
 
 @login_required
@@ -163,6 +175,7 @@ def request_ride(request, ride_id):
             with transaction.atomic():
                 ride_request = RideRequest.objects.create(ride=ride, passenger=request.user, message=message)
                 notifications.request_received(request, ride_request)
+            events.record(Kind.REQUEST_SENT, request.user, ride, message=bool(message), seats_left=ride.seats_left())
             messages.success(request, _("Request sent. You will be notified when the driver responds."))
         except IntegrityError:
             # The user has already requested to join this ride
@@ -181,11 +194,14 @@ def withdraw_request(request, ride_id):
 
         if ride_request:
             ride_request.delete()
+            hours = events.hours_since(ride_request.created_at)
             if ride_request.status == RideRequest.Status.ACCEPTED:
                 notifications.passenger_left(request, ride_request)
+                events.record(Kind.PASSENGER_LEFT, request.user, ride_request.ride, hours=hours)
                 messages.success(request, _("You have left the ride."))
             else:
                 notifications.request_withdrawn(request, ride_request)
+                events.record(Kind.REQUEST_WITHDRAWN, request.user, ride_request.ride, hours=hours)
                 messages.success(request, _("Your request was withdrawn."))
 
     return redirect("ride_detail", ride_id=ride_id)
@@ -212,12 +228,15 @@ def answer_request(request, request_id):
                 ride_request.status = RideRequest.Status.ACCEPTED
                 ride_request.save(update_fields=["status", "updated_at"])
                 notifications.request_accepted(request, ride_request)
+                events.record(Kind.REQUEST_ACCEPTED, request.user, ride, hours=events.hours_since(ride_request.created_at))
                 messages.success(request, _("Request accepted. You can now see the passenger's shared contact details."))
         elif not accept and ride_request.status != RideRequest.Status.DECLINED:
             # Declining a request, or removing a passenger who was accepted
             was_accepted = ride_request.status == RideRequest.Status.ACCEPTED
             ride_request.status = RideRequest.Status.DECLINED
             ride_request.save(update_fields=["status", "updated_at"])
+            kind = Kind.PASSENGER_REMOVED if was_accepted else Kind.REQUEST_DECLINED
+            events.record(kind, request.user, ride, hours=events.hours_since(ride_request.created_at))
             if was_accepted:
                 notifications.passenger_removed(request, ride_request)
                 messages.success(request, _("The passenger was removed from the ride."))
@@ -234,6 +253,14 @@ def delete_ride(request):
     # Only deletes the ride if the user is its driver
     ride = Ride.objects.filter(pk=ride_id, driver=request.user).first()
     if ride:
+        statuses = list(ride.requests.values_list("status", flat=True))
+        events.record(
+            Kind.RIDE_DELETED, request.user, ride,
+            passengers=statuses.count(RideRequest.Status.ACCEPTED),
+            pending=statuses.count(RideRequest.Status.PENDING),
+            upcoming=Ride.objects.upcoming().filter(pk=ride.pk).exists(),
+            hours_old=events.hours_since(ride.created_at),
+        )
         with transaction.atomic():
             notifications.ride_cancelled(request, ride)
             ride.delete()
@@ -272,12 +299,30 @@ def search(request):
             ride.icons = icon_layout(ride.transport_options(), filters)
         context["page"] = page
         context["searched"] = True
+        # Searches, not opening the page or changing the page of results
+        if request.method == "POST" and "page" not in request.POST:
+            record_search(request.user, search_form.cleaned_data, page.paginator)
 
     # Asynchronous searches from the search page only need the results
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         return render(request, "search_results.html", context)
 
     return render(request, "search.html", context)
+
+def record_search(user, form_clean, paginator):
+    """Records what kind of search it was and how many rides it found, not the places."""
+    on_the_way = paginator.object_list.filter(on_the_way=True).count() if paginator.count else 0
+    events.record(
+        Kind.SEARCHED, user,
+        results=paginator.count,
+        on_the_way=on_the_way,
+        start=bool(form_clean["start_json"]),
+        destination=bool(form_clean["destination_json"]),
+        date=bool(form_clean["date"]),
+        start_campus=events.campus(form_clean["start_json"]),
+        destination_campus=events.campus(form_clean["destination_json"]),
+        transport=transport_filters(form_clean),
+    )
 
 def transport_filters(form_clean):
     """The ways of travelling (Ride fields) ticked in the search form."""
@@ -441,7 +486,10 @@ def ride_form_page(request, ride):
     if editing:
         if ride_form.has_changed() or place_signature(ride) != old_places:
             notifications.ride_updated(request, ride)
+            events.record(Kind.RIDE_EDITED, request.user, ride, places=place_signature(ride) != old_places)
         messages.success(request, _("The ride was updated."))
+    else:
+        events.record(Kind.RIDE_POSTED, request.user, ride, **events.ride_details(ride))
     return redirect("ride_detail", ride_id=ride.pk)
 
 def save_ride(ride_form):
