@@ -115,7 +115,7 @@ function switchTimes(times, radio) {
     }
 }
 
-// The theme switches (side menu, More page, account pages): dark when checked.
+// The theme switches (More page, account pages): dark when checked.
 // The theme is only data-theme; the other switches on the page follow the one used.
 function updateTheme(dark) {
     const theme = dark ? "dark" : "light";
@@ -155,7 +155,7 @@ document.addEventListener("change", (event) => {
     if (event.target.matches(".options")) {
         updateTransportRequired();
     }
-    // Choosing a language (side menu, More page) switches to it
+    // Choosing a language (More page) switches to it
     if (event.target.matches("[data-language-select]")) {
         event.target.form.submit();
     }

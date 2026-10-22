@@ -122,6 +122,10 @@ class User(AbstractUser):
     pending_email = models.EmailField(blank=True, default="")
     pending_email_sent_at = models.DateTimeField(null=True, blank=True)
 
+    # When the welcome popup (home.html) was shown. It opens on the first
+    # visit to the home page, and not again once this is set.
+    welcomed_at = models.DateTimeField(null=True, blank=True)
+
     objects = UserManager()
 
     def __str__(self):

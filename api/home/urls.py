@@ -12,6 +12,7 @@ urlpatterns = [
     path("ride/<uuid:ride_id>/withdraw/", withdraw_request, name="withdraw_request"),
     path("requests/<uuid:request_id>/answer/", answer_request, name="answer_request"),
     path("home/", home, name="home"),
+    path("home/welcomed/", welcomed, name="welcomed"),
     path("rides/", my_rides, name="my_rides"),
     path("more/", more, name="more"),
     path("notifications/", include("notifications.urls")),

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 17:34+0300\n"
+"POT-Creation-Date: 2026-10-22 12:37+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,8 +38,7 @@ msgstr ""
 msgid "Mikkeli campus"
 msgstr ""
 
-#: home/templates/_page_footer.html:4 home/templates/app.html:106
-#: home/templates/more.html:80
+#: home/templates/_page_footer.html:4 home/templates/more.html:80
 msgid "Contact"
 msgstr ""
 
@@ -101,7 +100,8 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
-#: home/templates/add_ride.html:6 home/templates/add_ride.html:70
+#: home/templates/add_ride.html:6 home/templates/add_ride.html:74
+#: home/templates/ride_detail.html:219
 msgid "Edit ride"
 msgstr ""
 
@@ -109,192 +109,192 @@ msgstr ""
 msgid "Post a ride"
 msgstr ""
 
-#: home/templates/add_ride.html:48
+#: home/templates/add_ride.html:25
 msgid "Select a start location"
 msgstr ""
 
-#: home/templates/add_ride.html:49 home/templates/search.html:22
+#: home/templates/add_ride.html:26 home/templates/search.html:15
 msgid "Other destination"
 msgstr ""
 
-#: home/templates/add_ride.html:49
+#: home/templates/add_ride.html:27
 msgid "Select a destination"
 msgstr ""
 
-#: home/templates/add_ride.html:53
+#: home/templates/add_ride.html:57
 msgid "Choose at least one day for a recurring ride."
 msgstr ""
 
-#: home/templates/add_ride.html:70
+#: home/templates/add_ride.html:74
 msgid "Ride options"
 msgstr ""
 
-#: home/templates/add_ride.html:71 home/templates/app.html:190
+#: home/templates/add_ride.html:75 home/templates/app.html:105
 msgid "Offer"
 msgstr ""
 
-#: home/templates/add_ride.html:71
+#: home/templates/add_ride.html:75
 msgid "Request"
 msgstr ""
 
-#: home/templates/add_ride.html:71 home/templates/search.html:35
+#: home/templates/add_ride.html:75 home/templates/search.html:39
 msgid "Train"
 msgstr ""
 
-#: home/templates/add_ride.html:71 home/templates/search.html:35
+#: home/templates/add_ride.html:75 home/templates/search.html:39
 msgid "Bus"
 msgstr ""
 
-#: home/templates/add_ride.html:71 home/templates/search.html:35
+#: home/templates/add_ride.html:75 home/templates/search.html:39
 msgid "Taxi"
 msgstr ""
 
-#: home/templates/add_ride.html:71 home/templates/add_ride.html:100
-#: home/templates/search.html:35
+#: home/templates/add_ride.html:75 home/templates/add_ride.html:104
+#: home/templates/search.html:39
 msgid "Other"
 msgstr ""
 
-#: home/templates/add_ride.html:74
+#: home/templates/add_ride.html:78
 msgid "Car ride"
 msgstr ""
 
-#: home/templates/add_ride.html:81
+#: home/templates/add_ride.html:85
 msgid "Other transport"
 msgstr ""
 
-#: home/templates/add_ride.html:94
+#: home/templates/add_ride.html:98
 msgid "Maximum passengers"
 msgstr ""
 
-#: home/templates/add_ride.html:110
+#: home/templates/add_ride.html:114
 msgid "Route"
 msgstr ""
 
-#: home/templates/add_ride.html:113 home/templates/search.html:45
+#: home/templates/add_ride.html:117 home/templates/search.html:49
 msgid "From"
 msgstr ""
 
-#: home/templates/add_ride.html:117
+#: home/templates/add_ride.html:121 home/templates/ride_detail.html:204
 msgid "Remove"
 msgstr ""
 
-#: home/templates/add_ride.html:119 home/templates/search.html:49
+#: home/templates/add_ride.html:123 home/templates/search.html:53
 msgid "To"
 msgstr ""
 
-#: home/templates/add_ride.html:124
+#: home/templates/add_ride.html:128
 msgid "Add a stop"
 msgstr ""
 
-#: home/templates/add_ride.html:136
+#: home/templates/add_ride.html:140 home/templates/ride_detail.html:95
 msgid "Schedule"
 msgstr ""
 
-#: home/templates/add_ride.html:139
+#: home/templates/add_ride.html:143
 msgid "Recurrance"
 msgstr ""
 
-#: home/templates/add_ride.html:141
+#: home/templates/add_ride.html:145
 msgid "One-time"
 msgstr ""
 
-#: home/templates/add_ride.html:142
+#: home/templates/add_ride.html:146 home/templates/ride_detail.html:93
 msgid "Recurring"
 msgstr ""
 
-#: home/templates/add_ride.html:146 home/templates/add_ride.html:149
+#: home/templates/add_ride.html:150 home/templates/add_ride.html:153
+#: home/templates/ride_detail.html:87
 msgid "Return"
 msgstr ""
 
-#: home/templates/add_ride.html:148
+#: home/templates/add_ride.html:152
 msgid "One-way"
 msgstr ""
 
-#: home/templates/add_ride.html:156 home/templates/add_ride.html:175
+#: home/templates/add_ride.html:160 home/templates/add_ride.html:179
 msgid "Leaving at"
 msgstr ""
 
-#: home/templates/add_ride.html:160 home/templates/add_ride.html:181
+#: home/templates/add_ride.html:164 home/templates/add_ride.html:185
 msgid "Returning at"
 msgstr ""
 
-#: home/templates/add_ride.html:176
+#: home/templates/add_ride.html:180
 #, python-format
 msgid "%(day)s: leaving at"
 msgstr ""
 
-#: home/templates/add_ride.html:182
+#: home/templates/add_ride.html:186
 #, python-format
 msgid "%(day)s: returning at"
 msgstr ""
 
-#: home/templates/add_ride.html:232
-msgid "Note for passengers"
+#: home/templates/add_ride.html:236
+msgid "Price and note for passengers"
 msgstr ""
 
-#: home/templates/add_ride.html:235
+#: home/templates/add_ride.html:239 home/templates/ride_detail.html:108
+msgid "Price"
+msgstr ""
+
+#: home/templates/add_ride.html:239 home/templates/add_ride.html:243
+msgid "(optional)"
+msgstr ""
+
+#: home/templates/add_ride.html:240
+msgid "e.g. €10 per passenger"
+msgstr ""
+
+#: home/templates/add_ride.html:243
+msgid "Note"
+msgstr ""
+
+#: home/templates/add_ride.html:247 home/templates/ride_detail.html:333
+#: home/templates/ride_detail.html:343
 msgid "Cancel"
 msgstr ""
 
-#: home/templates/add_ride.html:236
+#: home/templates/add_ride.html:248
 msgid "Save changes"
 msgstr ""
 
-#: home/templates/add_ride.html:236
+#: home/templates/add_ride.html:248
 msgid "Add ride"
 msgstr ""
 
-#: home/templates/app.html:93 home/templates/more.html:20
-msgid "Profile & settings"
-msgstr ""
-
-#: home/templates/app.html:98 home/templates/app.html:158
-#: home/templates/more.html:31
-msgid "Notifications"
-msgstr ""
-
-#: home/templates/app.html:103 home/templates/app.html:194
-#: home/templates/more.html:39 home/templates/my_rides.html:4
-#: home/templates/my_rides.html:11
-msgid "My rides"
-msgstr ""
-
-#: home/templates/app.html:104
-msgid "Help"
-msgstr ""
-
-#: home/templates/app.html:105 home/templates/more.html:79
-msgid "Safety tips"
-msgstr ""
-
-#: home/templates/app.html:141
+#: home/templates/app.html:56
 msgid "LUT Kyyti"
 msgstr ""
 
-#: home/templates/app.html:151 home/templates/app.html:182
+#: home/templates/app.html:66 home/templates/app.html:97
 #: home/templates/home.html:4
 msgid "Home"
 msgstr ""
 
-#: home/templates/app.html:152 home/templates/app.html:186
+#: home/templates/app.html:67 home/templates/app.html:101
 msgid "Find"
 msgstr ""
 
-#: home/templates/app.html:153
+#: home/templates/app.html:68
 msgid "Post"
 msgstr ""
 
-#: home/templates/app.html:170
-msgid "Menu"
+#: home/templates/app.html:73 home/templates/more.html:31
+msgid "Notifications"
 msgstr ""
 
-#: home/templates/app.html:200
-msgid "Unread notifications"
-msgstr ""
-
-#: home/templates/app.html:202 home/templates/more.html:4
-#: home/templates/more.html:13
+#: home/templates/app.html:85 home/templates/app.html:117
+#: home/templates/more.html:4 home/templates/more.html:13
 msgid "More"
+msgstr ""
+
+#: home/templates/app.html:109 home/templates/more.html:39
+#: home/templates/my_rides.html:4 home/templates/my_rides.html:11
+msgid "My rides"
+msgstr ""
+
+#: home/templates/app.html:115
+msgid "Unread notifications"
 msgstr ""
 
 #: home/templates/emails/_footer.txt:4
@@ -397,7 +397,7 @@ msgid "Main actions"
 msgstr ""
 
 #: home/templates/home.html:20 home/templates/my_rides.html:28
-#: home/templates/search.html:7 home/templates/search.html:32
+#: home/templates/search.html:7 home/templates/search.html:36
 msgid "Find a ride"
 msgstr ""
 
@@ -470,12 +470,47 @@ msgstr[1] ""
 msgid "No other upcoming rides have been posted yet."
 msgstr ""
 
-#: home/templates/home.html:121
+#: home/templates/home.html:137
 #, python-format
+msgid "Welcome to LUT Kyyti, %(name)s!"
+msgstr ""
+
+#: home/templates/home.html:138
 msgid ""
-"New to LUT Kyyti? Read our <a href=\"%(faq_url)s\" class=\"link link-"
-"primary\">FAQ</a> and <a href=\"%(safety_url)s\" class=\"link link-"
-"primary\">safety tips</a> before your first shared trip."
+"Find a ride to where you're going, or offer the empty seats in your car. "
+"Before your first shared trip, take a moment to read these:"
+msgstr ""
+
+#: home/templates/home.html:145 home/templates/more.html:78
+msgid "Help & FAQ"
+msgstr ""
+
+#: home/templates/home.html:146
+msgid "How rides, requests and seats work"
+msgstr ""
+
+#: home/templates/home.html:155 home/templates/more.html:79
+msgid "Safety tips"
+msgstr ""
+
+#: home/templates/home.html:156
+msgid "Sharing a ride safely"
+msgstr ""
+
+#: home/templates/home.html:165 home/templates/more.html:20
+msgid "Profile & settings"
+msgstr ""
+
+#: home/templates/home.html:166
+msgid "Add a photo and choose what others see"
+msgstr ""
+
+#: home/templates/home.html:173
+msgid "Get started"
+msgstr ""
+
+#: home/templates/home.html:176
+msgid "Close"
 msgstr ""
 
 #: home/templates/more.html:51
@@ -484,10 +519,6 @@ msgstr ""
 
 #: home/templates/more.html:64 home/templates/more.html:65
 msgid "Language"
-msgstr ""
-
-#: home/templates/more.html:78
-msgid "Help & FAQ"
 msgstr ""
 
 #: home/templates/more.html:88
@@ -522,31 +553,329 @@ msgid_plural "%(counter)s past rides"
 msgstr[0] ""
 msgstr[1] ""
 
-#: home/templates/search.html:21
+#: home/templates/ride_detail.html:12
+msgid "Back to ride search"
+msgstr ""
+
+#: home/templates/ride_detail.html:17
+msgid "Ride details"
+msgstr ""
+
+#: home/templates/ride_detail.html:21
+msgid "Past ride"
+msgstr ""
+
+#: home/templates/ride_detail.html:25
+#, python-format
+msgid "Recurring · %(days)s"
+msgstr ""
+
+#: home/templates/ride_detail.html:26
+msgid "One-way trip"
+msgstr ""
+
+#: home/templates/ride_detail.html:26 home/templates/search_results.html:58
+msgid "Return trip"
+msgstr ""
+
+#: home/templates/ride_detail.html:35
+msgid "Route & departure"
+msgstr ""
+
+#: home/templates/ride_detail.html:41 home/templates/ride_detail.html:78
+msgid "Departure"
+msgstr ""
+
+#: home/templates/ride_detail.html:51
+msgid "Stop on the way · time to be agreed"
+msgstr ""
+
+#: home/templates/ride_detail.html:62
+msgid "Destination"
+msgstr ""
+
+#: home/templates/ride_detail.html:62
+#, python-format
+msgid "returning %(time)s"
+msgstr ""
+
+#: home/templates/ride_detail.html:68
+msgid ""
+"Pickup and drop-off points should be agreed before the trip. Passing near a "
+"place does not guarantee a convenient stop."
+msgstr ""
+
+#: home/templates/ride_detail.html:75
+msgid "Trip information"
+msgstr ""
+
+#: home/templates/ride_detail.html:82
+msgid "Available seats"
+msgstr ""
+
+#: home/templates/ride_detail.html:83
+msgid "Not specified"
+msgstr ""
+
+#: home/templates/ride_detail.html:86
+msgid "Trip type"
+msgstr ""
+
+#: home/templates/ride_detail.html:87
+msgid "One way"
+msgstr ""
+
+#: home/templates/ride_detail.html:92
+msgid "Frequency"
+msgstr ""
+
+#: home/templates/ride_detail.html:93
+msgid "One-time trip"
+msgstr ""
+
+#: home/templates/ride_detail.html:102
+msgid "Return journey"
+msgstr ""
+
+#: home/templates/ride_detail.html:105
+msgid "Transport"
+msgstr ""
+
+#: home/templates/ride_detail.html:111
+msgid "Posted"
+msgstr ""
+
+#: home/templates/ride_detail.html:120
+msgid "Additional information from the poster"
+msgstr ""
+
+#: home/templates/ride_detail.html:128
+msgid "Safety & arrangements"
+msgstr ""
+
+#: home/templates/ride_detail.html:129
+msgid ""
+"Confirm the meeting point, departure time, and any costs before travelling. "
+"Avoid sharing sensitive personal information publicly."
+msgstr ""
+
+#: home/templates/ride_detail.html:130
+msgid "View safety guidance"
+msgstr ""
+
+#: home/templates/ride_detail.html:143
+msgid "Ride posted by"
+msgstr ""
+
+#: home/templates/ride_detail.html:147
+msgid "you"
+msgstr ""
+
+#: home/templates/ride_detail.html:148
+msgid "Verified LUT/LAB account"
+msgstr ""
+
+#: home/templates/ride_detail.html:154
+msgid "Contact details shared with you:"
+msgstr ""
+
+#: home/templates/ride_detail.html:157
+msgid ""
+"The driver has not shared any contact details. Check the ride's notes for "
+"how to get in touch."
+msgstr ""
+
+#: home/templates/ride_detail.html:160
+msgid "Accepted passengers see your name and the contact details you share."
+msgstr ""
+
+#: home/templates/ride_detail.html:160
+msgid "Privacy settings"
+msgstr ""
+
+#: home/templates/ride_detail.html:162
+msgid "Contact details are shared once the driver accepts your request."
+msgstr ""
+
+#: home/templates/ride_detail.html:170
+msgid "Manage your ride"
+msgstr ""
+
+#: home/templates/ride_detail.html:172
+msgid "Requests"
+msgstr ""
+
+#: home/templates/ride_detail.html:185
+msgid "The ride is full"
+msgstr ""
+
+#: home/templates/ride_detail.html:185
+msgid "Accept"
+msgstr ""
+
+#: home/templates/ride_detail.html:186
+msgid "Decline"
+msgstr ""
+
+#: home/templates/ride_detail.html:190
+msgid "No requests waiting for an answer."
+msgstr ""
+
+#: home/templates/ride_detail.html:194
+msgid "Passengers"
+msgstr ""
+
+#: home/templates/ride_detail.html:202
+msgid "Remove this passenger from the ride?"
+msgstr ""
+
+#: home/templates/ride_detail.html:210
+msgid "This passenger has not shared any contact details."
+msgstr ""
+
+#: home/templates/ride_detail.html:214
+msgid "Nobody has joined yet."
+msgstr ""
+
+#: home/templates/ride_detail.html:220
+msgid "Delete ride"
+msgstr ""
+
+#: home/templates/ride_detail.html:227
+msgid "Join this ride"
+msgstr ""
+
+#: home/templates/ride_detail.html:230
+msgid "This ride has already taken place."
+msgstr ""
+
+#: home/templates/ride_detail.html:232
+msgid "All seats on this ride are taken."
+msgstr ""
+
+#: home/templates/ride_detail.html:233
+msgid "Ride full"
+msgstr ""
+
+#: home/templates/ride_detail.html:236
+#, python-format
+msgid "There is currently %(counter)s seat available."
+msgid_plural "There are currently %(counter)s seats available."
+msgstr[0] ""
+msgstr[1] ""
+
+#: home/templates/ride_detail.html:237
+msgid ""
+"Send a request to the driver. Your seat is confirmed once they accept it."
+msgstr ""
+
+#: home/templates/ride_detail.html:242
+msgid "Message to the driver (optional)"
+msgstr ""
+
+#: home/templates/ride_detail.html:243
+msgid "Hi, could I join from Kouvola?"
+msgstr ""
+
+#: home/templates/ride_detail.html:244
+msgid ""
+"Only the driver sees your message. Don't include sensitive personal "
+"information."
+msgstr ""
+
+#: home/templates/ride_detail.html:246
+msgid "Request to join"
+msgstr ""
+
+#: home/templates/ride_detail.html:250
+msgid ""
+"Your request is awaiting a response from the driver. You will get an email "
+"when they answer."
+msgstr ""
+
+#: home/templates/ride_detail.html:253
+msgid "Withdraw request"
+msgstr ""
+
+#: home/templates/ride_detail.html:257
+msgid ""
+"Your request has been accepted. Agree on the meeting point and time with the "
+"driver using the contact details above."
+msgstr ""
+
+#: home/templates/ride_detail.html:259
+msgid "Leave this ride? The driver will be notified."
+msgstr ""
+
+#: home/templates/ride_detail.html:261
+msgid "Leave ride"
+msgstr ""
+
+#: home/templates/ride_detail.html:265
+msgid "The driver declined your request for this ride."
+msgstr ""
+
+#: home/templates/ride_detail.html:267
+msgid "Find another ride"
+msgstr ""
+
+#: home/templates/ride_detail.html:275
+msgid "Share this ride"
+msgstr ""
+
+#: home/templates/ride_detail.html:276
+msgid "Only signed-in LUT Kyyti members can open the link."
+msgstr ""
+
+#: home/templates/ride_detail.html:281
+msgid "Link copied"
+msgstr ""
+
+#: home/templates/ride_detail.html:282
+msgid "Copy link"
+msgstr ""
+
+#: home/templates/ride_detail.html:323
+msgid "Delete this trip?"
+msgstr ""
+
+#: home/templates/ride_detail.html:325
+msgid "The trip will be removed for everyone and cannot be restored."
+msgstr ""
+
+#: home/templates/ride_detail.html:328
+msgid "Everyone who has joined or requested to join will be notified by email."
+msgstr ""
+
+#: home/templates/ride_detail.html:338
+msgid "Delete trip"
+msgstr ""
+
+#: home/templates/search.html:14
 msgid "Select a start location from the list"
 msgstr ""
 
-#: home/templates/search.html:22
+#: home/templates/search.html:16
 msgid "Select a destination from the list"
 msgstr ""
 
-#: home/templates/search.html:35
+#: home/templates/search.html:39
 msgid "Offer car ride"
 msgstr ""
 
-#: home/templates/search.html:35
+#: home/templates/search.html:39
 msgid "Request car ride"
 msgstr ""
 
-#: home/templates/search.html:53 home/templates/search.html:54
+#: home/templates/search.html:57 home/templates/search.html:58
 msgid "Date"
 msgstr ""
 
-#: home/templates/search.html:56
+#: home/templates/search.html:60
 msgid "Search"
 msgstr ""
 
-#: home/templates/search.html:70
+#: home/templates/search.html:74
 msgid "Search failed, please try again."
 msgstr ""
 
@@ -563,10 +892,6 @@ msgstr ""
 
 #: home/templates/search_results.html:40
 msgid "On the way"
-msgstr ""
-
-#: home/templates/search_results.html:58
-msgid "Return trip"
 msgstr ""
 
 #: home/templates/search_results.html:74
@@ -586,79 +911,79 @@ msgstr ""
 msgid "Next page"
 msgstr ""
 
-#: home/views.py:150
+#: home/views.py:158
 msgid "You cannot request to join your own ride."
 msgstr ""
 
-#: home/views.py:152
+#: home/views.py:160
 msgid "This ride has no free seats left."
 msgstr ""
 
-#: home/views.py:158
+#: home/views.py:166
 msgid "Request sent. You will be notified when the driver responds."
 msgstr ""
 
-#: home/views.py:178
+#: home/views.py:186
 msgid "You have left the ride."
 msgstr ""
 
-#: home/views.py:181
+#: home/views.py:189
 msgid "Your request was withdrawn."
 msgstr ""
 
-#: home/views.py:202
+#: home/views.py:210
 msgid "The ride is full. Increase its seats or remove a passenger first."
 msgstr ""
 
-#: home/views.py:207
+#: home/views.py:215
 msgid ""
 "Request accepted. You can now see the passenger's shared contact details."
 msgstr ""
 
-#: home/views.py:215
+#: home/views.py:223
 msgid "The passenger was removed from the ride."
 msgstr ""
 
-#: home/views.py:218
+#: home/views.py:226
 msgid "Request declined."
 msgstr ""
 
-#: home/views.py:232
+#: home/views.py:240
 msgid "The ride was deleted."
 msgstr ""
 
-#: home/views.py:421
+#: home/views.py:429
 msgid "The ride could not be saved. Please try again."
 msgstr ""
 
-#: home/views.py:436
+#: home/views.py:444
 msgid "The ride was updated."
 msgstr ""
 
-#: home/views.py:460
+#: home/views.py:468
 msgid "Mon"
 msgstr ""
 
-#: home/views.py:460
+#: home/views.py:468
 msgid "Tue"
 msgstr ""
 
-#: home/views.py:460
+#: home/views.py:468
 msgid "Wed"
 msgstr ""
 
-#: home/views.py:460
+#: home/views.py:468
 msgid "Thu"
 msgstr ""
 
-#: home/views.py:460
+#: home/views.py:468
 msgid "Fri"
 msgstr ""
 
-#: home/views.py:460
+#: home/views.py:468
 msgid "Sat"
 msgstr ""
 
-#: home/views.py:460
+#: home/views.py:468
 msgid "Sun"
 msgstr ""

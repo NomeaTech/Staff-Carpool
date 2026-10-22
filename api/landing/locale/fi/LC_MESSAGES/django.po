@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 17:34+0300\n"
+"POT-Creation-Date: 2026-10-22 12:37+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -971,6 +971,18 @@ msgstr ""
 
 #: landing/templates/landing.html:135
 msgid "LUT Kyyti is operated by LUT University."
+msgstr ""
+
+#: landing/templates/offline.html:9
+msgid "Offline"
+msgstr ""
+
+#: landing/templates/offline.html:15
+msgid "You are offline"
+msgstr ""
+
+#: landing/templates/offline.html:16
+msgid "Check your internet connection and try again."
 msgstr ""
 
 #: landing/templates/privacy-policy.html:6

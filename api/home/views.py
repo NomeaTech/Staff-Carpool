@@ -29,7 +29,8 @@ from django.contrib.gis.geos import Point
 from django.contrib.gis.measure import D
 from django.contrib.gis.db.models.functions import Distance, LineLocatePoint
 from django.urls import reverse
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from accounts.models import User
 from django.db import IntegrityError, transaction
 from django.db.models import Exists, OuterRef
 import uuid
@@ -60,15 +61,23 @@ def home(request):
         "my_rides": my_ride_entries(user, upcoming)[:HOME_RIDES],
         "pending_requests": pending_requests,
         "recent_rides": recent_rides,
+        "show_welcome": user.welcomed_at is None,
     }
     return render(request, "home.html", context)
+
+@login_required
+@require_POST
+def welcomed(request):
+    """The welcome popup was shown (home.html), so it does not open again."""
+    User.objects.filter(pk=request.user.pk, welcomed_at=None).update(welcomed_at=timezone.now())
+    return HttpResponse(status=204)
 
 # How many of the user's upcoming rides the home page shows
 HOME_RIDES = 4
 
 @login_required
 def more(request):
-    """The More tab of the mobile dock: account, settings and help (the side menu on desktop)."""
+    """The More tab of the mobile dock: account, settings and help (the navbar's profile picture on desktop)."""
     return render(request, "more.html")
 
 @login_required

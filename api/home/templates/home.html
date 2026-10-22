@@ -117,15 +117,77 @@
       </div>
     </div>
 
-    <div role="note" class="alert alert-soft justify-center text-center text-xs mt-5 max-w-2xl mx-auto">
-      {% include "_icon.html" with name="alert" class="size-5" %}
-      <span>
-        {% url 'faq' as faq_url %}{% url 'safety' as safety_url %}
-        {% blocktrans %}New to LUT Kyyti? Read our <a href="{{ faq_url }}" class="link link-primary">FAQ</a> and <a href="{{ safety_url }}" class="link link-primary">safety tips</a> before your first shared trip.{% endblocktrans %}
-      </span>
-    </div>
+    {# Opens the welcome popup, for testing it #}
+    <!-- <div class="text-center mt-5">
+      <button type="button" class="btn btn-sm btn-outline" onclick="document.getElementById('welcome-modal').showModal()">Show welcome popup</button>
+    </div> -->
 
     {% include "_page_footer.html" %}
   </div>
 </section>
+
+{% comment %}
+  Welcome popup, opened on the user's first visit to the home page (show_welcome).
+  Opening it posts welcomed-form (views.welcomed), so it opens only once for each user.
+{% endcomment %}
+<dialog id="welcome-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="welcome-title" {% if show_welcome %}data-open-on-load{% endif %}>
+  <div class="modal-box">
+    <div class="flex flex-col items-center text-center gap-2">
+      {% include "_logo.html" with width="56px" %}
+      <h3 id="welcome-title" class="text-xl font-bold mt-2">{% blocktrans with name=user.first_name %}Welcome to LUT Kyyti, {{ name }}!{% endblocktrans %}</h3>
+      <p class="text-sm text-base-content/70">{% trans "Find a ride to where you're going, or offer the empty seats in your car. Before your first shared trip, take a moment to read these:" %}</p>
+    </div>
+    <ul class="menu menu-soft w-full p-0 mt-4 text-base [&_li>*]:rounded-full">
+      <li>
+        <a href="{% url 'faq' %}" class="py-3">
+          {% include "_icon.html" with name="help" %}
+          <span class="grow">
+            <span class="block font-semibold">{% trans "Help & FAQ" %}</span>
+            <span class="block text-xs text-base-content/60">{% trans "How rides, requests and seats work" %}</span>
+          </span>
+          {% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'safety' %}" class="py-3">
+          {% include "_icon.html" with name="shield" %}
+          <span class="grow">
+            <span class="block font-semibold">{% trans "Safety tips" %}</span>
+            <span class="block text-xs text-base-content/60">{% trans "Sharing a ride safely" %}</span>
+          </span>
+          {% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'account' %}" class="py-3">
+          {% include "_icon.html" with name="user" %}
+          <span class="grow">
+            <span class="block font-semibold">{% trans "Profile & settings" %}</span>
+            <span class="block text-xs text-base-content/60">{% trans "Add a photo and choose what others see" %}</span>
+          </span>
+          {% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}
+        </a>
+      </li>
+    </ul>
+    <div class="modal-action">
+      <form method="dialog" class="w-full"><button class="btn btn-primary w-full rounded-full" autofocus>{% trans "Get started" %}</button></form>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>{% trans "Close" %}</button></form>
+</dialog>
+<form id="welcomed-form" action="{% url 'welcomed' %}" method="post" hidden>{% csrf_token %}</form>
+<script>
+  // Inline, so it also runs on pages shown by Turbo. The attribute is removed,
+  // so the copy Turbo keeps for going back does not open the popup again.
+  (() => {
+    const dialog = document.getElementById("welcome-modal");
+    if (!dialog.hasAttribute("data-open-on-load")) {
+      return;
+    }
+    dialog.removeAttribute("data-open-on-load");
+    dialog.showModal();
+    const form = document.getElementById("welcomed-form");
+    fetch(form.action, { method: "POST", body: new FormData(form), headers: { "X-Requested-With": "XMLHttpRequest" } });
+  })();
+</script>
 {% endblock %}

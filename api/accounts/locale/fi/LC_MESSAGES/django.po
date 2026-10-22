@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 17:34+0300\n"
+"POT-Creation-Date: 2026-10-22 12:38+0300\n"
 "PO-Revision-Date: 2026-06-27 19:05+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,163 +47,164 @@ msgstr ""
 msgid "Your LUT Kyyti email address was changed"
 msgstr ""
 
-#: accounts/forms.py:26 accounts/templates/registration/signup.html:19
+#: accounts/forms.py:29 accounts/templates/registration/signup.html:19
 msgid "The passwords don't match. Type the same password in both fields."
 msgstr ""
 
-#: accounts/forms.py:40
+#: accounts/forms.py:43
 msgid "Required. Enter a valid email address."
 msgstr ""
 
-#: accounts/forms.py:42
+#: accounts/forms.py:45
 msgid "Enter your LUT or LAB email address."
 msgstr ""
 
-#: accounts/forms.py:43
-msgid "Enter a valid email address, e.g. firstname.lastname@lut.fi."
-msgstr ""
-
-#: accounts/forms.py:47
-msgid "Email Address *"
+#: accounts/forms.py:46
+#, python-brace-format
+msgid "Enter a valid email address, e.g. {example}."
 msgstr ""
 
 #: accounts/forms.py:50
+msgid "Email Address *"
+msgstr ""
+
+#: accounts/forms.py:53
 msgid "Your LUT or LAB email address, ending in @lut.fi or @lab.fi"
 msgstr ""
 
-#: accounts/forms.py:57
+#: accounts/forms.py:60
 msgid "Username"
 msgstr "Käyttäjätunnus"
 
-#: accounts/forms.py:65
+#: accounts/forms.py:68
 msgid "Enter your first name."
 msgstr ""
 
-#: accounts/forms.py:66
+#: accounts/forms.py:69
 #, python-format
 msgid "Your first name can be at most %(limit_value)s characters."
 msgstr ""
 
-#: accounts/forms.py:71
+#: accounts/forms.py:74
 msgid "First Name *"
 msgstr ""
 
-#: accounts/forms.py:80
+#: accounts/forms.py:83
 msgid "Enter your last name."
 msgstr ""
 
-#: accounts/forms.py:81
+#: accounts/forms.py:84
 #, python-format
 msgid "Your last name can be at most %(limit_value)s characters."
 msgstr ""
 
-#: accounts/forms.py:86
+#: accounts/forms.py:89
 msgid "Last Name *"
 msgstr ""
 
-#: accounts/forms.py:100
+#: accounts/forms.py:103
 msgid "Phone"
 msgstr ""
 
-#: accounts/forms.py:108
+#: accounts/forms.py:111
 msgid "Choose a password."
 msgstr ""
 
-#: accounts/forms.py:112
+#: accounts/forms.py:115
 msgid "Password *"
 msgstr ""
 
-#: accounts/forms.py:116
+#: accounts/forms.py:119
 msgid ""
 "At least 8 characters, including a number, a lower case letter and an upper "
 "case letter"
 msgstr ""
 
-#: accounts/forms.py:123
+#: accounts/forms.py:126
 msgid "Type your password again to confirm it."
 msgstr ""
 
-#: accounts/forms.py:127
+#: accounts/forms.py:130
 msgid "Confirm Password *"
 msgstr ""
 
-#: accounts/forms.py:129
+#: accounts/forms.py:132
 msgid "The same password again"
 msgstr ""
 
-#: accounts/forms.py:177 accounts/forms.py:350
+#: accounts/forms.py:180 accounts/forms.py:353
 msgid "Use your LUT or LAB email address (ending in @lut.fi or @lab.fi)."
 msgstr ""
 
-#: accounts/forms.py:183
+#: accounts/forms.py:186
 msgid ""
 "This email address has already signed up but has not been confirmed yet. We "
 "have sent the confirmation link again."
 msgstr ""
 
-#: accounts/forms.py:188
+#: accounts/forms.py:191
 msgid ""
 "An account with this email address already exists. Log in, or reset your "
 "password if you have forgotten it."
 msgstr ""
 
-#: accounts/forms.py:222
+#: accounts/forms.py:225
 #, python-format
 msgid ""
 "Confirm your email address before logging in. Open the link we sent to "
 "%(email)s."
 msgstr ""
 
-#: accounts/forms.py:230
+#: accounts/forms.py:233
 #: accounts/templates/registration/_resend_confirmation.html:10
 #: accounts/templates/registration/password_reset_form.html:10
 msgid "Email"
 msgstr ""
 
-#: accounts/forms.py:248 accounts/templates/registration/account.html:111
+#: accounts/forms.py:251 accounts/templates/registration/account.html:111
 msgid "Password"
 msgstr ""
 
-#: accounts/forms.py:275
+#: accounts/forms.py:278
 msgid ""
 "Enter a valid phone number, e.g. 040 123 4567 or +358 40 123 4567. Include "
 "the country code for numbers outside Finland."
 msgstr ""
 
-#: accounts/forms.py:298
+#: accounts/forms.py:301
 #, python-format
 msgid "The photo must be smaller than %(size)s MB."
 msgstr ""
 
-#: accounts/forms.py:333 accounts/forms.py:360
+#: accounts/forms.py:336 accounts/forms.py:363
 msgid "The password is incorrect."
 msgstr ""
 
-#: accounts/forms.py:352
+#: accounts/forms.py:355
 msgid "This is already your email address."
 msgstr ""
 
-#: accounts/forms.py:354
+#: accounts/forms.py:357
 msgid "Another account already uses this email address."
 msgstr ""
 
-#: accounts/models.py:87
+#: accounts/models.py:86
 msgid "First name only"
 msgstr ""
 
-#: accounts/models.py:88
+#: accounts/models.py:87
 msgid "First name and last initial"
 msgstr ""
 
-#: accounts/models.py:89
+#: accounts/models.py:88
 msgid "Full name"
 msgstr ""
 
-#: accounts/models.py:111
+#: accounts/models.py:109
 msgid "All notifications"
 msgstr ""
 
-#: accounts/models.py:112
+#: accounts/models.py:110
 msgid "Only essential notifications"
 msgstr ""
 
@@ -891,7 +892,8 @@ msgid "Your password can't contain your name or email address."
 msgstr ""
 
 #: accounts/templates/registration/signup.html:30
-msgid "Use your LUT or LAB email address, e.g. firstname.lastname@lut.fi"
+#, python-format
+msgid "Use your LUT or LAB email address, e.g. %(example)s"
 msgstr ""
 
 #: accounts/templates/registration/signup.html:33

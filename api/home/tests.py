@@ -762,7 +762,7 @@ class TransportIconTests(TestCase):
 
 
 class MorePageTests(TestCase):
-    """The mobile dock's More tab (the side menu's contents as a page)."""
+    """The More page: the mobile dock's More tab, and the navbar's profile picture on desktop."""
 
     def setUp(self):
         self.user = make_user("Aino", "Mäkinen")
@@ -783,8 +783,12 @@ class MorePageTests(TestCase):
         for url in (reverse("more"), reverse("account"), reverse("notifications")):
             self.assertIn(more, dock(url))
         self.assertNotIn(more, dock(reverse("home")))
-        # The More tab is a link now, not the side menu's toggle
-        self.assertNotIn('<label for="my-drawer-5" class="', dock(reverse("home")))
+
+    def test_no_side_menu(self):
+        # The navbar's profile picture links to the More page; there is no side menu
+        page = self.client.get(reverse("home")).content.decode()
+        self.assertIn(f'<a href="{reverse("more")}" class="btn btn-ghost btn-circle"', page)
+        self.assertNotIn("drawer", page)
 
     def test_pages_name_their_dock_tab(self):
         # static/js/turbo-setup.js chooses the tab from <body data-dock-tab>
@@ -792,3 +796,36 @@ class MorePageTests(TestCase):
                 "notifications": "5"}
         for name, tab in tabs.items():
             self.assertContains(self.client.get(reverse(name)), f'data-dock-tab="{tab}"', msg_prefix=name)
+
+
+class WelcomePopupTests(TestCase):
+    """The welcome popup on the home page, opened once for each user."""
+
+    def setUp(self):
+        self.user = make_user("Aino", "Mäkinen")
+        self.client.force_login(self.user)
+
+    def test_opens_until_shown(self):
+        dialog = lambda page: re.search(r'<dialog id="welcome-modal"[^>]*>', page).group(0)
+        page = self.client.get(reverse("home")).content.decode()
+        self.assertIn("data-open-on-load", dialog(page))
+        for url in (reverse("faq"), reverse("safety"), reverse("account"), reverse("welcomed")):
+            self.assertIn(f'"{url}"', page)
+
+        self.assertEqual(self.client.post(reverse("welcomed")).status_code, 204)
+        self.user.refresh_from_db()
+        self.assertIsNotNone(self.user.welcomed_at)
+        # Still on the page, for opening it by hand, but it does not open by itself
+        page = self.client.get(reverse("home")).content.decode()
+        self.assertNotIn("data-open-on-load", dialog(page))
+
+    def test_first_showing_is_kept(self):
+        self.client.post(reverse("welcomed"))
+        self.user.refresh_from_db()
+        first = self.user.welcomed_at
+        self.client.post(reverse("welcomed"))
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.welcomed_at, first)
+
+    def test_only_posted(self):
+        self.assertEqual(self.client.get(reverse("welcomed")).status_code, 405)
