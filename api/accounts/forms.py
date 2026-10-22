@@ -5,10 +5,13 @@ from . import email_change
 from . import phone as phone_numbers
 from django.db import models
 from django import forms
+from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 
 # Only LUT and LAB addresses can sign up or be changed to
 ALLOWED_EMAIL_DOMAINS = ("lut.fi", "lab.fi")
+# Shown in messages, outside the translated text (gettext warns about addresses in it)
+EXAMPLE_EMAIL = "firstname.lastname@lut.fi"
 # The same in the browser (the pattern attribute has no case-insensitive flag)
 EMAIL_PATTERN = r"[^@\s]+@([Ll][Uu][Tt]|[Ll][Aa][Bb])\.[Ff][Ii]"
 # Passwords: at least 8 characters (MinimumLengthValidator), with a number, a
@@ -40,7 +43,7 @@ class CustomUserCreationForm(AdminUserCreationForm):
         help_text=_('Required. Enter a valid email address.'),
         error_messages={
             "required": _("Enter your LUT or LAB email address."),
-            "invalid": _("Enter a valid email address, e.g. firstname.lastname@lut.fi."),
+            "invalid": format_lazy(_("Enter a valid email address, e.g. {example}."), example=EXAMPLE_EMAIL),
         },
         widget=forms.EmailInput(attrs={
             'class': 'input validator w-full',

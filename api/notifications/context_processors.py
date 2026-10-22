@@ -7,7 +7,7 @@ from . import push
 
 def notifications(request):
     """
-    unread_notification_count, shown on the bell, in the side menu and on
+    unread_notification_count, shown on the bell, on the More page and on
     the dock. Counted once, and only when a template uses it.
     push_public_key: the VAPID public key, when push notifications are on
     (notifications/push.py).

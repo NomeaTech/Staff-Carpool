@@ -33,7 +33,7 @@
     <form id="search-form" class="card bg-base-100 border border-base-300 shadow-sm mb-5" action="/app/search/" method="post">
       {% csrf_token %}
       <div class="card-body p-5 sm:p-6 gap-4">
-        <h2 class="card-title text-lg">{% trans "Find a ride" %}</h2>
+        <!-- <h2 class="card-title text-lg">{% trans "Find a ride" %}</h2> -->
         {# The ways of travelling to show: rides with any of the ticked ones, or all rides when none is ticked #}
         <div class="flex flex-wrap gap-2">
           {% trans "Offer car ride" as offer_label %}{% trans "Request car ride" as request_label %}{% trans "Train" as train_label %}{% trans "Bus" as bus_label %}{% trans "Taxi" as taxi_label %}{% trans "Other" as other_label %}

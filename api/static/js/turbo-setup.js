@@ -143,10 +143,6 @@
     // Before keeping a copy of the page for going back: close what is open
     // and remove messages that should not show again
     document.addEventListener("turbo:before-cache", () => {
-        const drawer = document.getElementById("my-drawer-5");
-        if (drawer) {
-            drawer.checked = false;
-        }
         document.activeElement && document.activeElement.blur && document.activeElement.blur();
         document.getElementById("messages")?.remove();
         document.getElementById("notification-toasts")?.replaceChildren();

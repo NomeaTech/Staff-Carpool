@@ -26,7 +26,7 @@
         {% endif %}{% endifchanged %}
         <a href="{% url 'ride_detail' ride.id %}" class="card bg-base-100 border shadow-sm transition duration-200 ease-out hover:scale-102 hover:shadow-lg {% if ride.on_the_way %}border-dashed border-info{% else %}border-base-300{% endif %}">
             <div class="card-body p-5 gap-4">
-                <div class="@container flex items-start justify-between gap-3">
+                <div class="@container grow flex items-start justify-between gap-3">
                     <div class="grid {{ ride.icons.grid_class }} gap-1.5">
                         {# Which icons, and how big: rides/transport.py icon_layout #}
                         {% for option in ride.icons.options %}
@@ -58,7 +58,7 @@
                     {% with seats=ride.seats_left %}{% if seats is not None %}<span>{% blocktrans count counter=seats %}{{ counter }} seat{% plural %}{{ counter }} seats{% endblocktrans %}</span>{% endif %}{% endwith %}
                 </div>
 
-                <div class="flex items-center justify-between gap-2 mt-auto pt-3 border-t border-base-200 text-xs">
+                <div class="flex items-center justify-between gap-2 pt-3 border-t border-base-200 text-xs">
                     <span class="flex items-center gap-2 min-w-0">
                         {% avatar ride.driver "w-7" "text-[0.6rem]" %}
                         <span class="truncate font-semibold">{{ ride.driver|display_name }}</span>

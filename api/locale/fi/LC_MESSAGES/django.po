@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 17:34+0300\n"
+"POT-Creation-Date: 2026-10-22 12:37+0300\n"
 "PO-Revision-Date: 2026-07-01 16:50+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,11 +19,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
-#: carpool/settings.py:214
+#: carpool/settings.py:215
 msgid "English"
 msgstr "Englanti"
 
-#: carpool/settings.py:215
+#: carpool/settings.py:216
 msgid "Finnish"
 msgstr "Suomi"
 
@@ -152,4 +152,216 @@ msgstr ""
 msgid ""
 "Choose which notifications are also emailed to you in your <a "
 "href=\"%(account_url)s#notifications\" class=\"link\">settings</a>."
+msgstr ""
+
+#: rides/forms.py:14 rides/models.py:301
+msgid "Monday"
+msgstr ""
+
+#: rides/forms.py:15 rides/models.py:302
+msgid "Tuesday"
+msgstr ""
+
+#: rides/forms.py:16 rides/models.py:303
+msgid "Wednesday"
+msgstr ""
+
+#: rides/forms.py:17 rides/models.py:304
+msgid "Thursday"
+msgstr ""
+
+#: rides/forms.py:18 rides/models.py:305
+msgid "Friday"
+msgstr ""
+
+#: rides/forms.py:19 rides/models.py:306
+msgid "Saturday"
+msgstr ""
+
+#: rides/forms.py:20 rides/models.py:307
+msgid "Sunday"
+msgstr ""
+
+#: rides/forms.py:78
+msgid "One-time"
+msgstr ""
+
+#: rides/forms.py:78
+msgid "Recurring"
+msgstr ""
+
+#: rides/forms.py:80
+msgid "Choose whether the ride is one-time or recurring."
+msgstr ""
+
+#: rides/forms.py:83
+msgid "One-way"
+msgstr ""
+
+#: rides/forms.py:83
+msgid "Return"
+msgstr ""
+
+#: rides/forms.py:85
+msgid "Choose whether the ride is one-way or has a return journey."
+msgstr ""
+
+#: rides/forms.py:122
+msgid "Choose each stop on the way from the list of suggestions."
+msgstr ""
+
+#: rides/forms.py:126
+#, python-format
+msgid "A ride can have at most %(count)s stops on the way."
+msgstr ""
+
+#: rides/forms.py:131
+msgid "Choose at least one way of travelling."
+msgstr ""
+
+#: rides/forms.py:135
+msgid "Describe the other way of travelling."
+msgstr ""
+
+#: rides/forms.py:144
+msgid "Enter how many passengers you can take."
+msgstr ""
+
+#: rides/forms.py:147
+#, python-format
+msgid "Enter a number of passengers from 1 to %(max)s."
+msgstr ""
+
+#: rides/forms.py:152
+#, python-format
+msgid ""
+"%(count)s passengers have already joined. Remove passengers before lowering "
+"the seats below that."
+msgstr ""
+
+#: rides/forms.py:177
+msgid "Enter the date and time the ride leaves."
+msgstr ""
+
+#: rides/forms.py:179
+msgid "The ride cannot leave in the past."
+msgstr ""
+
+#: rides/forms.py:188
+msgid "Enter the date and time of the return journey."
+msgstr ""
+
+#: rides/forms.py:190
+msgid "The return journey must be after the departure."
+msgstr ""
+
+#: rides/forms.py:196
+msgid "Choose at least one day for a recurring ride."
+msgstr ""
+
+#: rides/forms.py:206
+#, python-format
+msgid "Enter the time the ride leaves on %(day)s."
+msgstr ""
+
+#: rides/forms.py:215
+#, python-format
+msgid "Enter the time of the return journey on %(day)s."
+msgstr ""
+
+#: rides/forms.py:217
+#, python-format
+msgid "The return journey on %(day)s must be after the departure."
+msgstr ""
+
+#: rides/forms.py:265
+msgid "Choose a start location from the list."
+msgstr ""
+
+#: rides/forms.py:266
+msgid "Choose a destination from the list."
+msgstr ""
+
+#: rides/models.py:152 rides/models.py:253
+msgid "Everyday"
+msgstr ""
+
+#: rides/models.py:154 rides/models.py:255
+msgid "Weekdays"
+msgstr ""
+
+#: rides/models.py:156 rides/models.py:257
+msgid "Weekends"
+msgstr ""
+
+#: rides/models.py:157 rides/models.py:241
+msgid "Mon"
+msgstr ""
+
+#: rides/models.py:157 rides/models.py:242
+msgid "Tue"
+msgstr ""
+
+#: rides/models.py:157 rides/models.py:243
+msgid "Wed"
+msgstr ""
+
+#: rides/models.py:157 rides/models.py:244
+msgid "Thu"
+msgstr ""
+
+#: rides/models.py:157 rides/models.py:245
+msgid "Fri"
+msgstr ""
+
+#: rides/models.py:157 rides/models.py:246
+msgid "Sat"
+msgstr ""
+
+#: rides/models.py:157 rides/models.py:247
+msgid "Sun"
+msgstr ""
+
+#: rides/models.py:397
+msgid "Pending"
+msgstr ""
+
+#: rides/models.py:398
+msgid "Accepted"
+msgstr ""
+
+#: rides/models.py:399
+msgid "Declined"
+msgstr ""
+
+#: rides/templates/admin/rides/ride/generate_test_rides.html:6
+msgid "Home"
+msgstr ""
+
+#: rides/templates/admin/rides/ride/generate_test_rides.html:23
+msgid "Cancel"
+msgstr ""
+
+#: rides/transport.py:38
+msgid "Ride offer"
+msgstr ""
+
+#: rides/transport.py:48
+msgid "Request"
+msgstr ""
+
+#: rides/transport.py:58
+msgid "Train"
+msgstr ""
+
+#: rides/transport.py:68
+msgid "Bus"
+msgstr ""
+
+#: rides/transport.py:78
+msgid "Taxi"
+msgstr ""
+
+#: rides/transport.py:88
+msgid "Other"
 msgstr ""

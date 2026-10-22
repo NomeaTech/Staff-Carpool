@@ -1,5 +1,5 @@
 [tool.bumpversion]
-current_version = "0.25.3"
+current_version = "0.25.4"
 parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
 serialize = ["{major}.{minor}.{patch}"]
 search = "{current_version}"
@@ -24,10 +24,5 @@ allow_shell_hooks = false
 
 [[tool.bumpversion.files]]
 filename = "../README.md"
-search = 'Version: {current_version}'
-replace = 'Version: {new_version}'
-
-[[tool.bumpversion.files]]
-filename = "home/templates/app.html"
 search = 'Version: {current_version}'
 replace = 'Version: {new_version}'
