@@ -12,8 +12,8 @@
 <div class="card bg-base-100 border border-base-300 shadow-sm">
   <div class="card-body p-6 sm:p-8 gap-4">
     <div>
-      <h1 class="text-2xl font-bold tracking-tight">{% trans "Sign Up" %}</h1>
-      <p class="text-sm text-base-content/60 mt-1">{% trans "* = Mandatory" %}</p>
+      <h1 class="text-2xl font-bold tracking-tight">{% trans "Sign up" %}</h1>
+      <p class="text-sm text-base-content/60 mt-1">{% trans "* = required" %}</p>
     </div>
     <form method="post" id="signup-form" class="grid gap-3"
           data-mismatch="{% trans "The passwords don't match. Type the same password in both fields." %}"
@@ -48,7 +48,7 @@
         <a href="{% url 'confirmation_sent' %}" class="link link-primary text-sm">{% trans "Didn't get the email?" %}</a>
       {% endif %}
 
-      <button type="submit" class="btn btn-primary w-full mt-2">{% trans "Sign Up" %}</button>
+      <button type="submit" class="btn btn-primary w-full mt-2">{% trans "Sign up" %}</button>
       {% blocktranslate context "Full sentence: By creating an account you agree to the Terms of Use and Privacy Policy." %}
                 <p class="text-[0.8125rem]">By creating an account you agree to the <a class="link link-primary" href="/terms-of-use">Terms of Use</a> and <a class="link link-secondary" href="/privacy-policy">Privacy Policy</a>.</p>
               {% endblocktranslate %}

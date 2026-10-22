@@ -52,7 +52,7 @@ class EmailConfirmationTests(TestCase):
         self.sign_up()
         response = self.log_in(password="wrong")
         self.assertNotContains(response, "Confirm your email address")
-        self.assertContains(response, "Enter a valid email and password")
+        self.assertContains(response, "The email address or password is wrong.")
 
     def test_confirming_logs_in_and_the_link_works_once(self):
         self.sign_up()

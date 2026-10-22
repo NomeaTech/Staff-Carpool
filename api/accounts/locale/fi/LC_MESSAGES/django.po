@@ -3,16 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-23 02:27+0300\n"
+"POT-Creation-Date: 2026-10-23 02:42+0300\n"
 "PO-Revision-Date: 2026-06-27 19:05+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,60 +20,60 @@ msgstr ""
 
 #: accounts/admin.py:35
 msgid "Personal info"
-msgstr ""
+msgstr "Henkilötiedot"
 
 #: accounts/admin.py:37
 msgid "Privacy and notifications"
-msgstr ""
+msgstr "Yksityisyys ja ilmoitukset"
 
 #: accounts/admin.py:41
 msgid "Permissions"
-msgstr ""
+msgstr "Oikeudet"
 
 #: accounts/admin.py:44
 msgid "Important dates"
-msgstr ""
+msgstr "Tärkeät päivämäärät"
 
 #: accounts/admin.py:101
 msgid "User statistics"
-msgstr ""
+msgstr "Käyttäjätilastot"
 
 #: accounts/email_change.py:74
 msgid "Your LUT Kyyti email address is being changed"
-msgstr ""
+msgstr "LUT Kyyti -sähköpostiosoitettasi ollaan vaihtamassa"
 
 #: accounts/email_change.py:88
 msgid "Confirm your new LUT Kyyti email address"
-msgstr ""
+msgstr "Vahvista uusi LUT Kyyti -sähköpostiosoitteesi"
 
 #: accounts/email_change.py:117
 msgid "Your LUT Kyyti email address was changed"
-msgstr ""
+msgstr "LUT Kyyti -sähköpostiosoitteesi vaihdettiin"
 
 #: accounts/forms.py:29 accounts/templates/registration/signup.html:19
 msgid "The passwords don't match. Type the same password in both fields."
-msgstr ""
+msgstr "Salasanat eivät täsmää. Kirjoita sama salasana molempiin kenttiin."
 
 #: accounts/forms.py:43
 msgid "Required. Enter a valid email address."
-msgstr ""
+msgstr "Pakollinen. Anna kelvollinen sähköpostiosoite."
 
 #: accounts/forms.py:45
 msgid "Enter your LUT or LAB email address."
-msgstr ""
+msgstr "Anna LUT- tai LAB-sähköpostiosoitteesi."
 
 #: accounts/forms.py:46
 #, python-brace-format
 msgid "Enter a valid email address, e.g. {example}."
-msgstr ""
+msgstr "Anna kelvollinen sähköpostiosoite, esim. {example}."
 
 #: accounts/forms.py:50
 msgid "Email Address *"
-msgstr ""
+msgstr "Sähköpostiosoite *"
 
 #: accounts/forms.py:53
 msgid "Your LUT or LAB email address, ending in @lut.fi or @lab.fi"
-msgstr ""
+msgstr "LUT- tai LAB-sähköpostiosoitteesi, joka päättyy @lut.fi tai @lab.fi"
 
 #: accounts/forms.py:60
 msgid "Username"
@@ -82,75 +81,80 @@ msgstr "Käyttäjätunnus"
 
 #: accounts/forms.py:68
 msgid "Enter your first name."
-msgstr ""
+msgstr "Anna etunimesi."
 
 #: accounts/forms.py:69
 #, python-format
 msgid "Your first name can be at most %(limit_value)s characters."
-msgstr ""
+msgstr "Etunimesi voi olla enintään %(limit_value)s merkkiä."
 
 #: accounts/forms.py:74
 msgid "First Name *"
-msgstr ""
+msgstr "Etunimi *"
 
 #: accounts/forms.py:83
 msgid "Enter your last name."
-msgstr ""
+msgstr "Anna sukunimesi."
 
 #: accounts/forms.py:84
 #, python-format
 msgid "Your last name can be at most %(limit_value)s characters."
-msgstr ""
+msgstr "Sukunimesi voi olla enintään %(limit_value)s merkkiä."
 
 #: accounts/forms.py:89
 msgid "Last Name *"
-msgstr ""
+msgstr "Sukunimi *"
 
 #: accounts/forms.py:103 accounts/stats.py:530
 msgid "Phone"
-msgstr ""
+msgstr "Puhelin"
 
 #: accounts/forms.py:111
 msgid "Choose a password."
-msgstr ""
+msgstr "Valitse salasana."
 
 #: accounts/forms.py:115
 msgid "Password *"
-msgstr ""
+msgstr "Salasana *"
 
 #: accounts/forms.py:119
 msgid ""
 "At least 8 characters, including a number, a lower case letter and an upper "
 "case letter"
-msgstr ""
+msgstr "Vähintään 8 merkkiä, joissa on numero, pieni kirjain ja iso kirjain"
 
 #: accounts/forms.py:126
 msgid "Type your password again to confirm it."
-msgstr ""
+msgstr "Vahvista salasanasi kirjoittamalla se uudelleen."
 
 #: accounts/forms.py:130
 msgid "Confirm Password *"
-msgstr ""
+msgstr "Vahvista salasana *"
 
 #: accounts/forms.py:132
 msgid "The same password again"
-msgstr ""
+msgstr "Sama salasana uudelleen"
 
 #: accounts/forms.py:180 accounts/forms.py:367
 msgid "Use your LUT or LAB email address (ending in @lut.fi or @lab.fi)."
 msgstr ""
+"Käytä LUT- tai LAB-sähköpostiosoitettasi (päättyy @lut.fi tai @lab.fi)."
 
 #: accounts/forms.py:186
 msgid ""
 "This email address has already signed up but has not been confirmed yet. We "
 "have sent the confirmation link again."
 msgstr ""
+"Tällä sähköpostiosoitteella on jo rekisteröidytty, mutta osoitetta ei ole "
+"vielä vahvistettu. Lähetimme vahvistuslinkin uudelleen."
 
 #: accounts/forms.py:191
 msgid ""
 "An account with this email address already exists. Log in, or reset your "
 "password if you have forgotten it."
 msgstr ""
+"Tällä sähköpostiosoitteella on jo tili. Kirjaudu sisään tai palauta "
+"salasanasi, jos olet unohtanut sen."
 
 #: accounts/forms.py:225
 #, python-format
@@ -158,783 +162,803 @@ msgid ""
 "Confirm your email address before logging in. Open the link we sent to "
 "%(email)s."
 msgstr ""
+"Vahvista sähköpostiosoitteesi ennen kirjautumista. Avaa linkki, jonka "
+"lähetimme osoitteeseen %(email)s."
 
 #: accounts/forms.py:233 accounts/stats.py:131
 #: accounts/templates/registration/_resend_confirmation.html:10
 #: accounts/templates/registration/password_reset_form.html:10
 msgid "Email"
-msgstr ""
+msgstr "Sähköposti"
 
 #: accounts/forms.py:251 accounts/templates/registration/account.html:111
 msgid "Password"
-msgstr ""
+msgstr "Salasana"
 
 #: accounts/forms.py:278
 msgid ""
 "Enter a valid phone number, e.g. 040 123 4567 or +358 40 123 4567. Include "
 "the country code for numbers outside Finland."
 msgstr ""
+"Anna kelvollinen puhelinnumero, esim. 040 123 4567 tai +358 40 123 4567. "
+"Lisää maatunnus, jos numero ei ole suomalainen."
 
 #: accounts/forms.py:301
 #, python-format
 msgid "The photo must be smaller than %(size)s MB."
-msgstr ""
+msgstr "Kuvan on oltava alle %(size)s Mt."
 
 #: accounts/forms.py:337 accounts/forms.py:377
 msgid "The password is incorrect."
-msgstr ""
+msgstr "Salasana on väärä."
 
 #: accounts/forms.py:349
 msgid "Enter the code."
-msgstr ""
+msgstr "Anna koodi."
 
 #: accounts/forms.py:369
 msgid "This is already your email address."
-msgstr ""
+msgstr "Tämä on jo sähköpostiosoitteesi."
 
 #: accounts/forms.py:371
 msgid "Another account already uses this email address."
-msgstr ""
+msgstr "Tämä sähköpostiosoite on jo toisen tilin käytössä."
 
 #: accounts/models.py:86
 msgid "First name only"
-msgstr ""
+msgstr "Vain etunimi"
 
 #: accounts/models.py:87
 msgid "First name and last initial"
-msgstr ""
+msgstr "Etunimi ja sukunimen alkukirjain"
 
 #: accounts/models.py:88
 msgid "Full name"
-msgstr ""
+msgstr "Koko nimi"
 
 #: accounts/models.py:109
 msgid "All notifications"
-msgstr ""
+msgstr "Kaikki ilmoitukset"
 
 #: accounts/models.py:110
 msgid "Only essential notifications"
-msgstr ""
+msgstr "Vain tärkeät ilmoitukset"
 
 #: accounts/stats.py:59
 msgid "Period"
-msgstr ""
+msgstr "Ajanjakso"
 
 #: accounts/stats.py:60 accounts/stats.py:217
 msgid "All time"
-msgstr ""
+msgstr "Koko ajalta"
 
 #: accounts/stats.py:61
 msgid "Last 30 days"
-msgstr ""
+msgstr "Viimeiset 30 päivää"
 
 #: accounts/stats.py:62
 msgid "Last 90 days"
-msgstr ""
+msgstr "Viimeiset 90 päivää"
 
 #: accounts/stats.py:63
 msgid "Last 12 months"
-msgstr ""
+msgstr "Viimeiset 12 kuukautta"
 
 #: accounts/stats.py:64
 msgid "Custom range"
-msgstr ""
+msgstr "Mukautettu aikaväli"
 
 #: accounts/stats.py:66 accounts/templates/admin/accounts/user_stats.html:166
 msgid "From"
-msgstr ""
+msgstr "Alkaen"
 
 #: accounts/stats.py:67 accounts/templates/admin/accounts/user_stats.html:166
 msgid "To"
-msgstr ""
+msgstr "Asti"
 
 #: accounts/stats.py:68
 msgid "Email domain"
-msgstr ""
+msgstr "Sähköpostin verkkotunnus"
 
 #: accounts/stats.py:69
 msgid "All domains"
-msgstr ""
+msgstr "Kaikki verkkotunnukset"
 
 #: accounts/stats.py:70
 msgid "Email address"
-msgstr ""
+msgstr "Sähköpostiosoite"
 
 #: accounts/stats.py:71
 msgid "Confirmed or not"
-msgstr ""
+msgstr "Vahvistettu tai ei"
 
 #: accounts/stats.py:72
 msgid "Confirmed"
-msgstr ""
+msgstr "Vahvistettu"
 
 #: accounts/stats.py:73
 msgid "Not confirmed"
-msgstr ""
+msgstr "Ei vahvistettu"
 
 #: accounts/stats.py:79
 msgid "The start of the period is after its end."
-msgstr ""
+msgstr "Ajanjakson alku on sen lopun jälkeen."
 
 #: accounts/stats.py:130
 msgid "User ID"
-msgstr ""
+msgstr "Käyttäjätunnus"
 
 #: accounts/stats.py:132
 msgid "Domain"
-msgstr ""
+msgstr "Verkkotunnus"
 
 #: accounts/stats.py:133 accounts/templates/registration/account.html:62
 msgid "First name"
-msgstr ""
+msgstr "Etunimi"
 
 #: accounts/stats.py:134 accounts/templates/registration/account.html:67
 msgid "Last name"
-msgstr ""
+msgstr "Sukunimi"
 
 #: accounts/stats.py:135 accounts/templates/admin/accounts/user_stats.html:185
 msgid "Joined"
-msgstr ""
+msgstr "Liittynyt"
 
 #: accounts/stats.py:136 accounts/stats.py:252
 msgid "Email confirmed"
-msgstr ""
+msgstr "Sähköposti vahvistettu"
 
 #: accounts/stats.py:137 accounts/stats.py:597
-#, fuzzy
-#| msgid "Login"
 msgid "Last login"
-msgstr "Kirjaudu"
+msgstr "Viimeisin kirjautuminen"
 
 #: accounts/stats.py:138
 msgid "Saw the welcome popup"
-msgstr ""
+msgstr "Näki tervetuloikkunan"
 
 #: accounts/stats.py:139
 msgid "Active account"
-msgstr ""
+msgstr "Aktiivinen tili"
 
 #: accounts/stats.py:140
 msgid "Staff"
-msgstr ""
+msgstr "Henkilökunta"
 
 #: accounts/stats.py:141
 msgid "Has a photo"
-msgstr ""
+msgstr "Kuva lisätty"
 
 #: accounts/stats.py:142 accounts/stats.py:615
 msgid "Has a phone number"
-msgstr ""
+msgstr "Puhelinnumero lisätty"
 
 #: accounts/stats.py:143
 msgid "Name shown"
-msgstr ""
+msgstr "Näytettävä nimi"
 
 #: accounts/stats.py:144
 msgid "Shows photo"
-msgstr ""
+msgstr "Näyttää kuvan"
 
 #: accounts/stats.py:145
 msgid "Shares email"
-msgstr ""
+msgstr "Jakaa sähköpostin"
 
 #: accounts/stats.py:146
 msgid "Shares phone"
-msgstr ""
+msgstr "Jakaa puhelinnumeron"
 
 #: accounts/stats.py:147
 msgid "Emailed notifications"
-msgstr ""
+msgstr "Sähköpostitetut ilmoitukset"
 
 #: accounts/stats.py:148
 msgid "Push devices"
-msgstr ""
+msgstr "Push-laitteet"
 
 #: accounts/stats.py:149 accounts/stats.py:387 accounts/stats.py:469
 msgid "Rides posted"
-msgstr ""
+msgstr "Julkaistut kyydit"
 
 #: accounts/stats.py:150 accounts/stats.py:388
 msgid "Requests made"
-msgstr ""
+msgstr "Tehdyt pyynnöt"
 
 #: accounts/stats.py:151 accounts/stats.py:260
 msgid "Requests accepted"
-msgstr ""
+msgstr "Hyväksytyt pyynnöt"
 
 #: accounts/stats.py:152 accounts/stats.py:448
 msgid "Requests declined"
-msgstr ""
+msgstr "Hylätyt pyynnöt"
 
 #: accounts/stats.py:153
 msgid "Requests pending"
-msgstr ""
+msgstr "Odottavat pyynnöt"
 
 #: accounts/stats.py:154
 msgid "Requests received"
-msgstr ""
+msgstr "Saadut pyynnöt"
 
 #: accounts/stats.py:155
 msgid "Received requests accepted"
-msgstr ""
+msgstr "Hyväksytyt saadut pyynnöt"
 
 #: accounts/stats.py:156 accounts/templates/registration/account.html:158
 msgid "Notifications"
-msgstr ""
+msgstr "Ilmoitukset"
 
 #: accounts/stats.py:157
 msgid "Notifications read"
-msgstr ""
+msgstr "Luetut ilmoitukset"
 
 #: accounts/stats.py:159
 msgid "Last active"
-msgstr ""
+msgstr "Viimeksi aktiivinen"
 
 #: accounts/stats.py:160
 msgid "Days active"
-msgstr ""
+msgstr "Aktiivisia päiviä"
 
 #: accounts/stats.py:161 accounts/stats.py:300 accounts/stats.py:407
 #: accounts/stats.py:411 accounts/stats.py:468
 msgid "Searches"
-msgstr ""
+msgstr "Haut"
 
 #: accounts/stats.py:162
 msgid "Rides opened"
-msgstr ""
+msgstr "Avatut kyydit"
 
 #: accounts/stats.py:163
 msgid "Rides deleted"
-msgstr ""
+msgstr "Poistetut kyydit"
 
 #: accounts/stats.py:164
 msgid "Requests withdrawn or rides left"
-msgstr ""
+msgstr "Perutut pyynnöt tai kyydistä poistumiset"
 
 #: accounts/stats.py:211
 msgid "The activity log has no events yet."
-msgstr ""
+msgstr "Toimintalokissa ei ole vielä tapahtumia."
 
 #: accounts/stats.py:212
 #, python-format
 msgid "From the activity log, which starts on %(date)s."
-msgstr ""
+msgstr "Toimintalokista, joka alkaa %(date)s."
 
 #: accounts/stats.py:250 accounts/stats.py:378 accounts/stats.py:380
 #: accounts/stats.py:438 accounts/stats.py:523 accounts/stats.py:599
 #: accounts/stats.py:623 accounts/stats.py:631
 #: accounts/templates/admin/accounts/user_stats.html:185
 #: accounts/templates/admin/accounts/user_stats.html:202
-#, fuzzy
-#| msgid "Username"
 msgid "Users"
-msgstr "Käyttäjätunnus"
+msgstr "Käyttäjät"
 
 #: accounts/stats.py:251 accounts/stats.py:381
 msgid "New sign-ups"
-msgstr ""
+msgstr "Uudet rekisteröitymiset"
 
 #: accounts/stats.py:253
 #, python-format
 msgid "%(count)s of %(total)s users"
-msgstr ""
+msgstr "%(count)s / %(total)s käyttäjää"
 
 #: accounts/stats.py:254
 msgid "Active in the last 30 days"
-msgstr ""
+msgstr "Aktiivisia viimeisten 30 päivän aikana"
 
 #: accounts/stats.py:255
 #, python-format
 msgid "%(count)s in the last 7 days"
-msgstr ""
+msgstr "%(count)s viimeisten 7 päivän aikana"
 
 #: accounts/stats.py:256
 msgid "Drivers"
-msgstr ""
+msgstr "Kuljettajat"
 
 #: accounts/stats.py:257
 #, python-format
 msgid "%(count)s ride posted"
 msgid_plural "%(count)s rides posted"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(count)s kyyti julkaistu"
+msgstr[1] "%(count)s kyytiä julkaistu"
 
 #: accounts/stats.py:258
 msgid "Passengers"
-msgstr ""
+msgstr "Matkustajat"
 
 #: accounts/stats.py:259
 #, python-format
 msgid "%(count)s request made"
 msgid_plural "%(count)s requests made"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(count)s pyyntö tehty"
+msgstr[1] "%(count)s pyyntöä tehty"
 
 #: accounts/stats.py:261
 #, python-format
 msgid "of %(count)s answered requests"
-msgstr ""
+msgstr "%(count)s vastatusta pyynnöstä"
 
 #: accounts/stats.py:262
 msgid "Median time to answer"
-msgstr ""
+msgstr "Vastausajan mediaani"
 
 #: accounts/stats.py:263
 msgid "from request to accepted or declined"
-msgstr ""
+msgstr "pyynnöstä hyväksymiseen tai hylkäämiseen"
 
 #: accounts/stats.py:297
 msgid "Stickiness"
-msgstr ""
+msgstr "Sitoutuneisuus"
 
 #: accounts/stats.py:298
 #, python-format
 msgid "%(daily)s active a day on average, %(monthly)s in the last 30 days"
 msgstr ""
+"%(daily)s aktiivista päivässä keskimäärin, %(monthly)s viimeisten 30 päivän "
+"aikana"
 
 #: accounts/stats.py:301
 #, python-format
 msgid "%(percent)s %% found no rides"
-msgstr ""
+msgstr "%(percent)s %% ei löytänyt kyytejä"
 
 #: accounts/stats.py:302
 msgid "Searchers who asked to join"
-msgstr ""
+msgstr "Pyynnön tehneet hakijat"
 
 #: accounts/stats.py:303
 #, python-format
 msgid "of %(count)s users who searched"
-msgstr ""
+msgstr "%(count)s hakua tehneestä käyttäjästä"
 
 #: accounts/stats.py:304
 msgid "Seats filled"
-msgstr ""
+msgstr "Täytetyt paikat"
 
 #: accounts/stats.py:305
 #, python-format
 msgid "of %(count)s seats offered in car rides"
-msgstr ""
+msgstr "%(count)s autokyydeissä tarjotusta paikasta"
 
 #: accounts/stats.py:306
 msgid "Car rides without requests"
-msgstr ""
+msgstr "Autokyydit ilman pyyntöjä"
 
 #: accounts/stats.py:307
 #, python-format
 msgid "%(count)s of %(total)s rides offered"
-msgstr ""
+msgstr "%(count)s / %(total)s tarjotusta kyydistä"
 
 #: accounts/stats.py:308
 msgid "Trips called off"
-msgstr ""
+msgstr "Peruuntuneet matkat"
 
 #: accounts/stats.py:309
 #, python-format
 msgid ""
-"%(requests)s requests withdrawn, passengers left or removed; %(rides)s rides "
-"with passengers cancelled"
+"%(requests)s requests withdrawn, passengers left or removed; %(rides)s rides"
+" with passengers cancelled"
 msgstr ""
+"%(requests)s pyyntöä peruttu, matkustajia poistunut tai poistettu; %(rides)s"
+" matkustajallista kyytiä peruttu"
 
 #: accounts/stats.py:311
 msgid "Have shared a ride"
-msgstr ""
+msgstr "Ovat jakaneet kyydin"
 
 #: accounts/stats.py:312
 #, python-format
 msgid "%(count)s users have driven or been a passenger with someone"
-msgstr ""
+msgstr "%(count)s käyttäjää on ajanut tai ollut matkustajana jonkun kanssa"
 
 #: accounts/stats.py:313
 msgid "Accounts deleted"
-msgstr ""
+msgstr "Poistetut tilit"
 
 #: accounts/stats.py:314
 #, python-format
 msgid "after %(days)s days as a member (median)"
-msgstr ""
+msgstr "%(days)s päivän jäsenyyden jälkeen (mediaani)"
 
 #: accounts/stats.py:368 accounts/stats.py:395
 msgid "week"
-msgstr ""
+msgstr "viikko"
 
 #: accounts/stats.py:368 accounts/stats.py:395
 msgid "month"
-msgstr ""
+msgstr "kuukausi"
 
 #: accounts/stats.py:379
 #, python-format
 msgid "All users who had joined by the end of each %(unit)s"
 msgstr ""
+"Kaikki käyttäjät, jotka olivat liittyneet kunkin jakson (%(unit)s) loppuun "
+"mennessä"
 
 #: accounts/stats.py:382
 #, python-format
 msgid "Accounts created each %(unit)s"
-msgstr ""
+msgstr "Luodut tilit jaksoittain (%(unit)s)"
 
 #: accounts/stats.py:383
 msgid "Sign-ups"
-msgstr ""
+msgstr "Rekisteröitymiset"
 
 #: accounts/stats.py:384
 msgid "Rides and requests"
-msgstr ""
+msgstr "Kyydit ja pyynnöt"
 
 #: accounts/stats.py:385
 #, python-format
 msgid "Rides posted and requests to join a ride made each %(unit)s"
-msgstr ""
+msgstr "Julkaistut kyydit ja tehdyt liittymispyynnöt jaksoittain (%(unit)s)"
 
 #: accounts/stats.py:399 accounts/stats.py:403
 msgid "Active users"
-msgstr ""
+msgstr "Aktiiviset käyttäjät"
 
 #: accounts/stats.py:400
 #, python-format
 msgid ""
 "Users who used the app, and who searched for rides, each %(unit)s. %(log)s"
 msgstr ""
+"Sovellusta käyttäneet ja kyytejä hakeneet käyttäjät jaksoittain (%(unit)s). "
+"%(log)s"
 
 #: accounts/stats.py:405
 msgid "Searched"
-msgstr ""
+msgstr "Hakeneet"
 
 #: accounts/stats.py:408
 #, python-format
 msgid ""
-"Searches each %(unit)s, and those that found no rides: demand that is not met"
+"Searches each %(unit)s, and those that found no rides: demand that is not "
+"met"
 msgstr ""
+"Haut jaksoittain (%(unit)s) ja ne, joilla ei löytynyt kyytejä: täyttymätön "
+"kysyntä"
 
 #: accounts/stats.py:412
 msgid "Found no rides"
-msgstr ""
+msgstr "Ei löytänyt kyytejä"
 
 #: accounts/stats.py:428
 msgid "Signed up"
-msgstr ""
+msgstr "Rekisteröityi"
 
 #: accounts/stats.py:429
 msgid "Confirmed the email address"
-msgstr ""
+msgstr "Vahvisti sähköpostiosoitteen"
 
 #: accounts/stats.py:430
 msgid "Searched or opened a ride"
-msgstr ""
+msgstr "Haki tai avasi kyydin"
 
 #: accounts/stats.py:431
 msgid "Posted a ride or asked to join one"
-msgstr ""
+msgstr "Julkaisi kyydin tai pyysi päästä kyytiin"
 
 #: accounts/stats.py:432
 msgid "Shared a ride"
-msgstr ""
+msgstr "Jakoi kyydin"
 
 #: accounts/stats.py:434
 msgid "From sign-up to sharing a ride"
-msgstr ""
+msgstr "Rekisteröitymisestä kyydin jakamiseen"
 
 #: accounts/stats.py:435
 msgid ""
 "Users who joined in the period, by how far they got. Searching and opening "
 "rides is from the activity log."
 msgstr ""
+"Ajanjaksolla liittyneet käyttäjät sen mukaan, kuinka pitkälle he etenivät. "
+"Haut ja kyytien avaamiset ovat toimintalokista."
 
 #: accounts/stats.py:447
 msgid "Requests withdrawn"
-msgstr ""
+msgstr "Perutut pyynnöt"
 
 #: accounts/stats.py:447
 msgid "Passengers who left"
-msgstr ""
+msgstr "Poistuneet matkustajat"
 
 #: accounts/stats.py:448
 msgid "Passengers removed"
-msgstr ""
+msgstr "Poistetut matkustajat"
 
 #: accounts/stats.py:449
 msgid "Rides cancelled with passengers"
-msgstr ""
+msgstr "Matkustajalliset perutut kyydit"
 
 #: accounts/stats.py:451
 msgid "Trips that fell through"
-msgstr ""
+msgstr "Kariutuneet matkat"
 
 #: accounts/stats.py:452
 #, python-format
 msgid "In the period. %(log)s"
-msgstr ""
+msgstr "Ajanjaksolla. %(log)s"
 
 #: accounts/stats.py:454
 msgid "Times"
-msgstr ""
+msgstr "Kerrat"
 
 #: accounts/stats.py:464
 msgid "Campuses: searches and rides"
-msgstr ""
+msgstr "Kampukset: haut ja kyydit"
 
 #: accounts/stats.py:465
 msgid ""
 "Searches for rides to each campus, and rides posted to it, in the period"
 msgstr ""
+"Kullekin kampukselle tehdyt kyytihaut ja sinne julkaistut kyydit "
+"ajanjaksolla"
 
 #: accounts/stats.py:474
 msgid "Same day"
-msgstr ""
+msgstr "Samana päivänä"
 
 #: accounts/stats.py:474
 msgid "The day before"
-msgstr ""
+msgstr "Edellisenä päivänä"
 
 #: accounts/stats.py:474
 msgid "2–7 days before"
-msgstr ""
+msgstr "2–7 päivää ennen"
 
 #: accounts/stats.py:474
 msgid "Over a week before"
-msgstr ""
+msgstr "Yli viikkoa ennen"
 
 #: accounts/stats.py:482
 msgid "How far ahead rides are posted"
-msgstr ""
+msgstr "Kuinka paljon etukäteen kyytejä julkaistaan"
 
 #: accounts/stats.py:483
 msgid "One-time rides posted in the period, by how long before leaving"
 msgstr ""
+"Ajanjaksolla julkaistut kertakyydit sen mukaan, kuinka kauan ennen lähtöä"
 
 #: accounts/stats.py:484 accounts/stats.py:585
 #: accounts/templates/admin/accounts/user_stats.html:166
 msgid "Rides"
-msgstr ""
+msgstr "Kyydit"
 
 #: accounts/stats.py:489
 msgid "Time of day"
-msgstr ""
+msgstr "Kellonaika"
 
 #: accounts/stats.py:490
 #, python-format
 msgid "Things done in the app by hour (Finnish time). %(log)s"
-msgstr ""
+msgstr "Sovelluksessa tehdyt toiminnot tunneittain (Suomen aikaa). %(log)s"
 
 #: accounts/stats.py:492 accounts/stats.py:500
 msgid "Actions"
-msgstr ""
+msgstr "Toiminnot"
 
 #: accounts/stats.py:497
 msgid "Mon"
-msgstr ""
+msgstr "Ma"
 
 #: accounts/stats.py:497
 msgid "Tue"
-msgstr ""
+msgstr "Ti"
 
 #: accounts/stats.py:497
 msgid "Wed"
-msgstr ""
+msgstr "Ke"
 
 #: accounts/stats.py:497
 msgid "Thu"
-msgstr ""
+msgstr "To"
 
 #: accounts/stats.py:497
 msgid "Fri"
-msgstr ""
+msgstr "Pe"
 
 #: accounts/stats.py:497
 msgid "Sat"
-msgstr ""
+msgstr "La"
 
 #: accounts/stats.py:497
 msgid "Sun"
-msgstr ""
+msgstr "Su"
 
 #: accounts/stats.py:498
 msgid "Day of the week"
-msgstr ""
+msgstr "Viikonpäivä"
 
 #: accounts/stats.py:499
 #, python-format
 msgid "Things done in the app by day of the week. %(log)s"
-msgstr ""
+msgstr "Sovelluksessa tehdyt toiminnot viikonpäivittäin. %(log)s"
 
 #: accounts/stats.py:506
 msgid "Searched for rides"
-msgstr ""
+msgstr "Haki kyytejä"
 
 #: accounts/stats.py:507
 msgid "Opened a ride"
-msgstr ""
+msgstr "Avasi kyydin"
 
 #: accounts/stats.py:508
 msgid "Asked to join a ride"
-msgstr ""
+msgstr "Pyysi päästä kyytiin"
 
 #: accounts/stats.py:509
 msgid "Posted a ride"
-msgstr ""
+msgstr "Julkaisi kyydin"
 
 #: accounts/stats.py:510
 msgid "Answered a request"
-msgstr ""
+msgstr "Vastasi pyyntöön"
 
 #: accounts/stats.py:511
 msgid "Opened a notification"
-msgstr ""
+msgstr "Avasi ilmoituksen"
 
 #: accounts/stats.py:512
 msgid "Turned push notifications on"
-msgstr ""
+msgstr "Otti push-ilmoitukset käyttöön"
 
 #: accounts/stats.py:513
 msgid "Changed the profile or photo"
-msgstr ""
+msgstr "Muutti profiilia tai kuvaa"
 
 #: accounts/stats.py:514
 msgid "Changed the settings"
-msgstr ""
+msgstr "Muutti asetuksia"
 
 #: accounts/stats.py:519
 msgid "What people use"
-msgstr ""
+msgstr "Mitä käytetään"
 
 #: accounts/stats.py:520
 #, python-format
-msgid "Share of the %(count)s users active in the period, in per cent. %(log)s"
+msgid ""
+"Share of the %(count)s users active in the period, in per cent. %(log)s"
 msgstr ""
+"Osuus ajanjaksolla aktiivisista %(count)s käyttäjästä, prosentteina. %(log)s"
 
 #: accounts/stats.py:528
 msgid "Phone or computer"
-msgstr ""
+msgstr "Puhelin vai tietokone"
 
 #: accounts/stats.py:529
 msgid "Days the app was used, by the device it was first used on that day"
 msgstr ""
+"Päivät, joina sovellusta käytettiin, sen laitteen mukaan, jolla sitä "
+"käytettiin päivän ensimmäisen kerran"
 
 #: accounts/stats.py:530
 msgid "Computer"
-msgstr ""
+msgstr "Tietokone"
 
 #: accounts/stats.py:531
 msgid "Days"
-msgstr ""
+msgstr "Päivät"
 
 #: accounts/stats.py:573
 msgid "Requests by answer"
-msgstr ""
+msgstr "Pyynnöt vastauksen mukaan"
 
 #: accounts/stats.py:574
 msgid "Requests made in the period, by their answer now"
-msgstr ""
+msgstr "Ajanjaksolla tehdyt pyynnöt niiden nykyisen vastauksen mukaan"
 
 #: accounts/stats.py:577
 msgid "Requests"
-msgstr ""
+msgstr "Pyynnöt"
 
 #: accounts/stats.py:582
 msgid "Rides by way of travelling"
-msgstr ""
+msgstr "Kyydit kulkutavan mukaan"
 
 #: accounts/stats.py:583
 msgid "Rides posted in the period; a ride can have several"
-msgstr ""
+msgstr "Ajanjaksolla julkaistut kyydit; kyydillä voi olla useita"
 
 #: accounts/stats.py:596
 msgid "Last 7 days"
-msgstr ""
+msgstr "Viimeiset 7 päivää"
 
 #: accounts/stats.py:596
 msgid "8–30 days ago"
-msgstr ""
+msgstr "8–30 päivää sitten"
 
 #: accounts/stats.py:596
 msgid "31–90 days ago"
-msgstr ""
+msgstr "31–90 päivää sitten"
 
 #: accounts/stats.py:596
 msgid "Over 90 days ago"
-msgstr ""
+msgstr "Yli 90 päivää sitten"
 
 #: accounts/stats.py:596
 msgid "Never"
-msgstr ""
+msgstr "Ei koskaan"
 
 #: accounts/stats.py:598
 msgid "When each user last logged in, counted from today"
-msgstr ""
+msgstr "Milloin kukin käyttäjä kirjautui viimeksi, tästä päivästä laskien"
 
 #: accounts/stats.py:615
 msgid "Has a profile photo"
-msgstr ""
+msgstr "On profiilikuva"
 
 #: accounts/stats.py:615
 msgid "Shows the photo"
-msgstr ""
+msgstr "Näyttää kuvan"
 
 #: accounts/stats.py:616
 msgid "Shares the email address"
-msgstr ""
+msgstr "Jakaa sähköpostiosoitteen"
 
 #: accounts/stats.py:616
 msgid "Shares the phone number"
-msgstr ""
+msgstr "Jakaa puhelinnumeron"
 
 #: accounts/stats.py:617
 msgid "Gets all notifications by email"
-msgstr ""
+msgstr "Saa kaikki ilmoitukset sähköpostilla"
 
 #: accounts/stats.py:617
 msgid "Has push notifications on"
-msgstr ""
+msgstr "Push-ilmoitukset käytössä"
 
 #: accounts/stats.py:618
 msgid "Has seen the welcome popup"
-msgstr ""
+msgstr "On nähnyt tervetuloikkunan"
 
 #: accounts/stats.py:620
 msgid "Profiles and settings"
-msgstr ""
+msgstr "Profiilit ja asetukset"
 
 #: accounts/stats.py:621
 msgid "Share of users, in per cent"
-msgstr ""
+msgstr "Osuus käyttäjistä, prosentteina"
 
 #: accounts/stats.py:628
 msgid "Name shown to others"
-msgstr ""
+msgstr "Muille näytettävä nimi"
 
 #: accounts/stats.py:629
 msgid "What other members see of each user's name"
-msgstr ""
+msgstr "Mitä muut jäsenet näkevät kunkin käyttäjän nimestä"
 
 #: accounts/templates/_avatar.html:6
 msgid "Profile photo"
-msgstr ""
+msgstr "Profiilikuva"
 
 #: accounts/templates/admin/accounts/user/change_list.html:5
 msgid "Statistics"
-msgstr ""
+msgstr "Tilastot"
 
 #: accounts/templates/admin/accounts/user_stats.html:98
 msgid "Home"
-msgstr ""
+msgstr "Etusivu"
 
 #: accounts/templates/admin/accounts/user_stats.html:107
 msgid "Filters"
-msgstr ""
+msgstr "Suodattimet"
 
 #: accounts/templates/admin/accounts/user_stats.html:114
 msgid "Apply"
-msgstr ""
+msgstr "Käytä"
 
 #: accounts/templates/admin/accounts/user_stats.html:115
 msgid "Reset"
-msgstr ""
+msgstr "Tyhjennä"
 
 #: accounts/templates/admin/accounts/user_stats.html:117
 msgid "Open Metabase"
-msgstr ""
+msgstr "Avaa Metabase"
 
 #: accounts/templates/admin/accounts/user_stats.html:118
 msgid "Download CSV"
-msgstr ""
+msgstr "Lataa CSV"
 
 #: accounts/templates/admin/accounts/user_stats.html:123
 #, python-format
@@ -942,44 +966,49 @@ msgid ""
 "Counts are for %(period)s. Users are everyone matching the filters who had "
 "joined by its end."
 msgstr ""
+"Luvut koskevat ajanjaksoa %(period)s. Käyttäjät ovat kaikki suodattimia "
+"vastaavat, jotka olivat liittyneet sen loppuun mennessä."
 
 #: accounts/templates/admin/accounts/user_stats.html:146
 msgid "Show as table"
-msgstr ""
+msgstr "Näytä taulukkona"
 
 #: accounts/templates/admin/accounts/user_stats.html:162
 msgid "Most common routes"
-msgstr ""
+msgstr "Yleisimmät reitit"
 
 #: accounts/templates/admin/accounts/user_stats.html:163
 msgid "Rides posted in the period, by start and destination"
-msgstr ""
+msgstr "Ajanjaksolla julkaistut kyydit lähtöpaikan ja määränpään mukaan"
 
 #: accounts/templates/admin/accounts/user_stats.html:171
 msgid "No rides were posted in the period."
-msgstr ""
+msgstr "Ajanjaksolla ei julkaistu kyytejä."
 
 #: accounts/templates/admin/accounts/user_stats.html:179
 msgid "Retention"
-msgstr ""
+msgstr "Pysyvyys"
 
 #: accounts/templates/admin/accounts/user_stats.html:180
 msgid ""
-"Users by the month they joined, and the share of them who used the app 1, 2, "
-"3, 6 and 12 months later (30-day months). Only users who joined after the "
+"Users by the month they joined, and the share of them who used the app 1, 2,"
+" 3, 6 and 12 months later (30-day months). Only users who joined after the "
 "activity log started."
 msgstr ""
+"Käyttäjät liittymiskuukauden mukaan ja osuus heistä, jotka käyttivät "
+"sovellusta 1, 2, 3, 6 ja 12 kuukautta myöhemmin (30 päivän kuukausia). Vain "
+"toimintalokin alkamisen jälkeen liittyneet käyttäjät."
 
 #: accounts/templates/admin/accounts/user_stats.html:186
 #, python-format
 msgid "Month %(counter)s"
 msgid_plural "Month %(counter)s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Kuukausi %(counter)s"
+msgstr[1] "Kuukausi %(counter)s"
 
 #: accounts/templates/admin/accounts/user_stats.html:193
 msgid "No users have joined since the activity log started."
-msgstr ""
+msgstr "Kukaan ei ole liittynyt toimintalokin alkamisen jälkeen."
 
 #: accounts/templates/admin/accounts/user_stats.html:203
 #, python-format
@@ -987,105 +1016,111 @@ msgid "%(counter)s user. Counts are for the period; the CSV has every column."
 msgid_plural ""
 "%(counter)s users. Counts are for the period; the CSV has every column."
 msgstr[0] ""
+"%(counter)s käyttäjä. Luvut koskevat ajanjaksoa; CSV-tiedostossa on kaikki "
+"sarakkeet."
 msgstr[1] ""
+"%(counter)s käyttäjää. Luvut koskevat ajanjaksoa; CSV-tiedostossa on kaikki "
+"sarakkeet."
 
 #: accounts/templates/admin/accounts/user_stats.html:208
 msgid "Name"
-msgstr ""
+msgstr "Nimi"
 
 #: accounts/templates/admin/accounts/user_stats.html:226
 msgid "No users match the filters."
-msgstr ""
+msgstr "Yksikään käyttäjä ei vastaa suodattimia."
 
 #: accounts/templates/admin/accounts/user_stats.html:233
 msgid "Previous"
-msgstr ""
+msgstr "Edellinen"
 
 #: accounts/templates/admin/accounts/user_stats.html:234
 #, python-format
 msgid "Page %(number)s of %(total)s"
-msgstr ""
+msgstr "Sivu %(number)s / %(total)s"
 
 #: accounts/templates/admin/accounts/user_stats.html:235
 msgid "Next"
-msgstr ""
+msgstr "Seuraava"
 
 #: accounts/templates/registration/_code_input.html:12
 msgid "8 letters and numbers, e.g. k3d9-x2mq"
-msgstr ""
+msgstr "8 kirjainta ja numeroa, esim. k3d9-x2mq"
 
 #: accounts/templates/registration/_copy.html:13
 msgid "Copied"
-msgstr ""
+msgstr "Kopioitu"
 
 #: accounts/templates/registration/_password_hint.html:4
 msgid ""
 "At least 8 characters, including a number, a lower case letter and an upper "
 "case letter."
-msgstr ""
+msgstr "Vähintään 8 merkkiä, joissa on numero, pieni kirjain ja iso kirjain."
 
 #: accounts/templates/registration/_password_hint.html:5
 msgid ""
 "It can't be a commonly used password, or too similar to your name or email "
 "address."
 msgstr ""
+"Se ei saa olla yleisesti käytetty salasana tai liian samanlainen kuin nimesi"
+" tai sähköpostiosoitteesi."
 
 #: accounts/templates/registration/_resend_confirmation.html:12
 msgid "Send a new link"
-msgstr ""
+msgstr "Lähetä uusi linkki"
 
 #: accounts/templates/registration/_two_factor_steps.html:3
 msgid "Get an app"
-msgstr ""
+msgstr "Hanki sovellus"
 
 #: accounts/templates/registration/_two_factor_steps.html:4
 msgid "Connect it"
-msgstr ""
+msgstr "Yhdistä se"
 
 #: accounts/templates/registration/_two_factor_steps.html:5
 msgid "Save backup codes"
-msgstr ""
+msgstr "Tallenna varakoodit"
 
 #: accounts/templates/registration/account.html:4
 #: accounts/templates/registration/account.html:13
 msgid "Profile & settings"
-msgstr ""
+msgstr "Profiili ja asetukset"
 
 #: accounts/templates/registration/account.html:12
 msgid "Your account"
-msgstr ""
+msgstr "Tilisi"
 
 #: accounts/templates/registration/account.html:14
 msgid "Manage your personal information, privacy and account preferences."
-msgstr ""
+msgstr "Hallitse henkilötietojasi, yksityisyyttäsi ja tilisi asetuksia."
 
 #: accounts/templates/registration/account.html:27
-msgid "LUT / LAB verified member"
-msgstr ""
+msgid "Verified LUT/LAB member"
+msgstr "Vahvistettu LUT/LAB-jäsen"
 
 #: accounts/templates/registration/account.html:36
 msgid "Change photo"
-msgstr ""
+msgstr "Vaihda kuva"
 
 #: accounts/templates/registration/account.html:36
 msgid "Add photo"
-msgstr ""
+msgstr "Lisää kuva"
 
 #: accounts/templates/registration/account.html:45
 msgid "Remove"
-msgstr ""
+msgstr "Poista"
 
 #: accounts/templates/registration/account.html:56
 msgid "Personal information"
-msgstr ""
+msgstr "Henkilötiedot"
 
 #: accounts/templates/registration/account.html:73
 msgid "University email"
-msgstr ""
+msgstr "Yliopiston sähköposti"
 
 #: accounts/templates/registration/account.html:76
 msgid "Change"
-msgstr ""
+msgstr "Vaihda"
 
 #: accounts/templates/registration/account.html:81
 #, python-format
@@ -1093,24 +1128,28 @@ msgid ""
 "Waiting for you to confirm <strong>%(new)s</strong>. Open the link we sent "
 "there. Until then, keep using your current address."
 msgstr ""
+"Odotetaan, että vahvistat osoitteen <strong>%(new)s</strong>. Avaa linkki, "
+"jonka lähetimme sinne. Siihen asti käytä nykyistä osoitettasi."
 
 #: accounts/templates/registration/account.html:83
 msgid "Send the link again"
-msgstr ""
+msgstr "Lähetä linkki uudelleen"
 
 #: accounts/templates/registration/account.html:84
 msgid "Cancel change"
-msgstr ""
+msgstr "Peru vaihto"
 
 #: accounts/templates/registration/account.html:88
 msgid ""
 "You log in with this address. Changing it needs confirming from the new "
 "inbox."
 msgstr ""
+"Kirjaudut sisään tällä osoitteella. Vaihto pitää vahvistaa uudesta "
+"postilaatikosta."
 
 #: accounts/templates/registration/account.html:92
 msgid "Phone number (optional)"
-msgstr ""
+msgstr "Puhelinnumero (valinnainen)"
 
 #: accounts/templates/registration/account.html:95
 msgid ""
@@ -1118,39 +1157,42 @@ msgid ""
 "elsewhere. Only shared with people on your rides, and only if you allow it "
 "under Privacy."
 msgstr ""
+"Suomalainen numero, tai lisää maatunnus (esim. +46) muualta oleville "
+"numeroille. Näytetään vain kyytiesi osallistujille, ja vain jos sallit sen "
+"Yksityisyys-kohdassa."
 
 #: accounts/templates/registration/account.html:97
 msgid "Save profile changes"
-msgstr ""
+msgstr "Tallenna profiilin muutokset"
 
 #: accounts/templates/registration/account.html:108
 msgid "Security"
-msgstr ""
+msgstr "Turvallisuus"
 
 #: accounts/templates/registration/account.html:112
 msgid "Update your account password"
-msgstr ""
+msgstr "Päivitä tilisi salasana"
 
 #: accounts/templates/registration/account.html:114
 #: accounts/templates/registration/password_change_form.html:4
 #: accounts/templates/registration/password_change_form.html:5
 #: accounts/templates/registration/password_change_form.html:30
 msgid "Change password"
-msgstr ""
+msgstr "Vaihda salasana"
 
 #: accounts/templates/registration/account.html:120
 #: accounts/templates/registration/login_code.html:4
 #: accounts/templates/registration/login_code.html:5
 msgid "Two-step verification"
-msgstr ""
+msgstr "Kaksivaiheinen tunnistautuminen"
 
 #: accounts/templates/registration/account.html:121
 msgid "On"
-msgstr ""
+msgstr "Päällä"
 
 #: accounts/templates/registration/account.html:122
 msgid "Off"
-msgstr ""
+msgstr "Pois"
 
 #: accounts/templates/registration/account.html:126
 #, python-format
@@ -1161,183 +1203,209 @@ msgid_plural ""
 "Logging in also needs a code from your authenticator app. %(count)s backup "
 "codes left."
 msgstr[0] ""
+"Kirjautuminen vaatii myös koodin todennussovelluksestasi. %(count)s "
+"varakoodi jäljellä."
 msgstr[1] ""
+"Kirjautuminen vaatii myös koodin todennussovelluksestasi. %(count)s "
+"varakoodia jäljellä."
 
 #: accounts/templates/registration/account.html:128
 msgid ""
 "Also ask for a code from an app on your phone when logging in, so your "
 "password alone isn't enough"
 msgstr ""
+"Kysy kirjautuessa myös koodia puhelimesi sovelluksesta, jotta pelkkä "
+"salasana ei riitä"
 
 #: accounts/templates/registration/account.html:134
 msgid "New backup codes"
-msgstr ""
+msgstr "Uudet varakoodit"
 
 #: accounts/templates/registration/account.html:135
 #: accounts/templates/registration/account.html:184
 #: accounts/templates/registration/account.html:381
 msgid "Turn off"
-msgstr ""
+msgstr "Poista käytöstä"
 
 #: accounts/templates/registration/account.html:138
 #: accounts/templates/registration/account.html:184
 #: accounts/templates/registration/two_factor_setup.html:42
 msgid "Turn on"
-msgstr ""
+msgstr "Ota käyttöön"
 
 #: accounts/templates/registration/account.html:144
 msgid ""
-"You're running out of backup codes. Make new ones so you can still log in if "
-"you lose your phone."
+"You're running out of backup codes. Make new ones so you can still log in if"
+" you lose your phone."
 msgstr ""
+"Varakoodisi ovat loppumassa. Luo uudet, jotta voit yhä kirjautua, jos "
+"kadotat puhelimesi."
 
 #: accounts/templates/registration/account.html:159
 #, python-format
 msgid ""
 "All notifications are shown in the app, under the bell and on the <a "
-"href=\"%(notifications_url)s\" class=\"link\">notifications page</a>. Choose "
-"which ones are also emailed to you."
+"href=\"%(notifications_url)s\" class=\"link\">notifications page</a>. Choose"
+" which ones are also emailed to you."
 msgstr ""
+"Kaikki ilmoitukset näytetään sovelluksessa kellon alla ja <a "
+"href=\"%(notifications_url)s\" class=\"link\">ilmoitussivulla</a>. Valitse, "
+"mitkä niistä lähetetään sinulle myös sähköpostilla."
 
 #: accounts/templates/registration/account.html:161
 msgid "Email me about"
-msgstr ""
+msgstr "Lähetä minulle sähköpostia"
 
 #: accounts/templates/registration/account.html:168
 msgid "Also new requests on your rides and withdrawn requests"
-msgstr ""
+msgstr "Myös uudet pyynnöt kyyteihisi ja perutut pyynnöt"
 
 #: accounts/templates/registration/account.html:168
 msgid ""
 "Only changes to your trips: answers to your requests, passengers leaving, "
 "and rides being changed or cancelled"
 msgstr ""
+"Vain matkojasi koskevat muutokset: vastaukset pyyntöihisi, poistuvat "
+"matkustajat sekä muutetut tai perutut kyydit"
 
 #: accounts/templates/registration/account.html:173
 msgid ""
 "Emails about your account, such as confirming your email address or "
 "resetting your password, are always sent."
 msgstr ""
+"Tiliäsi koskevat sähköpostit, kuten sähköpostiosoitteen vahvistus tai "
+"salasanan palautus, lähetetään aina."
 
 #: accounts/templates/registration/account.html:178
 msgid "On: notifications appear on this device even when LUT Kyyti is closed."
 msgstr ""
+"Päällä: ilmoitukset näkyvät tällä laitteella silloinkin, kun LUT Kyyti on "
+"suljettu."
 
 #: accounts/templates/registration/account.html:179
 msgid "Get notifications on this device even when LUT Kyyti is closed."
 msgstr ""
+"Saa ilmoitukset tälle laitteelle silloinkin, kun LUT Kyyti on suljettu."
 
 #: accounts/templates/registration/account.html:180
 msgid ""
-"On iPhone and iPad, add LUT Kyyti to your Home Screen first (Share, then Add "
-"to Home Screen) and open it from there to turn on notifications."
+"On iPhone and iPad, add LUT Kyyti to your Home Screen first (Share, then Add"
+" to Home Screen) and open it from there to turn on notifications."
 msgstr ""
+"Lisää iPhonessa ja iPadissa LUT Kyyti ensin kotivalikkoon (Jaa, sitten Lisää"
+" Koti-valikkoon) ja avaa se sieltä ottaaksesi ilmoitukset käyttöön."
 
 #: accounts/templates/registration/account.html:181
 msgid ""
-"This browser can't show push notifications. You'll still see them in the app "
-"and by email."
+"This browser can't show push notifications. You'll still see them in the app"
+" and by email."
 msgstr ""
+"Tämä selain ei voi näyttää push-ilmoituksia. Näet ne silti sovelluksessa ja "
+"sähköpostissa."
 
 #: accounts/templates/registration/account.html:182
 msgid ""
 "Notifications are blocked for LUT Kyyti in this browser. Allow them in the "
 "browser's site settings to turn them on."
 msgstr ""
+"LUT Kyydin ilmoitukset on estetty tässä selaimessa. Salli ne selaimen "
+"sivustoasetuksissa ottaaksesi ne käyttöön."
 
 #: accounts/templates/registration/account.html:183
 msgid "Push notifications could not be turned on. Please try again."
-msgstr ""
+msgstr "Push-ilmoituksia ei voitu ottaa käyttöön. Yritä uudelleen."
 
 #: accounts/templates/registration/account.html:185
 msgid "Push notifications on this device"
-msgstr ""
+msgstr "Push-ilmoitukset tällä laitteella"
 
 #: accounts/templates/registration/account.html:186
 msgid "Checking what this device can do…"
-msgstr ""
+msgstr "Tarkistetaan, mihin tämä laite pystyy…"
 
 #: accounts/templates/registration/account.html:195
 msgid "Privacy & visibility"
-msgstr ""
+msgstr "Yksityisyys ja näkyvyys"
 
 #: accounts/templates/registration/account.html:196
 msgid "Choose what other LUT Kyyti members can see about you."
-msgstr ""
+msgstr "Valitse, mitä muut LUT Kyydin jäsenet näkevät sinusta."
 
 #: accounts/templates/registration/account.html:199
 msgid "Name shown on rides and requests"
-msgstr ""
+msgstr "Kyydeissä ja pyynnöissä näytettävä nimi"
 
 #: accounts/templates/registration/account.html:211
 msgid "People on the same ride as you always see your full name."
-msgstr ""
+msgstr "Samassa kyydissä olevat näkevät aina koko nimesi."
 
 #: accounts/templates/registration/account.html:218
 msgid "Show my profile photo"
-msgstr ""
+msgstr "Näytä profiilikuvani"
 
 #: accounts/templates/registration/account.html:219
 msgid "Otherwise others see your initials"
-msgstr ""
+msgstr "Muuten muut näkevät nimikirjaimesi"
 
 #: accounts/templates/registration/account.html:225
 msgid "Share my email with ride partners"
-msgstr ""
+msgstr "Jaa sähköpostiosoitteeni kyytikumppaneille"
 
 #: accounts/templates/registration/account.html:226
 #: accounts/templates/registration/account.html:234
 msgid "The driver of a ride you join, or passengers you accept"
-msgstr ""
+msgstr "Kyydin kuljettaja, johon liityt, tai hyväksymäsi matkustajat"
 
 #: accounts/templates/registration/account.html:232
 msgid "Share my phone number with ride partners"
-msgstr ""
+msgstr "Jaa puhelinnumeroni kyytikumppaneille"
 
 #: accounts/templates/registration/account.html:234
 msgid "Add a phone number to your profile first"
-msgstr ""
+msgstr "Lisää ensin puhelinnumero profiiliisi"
 
 #: accounts/templates/registration/account.html:242
 msgid ""
 "Your email and phone number never appear on ride listings. They are only "
 "shown to people sharing a ride with you."
 msgstr ""
+"Sähköpostiosoitteesi ja puhelinnumerosi eivät koskaan näy kyytilistauksissa."
+" Ne näytetään vain niille, jotka jakavat kyydin kanssasi."
 
 #: accounts/templates/registration/account.html:245
 msgid "Save settings"
-msgstr ""
+msgstr "Tallenna asetukset"
 
 #: accounts/templates/registration/account.html:246
 msgid "Read the privacy policy"
-msgstr ""
+msgstr "Lue tietosuojaseloste"
 
 #: accounts/templates/registration/account.html:253
 msgid "Account management"
-msgstr ""
+msgstr "Tilin hallinta"
 
 #: accounts/templates/registration/account.html:255
 msgid "Help & support"
-msgstr ""
+msgstr "Ohjeet ja tuki"
 
 #: accounts/templates/registration/account.html:256
 msgid "Contact support"
-msgstr ""
+msgstr "Ota yhteyttä tukeen"
 
 #: accounts/templates/registration/account.html:259
 msgid "Log out"
-msgstr ""
+msgstr "Kirjaudu ulos"
 
 #: accounts/templates/registration/account.html:261
 #: accounts/templates/registration/account.html:336
 msgid "Delete account"
-msgstr ""
+msgstr "Poista tili"
 
 #: accounts/templates/registration/account.html:274
 #: accounts/templates/registration/confirm_email_change.html:4
 #: accounts/templates/registration/confirm_email_change.html:5
 msgid "Change email address"
-msgstr ""
+msgstr "Vaihda sähköpostiosoite"
 
 #: accounts/templates/registration/account.html:275
 #, python-format
@@ -1345,15 +1413,18 @@ msgid ""
 "We'll send a link to the new address. Your account keeps using "
 "<strong>%(email)s</strong> until you open it, so a typo can't lock you out."
 msgstr ""
+"Lähetämme linkin uuteen osoitteeseen. Tilisi käyttää osoitetta "
+"<strong>%(email)s</strong>, kunnes avaat linkin, joten kirjoitusvirhe ei voi"
+" lukita sinua ulos."
 
 #: accounts/templates/registration/account.html:280
 msgid "New email address"
-msgstr ""
+msgstr "Uusi sähköpostiosoite"
 
 #: accounts/templates/registration/account.html:285
 #: accounts/templates/registration/password_change_form.html:10
 msgid "Current password"
-msgstr ""
+msgstr "Nykyinen salasana"
 
 #: accounts/templates/registration/account.html:291
 #: accounts/templates/registration/account.html:295
@@ -1368,15 +1439,15 @@ msgstr ""
 #: accounts/templates/registration/password_change_form.html:31
 #: accounts/templates/registration/two_factor_setup.html:43
 msgid "Cancel"
-msgstr ""
+msgstr "Peruuta"
 
 #: accounts/templates/registration/account.html:292
 msgid "Send confirmation link"
-msgstr ""
+msgstr "Lähetä vahvistuslinkki"
 
 #: accounts/templates/registration/account.html:302
 msgid "Delete your account?"
-msgstr ""
+msgstr "Poistetaanko tilisi?"
 
 #: accounts/templates/registration/account.html:304
 msgid ""
@@ -1384,52 +1455,59 @@ msgid ""
 "requests are deleted permanently. People who joined or requested your rides "
 "are notified that they are cancelled."
 msgstr ""
+"Tilisi, profiilikuvasi, julkaisemasi kyydit ja kyytipyyntösi poistetaan "
+"pysyvästi. Kyyteihisi liittyneille tai niitä pyytäneille ilmoitetaan, että "
+"kyydit on peruttu."
 
 #: accounts/templates/registration/account.html:310
 msgid "You are the only admin of these groups:"
-msgstr ""
+msgstr "Olet näiden ryhmien ainoa ylläpitäjä:"
 
 #: accounts/templates/registration/account.html:315
 msgid "you are its last member, so it will be deleted."
-msgstr ""
+msgstr "olet sen viimeinen jäsen, joten se poistetaan."
 
 #: accounts/templates/registration/account.html:316
 #, python-format
 msgid "%(name)s will become its admin, as the longest-standing member."
-msgstr ""
+msgstr "%(name)s tulee sen ylläpitäjäksi pisimpään jäsenenä olleena."
 
 #: accounts/templates/registration/account.html:317
 msgid ""
 "none of its members have used LUT Kyyti lately; the first to come back will "
 "become its admin."
 msgstr ""
+"yksikään sen jäsenistä ei ole käyttänyt LUT Kyytiä viime aikoina; "
+"ensimmäinen palaava tulee sen ylläpitäjäksi."
 
 #: accounts/templates/registration/account.html:321
 msgid ""
 "To choose someone else, hand the admin role over on the group's page first."
 msgstr ""
+"Jos haluat valita jonkun muun, luovuta ylläpitäjän rooli ensin ryhmän "
+"sivulla."
 
 #: accounts/templates/registration/account.html:329
 #: accounts/templates/registration/account.html:350
 #: accounts/templates/registration/account.html:374
 msgid "Enter your password to confirm"
-msgstr ""
+msgstr "Vahvista antamalla salasanasi"
 
 #: accounts/templates/registration/account.html:344
 msgid "Make new backup codes?"
-msgstr ""
+msgstr "Luodaanko uudet varakoodit?"
 
 #: accounts/templates/registration/account.html:345
 msgid "You'll get 10 new codes, and the ones you have now stop working."
-msgstr ""
+msgstr "Saat 10 uutta koodia, ja nykyiset lakkaavat toimimasta."
 
 #: accounts/templates/registration/account.html:357
 msgid "Make new codes"
-msgstr ""
+msgstr "Luo uudet koodit"
 
 #: accounts/templates/registration/account.html:367
 msgid "Turn off two-step verification?"
-msgstr ""
+msgstr "Poistetaanko kaksivaiheinen tunnistautuminen käytöstä?"
 
 #: accounts/templates/registration/account.html:369
 msgid ""
@@ -1437,45 +1515,50 @@ msgid ""
 "backup codes stop working for LUT Kyyti. You can turn it on again at any "
 "time."
 msgstr ""
+"Kirjautuminen vaatii vain salasanasi, eivätkä todennussovelluksesi ja "
+"varakoodisi enää toimi LUT Kyydissä. Voit ottaa sen uudelleen käyttöön "
+"milloin tahansa."
 
 #: accounts/templates/registration/account.html:406
 msgid "Frame your photo"
-msgstr ""
+msgstr "Rajaa kuvasi"
 
 #: accounts/templates/registration/account.html:407
 msgid ""
 "Drag the photo to place your face inside the circle. Zoom with the slider, "
 "the mouse wheel or by pinching."
 msgstr ""
+"Vedä kuvaa niin, että kasvosi ovat ympyrän sisällä. Zoomaa liukusäätimellä, "
+"hiiren rullalla tai nipistämällä."
 
 #: accounts/templates/registration/account.html:409
 msgid "Your new photo"
-msgstr ""
+msgstr "Uusi kuvasi"
 
 #: accounts/templates/registration/account.html:412
 #: accounts/templates/registration/account.html:414
 msgid "Zoom"
-msgstr ""
+msgstr "Zoomaa"
 
 #: accounts/templates/registration/account.html:419
 msgid "Save photo"
-msgstr ""
+msgstr "Tallenna kuva"
 
 #: accounts/templates/registration/backup_codes.html:4
 msgid "Your backup codes"
-msgstr ""
+msgstr "Varakoodisi"
 
 #: accounts/templates/registration/backup_codes.html:5
 msgid "Save your backup codes"
-msgstr ""
+msgstr "Tallenna varakoodisi"
 
 #: accounts/templates/registration/backup_codes.html:11
 msgid "Two-step verification is on."
-msgstr ""
+msgstr "Kaksivaiheinen tunnistautuminen on käytössä."
 
 #: accounts/templates/registration/backup_codes.html:16
 msgid "You have new backup codes. Your old ones no longer work."
-msgstr ""
+msgstr "Sinulla on uudet varakoodit. Vanhat eivät enää toimi."
 
 #: accounts/templates/registration/backup_codes.html:19
 msgid ""
@@ -1483,36 +1566,40 @@ msgid ""
 "works once. Keep them somewhere safe, such as your password manager, and "
 "don't share them."
 msgstr ""
+"Jos kadotat puhelimesi, kirjaudu jollakin näistä koodeista. Kukin koodi "
+"toimii kerran. Säilytä ne turvallisessa paikassa, kuten salasanojen "
+"hallintaohjelmassa, äläkä jaa niitä."
 
 #: accounts/templates/registration/backup_codes.html:26
 #: accounts/templates/registration/two_factor_setup.html:29
 msgid "Copy"
-msgstr ""
+msgstr "Kopioi"
 
 #: accounts/templates/registration/backup_codes.html:27
 msgid "Download"
-msgstr ""
+msgstr "Lataa"
 
 #: accounts/templates/registration/backup_codes.html:32
 msgid ""
 "This is the only time these codes are shown. You can make new ones on your "
 "profile page."
 msgstr ""
+"Koodit näytetään vain tämän kerran. Voit luoda uudet profiilisivullasi."
 
 #: accounts/templates/registration/backup_codes.html:35
 msgid "I've saved my codes"
-msgstr ""
+msgstr "Olen tallentanut koodit"
 
 #: accounts/templates/registration/backup_codes.html:41
 msgid "LUT Kyyti backup codes"
-msgstr ""
+msgstr "LUT Kyydin varakoodit"
 
 #: accounts/templates/registration/confirm_email.html:4
 #: accounts/templates/registration/confirm_email.html:5
 #: accounts/templates/registration/confirmation_sent.html:4
 #: accounts/templates/registration/confirmation_sent.html:5
 msgid "Confirm your email"
-msgstr ""
+msgstr "Vahvista sähköpostiosoitteesi"
 
 #: accounts/templates/registration/confirm_email.html:8
 #, python-format
@@ -1520,37 +1607,42 @@ msgid ""
 "Confirm <strong>%(email)s</strong> as the email address of your LUT Kyyti "
 "account."
 msgstr ""
+"Vahvista <strong>%(email)s</strong> LUT Kyyti -tilisi sähköpostiosoitteeksi."
 
 #: accounts/templates/registration/confirm_email.html:11
 msgid "Confirm and log in"
-msgstr ""
+msgstr "Vahvista ja kirjaudu sisään"
 
 #: accounts/templates/registration/confirm_email.html:14
 msgid ""
 "This email address is already confirmed. You can log in to your account."
-msgstr ""
+msgstr "Tämä sähköpostiosoite on jo vahvistettu. Voit kirjautua tilillesi."
 
 #: accounts/templates/registration/confirm_email.html:15
 #: accounts/templates/registration/confirm_email_change.html:9
 #: accounts/templates/registration/login.html:6
 #: accounts/templates/registration/login.html:11
+#: accounts/templates/registration/login.html:26
 #: accounts/templates/registration/login_code.html:18
+#: accounts/templates/registration/password_reset_complete.html:8
 #: accounts/templates/registration/signup.html:58
 msgid "Log in"
-msgstr ""
+msgstr "Kirjaudu sisään"
 
 #: accounts/templates/registration/confirm_email.html:17
 msgid ""
 "This confirmation link is invalid or has expired. Enter your email address "
 "to get a new one."
 msgstr ""
+"Tämä vahvistuslinkki on virheellinen tai vanhentunut. Anna "
+"sähköpostiosoitteesi saadaksesi uuden."
 
 #: accounts/templates/registration/confirm_email.html:19
 #: accounts/templates/registration/confirmation_sent.html:16
 #: accounts/templates/registration/password_reset_done.html:9
 #: accounts/templates/registration/password_reset_form.html:19
 msgid "Back to login"
-msgstr ""
+msgstr "Takaisin kirjautumiseen"
 
 #: accounts/templates/registration/confirm_email_change.html:8
 #, python-format
@@ -1558,6 +1650,8 @@ msgid ""
 "Your email address is now <strong>%(email)s</strong>. Use it to log in from "
 "now on."
 msgstr ""
+"Sähköpostiosoitteesi on nyt <strong>%(email)s</strong>. Kirjaudu sillä tästä"
+" lähtien."
 
 #: accounts/templates/registration/confirm_email_change.html:11
 #, python-format
@@ -1565,21 +1659,25 @@ msgid ""
 "<strong>%(email)s</strong> is now used by another account, so your email "
 "address was not changed."
 msgstr ""
+"<strong>%(email)s</strong> on nyt toisen tilin käytössä, joten "
+"sähköpostiosoitettasi ei vaihdettu."
 
 #: accounts/templates/registration/confirm_email_change.html:12
 #: accounts/templates/registration/confirm_email_change.html:16
 msgid "Go to your profile"
-msgstr ""
+msgstr "Siirry profiiliisi"
 
 #: accounts/templates/registration/confirm_email_change.html:14
 msgid ""
-"This link is invalid or has expired, or the change was cancelled. Your email "
-"address has not changed."
+"This link is invalid or has expired, or the change was cancelled. Your email"
+" address has not changed."
 msgstr ""
+"Tämä linkki on virheellinen tai vanhentunut, tai vaihto peruttiin. "
+"Sähköpostiosoitteesi ei ole muuttunut."
 
 #: accounts/templates/registration/confirm_email_change.html:15
 msgid "You can ask for a new link on your profile page."
-msgstr ""
+msgstr "Voit pyytää uuden linkin profiilisivullasi."
 
 #: accounts/templates/registration/confirm_email_change.html:18
 #, python-format
@@ -1587,16 +1685,18 @@ msgid ""
 "Change the email address of your LUT Kyyti account from "
 "<strong>%(old_email)s</strong> to <strong>%(email)s</strong>?"
 msgstr ""
+"Vaihdetaanko LUT Kyyti -tilisi sähköpostiosoite osoitteesta "
+"<strong>%(old_email)s</strong> osoitteeseen <strong>%(email)s</strong>?"
 
 #: accounts/templates/registration/confirm_email_change.html:19
 msgid ""
 "You will log in with the new address from now on. Your password stays the "
 "same."
-msgstr ""
+msgstr "Kirjaudut tästä lähtien uudella osoitteella. Salasanasi pysyy samana."
 
 #: accounts/templates/registration/confirm_email_change.html:22
 msgid "Confirm new address"
-msgstr ""
+msgstr "Vahvista uusi osoite"
 
 #: accounts/templates/registration/confirmation_email.txt:1
 #: accounts/templates/registration/email_change_confirm.txt:1
@@ -1606,23 +1706,27 @@ msgstr ""
 #: accounts/templates/registration/two_factor_off.txt:1
 #: accounts/templates/registration/two_factor_on.txt:1
 msgid "Hi"
-msgstr ""
+msgstr "Hei"
 
 #: accounts/templates/registration/confirmation_email.txt:3
 msgid ""
 "Thanks for signing up to LUT Kyyti. Open the link below to confirm your "
 "email address and start using your account:"
 msgstr ""
+"Kiitos, että rekisteröidyit LUT Kyytiin. Avaa alla oleva linkki "
+"vahvistaaksesi sähköpostiosoitteesi ja aloittaaksesi tilisi käytön:"
 
 #: accounts/templates/registration/confirmation_email.txt:7
 msgid "The link works once and expires in 3 days."
-msgstr ""
+msgstr "Linkki toimii kerran ja vanhenee 3 päivässä."
 
 #: accounts/templates/registration/confirmation_email.txt:9
 msgid ""
 "If you didn't sign up to LUT Kyyti, you can ignore this email. The account "
 "won't be usable without confirming it."
 msgstr ""
+"Jos et rekisteröitynyt LUT Kyytiin, voit jättää tämän viestin huomiotta. "
+"Tiliä ei voi käyttää ilman vahvistusta."
 
 #: accounts/templates/registration/confirmation_email.txt:11
 #: accounts/templates/registration/email_change_confirm.txt:11
@@ -1632,11 +1736,11 @@ msgstr ""
 #: accounts/templates/registration/two_factor_off.txt:7
 #: accounts/templates/registration/two_factor_on.txt:7
 msgid "The LUT Kyyti team"
-msgstr ""
+msgstr "LUT Kyyti -tiimi"
 
 #: accounts/templates/registration/confirmation_email_subject.txt:1
 msgid "Confirm your LUT Kyyti email address"
-msgstr ""
+msgstr "Vahvista LUT Kyyti -sähköpostiosoitteesi"
 
 #: accounts/templates/registration/confirmation_sent.html:9
 #, python-format
@@ -1644,6 +1748,8 @@ msgid ""
 "If %(email)s has an account waiting for confirmation, we've sent it a new "
 "link."
 msgstr ""
+"Jos osoitteella %(email)s on vahvistusta odottava tili, lähetimme sille "
+"uuden linkin."
 
 #: accounts/templates/registration/confirmation_sent.html:12
 #, python-format
@@ -1651,44 +1757,56 @@ msgid ""
 "We've sent a confirmation link to <strong>%(email)s</strong>. Open it to "
 "start using your account."
 msgstr ""
+"Lähetimme vahvistuslinkin osoitteeseen <strong>%(email)s</strong>. Avaa se "
+"aloittaaksesi tilisi käytön."
 
 #: accounts/templates/registration/confirmation_sent.html:14
 msgid ""
 "If you don't receive an email within a few minutes, check your spam folder "
 "or send a new link."
 msgstr ""
+"Jos et saa sähköpostia muutaman minuutin kuluessa, tarkista roskapostikansio"
+" tai lähetä uusi linkki."
 
 #: accounts/templates/registration/email_change_confirm.txt:3
 #, python-format
 msgid ""
-"You asked to change the email address of your LUT Kyyti account from %(old)s "
-"to this address. Open the link below to confirm the change:"
+"You asked to change the email address of your LUT Kyyti account from %(old)s"
+" to this address. Open the link below to confirm the change:"
 msgstr ""
+"Pyysit vaihtamaan LUT Kyyti -tilisi sähköpostiosoitteen osoitteesta %(old)s "
+"tähän osoitteeseen. Vahvista vaihto avaamalla alla oleva linkki:"
 
 #: accounts/templates/registration/email_change_confirm.txt:7
 #, python-format
 msgid ""
-"Until you confirm, your account keeps using %(old)s. The link works once and "
-"expires in 3 days."
+"Until you confirm, your account keeps using %(old)s. The link works once and"
+" expires in 3 days."
 msgstr ""
+"Ennen vahvistusta tilisi käyttää osoitetta %(old)s. Linkki toimii kerran ja "
+"vanhenee 3 päivässä."
 
 #: accounts/templates/registration/email_change_confirm.txt:9
 msgid ""
 "If you didn't ask for this, you can ignore this email and nothing will "
 "change."
 msgstr ""
+"Jos et pyytänyt tätä, voit jättää viestin huomiotta, eikä mikään muutu."
 
 #: accounts/templates/registration/email_change_requested.txt:3
 #, python-format
 msgid ""
 "Someone asked to change the email address of your LUT Kyyti account to "
-"%(new_email)s. The change only happens once it is confirmed from that inbox, "
-"and until then your account keeps using this address."
+"%(new_email)s. The change only happens once it is confirmed from that inbox,"
+" and until then your account keeps using this address."
 msgstr ""
+"Joku pyysi vaihtamaan LUT Kyyti -tilisi sähköpostiosoitteeksi %(new_email)s."
+" Vaihto tapahtuu vasta, kun se vahvistetaan kyseisestä postilaatikosta, ja "
+"siihen asti tilisi käyttää tätä osoitetta."
 
 #: accounts/templates/registration/email_change_requested.txt:5
 msgid "If this was you, there is nothing else to do here."
-msgstr ""
+msgstr "Jos tämä olit sinä, sinun ei tarvitse tehdä muuta."
 
 #: accounts/templates/registration/email_change_requested.txt:7
 #, python-format
@@ -1696,6 +1814,8 @@ msgid ""
 "If it wasn't you, cancel the change on your profile page and change your "
 "password: %(account_url)s"
 msgstr ""
+"Jos se et ollut sinä, peru vaihto profiilisivullasi ja vaihda salasanasi: "
+"%(account_url)s"
 
 #: accounts/templates/registration/email_changed.txt:3
 #, python-format
@@ -1704,207 +1824,223 @@ msgid ""
 "From now on, log in with that address. This address no longer receives "
 "emails about your account."
 msgstr ""
+"LUT Kyyti -tilisi sähköpostiosoite vaihdettiin osoitteeksi %(new_email)s. "
+"Kirjaudu tästä lähtien sillä osoitteella. Tähän osoitteeseen ei enää "
+"lähetetä tiliäsi koskevia viestejä."
 
 #: accounts/templates/registration/email_changed.txt:5
 #, python-format
 msgid "If you didn't make this change, contact us right away: %(contact_url)s"
 msgstr ""
+"Jos et tehnyt tätä muutosta, ota meihin heti yhteyttä: %(contact_url)s"
 
 #: accounts/templates/registration/login.html:17
-msgid "Password Reset"
-msgstr ""
+#| msgid "Choose a password."
+msgid "Forgot your password?"
+msgstr "Unohditko salasanasi?"
 
 #: accounts/templates/registration/login.html:23
-msgid "Enter a valid email and password"
-msgstr ""
-
-#: accounts/templates/registration/login.html:26
-#: accounts/templates/registration/password_reset_complete.html:8
-msgid "Login"
-msgstr "Kirjaudu"
+msgid "The email address or password is wrong."
+msgstr "Sähköpostiosoite tai salasana on väärä."
 
 #: accounts/templates/registration/login.html:32
 #: accounts/templates/registration/signup.html:9
+#: accounts/templates/registration/signup.html:15
+#: accounts/templates/registration/signup.html:52
 msgid "Sign up"
-msgstr ""
+msgstr "Rekisteröidy"
 
 #: accounts/templates/registration/login_code.html:10
 msgid ""
 "Enter one of the backup codes you saved when you turned on two-step "
 "verification. Each code works once."
 msgstr ""
+"Anna yksi varakoodeista, jotka tallensit ottaessasi kaksivaiheisen "
+"tunnistautumisen käyttöön. Kukin koodi toimii kerran."
 
 #: accounts/templates/registration/login_code.html:11
 msgid ""
 "Open your authenticator app and enter the 6-digit code it shows for LUT "
 "Kyyti."
 msgstr ""
+"Avaa todennussovelluksesi ja anna sen LUT Kyydille näyttämä 6-numeroinen "
+"koodi."
 
 #: accounts/templates/registration/login_code.html:16
 msgid "Backup code"
-msgstr ""
+msgstr "Varakoodi"
 
 #: accounts/templates/registration/login_code.html:16
 msgid "Code from your app"
-msgstr ""
+msgstr "Koodi sovelluksestasi"
 
 #: accounts/templates/registration/login_code.html:23
 msgid "Use a code from my app instead"
-msgstr ""
+msgstr "Käytä sen sijaan sovelluksen koodia"
 
 #: accounts/templates/registration/login_code.html:25
 msgid "Lost your phone? Use a backup code"
-msgstr ""
+msgstr "Kadotitko puhelimesi? Käytä varakoodia"
 
 #: accounts/templates/registration/login_code.html:29
 msgid "Cancel and go back to login"
-msgstr ""
+msgstr "Peruuta ja palaa kirjautumiseen"
 
 #: accounts/templates/registration/password_change_done.html:4
 #: accounts/templates/registration/password_change_done.html:5
 msgid "Password changed"
-msgstr ""
+msgstr "Salasana vaihdettu"
 
 #: accounts/templates/registration/password_change_done.html:7
 msgid "Your password has been changed."
-msgstr ""
+msgstr "Salasanasi on vaihdettu."
 
 #: accounts/templates/registration/password_change_done.html:8
 msgid "Continue"
-msgstr ""
+msgstr "Jatka"
 
 #: accounts/templates/registration/password_change_form.html:7
 msgid "Enter your current password, then your new password twice."
-msgstr ""
+msgstr "Anna nykyinen salasanasi ja sitten uusi salasanasi kahdesti."
 
 #: accounts/templates/registration/password_change_form.html:11
 #: accounts/templates/registration/password_reset_confirm.html:10
 msgid "New password"
-msgstr ""
+msgstr "Uusi salasana"
 
 #: accounts/templates/registration/password_change_form.html:12
 #: accounts/templates/registration/password_reset_confirm.html:11
 msgid "Confirm new password"
-msgstr ""
+msgstr "Vahvista uusi salasana"
 
 #: accounts/templates/registration/password_reset_complete.html:4
 #: accounts/templates/registration/password_reset_complete.html:5
 msgid "Password reset complete"
-msgstr ""
+msgstr "Salasana palautettu"
 
 #: accounts/templates/registration/password_reset_complete.html:7
 msgid "Your new password has been set. You can now log in with it."
-msgstr ""
+msgstr "Uusi salasanasi on asetettu. Voit nyt kirjautua sillä."
 
 #: accounts/templates/registration/password_reset_confirm.html:4
 #: accounts/templates/registration/password_reset_confirm.html:5
 msgid "Set a new password"
-msgstr ""
+msgstr "Aseta uusi salasana"
 
 #: accounts/templates/registration/password_reset_confirm.html:24
 msgid "Set new password"
-msgstr ""
+msgstr "Aseta uusi salasana"
 
 #: accounts/templates/registration/password_reset_confirm.html:28
 msgid ""
 "This password reset link is invalid or has expired, possibly because it has "
 "already been used."
 msgstr ""
+"Tämä salasanan palautuslinkki on virheellinen tai vanhentunut, mahdollisesti"
+" koska sitä on jo käytetty."
 
 #: accounts/templates/registration/password_reset_confirm.html:29
 msgid "Request a new link"
-msgstr ""
+msgstr "Pyydä uusi linkki"
 
 #: accounts/templates/registration/password_reset_done.html:4
 #: accounts/templates/registration/password_reset_done.html:5
 msgid "Check your inbox"
-msgstr ""
+msgstr "Tarkista postilaatikkosi"
 
 #: accounts/templates/registration/password_reset_done.html:7
 msgid ""
 "If an account exists for the email address you entered, we've sent you a "
 "link for setting a new password."
 msgstr ""
+"Jos antamallesi sähköpostiosoitteelle on tili, lähetimme sinulle linkin "
+"uuden salasanan asettamiseen."
 
 #: accounts/templates/registration/password_reset_done.html:8
 msgid ""
 "If you don't receive an email within a few minutes, check your spam folder."
 msgstr ""
+"Jos et saa sähköpostia muutaman minuutin kuluessa, tarkista "
+"roskapostikansio."
 
 #: accounts/templates/registration/password_reset_email.html:3
 msgid ""
 "We received a request to reset the password of your LUT Kyyti account. Open "
 "the link below to choose a new password:"
 msgstr ""
+"Saimme pyynnön palauttaa LUT Kyyti -tilisi salasana. Valitse uusi salasana "
+"avaamalla alla oleva linkki:"
 
 #: accounts/templates/registration/password_reset_email.html:7
 msgid ""
 "If you didn't ask to reset your password, you can ignore this email. Your "
 "password won't change."
 msgstr ""
+"Jos et pyytänyt salasanan palautusta, voit jättää tämän viestin huomiotta. "
+"Salasanasi ei muutu."
 
 #: accounts/templates/registration/password_reset_form.html:4
 #: accounts/templates/registration/password_reset_form.html:5
 msgid "Reset password"
-msgstr ""
+msgstr "Palauta salasana"
 
 #: accounts/templates/registration/password_reset_form.html:7
 msgid ""
 "Enter your email address and we'll send you a link for setting a new "
 "password."
 msgstr ""
+"Anna sähköpostiosoitteesi, niin lähetämme sinulle linkin uuden salasanan "
+"asettamiseen."
 
 #: accounts/templates/registration/password_reset_form.html:15
-msgid "Enter valid email address"
-msgstr ""
+#| msgid "Enter valid email address"
+msgid "Enter a valid email address"
+msgstr "Anna kelvollinen sähköpostiosoite"
 
 #: accounts/templates/registration/password_reset_form.html:18
 msgid "Send instructions"
-msgstr ""
+msgstr "Lähetä ohjeet"
 
 #: accounts/templates/registration/password_reset_subject.txt:1
 msgid "Reset your LUT Kyyti password"
-msgstr ""
-
-#: accounts/templates/registration/signup.html:15
-#: accounts/templates/registration/signup.html:52
-msgid "Sign Up"
-msgstr ""
+msgstr "Palauta LUT Kyyti -salasanasi"
 
 #: accounts/templates/registration/signup.html:16
-msgid "* = Mandatory"
-msgstr ""
+msgid "* = required"
+msgstr "* = pakollinen"
 
 #: accounts/templates/registration/signup.html:20
 msgid "Your password can't contain your name or email address."
-msgstr ""
+msgstr "Salasanasi ei saa sisältää nimeäsi tai sähköpostiosoitettasi."
 
 #: accounts/templates/registration/signup.html:30
 #, python-format
 msgid "Use your LUT or LAB email address, e.g. %(example)s"
-msgstr ""
+msgstr "Käytä LUT- tai LAB-sähköpostiosoitettasi, esim. %(example)s"
 
 #: accounts/templates/registration/signup.html:33
 msgid "Enter your first name (at most 50 characters)"
-msgstr ""
+msgstr "Anna etunimesi (enintään 50 merkkiä)"
 
 #: accounts/templates/registration/signup.html:35
 msgid "Enter your last name (at most 50 characters)"
-msgstr ""
+msgstr "Anna sukunimesi (enintään 50 merkkiä)"
 
 #: accounts/templates/registration/signup.html:38
 msgid ""
 "At least 8 characters, including a number, a lower case letter and an upper "
 "case letter. It can't contain your name or email address."
 msgstr ""
+"Vähintään 8 merkkiä, joissa on numero, pieni kirjain ja iso kirjain. Se ei "
+"saa sisältää nimeäsi tai sähköpostiosoitettasi."
 
 #: accounts/templates/registration/signup.html:40
 msgid "Type the same password again"
-msgstr ""
+msgstr "Kirjoita sama salasana uudelleen"
 
 #: accounts/templates/registration/signup.html:49
 msgid "Didn't get the email?"
-msgstr ""
+msgstr "Etkö saanut sähköpostia?"
 
 #: accounts/templates/registration/signup.html:53
 msgctxt ""
@@ -1912,22 +2048,24 @@ msgctxt ""
 "Privacy Policy."
 msgid ""
 "\n"
-"                <p class=\"text-[0.8125rem]\">By creating an account you "
-"agree to the <a class=\"link link-primary\" href=\"/terms-of-use\">Terms of "
-"Use</a> and <a class=\"link link-secondary\" href=\"/privacy-"
-"policy\">Privacy Policy</a>.</p>\n"
+"                <p class=\"text-[0.8125rem]\">By creating an account you agree to the <a class=\"link link-primary\" href=\"/terms-of-use\">Terms of Use</a> and <a class=\"link link-secondary\" href=\"/privacy-policy\">Privacy Policy</a>.</p>\n"
 "              "
 msgstr ""
+"\n"
+"                <p class=\"text-[0.8125rem]\">Luomalla tilin hyväksyt <a class=\"link link-primary\" href=\"/terms-of-use\">käyttöehdot</a> ja <a class=\"link link-secondary\" href=\"/privacy-policy\">tietosuojaselosteen</a>.</p>\n"
+"              "
 
 #: accounts/templates/registration/signup.html:58
 msgid "Already have a LUT Kyyti account?"
-msgstr ""
+msgstr "Onko sinulla jo LUT Kyyti -tili?"
 
 #: accounts/templates/registration/two_factor_off.txt:3
 msgid ""
 "Two-step verification was turned off for your LUT Kyyti account. Logging in "
 "now only needs your password."
 msgstr ""
+"LUT Kyyti -tilisi kaksivaiheinen tunnistautuminen poistettiin käytöstä. "
+"Kirjautuminen vaatii nyt vain salasanasi."
 
 #: accounts/templates/registration/two_factor_off.txt:5
 #, python-format
@@ -1935,33 +2073,41 @@ msgid ""
 "If you didn't do this, change your password and contact us right away: "
 "%(contact_url)s"
 msgstr ""
+"Jos et tehnyt tätä, vaihda salasanasi ja ota meihin heti yhteyttä: "
+"%(contact_url)s"
 
 #: accounts/templates/registration/two_factor_on.txt:3
 msgid ""
-"Two-step verification is now on for your LUT Kyyti account. When you log in, "
-"you'll also enter a code from your authenticator app."
+"Two-step verification is now on for your LUT Kyyti account. When you log in,"
+" you'll also enter a code from your authenticator app."
 msgstr ""
+"LUT Kyyti -tilisi kaksivaiheinen tunnistautuminen on nyt käytössä. "
+"Kirjautuessasi annat myös koodin todennussovelluksestasi."
 
 #: accounts/templates/registration/two_factor_on.txt:5
 msgid ""
 "Keep your backup codes somewhere safe: they let you log in if you lose your "
 "phone."
 msgstr ""
+"Säilytä varakoodisi turvallisessa paikassa: niillä voit kirjautua, jos "
+"kadotat puhelimesi."
 
 #: accounts/templates/registration/two_factor_setup.html:4
 #: accounts/templates/registration/two_factor_setup.html:5
 msgid "Turn on two-step verification"
-msgstr ""
+msgstr "Ota kaksivaiheinen tunnistautuminen käyttöön"
 
 #: accounts/templates/registration/two_factor_setup.html:8
 msgid ""
-"When you log in, you'll also enter a code from an app on your phone, so your "
-"password alone isn't enough to get into your account."
+"When you log in, you'll also enter a code from an app on your phone, so your"
+" password alone isn't enough to get into your account."
 msgstr ""
+"Kirjautuessasi annat myös koodin puhelimesi sovelluksesta, jotta pelkkä "
+"salasana ei riitä pääsyyn tilillesi."
 
 #: accounts/templates/registration/two_factor_setup.html:11
 msgid "Add LUT Kyyti to your authenticator app"
-msgstr ""
+msgstr "Lisää LUT Kyyti todennussovellukseesi"
 
 #: accounts/templates/registration/two_factor_setup.html:12
 msgid ""
@@ -1969,76 +2115,80 @@ msgid ""
 "Microsoft Authenticator, free from your phone's app store. Many password "
 "managers can do it too."
 msgstr ""
+"Eikö sinulla ole vielä sovellusta? Mikä tahansa todennussovellus käy, kuten "
+"Google Authenticator tai Microsoft Authenticator, ilmaiseksi puhelimesi "
+"sovelluskaupasta. Myös monet salasanojen hallintaohjelmat osaavat tämän."
 
 #: accounts/templates/registration/two_factor_setup.html:16
 msgid "QR code for your authenticator app"
-msgstr ""
+msgstr "QR-koodi todennussovellustasi varten"
 
 #: accounts/templates/registration/two_factor_setup.html:17
 msgid "Scan this with your authenticator app"
-msgstr ""
+msgstr "Skannaa tämä todennussovelluksellasi"
 
 #: accounts/templates/registration/two_factor_setup.html:20
 msgid "OR, ON THIS PHONE"
-msgstr ""
+msgstr "TAI TÄLLÄ PUHELIMELLA"
 
 #: accounts/templates/registration/two_factor_setup.html:21
 msgid "Open in authenticator app"
-msgstr ""
+msgstr "Avaa todennussovelluksessa"
 
 #: accounts/templates/registration/two_factor_setup.html:24
 msgid "Can't scan? Type the key in by hand"
-msgstr ""
+msgstr "Etkö voi skannata? Kirjoita avain käsin"
 
 #: accounts/templates/registration/two_factor_setup.html:26
 msgid "In your app, choose to enter a setup key, and type in:"
-msgstr ""
+msgstr "Valitse sovelluksessasi asetusavaimen syöttäminen ja kirjoita:"
 
 #: accounts/templates/registration/two_factor_setup.html:31
 msgid ""
 "If the app asks, the account is your email address and the type is time-"
 "based."
 msgstr ""
+"Jos sovellus kysyy, tili on sähköpostiosoitteesi ja tyyppi on aikapohjainen."
 
 #: accounts/templates/registration/two_factor_setup.html:37
 msgid "Enter the code the app shows"
-msgstr ""
+msgstr "Anna sovelluksen näyttämä koodi"
 
 #: accounts/templates/registration/two_factor_setup.html:40
 msgid "6-digit code"
-msgstr ""
+msgstr "6-numeroinen koodi"
 
 #: accounts/validators.py:15
 msgid "a number"
-msgstr ""
+msgstr "numero"
 
 #: accounts/validators.py:17
 msgid "a lower case letter"
-msgstr ""
+msgstr "pieni kirjain"
 
 #: accounts/validators.py:19
 msgid "an upper case letter"
-msgstr ""
+msgstr "iso kirjain"
 
 #: accounts/validators.py:21
 #, python-format
 msgid "%(first)s and %(last)s"
-msgstr ""
+msgstr "%(first)s ja %(last)s"
 
 #: accounts/validators.py:25
 #, python-format
 msgid "Your password must also contain %(missing)s."
-msgstr ""
+msgstr "Salasanassasi on oltava myös %(missing)s."
 
 #: accounts/validators.py:30
 msgid ""
 "Your password must contain a number, a lower case letter and an upper case "
 "letter."
-msgstr ""
+msgstr "Salasanassasi on oltava numero, pieni kirjain ja iso kirjain."
 
 #: accounts/views.py:102
 msgid "Your email address is confirmed. Welcome to LUT Kyyti!"
-msgstr ""
+msgstr "Sähköpostiosoitteesi on vahvistettu. Tervetuloa LUT Kyytiin!"
 
 #: accounts/views.py:148
 #, python-format
@@ -2046,47 +2196,53 @@ msgid ""
 "You used a backup code. You have %(count)s left, and can make new ones on "
 "your profile page."
 msgstr ""
+"Käytit varakoodin. Sinulla on %(count)s jäljellä, ja voit luoda uusia "
+"profiilisivullasi."
 
 #: accounts/views.py:154
 msgid "That backup code is wrong or has already been used."
-msgstr ""
+msgstr "Varakoodi on väärä tai jo käytetty."
 
 #: accounts/views.py:156
 msgid "That code is wrong. Enter the code your app shows now."
-msgstr ""
+msgstr "Koodi on väärä. Anna koodi, jonka sovelluksesi näyttää nyt."
 
 #: accounts/views.py:161
 #, python-format
 msgid "Too many wrong codes. Wait %(seconds)s second and try again."
 msgid_plural "Too many wrong codes. Wait %(seconds)s seconds and try again."
 msgstr[0] ""
+"Liian monta väärää koodia. Odota %(seconds)s sekunti ja yritä uudelleen."
 msgstr[1] ""
+"Liian monta väärää koodia. Odota %(seconds)s sekuntia ja yritä uudelleen."
 
 #: accounts/views.py:181
 msgid "Two-step verification is on for your LUT Kyyti account"
-msgstr ""
+msgstr "LUT Kyyti -tilisi kaksivaiheinen tunnistautuminen on käytössä"
 
 #: accounts/views.py:185
 msgid ""
 "That code is wrong. Check that you scanned this page's QR code, and enter "
 "the code your app shows now."
 msgstr ""
+"Koodi on väärä. Tarkista, että skannasit tämän sivun QR-koodin, ja anna "
+"koodi, jonka sovelluksesi näyttää nyt."
 
 #: accounts/views.py:232
 msgid "Your profile was saved."
-msgstr ""
+msgstr "Profiilisi tallennettiin."
 
 #: accounts/views.py:238
 msgid "Your settings were saved."
-msgstr ""
+msgstr "Asetuksesi tallennettiin."
 
 #: accounts/views.py:243
 msgid "Your photo was changed."
-msgstr ""
+msgstr "Kuvasi vaihdettiin."
 
 #: accounts/views.py:250
 msgid "Your photo was removed."
-msgstr ""
+msgstr "Kuvasi poistettiin."
 
 #: accounts/views.py:255
 #, python-format
@@ -2094,38 +2250,63 @@ msgid ""
 "We sent a confirmation link to %(email)s. Your email address changes once "
 "you open it."
 msgstr ""
+"Lähetimme vahvistuslinkin osoitteeseen %(email)s. Sähköpostiosoitteesi "
+"vaihtuu, kun avaat sen."
 
 #: accounts/views.py:259
 #, python-format
 msgid "We sent a new confirmation link to %(email)s."
-msgstr ""
+msgstr "Lähetimme uuden vahvistuslinkin osoitteeseen %(email)s."
 
 #: accounts/views.py:261
 msgid ""
 "A link was sent less than a minute ago. Wait a moment before asking for a "
 "new one."
 msgstr ""
+"Linkki lähetettiin alle minuutti sitten. Odota hetki ennen kuin pyydät "
+"uutta."
 
 #: accounts/views.py:265
 #, python-format
 msgid "The email change was cancelled. Your address stays %(email)s."
 msgstr ""
+"Sähköpostiosoitteen vaihto peruttiin. Osoitteesi on edelleen %(email)s."
 
 #: accounts/views.py:270
 msgid "Two-step verification was turned off for your LUT Kyyti account"
 msgstr ""
+"LUT Kyyti -tilisi kaksivaiheinen tunnistautuminen poistettiin käytöstä"
 
 #: accounts/views.py:272
 msgid "Two-step verification is off. Logging in only needs your password."
 msgstr ""
+"Kaksivaiheinen tunnistautuminen on pois käytöstä. Kirjautuminen vaatii vain "
+"salasanasi."
 
 #: accounts/views.py:346
 #, python-format
 msgid "Your email address is now %(email)s."
-msgstr ""
+msgstr "Sähköpostiosoitteesi on nyt %(email)s."
+
+#~ msgid "LUT / LAB verified member"
+#~ msgstr "Vahvistettu LUT / LAB -jäsen"
+
+#~ msgid "Password Reset"
+#~ msgstr "Salasanan palautus"
+
+#~ msgid "Enter a valid email and password"
+#~ msgstr "Anna kelvollinen sähköpostiosoite ja salasana"
+
+#~ msgid "Login"
+#~ msgstr "Kirjaudu"
+
+#~ msgid "Sign Up"
+#~ msgstr "Rekisteröidy"
+
+#~ msgid "* = Mandatory"
+#~ msgstr "* = pakollinen"
 
 #, fuzzy
-#~| msgid "Login"
 #~ msgctxt "Full sentence: You can login now on the Login page."
 #~ msgid "Login page"
 #~ msgstr "Kirjaudu"

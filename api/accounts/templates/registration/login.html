@@ -14,16 +14,16 @@
       {% include "registration/_field.html" with field=form.username %}
       <div>
         {% include "registration/_field.html" with field=form.password %}
-        <a href="{% url 'password_reset' %}" class="link link-primary link-hover text-sm font-semibold inline-block mt-2">{% trans "Password Reset" %}</a>
+        <a href="{% url 'password_reset' %}" class="link link-primary link-hover text-sm font-semibold inline-block mt-2">{% trans "Forgot your password?" %}</a>
       </div>
 
       {% if form.unconfirmed_email %}
         {% for error in form.non_field_errors %}<div role="alert" class="text-error text-sm">{{ error }}</div>{% endfor %}
       {% elif form.errors %}
-        <div role="alert" class="text-error text-sm">{% trans "Enter a valid email and password" %}</div>
+        <div role="alert" class="text-error text-sm">{% trans "The email address or password is wrong." %}</div>
       {% endif %}
 
-      <button type="submit" class="btn btn-primary w-full mt-2">{% trans "Login" %}</button>
+      <button type="submit" class="btn btn-primary w-full mt-2">{% trans "Log in" %}</button>
     </form>
     {% if form.unconfirmed_email %}
       {% include "registration/_resend_confirmation.html" with email=form.unconfirmed_email %}

@@ -28,11 +28,11 @@
     <script>
         // Set form to same state after reload
         onPageReady(function() {
-            recurranceRadio = document.getElementsByClassName("recurrance");
+            recurrenceRadio = document.getElementsByClassName("recurrence");
             returnRadio = document.getElementsByClassName("return");
             for (var i = 0; i < 2; i++) {
-                if (recurranceRadio[i].checked == true) {
-                    changeRecurrance(recurranceRadio[i]);
+                if (recurrenceRadio[i].checked == true) {
+                    changeRecurrence(recurrenceRadio[i]);
                 }
                 if (returnRadio[i].checked == true) {
                     changeReturn(returnRadio[i]);
@@ -140,10 +140,10 @@
             <h2 class="card-title text-lg mb-1">{% trans "Schedule" %}</h2>
             <div class="grid @sm:grid-cols-2 gap-x-5 gap-y-3">
               <fieldset class="fieldset py-0">
-                <legend class="fieldset-legend">{% trans "Recurrance" %}</legend>
+                <legend class="fieldset-legend">{% trans "Recurrence" %}</legend>
                 <div class="tabs tabs-box w-full">
-                  <input id="id_one_time" type="radio" name="one_time" class="recurrance tab grow text-base-content/60 checked:text-primary checked:font-semibold" aria-label="{% trans "One-time" %}" onchange="changeRecurrance(this)" value="oneTime" {% if ride_form.one_time.value != "recurring" %}checked{% endif %}>
-                  <input id="id_one_time_recurring" type="radio" name="one_time" class="recurrance tab grow text-base-content/60 checked:text-primary checked:font-semibold" aria-label="{% trans "Recurring" %}" onchange="changeRecurrance(this)" value="recurring" {% if ride_form.one_time.value == "recurring" %}checked{% endif %}>
+                  <input id="id_one_time" type="radio" name="one_time" class="recurrence tab grow text-base-content/60 checked:text-primary checked:font-semibold" aria-label="{% trans "One-time" %}" onchange="changeRecurrence(this)" value="oneTime" {% if ride_form.one_time.value != "recurring" %}checked{% endif %}>
+                  <input id="id_one_time_recurring" type="radio" name="one_time" class="recurrence tab grow text-base-content/60 checked:text-primary checked:font-semibold" aria-label="{% trans "Recurring" %}" onchange="changeRecurrence(this)" value="recurring" {% if ride_form.one_time.value == "recurring" %}checked{% endif %}>
                 </div>
               </fieldset>
               <fieldset class="fieldset py-0">
