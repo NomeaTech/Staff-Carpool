@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-23 01:35+0300\n"
+"POT-Creation-Date: 2026-10-23 02:27+0300\n"
 "PO-Revision-Date: 2026-06-27 19:05+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -136,7 +136,7 @@ msgstr ""
 msgid "The same password again"
 msgstr ""
 
-#: accounts/forms.py:180 accounts/forms.py:353
+#: accounts/forms.py:180 accounts/forms.py:367
 msgid "Use your LUT or LAB email address (ending in @lut.fi or @lab.fi)."
 msgstr ""
 
@@ -180,15 +180,19 @@ msgstr ""
 msgid "The photo must be smaller than %(size)s MB."
 msgstr ""
 
-#: accounts/forms.py:336 accounts/forms.py:363
+#: accounts/forms.py:337 accounts/forms.py:377
 msgid "The password is incorrect."
 msgstr ""
 
-#: accounts/forms.py:355
+#: accounts/forms.py:349
+msgid "Enter the code."
+msgstr ""
+
+#: accounts/forms.py:369
 msgid "This is already your email address."
 msgstr ""
 
-#: accounts/forms.py:357
+#: accounts/forms.py:371
 msgid "Another account already uses this email address."
 msgstr ""
 
@@ -374,7 +378,7 @@ msgstr ""
 msgid "Received requests accepted"
 msgstr ""
 
-#: accounts/stats.py:156 accounts/templates/registration/account.html:127
+#: accounts/stats.py:156 accounts/templates/registration/account.html:158
 msgid "Notifications"
 msgstr ""
 
@@ -1006,6 +1010,14 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
+#: accounts/templates/registration/_code_input.html:12
+msgid "8 letters and numbers, e.g. k3d9-x2mq"
+msgstr ""
+
+#: accounts/templates/registration/_copy.html:13
+msgid "Copied"
+msgstr ""
+
 #: accounts/templates/registration/_password_hint.html:4
 msgid ""
 "At least 8 characters, including a number, a lower case letter and an upper "
@@ -1020,6 +1032,18 @@ msgstr ""
 
 #: accounts/templates/registration/_resend_confirmation.html:12
 msgid "Send a new link"
+msgstr ""
+
+#: accounts/templates/registration/_two_factor_steps.html:3
+msgid "Get an app"
+msgstr ""
+
+#: accounts/templates/registration/_two_factor_steps.html:4
+msgid "Connect it"
+msgstr ""
+
+#: accounts/templates/registration/_two_factor_steps.html:5
+msgid "Save backup codes"
 msgstr ""
 
 #: accounts/templates/registration/account.html:4
@@ -1114,7 +1138,60 @@ msgstr ""
 msgid "Change password"
 msgstr ""
 
+#: accounts/templates/registration/account.html:120
+#: accounts/templates/registration/login_code.html:4
+#: accounts/templates/registration/login_code.html:5
+msgid "Two-step verification"
+msgstr ""
+
+#: accounts/templates/registration/account.html:121
+msgid "On"
+msgstr ""
+
+#: accounts/templates/registration/account.html:122
+msgid "Off"
+msgstr ""
+
+#: accounts/templates/registration/account.html:126
+#, python-format
+msgid ""
+"Logging in also needs a code from your authenticator app. %(count)s backup "
+"code left."
+msgid_plural ""
+"Logging in also needs a code from your authenticator app. %(count)s backup "
+"codes left."
+msgstr[0] ""
+msgstr[1] ""
+
 #: accounts/templates/registration/account.html:128
+msgid ""
+"Also ask for a code from an app on your phone when logging in, so your "
+"password alone isn't enough"
+msgstr ""
+
+#: accounts/templates/registration/account.html:134
+msgid "New backup codes"
+msgstr ""
+
+#: accounts/templates/registration/account.html:135
+#: accounts/templates/registration/account.html:184
+#: accounts/templates/registration/account.html:381
+msgid "Turn off"
+msgstr ""
+
+#: accounts/templates/registration/account.html:138
+#: accounts/templates/registration/account.html:184
+#: accounts/templates/registration/two_factor_setup.html:42
+msgid "Turn on"
+msgstr ""
+
+#: accounts/templates/registration/account.html:144
+msgid ""
+"You're running out of backup codes. Make new ones so you can still log in if "
+"you lose your phone."
+msgstr ""
+
+#: accounts/templates/registration/account.html:159
 #, python-format
 msgid ""
 "All notifications are shown in the app, under the bell and on the <a "
@@ -1122,244 +1199,312 @@ msgid ""
 "which ones are also emailed to you."
 msgstr ""
 
-#: accounts/templates/registration/account.html:130
+#: accounts/templates/registration/account.html:161
 msgid "Email me about"
 msgstr ""
 
-#: accounts/templates/registration/account.html:137
+#: accounts/templates/registration/account.html:168
 msgid "Also new requests on your rides and withdrawn requests"
 msgstr ""
 
-#: accounts/templates/registration/account.html:137
+#: accounts/templates/registration/account.html:168
 msgid ""
 "Only changes to your trips: answers to your requests, passengers leaving, "
 "and rides being changed or cancelled"
 msgstr ""
 
-#: accounts/templates/registration/account.html:142
+#: accounts/templates/registration/account.html:173
 msgid ""
 "Emails about your account, such as confirming your email address or "
 "resetting your password, are always sent."
 msgstr ""
 
-#: accounts/templates/registration/account.html:147
+#: accounts/templates/registration/account.html:178
 msgid "On: notifications appear on this device even when LUT Kyyti is closed."
 msgstr ""
 
-#: accounts/templates/registration/account.html:148
+#: accounts/templates/registration/account.html:179
 msgid "Get notifications on this device even when LUT Kyyti is closed."
 msgstr ""
 
-#: accounts/templates/registration/account.html:149
+#: accounts/templates/registration/account.html:180
 msgid ""
 "On iPhone and iPad, add LUT Kyyti to your Home Screen first (Share, then Add "
 "to Home Screen) and open it from there to turn on notifications."
 msgstr ""
 
-#: accounts/templates/registration/account.html:150
+#: accounts/templates/registration/account.html:181
 msgid ""
 "This browser can't show push notifications. You'll still see them in the app "
 "and by email."
 msgstr ""
 
-#: accounts/templates/registration/account.html:151
+#: accounts/templates/registration/account.html:182
 msgid ""
 "Notifications are blocked for LUT Kyyti in this browser. Allow them in the "
 "browser's site settings to turn them on."
 msgstr ""
 
-#: accounts/templates/registration/account.html:152
+#: accounts/templates/registration/account.html:183
 msgid "Push notifications could not be turned on. Please try again."
 msgstr ""
 
-#: accounts/templates/registration/account.html:153
-msgid "Turn on"
-msgstr ""
-
-#: accounts/templates/registration/account.html:153
-msgid "Turn off"
-msgstr ""
-
-#: accounts/templates/registration/account.html:154
+#: accounts/templates/registration/account.html:185
 msgid "Push notifications on this device"
 msgstr ""
 
-#: accounts/templates/registration/account.html:155
+#: accounts/templates/registration/account.html:186
 msgid "Checking what this device can do…"
 msgstr ""
 
-#: accounts/templates/registration/account.html:164
+#: accounts/templates/registration/account.html:195
 msgid "Privacy & visibility"
 msgstr ""
 
-#: accounts/templates/registration/account.html:165
+#: accounts/templates/registration/account.html:196
 msgid "Choose what other LUT Kyyti members can see about you."
 msgstr ""
 
-#: accounts/templates/registration/account.html:168
+#: accounts/templates/registration/account.html:199
 msgid "Name shown on rides and requests"
 msgstr ""
 
-#: accounts/templates/registration/account.html:180
+#: accounts/templates/registration/account.html:211
 msgid "People on the same ride as you always see your full name."
 msgstr ""
 
-#: accounts/templates/registration/account.html:187
+#: accounts/templates/registration/account.html:218
 msgid "Show my profile photo"
 msgstr ""
 
-#: accounts/templates/registration/account.html:188
+#: accounts/templates/registration/account.html:219
 msgid "Otherwise others see your initials"
 msgstr ""
 
-#: accounts/templates/registration/account.html:194
+#: accounts/templates/registration/account.html:225
 msgid "Share my email with ride partners"
 msgstr ""
 
-#: accounts/templates/registration/account.html:195
-#: accounts/templates/registration/account.html:203
+#: accounts/templates/registration/account.html:226
+#: accounts/templates/registration/account.html:234
 msgid "The driver of a ride you join, or passengers you accept"
 msgstr ""
 
-#: accounts/templates/registration/account.html:201
+#: accounts/templates/registration/account.html:232
 msgid "Share my phone number with ride partners"
 msgstr ""
 
-#: accounts/templates/registration/account.html:203
+#: accounts/templates/registration/account.html:234
 msgid "Add a phone number to your profile first"
 msgstr ""
 
-#: accounts/templates/registration/account.html:211
+#: accounts/templates/registration/account.html:242
 msgid ""
 "Your email and phone number never appear on ride listings. They are only "
 "shown to people sharing a ride with you."
 msgstr ""
 
-#: accounts/templates/registration/account.html:214
+#: accounts/templates/registration/account.html:245
 msgid "Save settings"
 msgstr ""
 
-#: accounts/templates/registration/account.html:215
+#: accounts/templates/registration/account.html:246
 msgid "Read the privacy policy"
 msgstr ""
 
-#: accounts/templates/registration/account.html:222
+#: accounts/templates/registration/account.html:253
 msgid "Account management"
 msgstr ""
 
-#: accounts/templates/registration/account.html:224
+#: accounts/templates/registration/account.html:255
 msgid "Help & support"
 msgstr ""
 
-#: accounts/templates/registration/account.html:225
+#: accounts/templates/registration/account.html:256
 msgid "Contact support"
 msgstr ""
 
-#: accounts/templates/registration/account.html:228
+#: accounts/templates/registration/account.html:259
 msgid "Log out"
 msgstr ""
 
-#: accounts/templates/registration/account.html:230
-#: accounts/templates/registration/account.html:305
+#: accounts/templates/registration/account.html:261
+#: accounts/templates/registration/account.html:336
 msgid "Delete account"
 msgstr ""
 
-#: accounts/templates/registration/account.html:243
+#: accounts/templates/registration/account.html:274
 #: accounts/templates/registration/confirm_email_change.html:4
 #: accounts/templates/registration/confirm_email_change.html:5
 msgid "Change email address"
 msgstr ""
 
-#: accounts/templates/registration/account.html:244
+#: accounts/templates/registration/account.html:275
 #, python-format
 msgid ""
 "We'll send a link to the new address. Your account keeps using "
 "<strong>%(email)s</strong> until you open it, so a typo can't lock you out."
 msgstr ""
 
-#: accounts/templates/registration/account.html:249
+#: accounts/templates/registration/account.html:280
 msgid "New email address"
 msgstr ""
 
-#: accounts/templates/registration/account.html:254
+#: accounts/templates/registration/account.html:285
 #: accounts/templates/registration/password_change_form.html:10
 msgid "Current password"
 msgstr ""
 
-#: accounts/templates/registration/account.html:260
-#: accounts/templates/registration/account.html:264
-#: accounts/templates/registration/account.html:304
-#: accounts/templates/registration/account.html:308
-#: accounts/templates/registration/account.html:341
-#: accounts/templates/registration/account.html:345
+#: accounts/templates/registration/account.html:291
+#: accounts/templates/registration/account.html:295
+#: accounts/templates/registration/account.html:335
+#: accounts/templates/registration/account.html:339
+#: accounts/templates/registration/account.html:356
+#: accounts/templates/registration/account.html:360
+#: accounts/templates/registration/account.html:380
+#: accounts/templates/registration/account.html:384
+#: accounts/templates/registration/account.html:418
+#: accounts/templates/registration/account.html:422
 #: accounts/templates/registration/password_change_form.html:31
+#: accounts/templates/registration/two_factor_setup.html:43
 msgid "Cancel"
 msgstr ""
 
-#: accounts/templates/registration/account.html:261
+#: accounts/templates/registration/account.html:292
 msgid "Send confirmation link"
 msgstr ""
 
-#: accounts/templates/registration/account.html:271
+#: accounts/templates/registration/account.html:302
 msgid "Delete your account?"
 msgstr ""
 
-#: accounts/templates/registration/account.html:273
+#: accounts/templates/registration/account.html:304
 msgid ""
 "Your account, your profile photo, the rides you have posted and your ride "
 "requests are deleted permanently. People who joined or requested your rides "
 "are notified that they are cancelled."
 msgstr ""
 
-#: accounts/templates/registration/account.html:279
+#: accounts/templates/registration/account.html:310
 msgid "You are the only admin of these groups:"
 msgstr ""
 
-#: accounts/templates/registration/account.html:284
+#: accounts/templates/registration/account.html:315
 msgid "you are its last member, so it will be deleted."
 msgstr ""
 
-#: accounts/templates/registration/account.html:285
+#: accounts/templates/registration/account.html:316
 #, python-format
 msgid "%(name)s will become its admin, as the longest-standing member."
 msgstr ""
 
-#: accounts/templates/registration/account.html:286
+#: accounts/templates/registration/account.html:317
 msgid ""
 "none of its members have used LUT Kyyti lately; the first to come back will "
 "become its admin."
 msgstr ""
 
-#: accounts/templates/registration/account.html:290
+#: accounts/templates/registration/account.html:321
 msgid ""
 "To choose someone else, hand the admin role over on the group's page first."
 msgstr ""
 
-#: accounts/templates/registration/account.html:298
+#: accounts/templates/registration/account.html:329
+#: accounts/templates/registration/account.html:350
+#: accounts/templates/registration/account.html:374
 msgid "Enter your password to confirm"
 msgstr ""
 
-#: accounts/templates/registration/account.html:329
+#: accounts/templates/registration/account.html:344
+msgid "Make new backup codes?"
+msgstr ""
+
+#: accounts/templates/registration/account.html:345
+msgid "You'll get 10 new codes, and the ones you have now stop working."
+msgstr ""
+
+#: accounts/templates/registration/account.html:357
+msgid "Make new codes"
+msgstr ""
+
+#: accounts/templates/registration/account.html:367
+msgid "Turn off two-step verification?"
+msgstr ""
+
+#: accounts/templates/registration/account.html:369
+msgid ""
+"Logging in will only need your password, and your authenticator app and "
+"backup codes stop working for LUT Kyyti. You can turn it on again at any "
+"time."
+msgstr ""
+
+#: accounts/templates/registration/account.html:406
 msgid "Frame your photo"
 msgstr ""
 
-#: accounts/templates/registration/account.html:330
+#: accounts/templates/registration/account.html:407
 msgid ""
 "Drag the photo to place your face inside the circle. Zoom with the slider, "
 "the mouse wheel or by pinching."
 msgstr ""
 
-#: accounts/templates/registration/account.html:332
+#: accounts/templates/registration/account.html:409
 msgid "Your new photo"
 msgstr ""
 
-#: accounts/templates/registration/account.html:335
-#: accounts/templates/registration/account.html:337
+#: accounts/templates/registration/account.html:412
+#: accounts/templates/registration/account.html:414
 msgid "Zoom"
 msgstr ""
 
-#: accounts/templates/registration/account.html:342
+#: accounts/templates/registration/account.html:419
 msgid "Save photo"
+msgstr ""
+
+#: accounts/templates/registration/backup_codes.html:4
+msgid "Your backup codes"
+msgstr ""
+
+#: accounts/templates/registration/backup_codes.html:5
+msgid "Save your backup codes"
+msgstr ""
+
+#: accounts/templates/registration/backup_codes.html:11
+msgid "Two-step verification is on."
+msgstr ""
+
+#: accounts/templates/registration/backup_codes.html:16
+msgid "You have new backup codes. Your old ones no longer work."
+msgstr ""
+
+#: accounts/templates/registration/backup_codes.html:19
+msgid ""
+"If you lose your phone, log in with one of these codes instead. Each code "
+"works once. Keep them somewhere safe, such as your password manager, and "
+"don't share them."
+msgstr ""
+
+#: accounts/templates/registration/backup_codes.html:26
+#: accounts/templates/registration/two_factor_setup.html:29
+msgid "Copy"
+msgstr ""
+
+#: accounts/templates/registration/backup_codes.html:27
+msgid "Download"
+msgstr ""
+
+#: accounts/templates/registration/backup_codes.html:32
+msgid ""
+"This is the only time these codes are shown. You can make new ones on your "
+"profile page."
+msgstr ""
+
+#: accounts/templates/registration/backup_codes.html:35
+msgid "I've saved my codes"
+msgstr ""
+
+#: accounts/templates/registration/backup_codes.html:41
+msgid "LUT Kyyti backup codes"
 msgstr ""
 
 #: accounts/templates/registration/confirm_email.html:4
@@ -1389,6 +1534,7 @@ msgstr ""
 #: accounts/templates/registration/confirm_email_change.html:9
 #: accounts/templates/registration/login.html:6
 #: accounts/templates/registration/login.html:11
+#: accounts/templates/registration/login_code.html:18
 #: accounts/templates/registration/signup.html:58
 msgid "Log in"
 msgstr ""
@@ -1457,6 +1603,8 @@ msgstr ""
 #: accounts/templates/registration/email_change_requested.txt:1
 #: accounts/templates/registration/email_changed.txt:1
 #: accounts/templates/registration/password_reset_email.html:1
+#: accounts/templates/registration/two_factor_off.txt:1
+#: accounts/templates/registration/two_factor_on.txt:1
 msgid "Hi"
 msgstr ""
 
@@ -1481,6 +1629,8 @@ msgstr ""
 #: accounts/templates/registration/email_change_requested.txt:9
 #: accounts/templates/registration/email_changed.txt:7
 #: accounts/templates/registration/password_reset_email.html:9
+#: accounts/templates/registration/two_factor_off.txt:7
+#: accounts/templates/registration/two_factor_on.txt:7
 msgid "The LUT Kyyti team"
 msgstr ""
 
@@ -1576,6 +1726,38 @@ msgstr "Kirjaudu"
 #: accounts/templates/registration/login.html:32
 #: accounts/templates/registration/signup.html:9
 msgid "Sign up"
+msgstr ""
+
+#: accounts/templates/registration/login_code.html:10
+msgid ""
+"Enter one of the backup codes you saved when you turned on two-step "
+"verification. Each code works once."
+msgstr ""
+
+#: accounts/templates/registration/login_code.html:11
+msgid ""
+"Open your authenticator app and enter the 6-digit code it shows for LUT "
+"Kyyti."
+msgstr ""
+
+#: accounts/templates/registration/login_code.html:16
+msgid "Backup code"
+msgstr ""
+
+#: accounts/templates/registration/login_code.html:16
+msgid "Code from your app"
+msgstr ""
+
+#: accounts/templates/registration/login_code.html:23
+msgid "Use a code from my app instead"
+msgstr ""
+
+#: accounts/templates/registration/login_code.html:25
+msgid "Lost your phone? Use a backup code"
+msgstr ""
+
+#: accounts/templates/registration/login_code.html:29
+msgid "Cancel and go back to login"
 msgstr ""
 
 #: accounts/templates/registration/password_change_done.html:4
@@ -1741,6 +1923,91 @@ msgstr ""
 msgid "Already have a LUT Kyyti account?"
 msgstr ""
 
+#: accounts/templates/registration/two_factor_off.txt:3
+msgid ""
+"Two-step verification was turned off for your LUT Kyyti account. Logging in "
+"now only needs your password."
+msgstr ""
+
+#: accounts/templates/registration/two_factor_off.txt:5
+#, python-format
+msgid ""
+"If you didn't do this, change your password and contact us right away: "
+"%(contact_url)s"
+msgstr ""
+
+#: accounts/templates/registration/two_factor_on.txt:3
+msgid ""
+"Two-step verification is now on for your LUT Kyyti account. When you log in, "
+"you'll also enter a code from your authenticator app."
+msgstr ""
+
+#: accounts/templates/registration/two_factor_on.txt:5
+msgid ""
+"Keep your backup codes somewhere safe: they let you log in if you lose your "
+"phone."
+msgstr ""
+
+#: accounts/templates/registration/two_factor_setup.html:4
+#: accounts/templates/registration/two_factor_setup.html:5
+msgid "Turn on two-step verification"
+msgstr ""
+
+#: accounts/templates/registration/two_factor_setup.html:8
+msgid ""
+"When you log in, you'll also enter a code from an app on your phone, so your "
+"password alone isn't enough to get into your account."
+msgstr ""
+
+#: accounts/templates/registration/two_factor_setup.html:11
+msgid "Add LUT Kyyti to your authenticator app"
+msgstr ""
+
+#: accounts/templates/registration/two_factor_setup.html:12
+msgid ""
+"No app yet? Any authenticator app works, such as Google Authenticator or "
+"Microsoft Authenticator, free from your phone's app store. Many password "
+"managers can do it too."
+msgstr ""
+
+#: accounts/templates/registration/two_factor_setup.html:16
+msgid "QR code for your authenticator app"
+msgstr ""
+
+#: accounts/templates/registration/two_factor_setup.html:17
+msgid "Scan this with your authenticator app"
+msgstr ""
+
+#: accounts/templates/registration/two_factor_setup.html:20
+msgid "OR, ON THIS PHONE"
+msgstr ""
+
+#: accounts/templates/registration/two_factor_setup.html:21
+msgid "Open in authenticator app"
+msgstr ""
+
+#: accounts/templates/registration/two_factor_setup.html:24
+msgid "Can't scan? Type the key in by hand"
+msgstr ""
+
+#: accounts/templates/registration/two_factor_setup.html:26
+msgid "In your app, choose to enter a setup key, and type in:"
+msgstr ""
+
+#: accounts/templates/registration/two_factor_setup.html:31
+msgid ""
+"If the app asks, the account is your email address and the type is time-"
+"based."
+msgstr ""
+
+#: accounts/templates/registration/two_factor_setup.html:37
+msgid "Enter the code the app shows"
+msgstr ""
+
+#: accounts/templates/registration/two_factor_setup.html:40
+msgid "6-digit code"
+msgstr ""
+
 #: accounts/validators.py:15
 msgid "a number"
 msgstr ""
@@ -1769,50 +2036,90 @@ msgid ""
 "letter."
 msgstr ""
 
-#: accounts/views.py:100
+#: accounts/views.py:102
 msgid "Your email address is confirmed. Welcome to LUT Kyyti!"
 msgstr ""
 
-#: accounts/views.py:142
+#: accounts/views.py:148
+#, python-format
+msgid ""
+"You used a backup code. You have %(count)s left, and can make new ones on "
+"your profile page."
+msgstr ""
+
+#: accounts/views.py:154
+msgid "That backup code is wrong or has already been used."
+msgstr ""
+
+#: accounts/views.py:156
+msgid "That code is wrong. Enter the code your app shows now."
+msgstr ""
+
+#: accounts/views.py:161
+#, python-format
+msgid "Too many wrong codes. Wait %(seconds)s second and try again."
+msgid_plural "Too many wrong codes. Wait %(seconds)s seconds and try again."
+msgstr[0] ""
+msgstr[1] ""
+
+#: accounts/views.py:181
+msgid "Two-step verification is on for your LUT Kyyti account"
+msgstr ""
+
+#: accounts/views.py:185
+msgid ""
+"That code is wrong. Check that you scanned this page's QR code, and enter "
+"the code your app shows now."
+msgstr ""
+
+#: accounts/views.py:232
 msgid "Your profile was saved."
 msgstr ""
 
-#: accounts/views.py:148
+#: accounts/views.py:238
 msgid "Your settings were saved."
 msgstr ""
 
-#: accounts/views.py:153
+#: accounts/views.py:243
 msgid "Your photo was changed."
 msgstr ""
 
-#: accounts/views.py:160
+#: accounts/views.py:250
 msgid "Your photo was removed."
 msgstr ""
 
-#: accounts/views.py:165
+#: accounts/views.py:255
 #, python-format
 msgid ""
 "We sent a confirmation link to %(email)s. Your email address changes once "
 "you open it."
 msgstr ""
 
-#: accounts/views.py:169
+#: accounts/views.py:259
 #, python-format
 msgid "We sent a new confirmation link to %(email)s."
 msgstr ""
 
-#: accounts/views.py:171
+#: accounts/views.py:261
 msgid ""
 "A link was sent less than a minute ago. Wait a moment before asking for a "
 "new one."
 msgstr ""
 
-#: accounts/views.py:175
+#: accounts/views.py:265
 #, python-format
 msgid "The email change was cancelled. Your address stays %(email)s."
 msgstr ""
 
-#: accounts/views.py:243
+#: accounts/views.py:270
+msgid "Two-step verification was turned off for your LUT Kyyti account"
+msgstr ""
+
+#: accounts/views.py:272
+msgid "Two-step verification is off. Logging in only needs your password."
+msgstr ""
+
+#: accounts/views.py:346
 #, python-format
 msgid "Your email address is now %(email)s."
 msgstr ""

@@ -9,7 +9,7 @@ from django.utils import timezone
 
 from accounts.models import User
 from activity.models import Event, Kind as EventKind
-from home.tests import make_ride
+from home.tests import make_ride, log_in_to_admin
 from home.tests import make_user as make_account
 from notifications.models import Kind, Notification
 from rides.models import Ride, RideRequest
@@ -321,7 +321,7 @@ class AdminLockoutTests(GroupTestCase):
     def test_staff_can_see_groups_nobody_can_answer_for(self):
         User.objects.update(is_active=False)
         staff = make_user("Ada", is_staff=True, is_superuser=True)
-        self.client.force_login(staff)
+        log_in_to_admin(self.client, staff)
         page = self.client.get(reverse("admin:groups_group_changelist"), {"needs_admin": "yes"})
         self.assertContains(page, "Skinnarila commuters")
 

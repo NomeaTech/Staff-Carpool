@@ -400,3 +400,14 @@
 .tab:is(input[type="radio"]):not(:checked) {
   background-color: transparent;
 }
+/* And a blue ring around every focused field. Tabs made of radio buttons
+   (the add ride page's schedule and return) and the code boxes of an otp
+   (accounts/two_factor.py) show focus their own way instead: an outline
+   inside the tab when using the keyboard, and the highlighted box. Only the
+   ring is emptied: setting box-shadow here would also take away daisyUI's
+   shadow under the chosen tab. */
+.tab:is(input[type="radio"]):focus,
+.otp > input:focus {
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+}

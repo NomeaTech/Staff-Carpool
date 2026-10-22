@@ -1,0 +1,47 @@
+{% extends "registration/account_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Turn on two-step verification" %} | LUT Kyyti{% endblock %}
+{% block card_title %}{% trans "Turn on two-step verification" %}{% endblock %}
+{% block card_body %}
+{% include "registration/_two_factor_steps.html" with step=2 %}
+<p class="text-sm">{% trans "When you log in, you'll also enter a code from an app on your phone, so your password alone isn't enough to get into your account." %}</p>
+
+<section class="grid gap-3">
+  <h2 class="font-bold">1. {% trans "Add LUT Kyyti to your authenticator app" %}</h2>
+  <p class="text-sm text-base-content/70">{% trans "No app yet? Any authenticator app works, such as Google Authenticator or Microsoft Authenticator, free from your phone's app store. Many password managers can do it too." %}</p>
+
+  <figure class="grid justify-items-center gap-2">
+    {# Dark on white in both themes, so that cameras can read it #}
+    <div class="bg-white p-3 rounded-box border border-base-300 w-48 [&>svg]:w-full [&>svg]:h-auto" role="img" aria-label="{% trans 'QR code for your authenticator app' %}">{{ qr_code|safe }}</div>
+    <figcaption class="text-sm text-base-content/70">{% trans "Scan this with your authenticator app" %}</figcaption>
+  </figure>
+
+  <div class="divider my-0 text-xs text-base-content/60">{% trans "OR, ON THIS PHONE" %}</div>
+  <a href="{{ setup_url }}" class="btn btn-outline btn-primary w-full">{% include "_icon.html" with name="link" class="size-4" %}{% trans "Open in authenticator app" %}</a>
+
+  <details class="collapse collapse-arrow border border-base-300 bg-base-100">
+    <summary class="collapse-title text-sm font-semibold">{% trans "Can't scan? Type the key in by hand" %}</summary>
+    <div class="collapse-content grid gap-2 text-sm">
+      <p>{% trans "In your app, choose to enter a setup key, and type in:" %}</p>
+      <div class="join w-full">
+        <code class="join-item input w-full font-mono tracking-wider select-all h-auto py-2 whitespace-normal break-all">{{ secret }}</code>
+        <button type="button" class="btn btn-outline join-item h-auto" data-copy="{{ secret|cut:' ' }}">{% trans "Copy" %}</button>
+      </div>
+      <p class="text-base-content/70">{% trans "If the app asks, the account is your email address and the type is time-based." %}</p>
+    </div>
+  </details>
+</section>
+
+<section class="grid gap-3">
+  <h2 class="font-bold">2. {% trans "Enter the code the app shows" %}</h2>
+  <form method="post" class="grid gap-3">
+    {% csrf_token %}
+    {% trans "6-digit code" as label %}
+    {% include "registration/_code_input.html" with field=form.code label=label %}
+    <button type="submit" class="btn btn-primary w-full">{% trans "Turn on" %}</button>
+    <a href="{% url 'account' %}" class="btn btn-sm btn-ghost w-full">{% trans "Cancel" %}</a>
+  </form>
+</section>
+{% include "registration/_copy.html" %}
+{% endblock %}

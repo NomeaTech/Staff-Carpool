@@ -1,0 +1,18 @@
+{% load i18n %}{% comment %}
+  Makes buttons with data-copy="text" copy the text, and those with
+  data-copy-list="#list" the list's items, one per line. Then the button
+  says so for a moment.
+{% endcomment %}
+<script>
+  document.querySelectorAll("[data-copy], [data-copy-list]").forEach(function (button) {
+    const label = button.innerHTML;
+    button.addEventListener("click", function () {
+      const text = button.dataset.copy ?? Array.from(
+        document.querySelectorAll(button.dataset.copyList + " li"), li => li.textContent).join("\n");
+      navigator.clipboard.writeText(text).then(function () {
+        {% trans "Copied" as copied %}button.textContent = "{{ copied|escapejs }}";
+        setTimeout(function () { button.innerHTML = label; }, 2000);
+      });
+    });
+  });
+</script>

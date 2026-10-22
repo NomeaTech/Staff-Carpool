@@ -26,6 +26,17 @@ def make_user(first, last, **fields):
     return user
 
 
+def log_in_to_admin(client, user):
+    """Logs user in with two-step verification, which the admin needs (carpool/admin_site.py)."""
+    from django_otp import DEVICE_ID_SESSION_KEY
+    from django_otp.plugins.otp_totp.models import TOTPDevice
+    device = TOTPDevice.objects.create(user=user, name="Authenticator app")
+    client.force_login(user)
+    session = client.session
+    session[DEVICE_ID_SESSION_KEY] = device.persistent_id
+    session.save()
+
+
 def make_ride(driver, **fields):
     place = lambda name: {"displayName": name, "location": {"lat": 61.0, "lng": 28.2}}
     fields = {

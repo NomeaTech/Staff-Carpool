@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-23 01:35+0300\n"
+"POT-Creation-Date: 2026-10-23 02:27+0300\n"
 "PO-Revision-Date: 2026-07-01 16:50+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,91 +67,103 @@ msgstr ""
 msgid "Changed the email address"
 msgstr ""
 
-#: activity/models.py:43
+#: activity/models.py:41
+msgid "Turned on two-step verification"
+msgstr ""
+
+#: activity/models.py:42
+msgid "Turned off two-step verification"
+msgstr ""
+
+#: activity/models.py:45
 msgid "Deleted the account"
 msgstr ""
 
-#: activity/models.py:49
+#: activity/models.py:51
 msgid "Searched for rides"
 msgstr ""
 
-#: activity/models.py:51
+#: activity/models.py:53
 msgid "Opened a ride"
 msgstr ""
 
-#: activity/models.py:57
+#: activity/models.py:59
 msgid "Posted a ride"
 msgstr ""
 
-#: activity/models.py:59
+#: activity/models.py:61
 msgid "Changed a ride"
 msgstr ""
 
-#: activity/models.py:62
+#: activity/models.py:64
 msgid "Deleted a ride"
 msgstr ""
 
-#: activity/models.py:64
+#: activity/models.py:66
 msgid "Accepted a request"
 msgstr ""
 
-#: activity/models.py:65
+#: activity/models.py:67
 msgid "Declined a request"
 msgstr ""
 
-#: activity/models.py:66
+#: activity/models.py:68
 msgid "Removed a passenger"
 msgstr ""
 
-#: activity/models.py:69
+#: activity/models.py:71
 msgid "Asked to join a ride"
 msgstr ""
 
-#: activity/models.py:71
+#: activity/models.py:73
 msgid "Withdrew a request"
 msgstr ""
 
-#: activity/models.py:72
+#: activity/models.py:74
 msgid "Left a ride"
 msgstr ""
 
-#: activity/models.py:75
+#: activity/models.py:77
 msgid "Made a group"
 msgstr ""
 
-#: activity/models.py:76 notifications/models.py:29
+#: activity/models.py:78 notifications/models.py:29
 msgid "Joined a group"
 msgstr ""
 
-#: activity/models.py:77
+#: activity/models.py:79
 msgid "Left a group"
 msgstr ""
 
-#: activity/models.py:80
+#: activity/models.py:82
 msgid "Opened a notification"
 msgstr ""
 
-#: activity/models.py:81
+#: activity/models.py:83
 msgid "Marked notifications read"
 msgstr ""
 
-#: activity/models.py:82
+#: activity/models.py:84
 msgid "Turned push notifications on"
 msgstr ""
 
-#: activity/models.py:83
+#: activity/models.py:85
 msgid "Turned push notifications off"
 msgstr ""
 
-#: activity/models.py:105
+#: activity/models.py:107
 msgid "deleted user"
 msgstr ""
 
-#: carpool/settings.py:228
+#: carpool/admin_site.py:28
+msgid "Turn on two-step verification to use the admin."
+msgstr ""
+
+#: carpool/settings.py:235
 msgid "English"
 msgstr "Englanti"
 
-#: carpool/settings.py:229
+#: carpool/settings.py:236
 msgid "Finnish"
 msgstr "Suomi"
 
@@ -741,31 +753,31 @@ msgstr ""
 
 #: rides/forms.py:14 rides/models.py:330
 msgid "Monday"
-msgstr ""
+msgstr "Maanantai"
 
 #: rides/forms.py:15 rides/models.py:331
 msgid "Tuesday"
-msgstr ""
+msgstr "Tiistai"
 
 #: rides/forms.py:16 rides/models.py:332
 msgid "Wednesday"
-msgstr ""
+msgstr "Keskiviikko"
 
 #: rides/forms.py:17 rides/models.py:333
 msgid "Thursday"
-msgstr ""
+msgstr "Torstai"
 
 #: rides/forms.py:18 rides/models.py:334
 msgid "Friday"
-msgstr ""
+msgstr "Perjantai"
 
 #: rides/forms.py:19 rides/models.py:335
 msgid "Saturday"
-msgstr ""
+msgstr "Lauantai"
 
 #: rides/forms.py:20 rides/models.py:336
 msgid "Sunday"
-msgstr ""
+msgstr "Sunnuntai"
 
 #: rides/forms.py:80
 msgid "One-time"
