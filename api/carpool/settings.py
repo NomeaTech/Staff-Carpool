@@ -50,6 +50,11 @@ ALLOWED_HOSTS = ['localhost', 'kyyti.net', 'static.cloudflareinsights.com']
 # Requests reach Django through a proxy on localhost, so the address cannot be
 # taken from the request. Leave unset in development to use the request's.
 SITE_URL = os.getenv("SITE_URL", "").rstrip("/")
+# Metabase (scripts/metabase), linked from the admin's user statistics when set
+METABASE_URL = os.getenv("METABASE_URL", "").rstrip("/")
+# After how many days the activity log's events (activity/models.py) are
+# kept without their user and ride. The app does it itself, once a day.
+ACTIVITY_ANONYMISE_DAYS = int(os.getenv("ACTIVITY_ANONYMISE_DAYS", 730))
 
 CSRF_TRUSTED_ORIGINS = ['https://kyyti.net', 'http://localhost:8120', 'https://static.cloudflareinsights.com']
 
@@ -88,6 +93,7 @@ INSTALLED_APPS = [
     'notifications',
     'landing',
     'rides',
+    'activity',
     'test_app.apps.TestAppConfig',
     # 3rd party
     'corsheaders',
@@ -114,6 +120,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # Records each logged-in user's first visit of the day (activity/)
+    'activity.middleware.DailyActivityMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -169,7 +177,7 @@ DATABASES = {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": "campus_ride",
         "USER": "postgres",
-        "PASSWORD": "1234",
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
         "HOST": "127.0.0.1",
         "PORT": "5432",
         # Keep connections open between requests instead of reconnecting each time

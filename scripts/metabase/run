@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+#
+# scripts/metabase/run: start Metabase on the server, or update it to VERSION.
+#
+#   sudo scripts/metabase/run
+#
+# Runs the metabase/metabase Docker image with the settings in
+# /etc/metabase.env (see metabase.env.example). To update, back up first
+# (scripts/metabase/backup), change VERSION and run this again.
+set -euo pipefail
+
+VERSION="v0.64.1"
+ENV_FILE=/etc/metabase.env
+
+if [ ! -f "$ENV_FILE" ]; then
+    echo "$ENV_FILE is missing: copy scripts/metabase/metabase.env.example there and fill it in." >&2
+    exit 1
+fi
+port=$(sed -n 's/^MB_JETTY_PORT=//p' "$ENV_FILE")
+
+docker pull "metabase/metabase:$VERSION"
+docker rm -f metabase >/dev/null 2>&1 || true
+# The host's network, so that Metabase reaches PostgreSQL at 127.0.0.1;
+# MB_JETTY_HOST keeps it listening on the server itself only
+docker run -d --name metabase --restart unless-stopped --network host \
+    --env-file "$ENV_FILE" "metabase/metabase:$VERSION" >/dev/null
+
+echo "Starting Metabase $VERSION (this takes a minute or two)..."
+for _ in $(seq 60); do
+    if curl -fs "http://127.0.0.1:${port:-3000}/api/health" >/dev/null; then
+        echo "Metabase $VERSION is running."
+        exit 0
+    fi
+    sleep 5
+done
+echo "Metabase did not start. See: sudo docker logs metabase" >&2
+exit 1

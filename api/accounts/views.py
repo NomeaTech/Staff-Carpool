@@ -15,6 +15,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
 from django.views.generic import CreateView
 
+from activity import events
+from activity.models import Kind
 from notifications import services as notifications
 from rides.models import RideRequest
 from .forms import SignUpForm, UserLoginForm, ProfileForm, SettingsForm, PhotoForm, DeleteAccountForm, EmailChangeForm, PHOTO_MAX_UPLOAD, photo_too_large
@@ -33,6 +35,7 @@ class SignUpView(CreateView):
 
     def form_valid(self, form):
         user = form.save()
+        events.record(Kind.SIGNED_UP, user)
         send_confirmation(self.request, user)
         return confirmation_sent_redirect(self.request, user.email)
 
@@ -89,6 +92,7 @@ def confirm_email(request, uidb64, token):
     if request.method == "POST":
         user.email_confirmed_at = timezone.now()
         user.save(update_fields=["email_confirmed_at"])
+        events.record(Kind.EMAIL_CONFIRMED, user, hours=events.hours_since(user.date_joined))
         request.session.pop("confirmation_email", None)
         if user.is_active:
             login(request, user, backend="accounts.backends.EmailBackend")
@@ -133,24 +137,30 @@ def account(request):
 
     if posted == "profile" and profile_form.is_valid():
         profile_form.save()
+        events.record(Kind.PROFILE_SAVED, user, fields=profile_form.changed_data)
         messages.success(request, _("Your profile was saved."))
         return redirect("account")
     if posted == "settings" and settings_form.is_valid():
         settings_form.save()
+        # The settings are all choices or yes/no, so their new values are kept
+        events.record(Kind.SETTINGS_SAVED, user, changed={field: settings_form.cleaned_data[field] for field in settings_form.changed_data})
         messages.success(request, _("Your settings were saved."))
         return redirect("account")
     if posted == "photo" and photo_form.is_valid():
         photo_form.save(user)
+        events.record(Kind.PHOTO_ADDED, user)
         messages.success(request, _("Your photo was changed."))
         return redirect("account")
     if posted == "remove_photo" and user.pfp:
         # User.save() deletes the file
         user.pfp = None
         user.save(update_fields=["pfp"])
+        events.record(Kind.PHOTO_REMOVED, user)
         messages.success(request, _("Your photo was removed."))
         return redirect("account")
     if posted == "email" and email_form.is_valid():
         email_change.request_change(request, user, email_form.cleaned_data["new_email"])
+        events.record(Kind.EMAIL_CHANGE_REQUESTED, user)
         messages.success(request, _("We sent a confirmation link to %(email)s. Your email address changes once you open it.") % {"email": user.pending_email})
         return redirect("account")
     if posted == "email_resend" and user.pending_email:
@@ -176,6 +186,16 @@ def account(request):
                 elif ride_request.status == RideRequest.Status.PENDING:
                     notifications.request_withdrawn(request, ride_request)
             photo = user.pfp.name if user.pfp else None
+            # Recorded without the user: the account's other events are
+            # kept without it too (Event.user)
+            if not events.is_test_user(user):
+                events.record(
+                    Kind.ACCOUNT_DELETED, None,
+                    domain=user.email.rsplit("@", 1)[-1].lower(),
+                    days=(timezone.now() - user.date_joined).days,
+                    rides=user.driver.count(),
+                    requests=user.ride_requests.count(),
+                )
             logout(request)
             user.delete()
         delete_photo_file(photo)
@@ -215,6 +235,7 @@ def confirm_email_change(request, uidb64, token):
         except email_change.EmailTaken:
             email_change.cancel(user)
             return render(request, "registration/confirm_email_change.html", {"taken": True, "email": new_email}, status=409)
+        events.record(Kind.EMAIL_CHANGED, user)
         if request.user.is_authenticated and request.user.pk == user.pk:
             messages.success(request, _("Your email address is now %(email)s.") % {"email": new_email})
             return redirect("account")
