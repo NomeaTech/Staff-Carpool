@@ -1,5 +1,6 @@
 from io import BytesIO
 import re
+import uuid
 import json
 from unittest import skipUnless
 from unittest.mock import patch
@@ -8,7 +9,7 @@ import os
 from django.conf import settings
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase, override_settings
+from django.test import Client, RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from PIL import Image
@@ -850,3 +851,63 @@ class StaticFilesTests(TestCase):
         collected = [path for finder in finders.get_finders() for path, _storage in finder.list(ignore)]
         self.assertTrue(any(path.startswith("images/icons/") for path in collected))
         self.assertFalse([path for path in collected if "user_images" in path])
+
+
+class ErrorPageTests(TestCase):
+    """The error pages (carpool/errors.py), in the site's look."""
+
+    def setUp(self):
+        self.user = make_user("Aino", "Mäkinen")
+        self.client.force_login(self.user)
+
+    def page(self, url, status=404):
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status)
+        self.assertTemplateUsed(response, "error.html")
+        self.assertIn("no-store", response["Cache-Control"])
+        return response.content.decode()
+
+    def test_unknown_page(self):
+        page = self.page("/app/no-such-page/")
+        self.assertIn(">404<", page)
+        self.assertIn("Page not found", page)
+        self.assertIn(f'href="{reverse("landing")}"', page)
+
+    def test_rides_that_do_not_exist(self):
+        # A deleted ride, and a mistyped link that is not a ride ID at all
+        for url in (reverse("ride_detail", args=[uuid.uuid4()]), "/app/ride/asdfasd", "/app/ride/asdfasd/"):
+            page = self.page(url)
+            self.assertIn("Ride not found", page, url)
+            self.assertIn("Its driver may have deleted it", page)
+            self.assertIn(f'href="{reverse("search")}"', page)
+
+    def test_editing_someone_elses_ride(self):
+        ride = make_ride(make_user("Jamie", "Saarinen"))
+        page = self.page(reverse("edit_ride", args=[ride.pk]))
+        self.assertIn("you are not its driver", page)
+        self.assertIn(f'href="{reverse("my_rides")}"', page)
+
+    def test_groups_and_notifications_that_do_not_exist(self):
+        self.assertIn("Group not found", self.page(reverse("group_detail", args=[uuid.uuid4()])))
+        self.assertIn("Group not found", self.page("/app/groups/nope/"))
+        self.assertIn("Notification not found", self.page(reverse("open_notification", args=[uuid.uuid4()])))
+
+    def test_in_finnish(self):
+        self.client.cookies["django_language"] = "fi"
+        page = self.page("/app/ride/asdfasd")
+        self.assertIn("Kyytiä ei löytynyt", page)
+
+    def test_server_error(self):
+        from carpool.errors import server_error
+        request = RequestFactory().get("/app/home/")
+        request.user = self.user
+        response = server_error(request)
+        self.assertEqual(response.status_code, 500)
+        self.assertIn("Something went wrong", response.content.decode())
+
+    def test_expired_form(self):
+        client = Client(enforce_csrf_checks=True)
+        client.force_login(self.user)
+        response = client.post(reverse("account"), {"form": "profile"})
+        self.assertEqual(response.status_code, 403)
+        self.assertIn("The form had expired", response.content.decode())

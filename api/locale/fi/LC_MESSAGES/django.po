@@ -1018,3 +1018,103 @@ msgstr "Taksi"
 #: rides/transport.py:88
 msgid "Other"
 msgstr "Muu"
+
+#: carpool/errors.py:23
+msgid "Bad request"
+msgstr "Virheellinen pyyntö"
+
+#: carpool/errors.py:23
+msgid "The page could not handle the request. Go back and try again."
+msgstr "Sivu ei pystynyt käsittelemään pyyntöä. Palaa takaisin ja yritä uudelleen."
+
+#: carpool/errors.py:24
+msgid "No access"
+msgstr "Ei käyttöoikeutta"
+
+#: carpool/errors.py:24
+msgid "You do not have permission to see this page."
+msgstr "Sinulla ei ole oikeutta nähdä tätä sivua."
+
+#: carpool/errors.py:25
+msgid "Page not found"
+msgstr "Sivua ei löytynyt"
+
+#: carpool/errors.py:25
+msgid ""
+"The page does not exist or has moved. Check the address, or start again from "
+"the home page."
+msgstr ""
+"Sivua ei ole olemassa tai se on siirretty. Tarkista osoite tai aloita alusta "
+"etusivulta."
+
+#: carpool/errors.py:26
+msgid "Something went wrong"
+msgstr "Jotain meni pieleen"
+
+#: carpool/errors.py:26
+msgid "There was an error on our side. Try again in a moment."
+msgstr "Meillä tapahtui virhe. Yritä hetken kuluttua uudelleen."
+
+#: carpool/errors.py:66
+msgid "The form had expired. Go back, reload the page and try again."
+msgstr "Lomake vanheni. Palaa takaisin, lataa sivu uudelleen ja yritä uudelleen."
+
+#: templates/error.html:19
+msgid "Go back"
+msgstr "Takaisin"
+
+#: templates/error.html:20
+msgid "Home page"
+msgstr "Etusivu"
+
+#: carpool/errors.py:35 carpool/errors.py:38
+msgid "Ride not found"
+msgstr "Kyytiä ei löytynyt"
+
+#: carpool/errors.py:36
+msgid ""
+"This ride does not exist, or you are not its driver. Only drivers can edit "
+"their rides."
+msgstr ""
+"Tätä kyytiä ei ole olemassa, tai et ole sen kuljettaja. Vain kuljettaja voi "
+"muokata kyytiään."
+
+#: carpool/errors.py:39
+msgid ""
+"This ride does not exist. Its driver may have deleted it, or the link may be "
+"wrong."
+msgstr ""
+"Tätä kyytiä ei ole olemassa. Kuljettaja on ehkä poistanut sen, tai linkki on "
+"virheellinen."
+
+#: carpool/errors.py:41
+msgid "Request not found"
+msgstr "Pyyntöä ei löytynyt"
+
+#: carpool/errors.py:42
+msgid ""
+"This request to join a ride no longer exists. The passenger may have "
+"withdrawn it, or the ride was deleted."
+msgstr ""
+"Tätä kyytipyyntöä ei ole enää olemassa. Matkustaja on ehkä perunut sen, tai "
+"kyyti on poistettu."
+
+#: carpool/errors.py:44
+msgid "Group not found"
+msgstr "Ryhmää ei löytynyt"
+
+#: carpool/errors.py:45
+msgid ""
+"This group does not exist. Its admin may have deleted it, or the link may be "
+"wrong."
+msgstr ""
+"Tätä ryhmää ei ole olemassa. Ylläpitäjä on ehkä poistanut sen, tai linkki on "
+"virheellinen."
+
+#: carpool/errors.py:47
+msgid "Notification not found"
+msgstr "Ilmoitusta ei löytynyt"
+
+#: carpool/errors.py:48
+msgid "This notification does not exist, or it is not yours."
+msgstr "Tätä ilmoitusta ei ole olemassa, tai se ei ole sinun."
