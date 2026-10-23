@@ -54,7 +54,7 @@
         });
     </script>
 
-    <form action="{% if editing %}{% url 'edit_ride' ride.pk %}{% else %}{% url 'add' %}{% endif %}" name="RideForm" method="post" class="grid lg:grid-cols-2 gap-5 items-start" data-day-required="{% trans "Choose at least one day for a recurring ride." %}">
+    <form action="{% if editing %}{% url 'edit_ride' ride.pk %}{% else %}{% url 'add' %}{% endif %}" name="RideForm" method="post" class="grid lg:grid-cols-2 gap-5 items-start" data-day-required="{% trans "Choose at least one day for a recurring ride." %}" data-return-required="{% trans "Enter a return time on at least one day, or choose one-way." %}">
       {% csrf_token %}
 
       {% if ride_form.errors %}
@@ -78,6 +78,13 @@
                 <legend class="fieldset-legend">{% trans "Car ride" %}</legend>
                 <div class="grid @sm:grid-cols-2 @2xl:grid-cols-1 gap-2">
                   {% include "_transport_choice.html" with option=transport.offer label=offer_label checked=ride_form.offer.value onchange="enableMaxPassengerField(this)" %}
+                  {# Shown for an offer, right under it: next to it in the list, or below it when Offer and Request are side by side #}
+                  <div hidden id="id_max_passengers_div" class="@sm:order-last @sm:col-start-1 @2xl:order-none">
+                    <fieldset class="fieldset py-0">
+                      <legend class="fieldset-legend">{% trans "Maximum passengers" %}</legend>
+                      <input disabled id="id_max_passengers" name="max_passengers" type="number" pattern="\d*" min="1" max="100" class="input w-full" value="{{ ride_form.max_passengers.value|default_if_none:"" }}"/>
+                    </fieldset>
+                  </div>
                   {% include "_transport_choice.html" with option=transport.request label=request_label checked=ride_form.request.value %}
                 </div>
               </fieldset>
@@ -91,14 +98,8 @@
                 </div>
               </fieldset>
             </div>
-            {# Shown for an offer and for Other: side by side when there is room #}
+            {# Shown for Other #}
             <div class="flex flex-wrap gap-x-5 gap-y-3 has-[>:not([hidden])]:mt-2">
-              <div hidden id="id_max_passengers_div" class="w-full @sm:w-48">
-                <fieldset class="fieldset py-0">
-                  <legend class="fieldset-legend">{% trans "Maximum passengers" %}</legend>
-                  <input disabled id="id_max_passengers" name="max_passengers" type="number" pattern="\d*" min="1" max="100" class="input w-full" value="{{ ride_form.max_passengers.value|default_if_none:"" }}"/>
-                </fieldset>
-              </div>
               <div hidden id="other_div" class="grow basis-full @sm:basis-48">
                 <fieldset class="fieldset py-0">
                   <legend class="fieldset-legend">{% trans "Other" %}</legend>
@@ -166,8 +167,9 @@
               </fieldset>
             </div>
 
-            {# One row per weekday: ticked days get a leaving (and returning) time. In a narrow card (phones, the desktop column) the times are under the day, only once it is ticked #}
+            {# One row per weekday: ticked days get a leaving (and returning) time. In a narrow card (phones, the desktop column) the times are under the day, only once it is ticked. The labels have the same width, so the times line up #}
             <div hidden id="div-recurring" class="grid gap-2 mt-3">
+              <p hidden class="div-return text-sm text-base-content/60">{% trans "Leave the return time empty on days without a return journey." %}</p>
               {% for day in day_list %}
               <div id="div-{{ day.key }}" class="group grid @xl:grid-cols-[8rem_minmax(0,1fr)_minmax(0,1fr)] @xl:items-center gap-x-3 gap-y-2 rounded-field border border-base-300 p-3 transition has-[:checked]:border-primary/40 has-[:checked]:bg-primary/5">
                 <label class="flex items-center gap-2 font-semibold cursor-pointer">
@@ -176,14 +178,14 @@
                 </label>
                 <div class="div-departure @max-xl:hidden @max-xl:group-has-checked:block">
                   <label class="input input-sm w-full">
-                    <span class="label">{% trans "Leaving at" %}</span>
-                    <input id="id_{{ day.key }}_leaving_at_time" name="{{ day.key }}_leaving_at_time" type="time" class="min-w-0 grow" value="{{ day.leaving }}" aria-label="{% blocktrans with day=day.label %}{{ day }}: leaving at{% endblocktrans %}">
+                    <span class="label w-24 shrink-0">{% trans "Leaving at" %}</span>
+                    <input id="id_{{ day.key }}_leaving_at_time" name="{{ day.key }}_leaving_at_time" type="time" class="min-w-0 grow @xl:text-sm" value="{{ day.leaving }}" aria-label="{% blocktrans with day=day.label %}{{ day }}: leaving at{% endblocktrans %}">
                   </label>
                 </div>
                 <div hidden class="div-return @max-xl:hidden @max-xl:group-has-checked:block">
                   <label class="input input-sm w-full">
-                    <span class="label">{% trans "Returning at" %}</span>
-                    <input id="id_{{ day.key }}_returning_at_time" name="{{ day.key }}_returning_at_time" type="time" class="min-w-0 grow" value="{{ day.returning }}" aria-label="{% blocktrans with day=day.label %}{{ day }}: returning at{% endblocktrans %}">
+                    <span class="label w-24 shrink-0">{% trans "Returning at" %}</span>
+                    <input id="id_{{ day.key }}_returning_at_time" name="{{ day.key }}_returning_at_time" type="time" class="min-w-0 grow @xl:text-sm" value="{{ day.returning }}" aria-label="{% blocktrans with day=day.label %}{{ day }}: returning at{% endblocktrans %}">
                   </label>
                 </div>
               </div>
@@ -211,15 +213,21 @@
                     returning.required = oneTime && withReturn;
                     returning.min = leaving.value;
     
+                    // Return times are optional on each day (days without one are
+                    // one-way), but a return ride needs one on at least one day
                     const checks = [...form.querySelectorAll('input[name$="_check"]')];
+                    const returnings = [];
                     for (const check of checks) {
                         const day = check.name.replace(/_check$/, "");
                         const dayLeaving = form.elements[`${day}_leaving_at_time`];
                         const dayReturning = form.elements[`${day}_returning_at_time`];
                         dayLeaving.required = !oneTime && check.checked;
-                        dayReturning.required = !oneTime && withReturn && check.checked;
                         dayReturning.min = dayLeaving.value;
+                        dayReturning.setCustomValidity("");
+                        if (check.checked) returnings.push(dayReturning);
                     }
+                    const noReturn = !oneTime && withReturn && returnings.length && !returnings.some((input) => input.value);
+                    if (noReturn) returnings[0].setCustomValidity(form.dataset.returnRequired);
                     // A recurring ride needs at least one day
                     const noDays = !oneTime && !checks.some((check) => check.checked);
                     checks[0].setCustomValidity(noDays ? form.dataset.dayRequired : "");
@@ -269,7 +277,14 @@
         <section class="card bg-base-100 border border-base-300 shadow-sm">
           <div class="card-body p-5 sm:p-6 @container">
             <h2 class="card-title text-lg mb-1">{% trans "Price and note for passengers" %}</h2>
-            {# Both are optional, and only shown on the ride's page when filled in #}
+            {# All optional, and only shown on the ride's page when filled in or ticked #}
+            <label class="flex items-start gap-3 rounded-field border border-base-300 p-3 cursor-pointer transition has-[:checked]:border-primary/40 has-[:checked]:bg-primary/5">
+              <input id="id_flexible_time" name="flexible_time" type="checkbox" class="checkbox checkbox-sm checkbox-primary mt-0.5" {% if ride_form.flexible_time.value %}checked{% endif %}/>
+              <span class="grid gap-0.5">
+                <span class="font-semibold">{% trans "Time flexibility" %}</span>
+                <span class="text-sm text-base-content/60">{% trans "The departure times are flexible. Passengers can suggest a different time." %}</span>
+              </span>
+            </label>
             <fieldset class="fieldset py-0">
               <legend class="fieldset-legend">{% trans "Price" %} <span class="font-normal text-base-content/60">{% trans "(optional)" %}</span></legend>
               <input id="id_price" name="price" class="input w-full" maxlength="100" placeholder="{% trans "e.g. €10 per passenger" %}" value="{{ ride_form.price.value|default_if_none:"" }}"/>

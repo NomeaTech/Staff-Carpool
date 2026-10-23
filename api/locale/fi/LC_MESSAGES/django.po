@@ -1118,3 +1118,35 @@ msgstr "Ilmoitusta ei löytynyt"
 #: carpool/errors.py:48
 msgid "This notification does not exist, or it is not yours."
 msgstr "Tätä ilmoitusta ei ole olemassa, tai se ei ole sinun."
+
+#: rides/forms.py:705 home/templates/add_ride.html:57
+msgid "Enter a return time on at least one day, or choose one-way."
+msgstr "Anna paluuaika vähintään yhdelle päivälle tai valitse yhdensuuntainen."
+
+#: rides/models.py:18
+msgid "Mondays"
+msgstr "Maanantaisin"
+
+#: rides/models.py:19
+msgid "Tuesdays"
+msgstr "Tiistaisin"
+
+#: rides/models.py:20
+msgid "Wednesdays"
+msgstr "Keskiviikkoisin"
+
+#: rides/models.py:21
+msgid "Thursdays"
+msgstr "Torstaisin"
+
+#: rides/models.py:22
+msgid "Fridays"
+msgstr "Perjantaisin"
+
+#: rides/models.py:23
+msgid "Saturdays"
+msgstr "Lauantaisin"
+
+#: rides/models.py:24
+msgid "Sundays"
+msgstr "Sunnuntaisin"

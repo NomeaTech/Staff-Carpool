@@ -5,7 +5,7 @@ from accounts.privacy import contact_details
 from notifications import services as notifications
 from notifications.models import Notification
 from django.http import HttpResponseRedirect
-from rides.models import Ride, RideRequest, Via
+from rides.models import Ride, RideRequest, Via, WEEKDAY_KEYS, WEEKDAY_PLURALS
 from rides.routes import build_route, as_route_point
 from rides.transport import TRANSPORT_OPTIONS, icon_layout
 from django.contrib.auth.decorators import login_required
@@ -223,23 +223,36 @@ def ride_detail(request, ride_id):
 def request_ride(request, ride_id):
     ride = get_object_or_404(Ride.objects.upcoming().visible_to(request.user).with_seats_taken(), pk=ride_id)
     message = request.POST.get("message", "").strip()[:500]
+    # A recurring ride is joined on some of its days
+    ride_days = ride.day_keys()
+    chosen = [day for day in ride_days if day in request.POST.getlist("days")]
+    full = [day for day in chosen if ride.seats_left_on(day) == 0]
 
     if ride.driver_id == request.user.id:
         messages.error(request, _("You cannot request to join your own ride."))
+    elif ride_days and not chosen:
+        messages.error(request, _("Choose the days you would like to join the ride on."))
+    elif full:
+        messages.error(request, _("There are no free seats left on %(days)s.") % {"days": day_names(full)})
     elif ride.is_full():
         messages.error(request, _("This ride has no free seats left."))
     else:
         try:
             with transaction.atomic():
-                ride_request = RideRequest.objects.create(ride=ride, passenger=request.user, message=message)
+                ride_request = RideRequest.objects.create(ride=ride, passenger=request.user, message=message, days=chosen)
                 notifications.request_received(request, ride_request)
-            events.record(Kind.REQUEST_SENT, request.user, ride, message=bool(message), seats_left=ride.seats_left())
+            events.record(Kind.REQUEST_SENT, request.user, ride, message=bool(message), seats_left=ride.seats_left(),
+                          **({"days": len(chosen)} if ride_days else {}))
             messages.success(request, _("Request sent. You will be notified when the driver responds."))
         except IntegrityError:
             # The user has already requested to join this ride
             pass
 
     return redirect("ride_detail", ride_id=ride_id)
+
+def day_names(days):
+    """Day keys (WEEKDAY_KEYS) as their plural names, e.g. "Mondays, Wednesdays"."""
+    return ", ".join(str(WEEKDAY_PLURALS[WEEKDAY_KEYS.index(day)]) for day in days)
 
 @login_required
 @require_POST
@@ -278,9 +291,15 @@ def answer_request(request, request_id):
         # Locking the ride makes requests accepted at the same time count
         # each other's seats
         ride = Ride.objects.select_for_update().get(pk=ride_request.ride_id)
+        # Seats are counted on the locked ride
+        ride_request.ride = ride
 
         if accept and ride_request.status == RideRequest.Status.PENDING:
-            if ride.is_full():
+            full = [day for day in ride_request.ride_days() if ride.seats_left_on(day) == 0]
+            if full:
+                messages.error(request, _("The ride is full on %(days)s. Increase its seats or remove a passenger first.")
+                               % {"days": day_names(full)})
+            elif not ride_request.fits():
                 messages.error(request, _("The ride is full. Increase its seats or remove a passenger first."))
             else:
                 ride_request.status = RideRequest.Status.ACCEPTED
@@ -353,8 +372,11 @@ def search(request):
         page = Paginator(rides, SEARCH_PAGE_SIZE).get_page(request.POST.get("page"))
         # The icons of the options the search is filtered by come first
         filters = transport_filters(search_form.cleaned_data)
+        # A recurring ride's seats on the day searched for
+        day = WEEKDAY_KEYS[search_form.cleaned_data["date"].weekday()] if search_form.cleaned_data["date"] else None
         for ride in page:
             ride.icons = icon_layout(ride.transport_options(), filters)
+            ride.seats_day = day
         context["page"] = page
         context["searched"] = True
         # Searches, not opening the page or changing the page of results
@@ -416,7 +438,7 @@ def search_rides(form_clean, user):
     direct_distances = []
     route_distances = []
     # Rides that have already left (Ride.objects.upcoming) are not shown
-    rides = Ride.objects.upcoming().visible_to(user).select_related("driver")
+    rides = Ride.objects.upcoming().visible_to(user).select_related("driver").with_seats_taken()
 
     if start_json:
         sl = start_json["location"]
@@ -545,13 +567,43 @@ def ride_form_page(request, ride):
             logger.exception("Could not save the route of ride %s", ride.pk)
 
     if editing:
+        drop_removed_days(request, ride)
         if ride_form.has_changed() or place_signature(ride) != old_places:
+            ride.updated_at = timezone.now()
+            ride.save(update_fields=["updated_at"])
             notifications.ride_updated(request, ride)
             events.record(Kind.RIDE_EDITED, request.user, ride, places=place_signature(ride) != old_places)
         messages.success(request, _("The ride was updated."))
     else:
         events.record(Kind.RIDE_POSTED, request.user, ride, **events.ride_details(ride))
     return redirect("ride_detail", ride_id=ride.pk)
+
+def drop_removed_days(request, ride):
+    """
+    After a recurring ride's days are changed: requests to join it keep the
+    chosen days it still has. Those left with none are declined (pending)
+    or the passenger removed (accepted), and the passenger is told.
+    """
+    if ride.one_time:
+        return
+    with transaction.atomic():
+        for ride_request in ride.requests.exclude(status=RideRequest.Status.DECLINED).exclude(days=[]).select_related("passenger"):
+            days = ride_request.ride_days()
+            if days == ride_request.days:
+                continue
+            ride_request.days = days
+            if days:
+                ride_request.save(update_fields=["days", "updated_at"])
+                continue
+            was_accepted = ride_request.status == RideRequest.Status.ACCEPTED
+            ride_request.status = RideRequest.Status.DECLINED
+            ride_request.save(update_fields=["days", "status", "updated_at"])
+            if was_accepted:
+                notifications.passenger_removed(request, ride_request)
+            else:
+                notifications.request_declined(request, ride_request)
+            events.record(Kind.PASSENGER_REMOVED if was_accepted else Kind.REQUEST_DECLINED, ride.driver, ride,
+                          hours=events.hours_since(ride_request.created_at))
 
 def save_ride(ride_form):
     """Saves the ride, its locations and its stops on the way (RideForm.clean_vias)."""
@@ -582,13 +634,14 @@ def render_ride_form(request, ride_form, ride):
     """
     days = [
         {
-            "label": label,
+            # The ride goes on every such day: "Mondays"
+            "label": plural,
             "key": day,
             "checked": ride_form[f"{day}_check"].value(),
             "leaving": ride_form[f"{day}_leaving_at_time"].value() or "",
             "returning": ride_form[f"{day}_returning_at_time"].value() or "",
         }
-        for day, label in WEEKDAY_NAMES
+        for (day, _label), plural in zip(WEEKDAY_NAMES, WEEKDAY_PLURALS)
     ]
     context = {
         "ride_form": ride_form,

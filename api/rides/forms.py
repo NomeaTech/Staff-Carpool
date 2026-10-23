@@ -68,8 +68,9 @@ class RideForm(forms.ModelForm):
     Its schedule depends on two choices:
     - one-time rides need a departure date and time, recurring rides at
       least one day with a departure time on each chosen day
-    - return rides also need a return date and time (one-time rides) or a
-      return time on each chosen day (recurring rides), after the departure
+    - return rides also need a return date and time (one-time rides), or a
+      return time on at least one of the chosen days (recurring rides; the
+      other days are one-way), after the departure
     Values that do not apply to the chosen kind of ride are cleared.
     The ride is shown to everyone, or only to members of some of the
     driver's groups (audience and groups, see groups/models.py).
@@ -163,7 +164,8 @@ class RideForm(forms.ModelForm):
             if not 1 <= data["max_passengers"] <= MAX_SEATS:
                 self.add_error("max_passengers", _("Enter a number of passengers from 1 to %(max)s.") % {"max": MAX_SEATS})
             elif not self.instance._state.adding:
-                taken = self.instance.requests.filter(status="accepted").count()
+                # On a recurring ride, its busiest day
+                taken = self.instance.most_seats_taken()
                 if data["max_passengers"] < taken:
                     self.add_error("max_passengers", _(
                         "%(count)s passengers have already joined. Remove passengers before lowering the seats below that."
@@ -235,7 +237,8 @@ class RideForm(forms.ModelForm):
             else:
                 data[leaving_field] = leaving.strftime(TIME_FORMAT)
 
-            if one_way:
+            # Without a return time, the day is one-way
+            if one_way or not data.get(returning_field):
                 data[returning_field] = ""
                 continue
             returning = parse_time(data.get(returning_field))
@@ -245,6 +248,12 @@ class RideForm(forms.ModelForm):
                 self.add_error(returning_field, _("The return journey on %(day)s must be after the departure.") % {"day": name})
             else:
                 data[returning_field] = returning.strftime(TIME_FORMAT)
+
+        # A return ride returns on at least one of its days
+        days = [day for day, _name in WEEKDAYS if data.get(f"{day}_check")]
+        if not one_way and days and not any(data.get(f"{day}_returning_at_time") for day in days) \
+                and not any(f"{day}_returning_at_time" in self.errors for day in days):
+            self.add_error(None, _("Enter a return time on at least one day, or choose one-way."))
 
     class Meta:
         model = Ride
@@ -286,6 +295,7 @@ class RideForm(forms.ModelForm):
             "sunday_returning_at_time",
             "note",
             "price",
+            "flexible_time",
             "groups",
             # "test",
             # "private",
