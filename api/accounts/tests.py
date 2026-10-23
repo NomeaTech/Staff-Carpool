@@ -607,3 +607,90 @@ class TwoFactorTests(TestCase):
         self.assertRedirects(self.log_in(next=reverse("admin:index")), reverse("login_code"))
         response = self.client.post(reverse("login_code"), {"code": self.app_code()})
         self.assertRedirects(response, reverse("admin:index"))
+
+
+@override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
+class SecurityTests(TestCase):
+    def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
+        self.addCleanup(cache.clear)
+        self.user = make_user("Aino", "Mäkinen")
+
+    def log_in(self, password):
+        return self.client.post(reverse("login"), {"username": self.user.email, "password": password})
+
+    def test_wrong_passwords_are_limited(self):
+        from .throttle import LOGIN_ATTEMPTS
+        for _ in range(LOGIN_ATTEMPTS):
+            self.assertEqual(self.log_in("Wr0ng-password").status_code, 200)
+        # Even the right password waits, so that it cannot be guessed
+        response = self.log_in("Passw0rd!x")
+        self.assertContains(response, "Too many wrong passwords")
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_logging_in_clears_the_wrong_passwords(self):
+        from .throttle import LOGIN_ATTEMPTS
+        for _ in range(LOGIN_ATTEMPTS - 1):
+            self.log_in("Wr0ng-password")
+        self.assertRedirects(self.log_in("Passw0rd!x"), reverse("home"), fetch_redirect_response=False)
+        self.client.logout()
+        for _ in range(LOGIN_ATTEMPTS - 1):
+            self.log_in("Wr0ng-password")
+        self.assertRedirects(self.log_in("Passw0rd!x"), reverse("home"), fetch_redirect_response=False)
+
+    def test_password_reset_emails_are_limited(self):
+        from .throttle import PASSWORD_RESETS
+        for _ in range(PASSWORD_RESETS + 2):
+            response = self.client.post(reverse("password_reset"), {"email": self.user.email})
+            self.assertRedirects(response, reverse("password_reset_done"))
+        self.assertEqual(len(mail.outbox), PASSWORD_RESETS)
+
+    def test_logging_out_needs_a_post(self):
+        self.client.force_login(self.user)
+        # The old link that logged out on a GET is gone
+        self.assertEqual(self.client.get("/app/accounts/logout", follow=True).status_code, 405)
+        self.assertEqual(self.client.get(reverse("logout")).status_code, 405)
+        self.assertIn("_auth_user_id", self.client.session)
+        self.client.post(reverse("logout"))
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_confirming_an_address_does_not_skip_two_step_verification(self):
+        from django.utils.encoding import force_bytes
+        from django.utils.http import urlsafe_base64_encode
+        from .confirmation import token_generator
+        TOTPDevice.objects.create(user=self.user, name="Authenticator app", confirmed=True)
+        User.objects.filter(pk=self.user.pk).update(email_confirmed_at=None)
+        self.user.refresh_from_db()
+        url = reverse("confirm_email", args=[urlsafe_base64_encode(force_bytes(self.user.pk)), token_generator.make_token(self.user)])
+        self.assertRedirects(self.client.post(url), reverse("login"), fetch_redirect_response=False)
+        self.assertNotIn("_auth_user_id", self.client.session)
+        self.user.refresh_from_db()
+        self.assertIsNotNone(self.user.email_confirmed_at)
+
+    def test_user_csv_does_not_run_formulas(self):
+        from .admin import csv_cell
+        self.assertEqual(csv_cell('=HYPERLINK("https://evil.example.com","x")'), '\'=HYPERLINK("https://evil.example.com","x")')
+        for value in ("+1", "-1", "@SUM(A1)", "\tx"):
+            self.assertEqual(csv_cell(value), "'" + value)
+        self.assertEqual(csv_cell("Aino"), "Aino")
+        self.assertEqual(csv_cell(3), 3)
+
+    def test_translating_needs_two_step_verification(self):
+        self.user.is_staff = self.user.is_superuser = True
+        self.user.save()
+        self.client.force_login(self.user)
+        self.assertNotEqual(self.client.get("/rosetta/").status_code, 200)
+        log_in_to_admin(self.client, self.user)
+        self.assertEqual(self.client.get("/rosetta/", follow=True).status_code, 200)
+
+    def test_debug_is_only_on_when_asked(self):
+        import importlib, os
+        from unittest.mock import patch
+        import carpool.settings as project_settings
+        try:
+            for value, expected in (("False", False), ("false", False), ("0", False), ("", False), ("True", True), ("1", True)):
+                with patch.dict(os.environ, {"DEBUG": value}):
+                    self.assertIs(importlib.reload(project_settings).DEBUG, expected, value)
+        finally:
+            importlib.reload(project_settings)

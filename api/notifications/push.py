@@ -17,6 +17,7 @@ notifications are turned off.
 """
 import json
 import logging
+from urllib.parse import urlsplit
 
 from django.conf import settings
 from django.templatetags.static import static
@@ -29,6 +30,34 @@ logger = logging.getLogger(__name__)
 # that is offline, in seconds
 TIME_TO_LIVE = 24 * 60 * 60
 TIMEOUT = 10
+
+# The browsers' push services. The server sends notifications to the
+# endpoint a browser gives, so only these are accepted: any other address
+# would have the server send requests wherever a user chose, e.g. to
+# services on its own network.
+PUSH_SERVICE_HOSTS = (
+    "fcm.googleapis.com",           # Chrome, Edge on Android, Opera, Samsung Internet...
+    "android.googleapis.com",       # Older Chrome subscriptions
+    "updates.push.services.mozilla.com",  # Firefox
+    ".push.apple.com",              # Safari (web.push.apple.com)
+    ".notify.windows.com",          # Edge on Windows
+)
+ENDPOINT_MAX_LENGTH = 2000
+
+
+def allowed_endpoint(endpoint):
+    """Whether endpoint is an HTTPS address of one of the PUSH_SERVICE_HOSTS."""
+    if not isinstance(endpoint, str) or len(endpoint) > ENDPOINT_MAX_LENGTH:
+        return False
+    try:
+        url = urlsplit(endpoint)
+        port = url.port
+    except ValueError:
+        return False
+    host = (url.hostname or "").lower()
+    return (url.scheme == "https" and port in (None, 443) and not url.username and not url.password
+            and any(host == allowed or (allowed.startswith(".") and host.endswith(allowed))
+                    for allowed in PUSH_SERVICE_HOSTS))
 
 
 def enabled():
@@ -54,6 +83,10 @@ def push_channel(request, notification):
 
 
 def send(subscription, data):
+    # Subscriptions saved before the endpoints were checked
+    if not allowed_endpoint(subscription.endpoint):
+        subscription.delete()
+        return False
     try:
         webpush(
             subscription_info=subscription.as_subscription_info(),

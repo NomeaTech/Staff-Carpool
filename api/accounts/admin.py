@@ -127,7 +127,18 @@ class CustomUserAdmin(UserAdmin):
         writer = csv.writer(response)
         writer.writerow([key for key, _label, _value in stats.COLUMNS])
         for user in user_stats.user_rows("date_joined").iterator():
-            writer.writerow([value(user) for _key, _label, value in stats.COLUMNS])
+            writer.writerow([csv_cell(value(user)) for _key, _label, value in stats.COLUMNS])
         return response
+
+
+def csv_cell(value):
+    """
+    A value for the CSV. Text that a spreadsheet would run as a formula
+    (a name such as "=HYPERLINK(...)" chosen by a user) starts with an
+    apostrophe instead, so that it is shown as text.
+    """
+    if isinstance(value, str) and value.startswith(("=", "+", "-", "@", "\t", "\r")):
+        return "'" + value
+    return value
 
 admin.site.register(User, CustomUserAdmin)

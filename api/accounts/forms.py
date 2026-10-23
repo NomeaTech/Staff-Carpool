@@ -1,7 +1,7 @@
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AdminUserCreationForm, AuthenticationForm, UsernameField
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AdminUserCreationForm, AuthenticationForm, PasswordResetForm, UsernameField
 from .models import User
 from .backends import find_user
-from . import email_change
+from . import email_change, throttle
 from . import phone as phone_numbers
 from django.db import models
 from django import forms
@@ -207,17 +207,29 @@ class UserLoginForm(AuthenticationForm):
     # The email address when the password is right but the address has not
     # been confirmed, so that the login page can offer a new link
     unconfirmed_email = None
+    # Too many wrong passwords: the login page says so, not that it is wrong
+    throttled = False
 
     def __init__(self, *args, **kwargs):
         super(UserLoginForm, self).__init__(*args, **kwargs)
 
     def clean(self):
+        email, password = self.cleaned_data.get("username"), self.cleaned_data.get("password")
+        # Too many wrong passwords: not even tried, so that it cannot be guessed
+        if email and throttle.blocked("login", email, throttle.LOGIN_ATTEMPTS):
+            self.throttled = True
+            raise forms.ValidationError(
+                _("Too many wrong passwords. Wait %(minutes)s minutes and try again, or reset your password.")
+                % {"minutes": throttle.LOGIN_WINDOW // 60},
+                code="throttled",
+            )
         try:
-            return super().clean()
+            data = super().clean()
         except forms.ValidationError:
+            if email:
+                throttle.count("login", email, throttle.LOGIN_WINDOW)
             # Only with the right password, so that it does not tell anyone
             # else whether the address has an account
-            email, password = self.cleaned_data.get("username"), self.cleaned_data.get("password")
             user = find_user(email) if email else None
             if user and user.is_active and user.email_confirmed_at is None and user.check_password(password):
                 self.unconfirmed_email = user.email
@@ -226,6 +238,8 @@ class UserLoginForm(AuthenticationForm):
                     code="unconfirmed",
                 )
             raise
+        throttle.clear("login", email)
+        return data
 
     username = forms.EmailField(widget=forms.EmailInput(
         attrs={
@@ -376,3 +390,18 @@ class EmailChangeForm(forms.Form):
         if not self.user.check_password(password):
             raise forms.ValidationError(_("The password is incorrect."), code="password")
         return password
+
+
+class ThrottledPasswordResetForm(PasswordResetForm):
+    """
+    The password reset form, sending at most throttle.PASSWORD_RESETS emails
+    to an address an hour, so that it cannot be used to flood an inbox. The
+    page says the same either way, so it does not tell which addresses have
+    accounts.
+    """
+
+    def get_users(self, email):
+        if throttle.blocked("password_reset", email, throttle.PASSWORD_RESETS):
+            return iter(())
+        throttle.count("password_reset", email, throttle.PASSWORD_RESET_WINDOW)
+        return super().get_users(email)

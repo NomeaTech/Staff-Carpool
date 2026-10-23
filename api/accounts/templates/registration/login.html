@@ -17,7 +17,7 @@
         <a href="{% url 'password_reset' %}" class="link link-primary link-hover text-sm font-semibold inline-block mt-2">{% trans "Forgot your password?" %}</a>
       </div>
 
-      {% if form.unconfirmed_email %}
+      {% if form.unconfirmed_email or form.throttled %}
         {% for error in form.non_field_errors %}<div role="alert" class="text-error text-sm">{{ error }}</div>{% endfor %}
       {% elif form.errors %}
         <div role="alert" class="text-error text-sm">{% trans "The email address or password is wrong." %}</div>

@@ -634,7 +634,12 @@ def digitrans_autocomplete_proxy(request):
     if not q:
         return JsonResponse({'features': []})
 
-    size = request.GET.get('size', '7')
+    # Passed on to Digitransit, so only a sensible number of suggestions
+    try:
+        size = min(max(int(request.GET.get('size', 7)), 1), 20)
+    except ValueError:
+        size = 7
+    q = q[:200]
 
     key = os.getenv("DIGITRANS_SUBSCRIPTION_KEY")
     headers = {'Digitransit-subscription-key': key} if key else {}
