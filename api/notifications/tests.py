@@ -196,7 +196,7 @@ class NotificationViewTests(TestCase):
 
 PUSH_KEYS = {"VAPID_PUBLIC_KEY": "BPublicKeyForTests", "VAPID_PRIVATE_KEY": "private-key-for-tests"}
 SUBSCRIPTION = {
-    "endpoint": "https://push.example.com/send/abc123",
+    "endpoint": "https://fcm.googleapis.com/fcm/send/abc123",
     "keys": {"p256dh": "BKeyP256dh", "auth": "authsecret"},
 }
 
@@ -254,8 +254,8 @@ class PushDeliveryTests(TestCase):
     def setUp(self):
         self.driver = make_user("Aino", "Mäkinen")
         self.ride = make_ride(self.driver)
-        self.phone = PushSubscription.objects.create(user=self.driver, endpoint="https://push.example.com/1", p256dh="k", auth="a")
-        self.laptop = PushSubscription.objects.create(user=self.driver, endpoint="https://push.example.com/2", p256dh="k", auth="a")
+        self.phone = PushSubscription.objects.create(user=self.driver, endpoint="https://fcm.googleapis.com/fcm/send/1", p256dh="k", auth="a")
+        self.laptop = PushSubscription.objects.create(user=self.driver, endpoint="https://updates.push.services.mozilla.com/wpush/v2/2", p256dh="k", auth="a")
 
     def notify(self):
         with self.captureOnCommitCallbacks(execute=True):
@@ -362,3 +362,37 @@ class FasterPagesTests(TestCase):
     def test_notification_links_are_not_loaded_early(self):
         Notification.objects.create(recipient=self.user, kind=Kind.RIDE_UPDATED, ride=self.ride, data={"name": "X"})
         self.assertContains(self.client.get(reverse("notifications")), 'data-turbo-prefetch="false"')
+
+
+class SecurityTests(TestCase):
+    def setUp(self):
+        self.user = make_user("Aino", "Mäkinen")
+        self.client.force_login(self.user)
+
+    def test_marking_read_only_goes_back_to_the_app(self):
+        url = reverse("notifications_mark_all_read")
+        self.assertRedirects(self.client.post(url, {"next": reverse("home")}), reverse("home"))
+        for elsewhere in ("https://evil.example.com/", "//evil.example.com/", "/\\evil.example.com"):
+            response = self.client.post(url, {"next": elsewhere})
+            self.assertRedirects(response, reverse("notifications"))
+
+    @override_settings(**PUSH_KEYS)
+    def test_only_push_services_are_accepted(self):
+        subscribe = lambda endpoint: self.client.post(reverse("push_subscribe"), json.dumps(
+            {**SUBSCRIPTION, "endpoint": endpoint}), content_type="application/json")
+        for endpoint in ("https://fcm.googleapis.com/fcm/send/x", "https://web.push.apple.com/x",
+                         "https://wns2-db5p.notify.windows.com/w/?token=x", "https://updates.push.services.mozilla.com/wpush/v2/x"):
+            self.assertEqual(subscribe(endpoint).status_code, 200, endpoint)
+        for endpoint in ("https://127.0.0.1/x", "https://localhost:8120/admin/", "https://evil.example.com/x",
+                         "https://fcm.googleapis.com.evil.example.com/x", "https://fcm.googleapis.com:8443/x",
+                         "https://user@fcm.googleapis.com/x", "http://fcm.googleapis.com/x", "https://" + "a" * 3000):
+            self.assertEqual(subscribe(endpoint).status_code, 400, endpoint)
+
+    @override_settings(**PUSH_KEYS)
+    @patch("notifications.push.webpush")
+    def test_older_subscriptions_elsewhere_are_not_sent_to(self, webpush):
+        from . import push
+        subscription = PushSubscription.objects.create(user=self.user, endpoint="https://10.0.0.1/x", p256dh="k", auth="a")
+        self.assertFalse(push.send(subscription, "{}"))
+        webpush.assert_not_called()
+        self.assertFalse(PushSubscription.objects.exists())

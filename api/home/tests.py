@@ -840,3 +840,13 @@ class WelcomePopupTests(TestCase):
 
     def test_only_posted(self):
         self.assertEqual(self.client.get(reverse("welcomed")).status_code, 405)
+
+
+class StaticFilesTests(TestCase):
+    def test_old_profile_photos_are_not_collected(self):
+        from django.contrib.staticfiles import finders
+        from django.apps import apps
+        ignore = apps.get_app_config("staticfiles").ignore_patterns
+        collected = [path for finder in finders.get_finders() for path, _storage in finder.list(ignore)]
+        self.assertTrue(any(path.startswith("images/icons/") for path in collected))
+        self.assertFalse([path for path in collected if "user_images" in path])

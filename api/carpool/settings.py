@@ -37,14 +37,12 @@ TURNSTILE_DEFAULT_CONFIG = {
     # 'size': 'compact',  # do not use data- prefix
 }
 
-TURNSTILE_PROXIES = {
-   'http': 'http://127.0.0.1:8120',
-}
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG")
+# Only "true" (or 1, yes, on) turns it on: os.getenv gives a string, and any
+# non-empty string, "False" too, would count as on.
+DEBUG = os.getenv("DEBUG", "").strip().lower() in ("1", "true", "yes", "on")
 
-ALLOWED_HOSTS = ['localhost', 'kyyti.net', 'static.cloudflareinsights.com']
+ALLOWED_HOSTS = ['localhost', 'kyyti.net']
 
 # Public address of the site, used for links in emails (e.g. password reset).
 # Requests reach Django through a proxy on localhost, so the address cannot be
@@ -60,7 +58,10 @@ ACTIVITY_ANONYMISE_DAYS = int(os.getenv("ACTIVITY_ANONYMISE_DAYS", 730))
 # another admin (groups/services.py ensure_admin)
 GROUP_ADMIN_AWAY_DAYS = int(os.getenv("GROUP_ADMIN_AWAY_DAYS", 180))
 
-CSRF_TRUSTED_ORIGINS = ['https://kyyti.net', 'http://localhost:8120', 'https://static.cloudflareinsights.com']
+# The development server's address is only trusted in development
+DEV_ORIGINS = ['http://localhost:8120'] if DEBUG else []
+
+CSRF_TRUSTED_ORIGINS = ['https://kyyti.net', *DEV_ORIGINS]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
@@ -69,6 +70,10 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SESSION_COOKIE_SECURE = True
 
 CSRF_COOKIE_SECURE = True
+
+# Browsers only use HTTPS for the site once they have seen it. Not for
+# subdomains, which may be served by others (e.g. Metabase's).
+SECURE_HSTS_SECONDS = 0 if DEBUG else 365 * 24 * 60 * 60
 
 CSRF_COOKIE_DOMAIN = os.getenv("CSRF_COOKIE_DOMAIN")
 
@@ -79,9 +84,8 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8120',
     'https://kyyti.net',
-    'https://static.cloudflareinsights.com',
+    *DEV_ORIGINS,
 ]
 
 
@@ -120,7 +124,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    # Leaves out old profile photos in static/ (carpool/apps.py)
+    'carpool.apps.StaticFilesConfig',
     'django.contrib.gis',
 ]
 
@@ -286,6 +291,9 @@ AUTHENTICATION_BACKENDS = ['accounts.backends.EmailBackend']
 
 # The admin does not show the keys of users' authenticator apps
 OTP_ADMIN_HIDE_SENSITIVE_DATA = True
+
+# Translating (/rosetta/) needs two-step verification, as the admin does
+ROSETTA_ACCESS_CONTROL_FUNCTION = "carpool.admin_site.can_translate"
 
 # Email is sent through Resend's SMTP server, whose password is the API key.
 # Without a key (e.g. in development) emails are printed to the console.

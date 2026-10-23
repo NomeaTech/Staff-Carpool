@@ -12,17 +12,27 @@ jobs:
     # The code is pulled on the server itself, so the repository is not checked
     # out here. The key is set up directly instead of with an action, as the
     # previous actions ran on the deprecated Node 20.
+    # The server's host key comes from the SSH_KNOWN_HOSTS secret (the output
+    # of "ssh-keyscan <host>", checked against the server), so that the key
+    # and the deploy cannot be handed to another machine posing as it.
     - name: Set up SSH
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
       run: |
+        if [ -z "$SSH_KNOWN_HOSTS" ]; then
+          echo "::error::The SSH_KNOWN_HOSTS secret is missing. Add the output of 'ssh-keyscan <server>' (checked against the server's own keys) as a repository secret."
+          exit 1
+        fi
         install -m 700 -d ~/.ssh
         printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
         chmod 600 ~/.ssh/id_ed25519
+        printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+        chmod 600 ~/.ssh/known_hosts
 
     - name: Deploy to Server
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'bash -s' << 'EOF'
+        ssh -o StrictHostKeyChecking=yes ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'bash -s' << 'EOF'
           # Stop at the first failing command, so a failed step fails the
           # workflow instead of restarting the server with outdated code.
           set -eo pipefail
@@ -71,6 +81,12 @@ jobs:
           fi
           python manage.py compilemessages --ignore "node_modules" --ignore "env"
           python manage.py collectstatic --noinput
+          # Profile photos once kept in static/ are no longer collected
+          # (carpool/apps.py); remove the copies collected before
+          static_root=$(python manage.py shell -c "from django.conf import settings; print(settings.STATIC_ROOT or '')" | tail -n 1)
+          if [ -n "$static_root" ] && [ -d "$static_root/images/user_images" ]; then
+            rm -rf -- "$static_root/images/user_images"
+          fi
           sudo systemctl restart django_ride
           systemctl is-active --quiet django_ride
         EOF

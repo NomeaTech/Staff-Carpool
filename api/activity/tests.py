@@ -179,7 +179,7 @@ class RecordingTests(TestCase):
         self.client.get(reverse("open_notification", args=[notification.pk]))
         self.assertEqual(Event.objects.get(kind=Kind.NOTIFICATION_OPENED).data["kind"], "request_accepted")
 
-        subscription = {"endpoint": "https://push.example.com/1", "keys": {"p256dh": "key", "auth": "auth"}}
+        subscription = {"endpoint": "https://fcm.googleapis.com/fcm/send/1", "keys": {"p256dh": "key", "auth": "auth"}}
         for _ in range(2):
             self.client.post(reverse("push_subscribe"), json.dumps(subscription), content_type="application/json")
         self.client.post(reverse("push_unsubscribe"), json.dumps(subscription), content_type="application/json")

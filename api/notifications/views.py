@@ -7,11 +7,13 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
 from activity import events
 from activity.models import Kind
+from . import push
 from .models import Notification, PushSubscription
 
 # How many the bell's menu shows
@@ -85,7 +87,11 @@ def mark_all_read(request):
         events.record(Kind.NOTIFICATIONS_READ, request.user, count=count)
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         return JsonResponse({"unread": 0})
-    return redirect(request.POST.get("next") or "notifications")
+    # Only back to a page of the app, never to another site
+    next_url = request.POST.get("next")
+    if not url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+        next_url = "notifications"
+    return redirect(next_url)
 
 
 @login_required
@@ -102,7 +108,8 @@ def push_subscribe(request):
         p256dh, auth = keys["p256dh"], keys["auth"]
     except (ValueError, KeyError, TypeError):
         return JsonResponse({"error": "Not a push subscription"}, status=400)
-    if not (isinstance(endpoint, str) and endpoint.startswith("https://") and isinstance(p256dh, str) and isinstance(auth, str)):
+    if not (push.allowed_endpoint(endpoint) and isinstance(p256dh, str) and isinstance(auth, str)
+            and len(p256dh) <= 200 and len(auth) <= 100):
         return JsonResponse({"error": "Not a push subscription"}, status=400)
 
     _subscription, created = PushSubscription.objects.update_or_create(

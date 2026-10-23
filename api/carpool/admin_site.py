@@ -31,3 +31,14 @@ class AdminSite(admin.AdminSite):
             # again, with the code
             logout(request)
         return redirect_to_login(next_url)
+
+
+def can_translate(user):
+    """
+    Who can use Rosetta (/rosetta/, ROSETTA_ACCESS_CONTROL_FUNCTION): the
+    superusers and translators Rosetta allows, when logged in with two-step
+    verification, as the admin needs.
+    """
+    from rosetta.access import is_superuser_staff_or_in_translators_group
+    is_verified = getattr(user, "is_verified", None)
+    return bool(is_verified and is_verified()) and is_superuser_staff_or_in_translators_group(user)

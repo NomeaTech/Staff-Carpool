@@ -97,7 +97,10 @@ def confirm_email(request, uidb64, token):
         user.save(update_fields=["email_confirmed_at"])
         events.record(Kind.EMAIL_CONFIRMED, user, hours=events.hours_since(user.date_joined))
         request.session.pop("confirmation_email", None)
-        if user.is_active:
+        # The link alone does not log in an account with two-step
+        # verification (e.g. one confirming its address again): it needs
+        # the code, so the user logs in as usual
+        if user.is_active and not two_factor.enabled(user):
             login(request, user, backend="accounts.backends.EmailBackend")
             messages.success(request, _("Your email address is confirmed. Welcome to LUT Kyyti!"))
             return redirect("home")
@@ -203,9 +206,6 @@ def backup_codes(request):
     if not shown:
         return redirect("account")
     return render(request, "registration/backup_codes.html", shown)
-
-def LogoutView(request):
-    logout(request)
 
 @login_required
 def account(request):
