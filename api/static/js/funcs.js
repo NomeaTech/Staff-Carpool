@@ -104,6 +104,8 @@ function changeReturn(radio) {
 function switchTimes(times, radio) {
     for (const item of times) {
         inputs = item.getElementsByTagName('INPUT');
+        // e.g. the recurring days' hint, which has no time of its own
+        if (!inputs.length) continue;
         if (radio.value == "oneWay") {
             // inputs[0].classList.add("select-lg")
             // inputs[0].classList.remove("select-xs")

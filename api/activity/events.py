@@ -91,6 +91,7 @@ def ride_details(ride):
         "vias": ride.via_points.count(),
         "price": bool(ride.price),
         "note": bool(ride.note),
+        "flexible_time": ride.flexible_time,
         "destination_campus": campus(ride.destination_json),
         # How many groups it was posted to; 0 is everyone
         "groups": ride.groups.count() if ride.groups_only else 0,

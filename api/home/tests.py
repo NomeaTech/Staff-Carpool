@@ -541,6 +541,20 @@ class AddRideScheduleTests(TestCase):
         self.assertEqual(ride.tuesday_leaving_at_time, "")
         self.assertEqual(ride.leaving_at_date_time, "")
 
+    def test_recurring_return_on_some_days_only(self, _route):
+        # Monday returns, Wednesday is one-way
+        self.post(one_time="recurring", one_way="twoWay", monday_check="on", monday_leaving_at_time="07:30",
+                  monday_returning_at_time="16:00", wednesday_check="on", wednesday_leaving_at_time="08:00",
+                  wednesday_returning_at_time="")
+        ride = Ride.objects.get()
+        self.assertFalse(ride.one_way)
+        self.assertEqual((ride.monday_returning_at_time, ride.wednesday_returning_at_time), ("16:00", ""))
+        detail = self.client.get(reverse("ride_detail", args=[ride.pk])).content.decode()
+        self.assertIn("07:30 ⇄ 16:00", detail)
+        self.assertRegex(detail, r'Wednesdays <span class="tabular-nums">08:00</span>')
+        self.assertRegex(detail, r'Mondays <span class="tabular-nums">07:30 ⇄ 16:00</span>')
+        self.assertContains(self.client.get(reverse("edit_ride", args=[ride.pk])), "Mondays")
+
     def test_recurring_needs_a_day(self, _route):
         self.assert_error(self.post(one_time="recurring", one_way="oneWay", leaving_at_date_time="2099-10-14T07:30"),
                           "Choose at least one day for a recurring ride.")
@@ -552,6 +566,9 @@ class AddRideScheduleTests(TestCase):
 
     def test_recurring_return(self, _route):
         self.assert_error(self.post(one_time="recurring", one_way="twoWay", friday_check="on", friday_leaving_at_time="07:30"),
+                          "Enter a return time on at least one day, or choose one-way.")
+        self.assert_error(self.post(one_time="recurring", one_way="twoWay", friday_check="on", friday_leaving_at_time="07:30",
+                                    friday_returning_at_time="soon"),
                           "Enter the time of the return journey on Friday.")
         self.assert_error(self.post(one_time="recurring", one_way="twoWay", friday_check="on", friday_leaving_at_time="16:00",
                                     friday_returning_at_time="07:30"),
@@ -662,6 +679,36 @@ class EditRideTests(TestCase):
             response = self.client.post(self.url, {k: v for k, v in data.items() if v is not None})
         self.ride.refresh_from_db()
         return response
+
+    def test_time_flexibility(self, _route):
+        detail = reverse("ride_detail", args=[self.ride.pk])
+        self.assertNotContains(self.client.get(detail), "The departure time is flexible")
+        self.assertContains(self.client.get(self.url), 'name="flexible_time" type="checkbox"')
+
+        self.post(flexible_time="on")
+        self.assertTrue(self.ride.flexible_time)
+        self.assertContains(self.client.get(self.url), 'id="id_flexible_time" name="flexible_time" type="checkbox" class="checkbox checkbox-sm checkbox-primary mt-0.5" checked')
+        self.client.force_login(make_user("Jamie", "Saarinen"))
+        self.assertContains(self.client.get(detail), "The departure time is flexible")
+
+        # Unticking it
+        self.client.force_login(self.driver)
+        self.post()
+        self.assertFalse(self.ride.flexible_time)
+
+    def test_last_updated(self, _route):
+        detail = reverse("ride_detail", args=[self.ride.pk])
+        self.assertNotContains(self.client.get(detail), "Last updated")
+        self.assertIsNone(self.ride.updated_at)
+        # The route being saved is not an update
+        self.ride.save(update_fields=["route"])
+        self.assertNotContains(self.client.get(detail), "Last updated")
+
+        self.post(note="Leaving from the main door")
+        self.assertIsNotNone(self.ride.updated_at)
+        when = timezone.localtime(self.ride.updated_at)
+        self.assertContains(self.client.get(detail), "Last updated")
+        self.assertContains(self.client.get(detail), when.strftime("%H:%M"))
 
     def test_only_the_driver_can_edit(self, _route):
         self.client.force_login(make_user("Jamie", "Saarinen"))
@@ -911,3 +958,208 @@ class ErrorPageTests(TestCase):
         response = client.post(reverse("account"), {"form": "profile"})
         self.assertEqual(response.status_code, 403)
         self.assertIn("The form had expired", response.content.decode())
+
+
+@override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
+@patch("home.views.build_route", return_value=None)
+class RecurringSeatsTests(TestCase):
+    """A recurring ride's seats are on each of its days, and passengers join it on some of them."""
+
+    def setUp(self):
+        self.driver = make_user("Aino", "Mäkinen")
+        # Mondays and Wednesdays, one seat
+        self.ride = make_ride(self.driver, one_time=False, leaving_at_date_time="", max_passengers=1,
+                              monday_check=True, monday_leaving_at_time="07:30",
+                              wednesday_check=True, wednesday_leaving_at_time="08:00")
+        self.jamie = make_user("Jamie", "Saarinen")
+        self.kim = make_user("Kim", "Virtanen")
+
+    def ask(self, user, *days):
+        self.client.force_login(user)
+        return self.client.post(reverse("request_ride", args=[self.ride.pk]), {"days": list(days)}, follow=True)
+
+    def answer(self, ride_request, action="accept"):
+        self.client.force_login(self.driver)
+        return self.client.post(reverse("answer_request", args=[ride_request.pk]), {"action": action}, follow=True)
+
+    def fresh(self):
+        return Ride.objects.with_seats_taken().get(pk=self.ride.pk)
+
+    def test_joining_needs_days(self, _route):
+        self.assertContains(self.ask(self.jamie), "Choose the days you would like to join the ride on.")
+        # Days the ride does not have are not days
+        self.assertContains(self.ask(self.jamie, "friday"), "Choose the days you would like to join the ride on.")
+        self.assertFalse(RideRequest.objects.exists())
+
+    def test_seats_are_taken_on_the_chosen_days_only(self, _route):
+        self.ask(self.jamie, "monday")
+        ride_request = RideRequest.objects.get()
+        self.assertEqual(ride_request.days, ["monday"])
+        self.assertContains(self.answer(ride_request), "Mondays")
+        ride = self.fresh()
+        self.assertEqual((ride.seats_left_on("monday"), ride.seats_left_on("wednesday")), (0, 1))
+        self.assertEqual(ride.seats_left(), 1)
+        self.assertFalse(ride.is_full())
+
+        # Mondays are full, Wednesdays are not
+        self.client.force_login(self.kim)
+        page = self.client.get(reverse("ride_detail", args=[ride.pk])).content.decode()
+        self.assertRegex(page, r'value="monday" class="[^"]*" disabled')
+        self.assertNotRegex(page, r'value="wednesday" class="[^"]*" disabled')
+        self.assertContains(self.ask(self.kim, "monday", "wednesday"), "There are no free seats left on Mondays.")
+        self.ask(self.kim, "wednesday")
+        self.answer(RideRequest.objects.get(passenger=self.kim))
+        self.assertTrue(self.fresh().is_full())
+
+    def test_a_request_is_accepted_only_if_its_days_have_seats(self, _route):
+        pending = RideRequest.objects.create(ride=self.ride, passenger=self.kim, days=["monday", "wednesday"])
+        RideRequest.objects.create(ride=self.ride, passenger=self.jamie, days=["monday"], status=RideRequest.Status.ACCEPTED)
+        response = self.answer(pending)
+        self.assertContains(response, "The ride is full on Mondays.")
+        pending.refresh_from_db()
+        self.assertEqual(pending.status, RideRequest.Status.PENDING)
+        self.assertRegex(response.content.decode(), r'name="action" value="accept" disabled')
+
+    def test_older_requests_take_every_day(self, _route):
+        RideRequest.objects.create(ride=self.ride, passenger=self.jamie, status=RideRequest.Status.ACCEPTED)
+        ride = self.fresh()
+        self.assertEqual((ride.seats_left_on("monday"), ride.seats_left_on("wednesday")), (0, 0))
+        self.assertTrue(ride.is_full())
+
+    def test_seats_cannot_go_below_the_busiest_day(self, _route):
+        Ride.objects.filter(pk=self.ride.pk).update(max_passengers=2)
+        for user in (self.jamie, self.kim):
+            RideRequest.objects.create(ride=self.ride, passenger=user, days=["monday"], status=RideRequest.Status.ACCEPTED)
+        self.client.force_login(self.driver)
+        data = {"start_json": json.dumps(PLACE("Lappeenranta")), "destination_json": json.dumps(PLACE("Lahti")),
+                "offer": "on", "max_passengers": "1", "one_time": "recurring", "one_way": "oneWay",
+                "monday_check": "on", "monday_leaving_at_time": "07:30", "wednesday_check": "on", "wednesday_leaving_at_time": "08:00"}
+        response = self.client.post(reverse("edit_ride", args=[self.ride.pk]), data)
+        self.assertContains(response, "2 passengers have already joined.")
+
+    def test_removing_a_day_removes_its_passengers(self, _route):
+        from notifications.models import Kind as NotificationKind
+        Ride.objects.filter(pk=self.ride.pk).update(max_passengers=3)
+        wednesdays = RideRequest.objects.create(ride=self.ride, passenger=self.jamie, days=["wednesday"], status=RideRequest.Status.ACCEPTED)
+        both = RideRequest.objects.create(ride=self.ride, passenger=self.kim, days=["monday", "wednesday"])
+        self.client.force_login(self.driver)
+        data = {"start_json": json.dumps(PLACE("Lappeenranta")), "destination_json": json.dumps(PLACE("Lahti")),
+                "offer": "on", "max_passengers": "3", "one_time": "recurring", "one_way": "oneWay",
+                "monday_check": "on", "monday_leaving_at_time": "07:30"}
+        with self.captureOnCommitCallbacks(execute=True):
+            self.client.post(reverse("edit_ride", args=[self.ride.pk]), data)
+        wednesdays.refresh_from_db()
+        both.refresh_from_db()
+        self.assertEqual(wednesdays.status, RideRequest.Status.DECLINED)
+        self.assertTrue(self.jamie.notifications.filter(kind=NotificationKind.PASSENGER_REMOVED).exists())
+        self.assertEqual((both.status, both.days), (RideRequest.Status.PENDING, ["monday"]))
+
+    def test_searching_a_date_shows_that_days_seats(self, _route):
+        RideRequest.objects.create(ride=self.ride, passenger=self.jamie, days=["monday"], status=RideRequest.Status.ACCEPTED)
+        self.client.force_login(self.kim)
+        # 2099-10-12 is a Monday, 2099-10-14 a Wednesday
+        for date, seats in (("2099-10-12", 0), ("2099-10-14", 1)):
+            response = self.client.post(reverse("search"), {"date": date})
+            ride = next(ride for ride in response.context["page"] if ride.pk == self.ride.pk)
+            self.assertEqual(ride.seats_left(), seats, date)
+
+    def test_lists_show_no_time_for_recurring_rides(self, _route):
+        # Its days leave at different times, so one of them would be wrong
+        make_ride(self.driver, leaving_at_date_time="2099-10-14T06:45")
+        self.client.force_login(self.kim)
+        results = self.client.post(reverse("search"), {}, HTTP_X_REQUESTED_WITH="XMLHttpRequest").content.decode()
+        self.assertIn("Mon, Wed", results)
+        self.assertNotIn("07:30", results)
+        self.assertNotIn("08:00", results)
+        # One-time rides keep theirs
+        self.assertIn("06:45", results)
+
+
+class RouteLabelsTests(TestCase):
+    """What the ride page's route says under its start and destination."""
+
+    def setUp(self):
+        self.driver = make_user("Aino", "Mäkinen")
+        self.client.force_login(make_user("Jamie", "Saarinen"))
+
+    def page(self, **fields):
+        ride = make_ride(self.driver, **fields)
+        return self.client.get(reverse("ride_detail", args=[ride.pk])).content.decode()
+
+    def test_one_way(self):
+        page = self.page(leaving_at_date_time="2099-10-14T14:19")
+        self.assertIn("Departure · 14:19", page)
+        self.assertNotIn("Returning ·", page)
+
+    def test_return_on_the_same_day(self):
+        page = self.page(leaving_at_date_time="2099-10-14T14:19", one_way=False, returning_at_date_time="2099-10-14T16:20")
+        self.assertIn("Departure · 14:19", page)
+        self.assertIn("Returning · 16:20", page)
+
+    def test_return_on_another_day(self):
+        page = self.page(leaving_at_date_time="2099-10-14T14:19", one_way=False, returning_at_date_time="2099-10-16T16:20")
+        self.assertIn("Returning · 16.10. 16:20", page)
+
+    def test_recurring(self):
+        page = self.page(one_time=False, one_way=False, leaving_at_date_time="", monday_check=True,
+                         monday_leaving_at_time="07:30", monday_returning_at_time="16:00")
+        self.assertNotIn("Departure ·", page)
+        self.assertNotIn("Returning ·", page)
+
+    def test_stops_on_the_way(self):
+        ride = make_ride(self.driver)
+        Via.objects.create(ride=ride, order=0, via_json={"displayName": "Kouvola"}, location="POINT(26.7 60.9)")
+        page = self.client.get(reverse("ride_detail", args=[ride.pk])).content.decode()
+        self.assertRegex(page, r"Kouvola</strong>\s*<small[^>]*>Passing by</small>")
+        self.assertNotIn("time to be agreed", page)
+
+
+class TripInformationTests(TestCase):
+    """The ride page's Trip information: the trip, then what the poster added, then when it was posted."""
+
+    def setUp(self):
+        self.driver = make_user("Aino", "Mäkinen")
+        self.client.force_login(make_user("Jamie", "Saarinen"))
+
+    def section(self, **fields):
+        ride = make_ride(self.driver, **fields)
+        page = self.client.get(reverse("ride_detail", args=[ride.pk])).content.decode()
+        return re.search(r"Trip information</h2>(.*?)</section>", page, re.S).group(1)
+
+    def test_trip_types(self):
+        recurring = {"one_time": False, "leaving_at_date_time": "", "monday_check": True, "monday_leaving_at_time": "07:30"}
+        self.assertIn("One-time trip, no return", self.section())
+        self.assertIn("One-time trip with return", self.section(one_way=False, returning_at_date_time="2099-10-14T16:20"))
+        self.assertIn("Recurring trip, no return", self.section(**recurring))
+        self.assertIn("Recurring trip with return", self.section(**recurring, one_way=False, monday_returning_at_time="16:00"))
+
+    def test_one_time_journeys_and_seats(self):
+        section = self.section(one_way=False, returning_at_date_time="2099-10-15T16:20", max_passengers=3)
+        self.assertRegex(section, r"Departure journey</dt>\s*<dd[^>]*>Wed 14 Oct, 07:30")
+        self.assertRegex(section, r"Return journey</dt>\s*<dd[^>]*>Thu 15 Oct, 16:20")
+        self.assertRegex(section, r"Available seats</dt>\s*<dd[^>]*>3 / 3")
+        self.assertNotIn("Schedule", section)
+
+    def test_recurring_schedule_has_the_seats(self):
+        section = self.section(one_time=False, leaving_at_date_time="", max_passengers=2,
+                               monday_check=True, monday_leaving_at_time="07:30")
+        self.assertIn("Schedule", section)
+        self.assertIn("2 seats left", section)
+        for label in ("Departure journey", "Return journey", "Available seats"):
+            self.assertNotIn(label, section)
+
+    def test_optional_rows(self):
+        # Without them, only when it was posted is under the line
+        section = self.section()
+        for label in ("Flexibility", "Price", "Additional information from the poster", "Return journey", "Available seats"):
+            self.assertNotIn(label, section)
+        self.assertIn("Posted", section)
+
+        section = self.section(flexible_time=True, price="€5", note="Room for skis\nNo pets", max_passengers=2)
+        bottom = section.split('class="divider')[1]
+        for text in ("The departure time is flexible", "€5", "Additional information from the poster", "Room for skis\nNo pets", "Posted"):
+            self.assertIn(text, bottom)
+        self.assertLess(bottom.index("Flexibility"), bottom.index("Price"))
+        self.assertLess(bottom.index("Price"), bottom.index("Additional information"))
+        self.assertLess(bottom.index("Additional information"), bottom.index("Posted"))
+

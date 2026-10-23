@@ -8,10 +8,25 @@ from dateutil import parser
 from dateutil.parser import ParserError
 from datetime import datetime
 from django.utils import formats
+from django.contrib.postgres.fields import ArrayField
 from django.db.models import OuterRef
 import uuid
 
 from .transport import TRANSPORT_OPTIONS
+
+# A recurring ride's days: the start of their fields' names (monday_check...)
+WEEKDAY_KEYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+
+# The same days, as its schedule names them ("Mondays 07:30")
+WEEKDAY_PLURALS = [
+    gettext_lazy("Mondays"),
+    gettext_lazy("Tuesdays"),
+    gettext_lazy("Wednesdays"),
+    gettext_lazy("Thursdays"),
+    gettext_lazy("Fridays"),
+    gettext_lazy("Saturdays"),
+    gettext_lazy("Sundays"),
+]
 
 class RideQuerySet(models.QuerySet):
     def upcoming(self):
@@ -47,9 +62,21 @@ class RideQuerySet(models.QuerySet):
         )
 
     def with_seats_taken(self):
-        return self.annotate(seats_taken=models.Count(
-            "requests", filter=models.Q(requests__status=RideRequest.Status.ACCEPTED)
-        ))
+        """
+        seats_taken: the accepted passengers; and for each day of the week
+        (seats_taken_monday...), the accepted passengers on that day of a
+        recurring ride (RideRequest.days).
+        """
+        accepted = models.Q(requests__status=RideRequest.Status.ACCEPTED)
+        return self.annotate(
+            seats_taken=models.Count("requests", filter=accepted),
+            **{f"seats_taken_{day}": models.Count("requests", filter=accepted & on_day(day, "requests__days"))
+               for day in WEEKDAY_KEYS},
+        )
+
+def on_day(day, field="days"):
+    """Requests (RideRequest.days) to join a recurring ride on day: those for that day, or for all its days."""
+    return models.Q(**{f"{field}__contains": [day]}) | models.Q(**{field: []})
 
 class Ride(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -138,6 +165,9 @@ class Ride(models.Model):
 
     note = models.TextField(blank=True, default="", help_text="Any kind of note for passengers")
     price = models.CharField(max_length=100, blank=True, default="", help_text="Optional price for passengers, e.g. \"€10 per passenger\"")
+    # The driver can leave at another time than the one given, e.g. one
+    # agreed with the passengers
+    flexible_time = models.BooleanField(default=False, help_text="The departure times are flexible")
     private = models.CharField(default=False)
 
     # Who sees the ride: everyone, or (groups_only) only the members of
@@ -147,6 +177,9 @@ class Ride(models.Model):
     groups = models.ManyToManyField("groups.Group", blank=True, related_name="rides")
 
     created_at = models.DateTimeField("date added", auto_now_add=True)
+    # When the driver last changed it on the edit ride page; None if never.
+    # Not auto_now: the app saves rides itself too (e.g. their route).
+    updated_at = models.DateTimeField("last updated", null=True, blank=True)
 
     objects = RideQuerySet.as_manager()
 
@@ -204,11 +237,41 @@ class Ride(models.Model):
         first_day = next(self.weekly_schedule(), None)
         return first_day[1] if first_day else ""
 
-    def seats_left(self):
-        """Free seats, or None when the driver set no limit. Uses the
-        seats_taken annotation (RideQuerySet.with_seats_taken) when present."""
+    # Seats. A one-time ride's seats are taken by its accepted passengers. A
+    # recurring ride has its seats on each of its days: a passenger joins it
+    # on some of them (RideRequest.days), and takes a seat on those only.
+    # The counts come from RideQuerySet.with_seats_taken when present.
+
+    def day_keys(self):
+        """The keys of a recurring ride's days (WEEKDAY_KEYS), in order; none for one-time rides."""
+        if self.one_time:
+            return []
+        return [day for day, checked in zip(WEEKDAY_KEYS, self.day_filter()) if checked]
+
+    def seats_taken_on(self, day):
+        taken = getattr(self, f"seats_taken_{day}", None)
+        if taken is None:
+            taken = self.requests.filter(on_day(day), status=RideRequest.Status.ACCEPTED).count()
+        return taken
+
+    def seats_left_on(self, day):
+        """Free seats on day of a recurring ride, or None when the driver set no limit."""
         if self.max_passengers is None:
             return None
+        return max(self.max_passengers - self.seats_taken_on(day), 0)
+
+    def seats_left(self):
+        """
+        Free seats, or None when the driver set no limit. For a recurring
+        ride, the most on any of its days (the ride is full when every day
+        is), or those on seats_day when it is set (a search for a date).
+        """
+        if self.max_passengers is None:
+            return None
+        days = self.day_keys()
+        if days:
+            day = getattr(self, "seats_day", None)
+            return self.seats_left_on(day) if day in days else max(self.seats_left_on(day) for day in days)
         taken = getattr(self, "seats_taken", None)
         if taken is None:
             taken = self.requests.filter(status=RideRequest.Status.ACCEPTED).count()
@@ -216,6 +279,34 @@ class Ride(models.Model):
 
     def is_full(self):
         return self.seats_left() == 0
+
+    def most_seats_taken(self):
+        """The most seats taken on any one trip: its passengers, or on a recurring ride its busiest day."""
+        days = self.day_keys()
+        if days:
+            return max(self.seats_taken_on(day) for day in days)
+        return self.requests.filter(status=RideRequest.Status.ACCEPTED).count()
+
+    def seat_days(self):
+        """
+        A recurring ride's days, for choosing which to join and showing
+        their seats: dicts of key, label ("Mondays"), leaving and returning
+        times, seats_left (None without a limit) and full.
+        """
+        times = {day: (getattr(self, f"{day}_leaving_at_time"), getattr(self, f"{day}_returning_at_time"))
+                 for day in WEEKDAY_KEYS}
+        seat_days = []
+        for day in self.day_keys():
+            seats = self.seats_left_on(day)
+            seat_days.append({
+                "key": day,
+                "label": WEEKDAY_PLURALS[WEEKDAY_KEYS.index(day)],
+                "leaving": times[day][0],
+                "returning": "" if self.one_way else times[day][1],
+                "seats_left": seats,
+                "full": seats == 0,
+            })
+        return seat_days
 
     def get_created_at(self):
         return formats.date_format(self.created_at, "Y.m.d")
@@ -326,15 +417,7 @@ class Ride(models.Model):
             self.sunday_check
         ]
 
-        days = [
-            _("Monday"), 
-            _("Tuesday"), 
-            _("Wednesday"), 
-            _("Thursday"), 
-            _("Friday"), 
-            _("Saturday"), 
-            _("Sunday")
-        ]
+        days = WEEKDAY_PLURALS
 
         # Datastructures are for suckers and losers
 
@@ -435,6 +518,10 @@ class RideRequest(models.Model):
         related_name="ride_requests",
     )
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
+    # The days of a recurring ride the passenger joins it on (WEEKDAY_KEYS),
+    # taking a seat on those only. Empty: all its days, as for one-time
+    # rides and requests made before passengers chose days.
+    days = ArrayField(models.CharField(max_length=10), blank=True, default=list)
     message = models.TextField(blank=True, default="", max_length=500, help_text="Message from the passenger to the driver")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -447,3 +534,22 @@ class RideRequest(models.Model):
 
     def __str__(self):
         return f"{self.passenger} → {self.ride} ({self.status})"
+
+    def ride_days(self):
+        """The keys of the ride's days the passenger joins it on: the chosen ones it still has, or all of them."""
+        days = self.ride.day_keys()
+        return [day for day in days if day in self.days] if self.days else days
+
+    def day_labels(self):
+        """The days the passenger joins the ride on, e.g. "Mondays, Wednesdays"; "" for a one-time ride."""
+        return ", ".join(str(WEEKDAY_PLURALS[WEEKDAY_KEYS.index(day)]) for day in self.ride_days())
+
+    def fits(self):
+        """Whether accepting the request leaves no day of the ride over its seats."""
+        ride = self.ride
+        if ride.max_passengers is None:
+            return True
+        days = self.ride_days()
+        if days:
+            return all(ride.seats_left_on(day) > 0 for day in days)
+        return not ride.is_full()
