@@ -63,6 +63,13 @@ jobs:
           python manage.py migrate --noinput
           # Store the driving route of rides that do not have one yet
           python manage.py compute_routes
+          # The translations (.po) are compiled here, as the compiled .mo files
+          # are not in the repository. This needs GNU gettext's msgfmt.
+          if ! command -v msgfmt > /dev/null; then
+            echo "::error::msgfmt not found, so the translations cannot be compiled. Run once on the server: sudo apt install gettext"
+            exit 1
+          fi
+          python manage.py compilemessages --ignore "node_modules" --ignore "env"
           python manage.py collectstatic --noinput
           sudo systemctl restart django_ride
           systemctl is-active --quiet django_ride
