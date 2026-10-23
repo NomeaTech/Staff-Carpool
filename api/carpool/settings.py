@@ -77,6 +77,9 @@ SECURE_HSTS_SECONDS = 0 if DEBUG else 365 * 24 * 60 * 60
 
 CSRF_COOKIE_DOMAIN = os.getenv("CSRF_COOKIE_DOMAIN")
 
+# A form whose security token has expired gets the site's error page (carpool/errors.py)
+CSRF_FAILURE_VIEW = "carpool.errors.csrf_failure"
+
 # CORS_REPLACE_HTTPS_REFERER = True
 
 CORS_ALLOW_CREDENTIALS = True

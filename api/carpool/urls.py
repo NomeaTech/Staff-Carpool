@@ -29,3 +29,8 @@ urlpatterns = [
     # Browsers and other tools ask for /favicon.ico when a page names no icon
     path('favicon.ico', RedirectView.as_view(url=static('images/icons/favicon.ico'), permanent=True)),
 ]
+# The error pages, in the site's look (carpool/errors.py)
+handler400 = "carpool.errors.bad_request"
+handler403 = "carpool.errors.permission_denied"
+handler404 = "carpool.errors.page_not_found"
+handler500 = "carpool.errors.server_error"
