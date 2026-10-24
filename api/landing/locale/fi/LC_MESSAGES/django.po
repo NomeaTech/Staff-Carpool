@@ -1226,13 +1226,13 @@ msgstr ""
 "Tietosuojaselosteen voimassa olevan version voi katsoa tai ladata alta."
 
 #: landing/templates/privacy-policy.html:19
-msgid "LUT Kyyti Privacy Policy (PDF)"
+msgid "LUT Kyyti Privacy Notice (PDF)"
 msgstr "LUT Kyydin tietosuojaseloste (PDF)"
 
 #: landing/templates/privacy-policy.html:22
 #: landing/templates/terms-of-use.html:25
-msgid "Last updated: July 2026"
-msgstr "Päivitetty viimeksi: heinäkuu 2026"
+msgid "Last updated: October 2026"
+msgstr "Päivitetty viimeksi: lokakuu 2026"
 
 #: landing/templates/safety.html:9
 msgid "Safety and Ride Etiquette"

@@ -227,3 +227,5 @@ start_dev.sh
 node_modules/
 # Uploaded profile photos (accounts.models.photo_storage)
 api/private_media/
+
+local_documents
