@@ -1,0 +1,63 @@
+{% extends "app.html" %}
+{% load i18n privacy dates %}
+
+{% block title %}{% trans "Ratings" %} | LUT Kyyti{% endblock %}
+
+{% block content %}
+{% comment %}
+  The trips the user can rate, or change their ratings of (rides/ratings.py),
+  including those of rides deleted or left after the trip; and the user's
+  own rating, as others see it. Rating notifications lead here.
+{% endcomment %}
+<section class="h-app w-full overflow-y-auto pt-[calc(1.75rem+env(safe-area-inset-top))] lg:pt-24 pb-dock lg:pb-10">
+  <div class="max-w-3xl mx-auto px-4 lg:px-7 grid gap-5">
+
+    <section class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 sm:p-6">
+        <h2 class="card-title text-lg mb-1">{% trans "Your rating" %}</h2>
+        <div class="flex items-center gap-3">
+          {% avatar user "w-12" "text-base" %}
+          <div>
+            <strong class="block">{{ user|display_name:True }}</strong>
+            {% include "_rating.html" with rating=user.rating %}
+          </div>
+        </div>
+        <p class="text-xs text-base-content/60 mt-2">
+          {% blocktrans count counter=rating_min_count %}This is what other members see with your name. Your average score is shown once you have been rated {{ counter }} time.{% plural %}This is what other members see with your name. Your average score is shown once you have been rated {{ counter }} times.{% endblocktrans %}
+          {% blocktrans count counter=no_show_shown %}If a co-rider says you didn't show up, it is shown too.{% plural %}If {{ counter }} co-riders say you didn't show up within a year, it is shown too.{% endblocktrans %}
+          <a href="{% url 'faq' %}#ratings-and-reports" class="link link-primary">{% trans "How ratings work" %}</a>
+        </p>
+      </div>
+    </section>
+
+    <section class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 sm:p-6">
+        <h2 class="card-title text-lg mb-1">{% trans "Rate your rides" %}</h2>
+        {% for trip in trips %}
+          <div id="trip-{{ forloop.counter }}" class="{% if not forloop.first %}border-t border-base-200 pt-4 mt-2{% endif %} scroll-mt-24">
+            <div class="flex flex-wrap items-baseline justify-between gap-2 mb-2">
+              {% if trip.ride %}<a href="{% url 'ride_detail' trip.ride.pk %}" class="font-bold link link-hover">{{ trip.route }}</a>{% else %}<span class="font-bold">{{ trip.route }}</span>{% endif %}
+              <span class="text-xs text-base-content/60">{{ trip.trip_date|localized:"WEEKDAY_MONTH_DAY_FORMAT" }}{% if not trip.ride %} · {% trans "Ride deleted" %}{% endif %}</span>
+            </div>
+            {% include "_rate_form.html" with next=request.get_full_path %}
+          </div>
+        {% empty %}
+          <div class="rounded-field border border-dashed border-primary/40 bg-primary/5 text-center px-4 py-8">
+            {% include "_icon.html" with name="star" class="size-8 mx-auto text-primary" %}
+            <p class="font-bold mt-2 mb-1">{% trans "Nothing to rate right now" %}</p>
+            <p class="text-sm text-base-content/60 max-w-xs mx-auto">{% trans "After each ride, you can rate the people you travelled with here." %}</p>
+          </div>
+        {% endfor %}
+        <p class="text-xs text-base-content/60 flex gap-2 mt-2">{% include "_icon.html" with name="lock" class="size-4" %}{% trans "Ratings are anonymous: members only see a person's average score and what went well most often." %}</p>
+      </div>
+    </section>
+
+    {% include "_page_footer.html" %}
+  </div>
+</section>
+<script>
+  document.querySelectorAll("button[data-confirm]").forEach((button) => {
+    button.addEventListener("click", (event) => { if (!confirm(button.dataset.confirm)) event.preventDefault(); });
+  });
+</script>
+{% endblock %}

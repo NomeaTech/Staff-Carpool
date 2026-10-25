@@ -240,7 +240,8 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en'
 TIME_ZONE = 'Europe/Helsinki'
 USE_I18N = True
-USER_L10N = True
+# How dates and times are shown in each language, e.g. 12:30 / 12.30
+FORMAT_MODULE_PATH = ["carpool.formats"]
 USE_TZ = True
 LANGUAGES = [
     ("en", _("English")),

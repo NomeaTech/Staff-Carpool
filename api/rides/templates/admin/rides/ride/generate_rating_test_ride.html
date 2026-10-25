@@ -1,0 +1,26 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+&rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+&rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<p>Makes a one-time ride from "RATING TEST start" to "RATING TEST finish" that left 3 hours ago, with you and
+two test users (Rating Tester One and Two) on it, so that you can rate it straight away, for 30 days.</p>
+<p>Making another one replaces your earlier rating test ride and deletes its ratings, so you can test again from the start.</p>
+<form method="post">{% csrf_token %}
+  {{ form.as_p }}
+  <input type="hidden" name="action" value="generate_rating_test_ride">
+  <input type="hidden" name="{{ action_checkbox_name }}" value="0">
+  <input type="hidden" name="select_across" value="1">
+  <input type="hidden" name="apply" value="1">
+  <input type="submit" value="Make the ride">
+  <a href="{% url opts|admin_urlname:'changelist' %}" class="button cancel-link">{% translate "Cancel" %}</a>
+</form>
+{% endblock %}

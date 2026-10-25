@@ -5,7 +5,8 @@ from accounts.privacy import contact_details
 from notifications import services as notifications
 from notifications.models import Notification
 from django.http import HttpResponseRedirect
-from rides.models import Ride, RideRequest, Via, WEEKDAY_KEYS, WEEKDAY_PLURALS
+from rides.models import Rating, Report, Ride, RideRequest, Via, WEEKDAY_KEYS, WEEKDAY_PLURALS
+from rides import ratings
 from rides.routes import build_route, as_route_point
 from rides.transport import TRANSPORT_OPTIONS, icon_layout
 from django.contrib.auth.decorators import login_required
@@ -38,6 +39,9 @@ from django.db import IntegrityError, transaction
 from django.db.models import Exists, OuterRef
 import uuid
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.core.mail import EmailMessage
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +68,7 @@ def home(request):
     context = {
         "my_rides": my_ride_entries(user, upcoming)[:HOME_RIDES],
         "pending_requests": pending_requests,
+        "rides_to_rate": [trip for trip in ratings.trips_to_rate(user) if trip.pending],
         "recent_rides": recent_rides,
         "show_welcome": user.welcomed_at is None,
         **group_summary(user, upcoming),
@@ -141,6 +146,8 @@ def my_rides(request):
     context = {
         "upcoming": my_ride_entries(request.user, rides.upcoming()),
         "past": my_ride_entries(request.user, rides.past(), reverse=True),
+        # Their entries link to rating them (_ride_entry.html)
+        "rating_ride_ids": {trip.ride.pk for trip in ratings.trips_to_rate(request.user) if trip.pending and trip.ride},
     }
     return render(request, "my_rides.html", context)
 
@@ -190,6 +197,10 @@ def ride_detail(request, ride_id):
         "share_url": request.build_absolute_uri(reverse("ride_detail", args=[ride.pk])),
         "mark_read_when_shown": mark_read_when_shown,
         "ride_groups": ride.groups.all() if ride.groups_only else None,
+        # The user's ratings of their co-riders that they can give now, or change
+        "rating_trips": ratings.trips_to_rate(user, ride),
+        "report_reasons": Report.Reason.choices,
+        **rating_form_context(),
     }
 
     if is_driver:
@@ -200,12 +211,21 @@ def ride_detail(request, ride_id):
         context["passengers"] = [
             (r, contact_details(r.passenger)) for r in requests if r.status == RideRequest.Status.ACCEPTED
         ]
+        people = [ride.driver, *(r.passenger for r in requests)]
     else:
         own_request = ride.requests.filter(passenger=user).first()
         context["own_request"] = own_request
         context["is_partner"] = own_request is not None and own_request.status == RideRequest.Status.ACCEPTED
         if context["is_partner"]:
             context["driver_contacts"] = contact_details(ride.driver)
+        people = [ride.driver]
+
+    # Their ratings (_rating.html), shown with their names
+    summaries = ratings.summaries(people)
+    for person in people:
+        person.rating = summaries[person.pk]
+    # Who the user can report from here (report_member)
+    context["reportable"] = [person for person in people if person.pk != user.pk]
 
     if not loaded_early:
         if is_driver:
@@ -264,6 +284,8 @@ def withdraw_request(request, ride_id):
         ).exclude(status=RideRequest.Status.DECLINED).select_related("ride").first()
 
         if ride_request:
+            # Leaving after the trip does not avoid its ratings
+            ratings.keep([ride_request])
             ride_request.delete()
             hours = events.hours_since(ride_request.created_at)
             if ride_request.status == RideRequest.Status.ACCEPTED:
@@ -303,13 +325,16 @@ def answer_request(request, request_id):
                 messages.error(request, _("The ride is full. Increase its seats or remove a passenger first."))
             else:
                 ride_request.status = RideRequest.Status.ACCEPTED
-                ride_request.save(update_fields=["status", "updated_at"])
+                ride_request.accepted_at = timezone.now()
+                ride_request.save(update_fields=["status", "accepted_at", "updated_at"])
                 notifications.request_accepted(request, ride_request)
                 events.record(Kind.REQUEST_ACCEPTED, request.user, ride, hours=events.hours_since(ride_request.created_at))
                 messages.success(request, _("Request accepted. You can now see the passenger's shared contact details."))
         elif not accept and ride_request.status != RideRequest.Status.DECLINED:
             # Declining a request, or removing a passenger who was accepted
             was_accepted = ride_request.status == RideRequest.Status.ACCEPTED
+            # Removing a passenger after the trip does not avoid its ratings
+            ratings.keep([ride_request])
             ride_request.status = RideRequest.Status.DECLINED
             ride_request.save(update_fields=["status", "updated_at"])
             kind = Kind.PASSENGER_REMOVED if was_accepted else Kind.REQUEST_DECLINED
@@ -322,6 +347,135 @@ def answer_request(request, request_id):
                 messages.success(request, _("Request declined."))
 
     return redirect("ride_detail", ride_id=ride_request.ride_id)
+
+def rating_form_context():
+    """What the rating forms need (_rate_form.html)."""
+    return {"scores": ratings.SCORES, "rating_min_count": ratings.RATING_MIN_COUNT}
+
+@login_required
+def ratings_page(request):
+    """
+    The trips the user can rate now, or change their ratings of
+    (rides/ratings.py), and their own rating. Rating notifications lead here.
+    """
+    if request.method == "POST":
+        return save_ratings(request)
+    user = request.user
+    user.rating = ratings.summaries([user])[user.pk]
+    return render(request, "ratings.html", {
+        "trips": ratings.trips_to_rate(user),
+        "no_show_shown": ratings.NO_SHOW_SHOWN,
+        **rating_form_context(),
+    })
+
+def save_ratings(request):
+    """
+    A trip's rating form (_rate_form.html), on the ratings page or the
+    ride's page: the user's answer for each co-rider, or that the ride did
+    not take place. Nothing is saved unless each has an answer. Once
+    submitted, the user goes home; a form that cannot be saved goes back
+    to its page (next).
+    """
+    now = timezone.now()
+    open_ratings = list(Rating.objects.filter(
+        rater=request.user, due_at__lte=now, due_at__gt=now - ratings.RATING_WINDOW,
+        pk__in=uuids(request.POST.getlist("rating")),
+    ).select_related("rated"))
+    back = request.POST.get("next", "")
+    if not url_has_allowed_host_and_scheme(back, allowed_hosts={request.get_host()}):
+        back = reverse("ratings")
+    if not open_ratings:
+        messages.error(request, _("This ride can no longer be rated."))
+        return redirect(back)
+
+    not_happened = "not_happened" in request.POST
+    answers = []
+    missing = False
+    for rating in open_ratings:
+        comment = request.POST.get(f"comment_{rating.pk}", "").strip()[:1000]
+        if not_happened:
+            answers.append((rating, Rating.Outcome.NOT_HAPPENED, None, [], comment))
+            continue
+        answer = request.POST.get(f"score_{rating.pk}", "")
+        if answer.isdigit() and int(answer) in ratings.SCORES:
+            allowed = {value for value, _label in rating.tag_choices()}
+            tags = [tag for tag in request.POST.getlist(f"tags_{rating.pk}") if tag in allowed]
+            answers.append((rating, Rating.Outcome.RATED, int(answer), tags, comment))
+        elif answer in (Rating.Outcome.NO_SHOW, Rating.Outcome.SKIPPED):
+            answers.append((rating, Rating.Outcome(answer), None, [], comment))
+        else:
+            missing = True
+
+    # Everyone needs an answer, "Don't rate" being one (the form checks too)
+    if missing:
+        messages.error(request, _("Required"))
+        return redirect(back)
+
+    first = answers[0][0]
+    changed = any(rating.outcome != Rating.Outcome.PENDING for rating, *_rest in answers)
+    outcomes = ratings.save(request.user, answers)
+    events.record(Kind.RIDE_RATED, request.user, first.ride, **outcomes, changed=changed,
+                  days=(timezone.localdate() - first.trip_date).days)
+    if not_happened:
+        messages.success(request, _("Thank you. Nobody was rated for this ride."))
+    else:
+        messages.success(request, _("Thank you for rating your ride."))
+    return redirect("home")
+
+def uuids(values):
+    """The values that are UUIDs, e.g. ids posted in a form."""
+    found = []
+    for value in values:
+        try:
+            found.append(uuid.UUID(value))
+        except (TypeError, ValueError, AttributeError):
+            pass
+    return found
+
+@login_required
+@require_POST
+def report_member(request, ride_id):
+    """
+    Reports the ride's driver, or (by its driver) someone who asked to join
+    it, to the admins, who are emailed. Each can be reported once per ride
+    until the admins have handled it.
+    """
+    ride = get_object_or_404(Ride.objects.visible_to(request.user).select_related("driver"), pk=ride_id)
+    is_driver = ride.driver_id == request.user.pk
+    allowed = ride.requests.values("passenger") if is_driver else [ride.driver_id]
+    reported = User.objects.filter(pk__in=uuids([request.POST.get("member")])).filter(pk__in=allowed).first()
+    reason = request.POST.get("reason", "")
+    message = request.POST.get("message", "").strip()[:2000]
+    back = reverse("ride_detail", args=[ride.pk])
+
+    if reported is None or reason not in Report.Reason.values or not message:
+        messages.error(request, _("Choose a reason and describe what happened."))
+        return redirect(back)
+    if Report.objects.filter(reporter=request.user, reported=reported, ride=ride, handled_at=None).exists():
+        messages.info(request, _("You have already reported this. The LUT Kyyti team will look into it."))
+        return redirect(back)
+
+    report = Report.objects.create(
+        reporter=request.user, reported=reported, ride=ride, route=ride.route_name(), reason=reason, message=message,
+    )
+    events.record(Kind.MEMBER_REPORTED, request.user, ride, reason=reason, reported_driver=not is_driver)
+    email = EmailMessage(
+        subject=f"LUT Kyyti report: {report.get_reason_display()}",
+        body=(
+            f"Reported by: {request.user.email}\n"
+            f"Reported: {reported.email}\n"
+            f"Ride: {report.route}, {request.build_absolute_uri(back)}\n"
+            f"Handle it in the admin: {request.build_absolute_uri(reverse('admin:rides_report_change', args=[report.pk]))}\n"
+            f"\n{message}\n"
+        ),
+        to=[settings.CONTACT_EMAIL],
+    )
+    try:
+        email.send()
+    except Exception:
+        logger.exception("Could not email report %s", report.pk)
+    messages.success(request, _("Thank you. The LUT Kyyti team will look into your report."))
+    return redirect(back)
 
 @login_required
 @require_POST
@@ -340,6 +494,8 @@ def delete_ride(request):
         )
         with transaction.atomic():
             notifications.ride_cancelled(request, ride)
+            # Deleting a ride after the trip does not avoid its ratings
+            ratings.keep(ride.requests.select_related("passenger"))
             ride.delete()
         messages.success(request, _("The ride was deleted."))
 
@@ -596,6 +752,7 @@ def drop_removed_days(request, ride):
                 ride_request.save(update_fields=["days", "updated_at"])
                 continue
             was_accepted = ride_request.status == RideRequest.Status.ACCEPTED
+            ratings.keep([ride_request])
             ride_request.status = RideRequest.Status.DECLINED
             ride_request.save(update_fields=["days", "status", "updated_at"])
             if was_accepted:

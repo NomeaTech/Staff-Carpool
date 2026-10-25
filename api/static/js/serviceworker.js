@@ -2,9 +2,9 @@
 
 var staticCacheName = "django-pwa-v" + new Date().getTime();
 // Files that are available offline. Every file must exist: see the install
-// handler below for what happens otherwise.
+// handler below for what happens otherwise. The offline page
+// (templates/offline.html) is cached with its own files: cacheOfflinePage().
 var filesToCache = [
-    '/offline/',
     '/static/css/django-pwa-app.css',
     '/static/images/icons/favicon.ico',
     '/static/images/icons/favicon-16x16.png',
@@ -20,7 +20,7 @@ self.addEventListener("install", event => {
     this.skipWaiting();
     event.waitUntil(
         caches.open(staticCacheName)
-            .then(cache => Promise.allSettled(filesToCache.map(file => cache.add(file))))
+            .then(cache => Promise.allSettled([cacheOfflinePage(cache), ...filesToCache.map(file => cache.add(file))]))
             .then(results => {
                 results
                     .filter(result => result.status === "rejected")
@@ -31,6 +31,22 @@ self.addEventListener("install", event => {
 
 // Static files the app has loaded: CSS, scripts, fonts, images
 var RUNTIME_CACHE = "kyyti-static-v1";
+
+// The offline page, and the stylesheet, scripts and icons it links to, so
+// that it has the app's look even on a device that has not opened the app
+// before. Their names change with each release (collectstatic's hashes,
+// ?v=), so they are read from the page rather than listed above.
+async function cacheOfflinePage(cache) {
+    const response = await fetch("/offline/");
+    if (!response.ok) {
+        throw new Error(`The offline page could not be loaded: ${response.status}`);
+    }
+    await cache.put("/offline/", response.clone());
+    const html = await response.text();
+    const files = [...html.matchAll(/(?:href|src)="(\/static\/[^"]+)"/g)].map(match => match[1].replaceAll("&amp;", "&"));
+    const runtime = await caches.open(RUNTIME_CACHE);
+    await Promise.allSettled(files.map(file => runtime.add(file)));
+}
 
 // Clear cache on activate, and start loading pages while the service worker
 // starts up (navigation preload)

@@ -1150,3 +1150,110 @@ msgstr "Lauantaisin"
 #: rides/models.py:24
 msgid "Sundays"
 msgstr "Sunnuntaisin"
+
+#: activity/models.py:79
+msgid "Rated co-riders"
+msgstr "Arvioi matkakumppaneita"
+
+#: rides/models.py:569
+msgid "Rated"
+msgstr "Arvioitu"
+
+#: rides/models.py:570
+msgid "Did not show up"
+msgstr "Ei saapunut paikalle"
+
+#: rides/models.py:571
+msgid "Not rated"
+msgstr "Ei arvioitu"
+
+#: rides/models.py:572
+msgid "The ride did not take place"
+msgstr "Matkaa ei tehty"
+
+msgid "Reported a member"
+msgstr "Ilmoitti jäsenestä"
+
+msgid "Rate your ride"
+msgstr "Arvioi matkasi"
+
+msgid "Missed rides"
+msgstr "Väliin jääneet matkat"
+
+#, python-format
+msgid "How was your trip %(route)s? Rate your co-riders."
+msgstr "Miten matkasi %(route)s sujui? Arvioi matkakumppanisi."
+
+msgid ""
+"Co-riders have said that you did not show up for rides you had joined. "
+"Others now see this with your rating. If you cannot make a ride, leave it in"
+" time so that the others can plan."
+msgstr ""
+"Matkakumppanit ovat kertoneet, ettet saapunut paikalle matkoille, joihin "
+"olit liittynyt. Muut näkevät tämän nyt arviosi yhteydessä. Jos et pääse "
+"matkalle, poistu siitä ajoissa, jotta muut voivat suunnitella."
+
+msgid "Waiting for an answer"
+msgstr "Odottaa vastausta"
+
+msgid "On time"
+msgstr "Ajoissa"
+
+msgid "Friendly"
+msgstr "Ystävällinen"
+
+msgid "Good communication"
+msgstr "Hyvä viestintä"
+
+msgid "Safe driving"
+msgstr "Turvallinen ajotapa"
+
+msgid "Comfortable car"
+msgstr "Mukava auto"
+
+msgid "Not disputed"
+msgstr "Ei kiistetty"
+
+msgid "Disputed, waiting for review"
+msgstr "Kiistetty, odottaa tarkistusta"
+
+msgid "Counted after review"
+msgstr "Hyväksytty tarkistuksen jälkeen"
+
+msgid "Discarded after review"
+msgstr "Hylätty tarkistuksen jälkeen"
+
+msgid "Safety concern"
+msgstr "Turvallisuushuoli"
+
+msgid "Rude or inappropriate behaviour"
+msgstr "Epäkohtelias tai sopimaton käytös"
+
+msgid "Fake or misleading ride"
+msgstr "Valheellinen tai harhaanjohtava matka"
+
+msgid "Payment problem"
+msgstr "Maksuongelma"
+
+msgid "Something else"
+msgstr "Jokin muu"
+
+#: templates/offline.html:14
+msgid "Offline"
+msgstr "Ei yhteyttä"
+
+#: templates/offline.html:20
+msgid "You are offline"
+msgstr "Ei internetyhteyttä"
+
+#: templates/offline.html:21
+msgid "LUT Kyyti needs an internet connection. Check your Wi-Fi or mobile data: the page will open by itself once you are back online."
+msgstr "LUT Kyyti tarvitsee internetyhteyden. Tarkista wifi- tai mobiilidatayhteytesi: sivu avautuu itsestään, kun yhteys palaa."
+
+#: templates/offline.html:23
+msgid "Waiting for a connection"
+msgstr "Odotetaan yhteyttä"
+
+#: templates/offline.html:27
+msgid "Try again"
+msgstr "Yritä uudelleen"
