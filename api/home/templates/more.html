@@ -41,6 +41,13 @@
           </a>
         </li>
         <li>
+          <a href="{% url 'ratings' %}" class="py-3">
+            {% include "_icon.html" with name="star" %}
+            <span class="grow">{% trans "Ratings" %}</span>
+            {% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}
+          </a>
+        </li>
+        <li>
           <a href="{% url 'groups' %}" class="py-3">
             {% include "_icon.html" with name="user" %}
             <span class="grow">{% trans "Groups" %}</span>

@@ -132,7 +132,7 @@ class EmailPreferenceTests(TestCase):
     def test_essential_kinds(self):
         self.assertEqual(
             {kind.value for kind in Kind if kind not in ESSENTIAL},
-            {"request_received", "request_withdrawn", "group_join_requested"},
+            {"request_received", "request_withdrawn", "group_join_requested", "rate_ride"},
         )
 
 

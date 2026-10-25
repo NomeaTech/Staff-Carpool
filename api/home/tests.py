@@ -1163,3 +1163,359 @@ class TripInformationTests(TestCase):
         self.assertLess(bottom.index("Price"), bottom.index("Additional information"))
         self.assertLess(bottom.index("Additional information"), bottom.index("Posted"))
 
+
+
+
+@override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
+class RatingTests(TestCase):
+    """Rating co-riders after a trip (rides/ratings.py)."""
+
+    def setUp(self):
+        self.driver = make_user("Aino", "Mäkinen")
+        self.passenger = make_user("Jamie", "Saarinen")
+        self.ride = make_ride(self.driver, leaving_at_date_time=self.local(days=-1))
+        self.join(self.passenger)
+
+    def local(self, **delta):
+        """A datetime-local string, as rides store them, delta from now."""
+        return (timezone.localtime() + timezone.timedelta(**delta)).strftime("%Y-%m-%dT%H:%M")
+
+    def join(self, user, ride=None, **fields):
+        return RideRequest.objects.create(
+            ride=ride or self.ride, passenger=user, status=RideRequest.Status.ACCEPTED,
+            accepted_at=timezone.now() - timezone.timedelta(days=3), **fields,
+        )
+
+    def rate(self, user, answers, ride=None, **data):
+        """Posts user's rating form for ride: answers is {rated user: answer}, data more fields."""
+        from rides.models import Rating
+        self.client.force_login(user)
+        self.client.get(reverse("ratings"))
+        ratings = Rating.objects.filter(rater=user, ride=ride or self.ride)
+        post = {"rating": [str(rating.pk) for rating in ratings], **data}
+        for rating in ratings:
+            if rating.rated in answers:
+                post[f"score_{rating.pk}"] = answers[rating.rated]
+        with self.captureOnCommitCallbacks(execute=True):
+            return self.client.post(reverse("ratings"), post)
+
+    def rating(self, rater, rated):
+        from rides.models import Rating
+        return Rating.objects.get(rater=rater, rated=rated)
+
+    def test_passenger_rates_the_driver(self):
+        from rides.models import Rating
+        self.client.force_login(self.passenger)
+        self.assertContains(self.client.get(reverse("home")), "How was your ride?")
+        self.assertContains(self.client.get(reverse("ride_detail", args=[self.ride.pk])), "Rate your driver")
+        self.assertContains(self.client.get(reverse("ratings")), "Rate your rides")
+
+        response = self.rate(self.passenger, {self.driver: "8"}, next=reverse("ratings"))
+        self.assertRedirects(response, reverse("home"), fetch_redirect_response=False)
+        rating = self.rating(self.passenger, self.driver)
+        self.assertEqual((rating.outcome, rating.score, rating.rated_is_driver), (Rating.Outcome.RATED, 8, True))
+        self.assertNotContains(self.client.get(reverse("home")), "How was your ride?")
+
+        # Until the deadline the answer can be changed
+        self.rate(self.passenger, {self.driver: "skipped"})
+        rating.refresh_from_db()
+        self.assertEqual((rating.outcome, rating.score), (Rating.Outcome.SKIPPED, None))
+
+    def test_driver_answers_for_each_passenger(self):
+        other = make_user("Kalle", "Virtanen")
+        self.join(other)
+        self.client.force_login(self.driver)
+        self.assertContains(self.client.get(reverse("my_rides")), "Rate your ride")
+        page = self.client.get(reverse("ride_detail", args=[self.ride.pk]))
+        self.assertContains(page, "Rate your passengers")
+        self.assertContains(page, f'name="score_{self.rating(self.driver, other).pk}" value="no_show"')
+
+        self.rate(self.driver, {self.passenger: "10", other: "no_show"})
+        self.assertEqual((self.rating(self.driver, self.passenger).score, self.rating(self.driver, other).outcome), (10, "no_show"))
+
+    def test_tags_and_comment(self):
+        self.client.force_login(self.driver)
+        self.client.get(reverse("ratings"))
+        rating = self.rating(self.driver, self.passenger)
+        # Comfortable car is for drivers only
+        self.rate(self.driver, {self.passenger: "9"}, **{
+            f"tags_{rating.pk}": ["on_time", "clean_car", "made_up"], f"comment_{rating.pk}": " Great company ",
+        })
+        rating.refresh_from_db()
+        self.assertEqual((rating.tags, rating.comment), (["on_time"], "Great company"))
+
+    def test_everyone_needs_an_answer(self):
+        other = make_user("Kalle", "Virtanen")
+        self.join(other)
+        response = self.rate(self.driver, {self.passenger: "9"}, next=reverse("ratings"))
+        self.assertRedirects(response, reverse("ratings"), fetch_redirect_response=False)
+        self.assertEqual(self.rating(self.driver, self.passenger).outcome, "pending")
+        # Not rating someone is an answer
+        self.rate(self.driver, {self.passenger: "9", other: "skipped"})
+        self.assertEqual((self.rating(self.driver, self.passenger).score, self.rating(self.driver, other).outcome), (9, "skipped"))
+
+        page = self.client.get(reverse("ratings")).content.decode()
+        self.assertIn('value="skipped" class="sr-only" required', page)
+        self.assertIn('name="not_happened" value="1" formnovalidate', page)
+
+    def test_the_ride_did_not_take_place(self):
+        self.rate(self.driver, {self.passenger: "2"}, not_happened="1")
+        rating = self.rating(self.driver, self.passenger)
+        self.assertEqual((rating.outcome, rating.score), ("not_happened", None))
+
+    def test_unanswered_and_invalid_answers_are_not_saved(self):
+        for answer in ("", "0", "11", "great"):
+            response = self.rate(self.passenger, {self.driver: answer}, next=reverse("ratings"))
+            # Back to the form, to choose an answer
+            self.assertRedirects(response, reverse("ratings"), fetch_redirect_response=False)
+        self.assertEqual(self.rating(self.passenger, self.driver).outcome, "pending")
+
+    def test_only_ride_partners_rate_and_only_after_the_trip(self):
+        from rides.models import Rating
+        # Passengers do not rate each other, nor do people who were not accepted
+        other = make_user("Kalle", "Virtanen")
+        self.join(other)
+        stranger = make_user("Liisa", "Laine")
+        RideRequest.objects.create(ride=self.ride, passenger=stranger)
+        for user in (other, stranger):
+            self.client.force_login(user)
+            self.client.get(reverse("ratings"))
+        self.assertFalse(Rating.objects.filter(rated=self.passenger, rater=other).exists())
+        self.assertFalse(Rating.objects.filter(rater=stranger).exists())
+        # Nor can anyone post someone else's ratings
+        self.rate(self.passenger, {})
+        theirs = self.rating(self.passenger, self.driver)
+        self.client.force_login(stranger)
+        self.client.post(reverse("ratings"), {"rating": [str(theirs.pk)], f"score_{theirs.pk}": "1"})
+        theirs.refresh_from_db()
+        self.assertEqual(theirs.outcome, "pending")
+
+        upcoming = make_ride(self.driver, leaving_at_date_time=self.local(days=1))
+        long_ago = make_ride(self.driver, leaving_at_date_time=self.local(days=-31))
+        for ride in (upcoming, long_ago):
+            self.join(self.passenger, ride)
+        self.client.force_login(self.passenger)
+        self.client.get(reverse("ratings"))
+        self.assertFalse(Rating.objects.filter(ride__in=[upcoming, long_ago]).exists())
+
+    def test_average_and_tags_are_shown_after_enough_ratings(self):
+        from rides.ratings import RATING_MIN_COUNT
+        url = reverse("ride_detail", args=[self.ride.pk])
+        raters = [self.passenger] + [make_user(f"Rater{n}", "Laine") for n in range(RATING_MIN_COUNT - 1)]
+        for n, rater in enumerate(raters):
+            if rater != self.passenger:
+                self.join(rater)
+            self.client.force_login(make_user(f"Viewer{n}", "Laine"))
+            self.assertContains(self.client.get(url), "Not rated yet")
+            self.client.force_login(rater)
+            self.client.get(reverse("ratings"))
+            rating = self.rating(rater, self.driver)
+            self.rate(rater, {self.driver: str(7 + n % 2)}, **{f"tags_{rating.pk}": ["safe_driving"]})
+        # Not showing up does not count towards the average
+        no_show = make_user("Pekka", "Laine")
+        self.join(no_show)
+        self.rate(no_show, {self.driver: "no_show"})
+
+        self.client.force_login(make_user("Viewer", "Laine"))
+        page = self.client.get(url)
+        self.assertNotContains(page, "Not rated yet")
+        self.assertContains(page, f"{RATING_MIN_COUNT} ratings")
+        self.assertContains(page, '<strong class="tabular-nums">7.3</strong>', html=False)
+        self.assertContains(page, f"Safe driving · {RATING_MIN_COUNT}")
+        # A single no-show is not shown
+        self.assertNotContains(page, "Didn't show up for")
+
+    def test_recurring_ride_is_rated_after_the_first_trip_together(self):
+        from rides.ratings import trip
+        today = timezone.localdate()
+        day = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"][(today - timezone.timedelta(days=2)).weekday()]
+        ride = make_ride(self.driver, one_time=False, leaving_at_date_time="",
+                         **{f"{day}_check": True, f"{day}_leaving_at_time": "00:01"})
+        # Accepted three days ago: the first trip together was two days ago
+        self.assertEqual(trip(self.join(make_user("Kalle", "Virtanen"), ride)).date, today - timezone.timedelta(days=2))
+        # Accepted after that day's trip: the next is in five days
+        late = RideRequest.objects.create(ride=ride, passenger=make_user("Liisa", "Laine"), status=RideRequest.Status.ACCEPTED,
+                                          accepted_at=timezone.now() - timezone.timedelta(days=1))
+        self.assertEqual(trip(late).date, today + timezone.timedelta(days=5))
+
+    def test_accepting_a_request_records_when(self):
+        ride_request = RideRequest.objects.create(ride=make_ride(self.driver), passenger=make_user("Kalle", "Virtanen"))
+        self.client.force_login(self.driver)
+        self.client.post(reverse("answer_request", args=[ride_request.pk]), {"action": "accept"})
+        ride_request.refresh_from_db()
+        self.assertIsNotNone(ride_request.accepted_at)
+
+    def test_reminders_are_sent_once_for_each_trip(self):
+        from notifications.models import Notification
+        from rides.ratings import remind
+        self.join(make_user("Kalle", "Virtanen"))
+        with self.captureOnCommitCallbacks(execute=True):
+            self.assertEqual(remind(), 3)
+        self.assertEqual(Notification.objects.filter(kind="rate_ride").count(), 3)
+        self.assertEqual(Notification.objects.filter(kind="rate_ride", recipient=self.driver).count(), 1)
+        self.assertTrue(any(self.driver.email in email.to for email in mail.outbox))
+        self.assertEqual(remind(), 0)
+
+    def test_leaving_removing_or_deleting_after_the_trip_keeps_the_ratings(self):
+        from rides.models import Rating
+        kalle, liisa = make_user("Kalle", "Virtanen"), make_user("Liisa", "Laine")
+        removed = self.join(kalle)
+        self.join(liisa)
+        self.client.force_login(self.driver)
+        self.client.post(reverse("answer_request", args=[removed.pk]), {"action": "decline"})
+        self.client.force_login(liisa)
+        self.client.post(reverse("withdraw_request", args=[self.ride.pk]))
+        self.client.force_login(self.driver)
+        self.client.post(reverse("delete_ride"), {"ride": str(self.ride.pk)})
+
+        self.assertFalse(Ride.objects.filter(pk=self.ride.pk).exists())
+        self.assertEqual(Rating.objects.filter(rater=self.driver).count(), 3)
+        self.assertEqual(Rating.objects.filter(rated=self.driver).count(), 3)
+        page = self.client.get(reverse("ratings"))
+        self.assertContains(page, "Ride deleted")
+        self.assertContains(page, "Kalle Virtanen")
+
+    def test_leaving_before_the_trip_makes_no_ratings(self):
+        from rides.models import Rating
+        upcoming = make_ride(self.driver, leaving_at_date_time=self.local(days=1))
+        self.join(make_user("Kalle", "Virtanen"), upcoming)
+        self.client.force_login(self.driver)
+        self.client.post(reverse("delete_ride"), {"ride": str(upcoming.pk)})
+        self.assertFalse(Rating.objects.filter(ride=None).exists())
+
+    def test_disagreeing_answers_wait_for_review(self):
+        from rides.ratings import summaries
+        self.rate(self.passenger, {self.driver: "9"})
+        self.rate(self.driver, {self.passenger: "no_show"})
+        reviews = {self.rating(self.passenger, self.driver).review, self.rating(self.driver, self.passenger).review}
+        self.assertEqual(reviews, {"pending"})
+        self.assertEqual(summaries([self.driver])[self.driver.pk].count, 0)
+        self.assertContains(self.client.get(reverse("ratings")), "will review them")
+
+        # Agreeing again ends the dispute
+        self.rate(self.driver, {self.passenger: "8"})
+        self.assertEqual(self.rating(self.passenger, self.driver).review, "")
+        self.assertEqual(summaries([self.driver])[self.driver.pk].count, 1)
+
+    def test_admins_decide_disputes(self):
+        from rides.admin import RatingAdmin
+        from rides.models import Rating
+        from rides.ratings import summaries
+        from django.contrib.admin.sites import site
+        self.rate(self.passenger, {self.driver: "9"}, not_happened="1")
+        self.rate(self.driver, {self.passenger: "no_show"})
+        request = RequestFactory().post("/")
+        request.user = self.driver
+        admin = RatingAdmin(Rating, site)
+        with patch.object(admin, "message_user"):
+            admin.count_ratings(request, Rating.objects.filter(rater=self.driver))
+        self.assertEqual(summaries([self.passenger])[self.passenger.pk].no_shows, 1)
+
+    def test_repeated_no_shows_are_shown_and_warned_about(self):
+        from notifications.models import Notification
+        rides = [self.ride, make_ride(make_user("Kalle", "Virtanen"), leaving_at_date_time=self.local(days=-2))]
+        self.join(self.passenger, rides[1])
+        for ride in rides:
+            self.rate(ride.driver, {self.passenger: "no_show"}, ride=ride)
+        self.assertEqual(Notification.objects.filter(recipient=self.passenger, kind="no_show_warning").count(), 1)
+
+        self.client.force_login(self.driver)
+        self.assertContains(self.client.get(reverse("ride_detail", args=[self.ride.pk])), "Didn't show up for 2 rides")
+
+    def test_reporting_a_member(self):
+        from rides.models import Report
+        url = reverse("report_member", args=[self.ride.pk])
+        self.client.force_login(self.passenger)
+        self.assertContains(self.client.get(reverse("ride_detail", args=[self.ride.pk])), "Report a problem")
+        data = {"member": str(self.driver.pk), "reason": "safety", "message": "Drove far too fast."}
+        self.client.post(url, data)
+        report = Report.objects.get()
+        self.assertEqual((report.reporter, report.reported, report.reason), (self.passenger, self.driver, "safety"))
+        self.assertIn("Drove far too fast.", mail.outbox[-1].body)
+
+        # Once until handled, and only the people the reporter rides with
+        self.client.post(url, data)
+        self.client.post(url, {**data, "member": str(make_user("Kalle", "Virtanen").pk)})
+        self.client.post(url, {**data, "reason": "made_up"})
+        self.assertEqual(Report.objects.count(), 1)
+
+        # The driver can report the passengers
+        self.client.force_login(self.driver)
+        self.client.post(url, {**data, "member": str(self.passenger.pk)})
+        self.assertEqual(Report.objects.filter(reported=self.passenger).count(), 1)
+
+
+class LocalizedDatesTests(TestCase):
+    """Dates and times are shown the way the user's language writes them (carpool/formats/)."""
+
+    def setUp(self):
+        self.driver = make_user("Aino", "Mäkinen")
+        self.client.force_login(self.driver)
+
+    def page(self, ride, language):
+        return self.client.get(reverse("ride_detail", args=[ride.pk]), HTTP_ACCEPT_LANGUAGE=language).content.decode()
+
+    def test_one_time_ride(self):
+        # A Wednesday
+        ride = make_ride(self.driver, one_way=False, leaving_at_date_time="2099-10-14T07:30",
+                         returning_at_date_time="2099-10-14T16:05")
+        english = self.page(ride, "en")
+        self.assertIn("Wednesday, 14 October 2099", english)
+        self.assertIn("Wed 14 Oct, 07:30", english)
+        self.assertIn("Returning · 16:05", english)
+
+        finnish = self.page(ride, "fi")
+        self.assertIn("Keskiviikko 14. lokakuuta 2099", finnish)
+        self.assertIn("Ke 14.10. klo 7.30", finnish)
+        self.assertIn("16.05", finnish)
+        self.assertNotIn("07:30", finnish)
+
+    def test_recurring_ride(self):
+        ride = make_ride(self.driver, one_time=False, one_way=False, leaving_at_date_time="",
+                         monday_check=True, monday_leaving_at_time="07:30", monday_returning_at_time="12:30")
+        self.assertIn("07:30 ⇄ 12:30", self.page(ride, "en"))
+        self.assertIn("7.30 ⇄ 12.30", self.page(ride, "fi"))
+
+    def test_departure_time_is_a_time(self):
+        from datetime import time
+        self.assertEqual(make_ride(self.driver).departure_time(), time(7, 30))
+        recurring = make_ride(self.driver, one_time=False, leaving_at_date_time="",
+                              wednesday_check=True, wednesday_leaving_at_time="08:15")
+        self.assertEqual(recurring.departure_time(), time(8, 15))
+        self.assertIsNone(make_ride(self.driver, leaving_at_date_time="").departure_time())
+
+
+class RatingTestRideTests(TestCase):
+    """The admin's "Make a ride to test ratings" action (rides/admin.py)."""
+
+    def setUp(self):
+        self.admin = make_user("Ada", "Admin", is_staff=True, is_superuser=True)
+        log_in_to_admin(self.client, self.admin)
+
+    def make(self, role):
+        return self.client.post(reverse("admin:rides_ride_changelist"), {
+            "action": "generate_rating_test_ride", "apply": "1", "role": role,
+            "_selected_action": "0", "select_across": "1",
+        }, follow=True)
+
+    def test_the_ride_can_be_rated_and_is_replaced(self):
+        from rides.models import Rating
+        self.assertContains(self.make("driver"), "Made a ride to test ratings")
+        ride = Ride.objects.get()
+        self.assertEqual(ride.driver, self.admin)
+        self.assertIn("RATING TEST", ride.route_name())
+        self.assertNotIn(ride, Ride.objects.upcoming())
+
+        page = self.client.get(reverse("ratings"))
+        self.assertContains(page, "Rating Tester One")
+        self.assertContains(page, "Rating Tester Two")
+        ratings = Rating.objects.filter(rater=self.admin)
+        self.client.post(reverse("ratings"), {"rating": [str(r.pk) for r in ratings], **{f"score_{r.pk}": "7" for r in ratings}})
+        self.assertFalse(ratings.filter(outcome="pending").exists())
+
+        # A new one replaces it, ratings and all
+        self.make("passenger")
+        ride = Ride.objects.get()
+        self.assertNotEqual(ride.driver, self.admin)
+        self.assertFalse(Rating.objects.exclude(ride=ride).exists())
+        self.assertContains(self.client.get(reverse("ride_detail", args=[ride.pk])), "Rate your driver")

@@ -37,12 +37,12 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
       <div class="grid gap-5">
 
-        {% if pending_requests %}
+        {% if pending_requests or rides_to_rate %}
         <section id="attention" class="card bg-base-100 border border-base-300 shadow-sm scroll-mt-24">
           <div class="card-body p-5 sm:p-6">
             <div class="flex items-center justify-between gap-3 mb-2">
               <h2 class="card-title text-lg">{% trans "Needs your attention" %}</h2>
-              <span class="badge border-0 bg-warning/30 text-warning-content badge-sm">{% blocktrans count counter=pending_requests|length %}{{ counter }} pending{% plural %}{{ counter }} pending{% endblocktrans %}</span>
+              {% if pending_requests %}<span class="badge border-0 bg-warning/30 text-warning-content badge-sm">{% blocktrans count counter=pending_requests|length %}{{ counter }} pending{% plural %}{{ counter }} pending{% endblocktrans %}</span>{% endif %}
             </div>
             <div class="grid gap-3">
               {% for ride_request in pending_requests %}
@@ -51,9 +51,22 @@
                 <div>
                   <p class="font-bold">{% trans "New ride request" %}</p>
                   <p class="text-sm opacity-80">
-                    {% blocktrans with name=ride_request.passenger|display_name route=ride_request.ride.route_name %}{{ name }} would like to join your ride {{ route }}{% endblocktrans %}{% if ride_request.ride.one_time %} · {{ ride_request.ride.leaving_at|date:"j F" }}{% endif %}
+                    {% blocktrans with name=ride_request.passenger|display_name route=ride_request.ride.route_name %}{{ name }} would like to join your ride {{ route }}{% endblocktrans %}{% if ride_request.ride.one_time %} · {{ ride_request.ride.leaving_at|date:"MONTH_DAY_FORMAT" }}{% endif %}
                   </p>
                   <a href="{% url 'ride_detail' ride_request.ride_id %}#requests" class="link link-primary text-sm font-bold no-underline">{% trans "Review request" %} →</a>
+                </div>
+              </div>
+              {% endfor %}
+              {# Past trips to rate (rides/ratings.py) #}
+              {% for trip in rides_to_rate %}
+              <div role="alert" class="alert border-primary/40 bg-primary/5 text-base-content items-start">
+                {% include "_icon.html" with name="star" class="size-5 mt-0.5 text-primary" %}
+                <div>
+                  <p class="font-bold">{% trans "How was your ride?" %}</p>
+                  <p class="text-sm opacity-80">
+                    {% if trip.rates_driver %}{% blocktrans with name=trip.ratings.0.rated|display_name:True route=trip.route %}Rate your trip {{ route }} with {{ name }}{% endblocktrans %}{% else %}{% blocktrans with route=trip.route count counter=trip.ratings|length %}Rate your passenger on {{ route }}{% plural %}Rate your {{ counter }} passengers on {{ route }}{% endblocktrans %}{% endif %} · {{ trip.trip_date|date:"MONTH_DAY_FORMAT" }}
+                  </p>
+                  <a href="{% url 'ratings' %}" class="link link-primary text-sm font-bold no-underline">{% trans "Rate now" %} →</a>
                 </div>
               </div>
               {% endfor %}

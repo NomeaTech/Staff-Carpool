@@ -4,10 +4,7 @@ from django.conf import settings
 from django.utils.translation import gettext as _, gettext_lazy
 from django.utils import timezone
 from itertools import compress
-from dateutil import parser
-from dateutil.parser import ParserError
 from datetime import datetime
-from django.utils import formats
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import OuterRef
 import uuid
@@ -230,12 +227,21 @@ class Ride(models.Model):
         ]
 
     def departure_time(self):
-        """The time the ride leaves, for recurring rides the time on its first day."""
+        """When the ride leaves (a time), for recurring rides on its first day; None if unknown."""
         if self.one_time:
             leaving_at = self.leaving_at()
-            return leaving_at.strftime("%H:%M") if leaving_at else ""
-        first_day = next(self.weekly_schedule(), None)
-        return first_day[1] if first_day else ""
+            return leaving_at.time() if leaving_at else None
+        days = self.day_keys()
+        return self.times_on(days[0])[0] if days else None
+
+    def times_on(self, day):
+        """
+        When a recurring ride leaves and returns on day (WEEKDAY_KEYS), as
+        times; returning is None for a one-way ride, and either for none set.
+        """
+        leaving = parse_time(getattr(self, f"{day}_leaving_at_time"))
+        returning = None if self.one_way else parse_time(getattr(self, f"{day}_returning_at_time"))
+        return leaving, returning
 
     # Seats. A one-time ride's seats are taken by its accepted passengers. A
     # recurring ride has its seats on each of its days: a passenger joins it
@@ -291,175 +297,21 @@ class Ride(models.Model):
         """
         A recurring ride's days, for choosing which to join and showing
         their seats: dicts of key, label ("Mondays"), leaving and returning
-        times, seats_left (None without a limit) and full.
+        (times, see times_on), seats_left (None without a limit) and full.
         """
-        times = {day: (getattr(self, f"{day}_leaving_at_time"), getattr(self, f"{day}_returning_at_time"))
-                 for day in WEEKDAY_KEYS}
         seat_days = []
         for day in self.day_keys():
             seats = self.seats_left_on(day)
+            leaving, returning = self.times_on(day)
             seat_days.append({
                 "key": day,
                 "label": WEEKDAY_PLURALS[WEEKDAY_KEYS.index(day)],
-                "leaving": times[day][0],
-                "returning": "" if self.one_way else times[day][1],
+                "leaving": leaving,
+                "returning": returning,
                 "seats_left": seats,
                 "full": seats == 0,
             })
         return seat_days
-
-    def get_created_at(self):
-        return formats.date_format(self.created_at, "Y.m.d")
-
-    # Very janky TEMPORARY system please someone replace it with a better one
-    def parse_date(self, display_format):
-        parse_format = "%Y-%m-%d %H:%M:%S"
-
-        try:
-            l_date = parser.parse(self.leaving_at_date_time)
-            l_date_datetime = datetime.strptime(str(l_date), parse_format)
-            l_date_formatted = datetime.strftime(l_date_datetime, display_format)
-        except ParserError:
-            l_date_formatted = ""
-
-        try:
-            r_date = parser.parse(self.returning_at_date_time)
-            r_date_datetime = datetime.strptime(str(r_date), parse_format)
-            r_date_formatted = datetime.strftime(r_date_datetime, display_format)
-        except ParserError:
-            r_date_formatted = ""
-        
-        return l_date_formatted, r_date_formatted
-    
-    def schedule(self):
-        schedule_string = ""
-        template = '''<div class="col-span-2 badge badge-soft badge-info rounded-full badge-lg">
-            {0}
-        </div>
-        '''
-        if self.one_time:
-            
-            l_date_formatted, r_date_formatted = self.parse_date("%d.%m  <b>%H:%M</b>")
-
-            if self.one_way:
-                schedule_string = template.format(l_date_formatted)
-                # schedule_string = "test"
-            else:      
-                schedule_string = template.format(l_date_formatted) + template.format(r_date_formatted)
-        else:
-            day_filter = [
-                self.monday_check, 
-                self.tuesday_check, 
-                self.wednesday_check, 
-                self.thursday_check, 
-                self.friday_check, 
-                self.saturday_check, 
-                self.sunday_check
-            ]
-
-            days = [
-                _("Mon"), 
-                _("Tue"), 
-                _("Wed"), 
-                _("Thu"), 
-                _("Fri"), 
-                _("Sat"), 
-                _("Sun")
-            ]
-
-
-
-            if all(day_filter):
-                schedule_string = template.format(_("Every day"))
-            elif all(day_filter[:5]) and not any(day_filter[5:7]):
-                schedule_string = template.format(_("Weekdays"))
-            elif all(day_filter[5:7]) and not any(day_filter[:5]):
-                schedule_string = template.format(_("Weekends"))
-            else:
-                days = compress(days, day_filter)
-                joint_string = ", ".join(days)
-                # schedule_string = "".join([template.format(day) for day in days])
-                args = "rounded-full"
-
-                if 2 < sum(day_filter) < 4:
-                    args = "h-20"
-                elif sum(day_filter) > 3:
-                    args = "h-20"
-                    
-                schedule_string = f'''<div class="col-span-2 badge badge-soft badge-info badge-lg {args}">
-                        {joint_string}
-                    </div>'''
-
-        return schedule_string
-
-    def schedule_long(self):
-            if self.one_time:
-
-                l_date_formatted, r_date_formatted = self.parse_date("%Y.%d.%m  <b>%H:%M</b>")
-                
-                if self.one_way:
-                    schedule_string = l_date_formatted
-                else:      
-                    schedule_string = f"<p>{r_date_formatted}</p> {self.sign()} <p>{l_date_formatted}</p>"
-            else:
-                schedule_string = ""
-    
-            return schedule_string
-
-    def weekly_schedule(self):
-        day_filter = [
-            self.monday_check, 
-            self.tuesday_check, 
-            self.wednesday_check, 
-            self.thursday_check, 
-            self.friday_check, 
-            self.saturday_check, 
-            self.sunday_check
-        ]
-
-        days = WEEKDAY_PLURALS
-
-        # Datastructures are for suckers and losers
-
-        schedule_array = [
-            (
-                days[0], 
-                self.monday_leaving_at_time, 
-                self.monday_returning_at_time
-            ),
-            (
-                days[1], 
-                self.tuesday_leaving_at_time, 
-                self.tuesday_returning_at_time
-            ),
-            (
-                days[2], 
-                self.wednesday_leaving_at_time, 
-                self.wednesday_returning_at_time
-            ),
-            (
-                days[3], 
-                self.thursday_leaving_at_time, 
-                self.thursday_returning_at_time
-            ),
-            (
-                days[4], 
-                self.friday_leaving_at_time, 
-                self.friday_returning_at_time
-            ),
-            (
-                days[5], 
-                self.saturday_leaving_at_time, 
-                self.saturday_returning_at_time
-            ),
-            (
-                days[6], 
-                self.sunday_leaving_at_time, 
-                self.sunday_returning_at_time
-            ),
-        ]
-
-        return compress(schedule_array, day_filter)
 
     def sign(self):
         if self.one_way:
@@ -471,6 +323,13 @@ def parse_local(value):
     """A datetime-local string ("2026-10-12T08:30") as a naive datetime."""
     try:
         return datetime.strptime(value[:16], "%Y-%m-%dT%H:%M")
+    except (TypeError, ValueError):
+        return None
+
+def parse_time(value):
+    """A recurring ride's time string ("07:30") as a time, None if it has none."""
+    try:
+        return datetime.strptime(value[:5], "%H:%M").time()
     except (TypeError, ValueError):
         return None
 
@@ -525,6 +384,9 @@ class RideRequest(models.Model):
     message = models.TextField(blank=True, default="", max_length=500, help_text="Message from the passenger to the driver")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    # When the driver accepted it: a recurring ride's first trip together is
+    # the first of the passenger's days after it (rides/ratings.py)
+    accepted_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["created_at"]
@@ -553,3 +415,117 @@ class RideRequest(models.Model):
         if days:
             return all(ride.seats_left_on(day) > 0 for day in days)
         return not ride.is_full()
+
+
+
+class Rating(models.Model):
+    """
+    A member's rating of a co-rider after a trip (rides/ratings.py): made
+    waiting for an answer once the trip is over, then a score out of 10,
+    or why they gave none. One per ride, rater and rated member; it can be
+    changed while the trip can still be rated.
+    """
+    class Outcome(models.TextChoices):
+        PENDING = "pending", gettext_lazy("Waiting for an answer")
+        RATED = "rated", gettext_lazy("Rated")
+        NO_SHOW = "no_show", gettext_lazy("Did not show up")
+        SKIPPED = "skipped", gettext_lazy("Not rated")
+        NOT_HAPPENED = "not_happened", gettext_lazy("The ride did not take place")
+
+    class Tag(models.TextChoices):
+        """What went well, ticked with a score. The last two are for drivers only (DRIVER_TAGS)."""
+        ON_TIME = "on_time", gettext_lazy("On time")
+        FRIENDLY = "friendly", gettext_lazy("Friendly")
+        COMMUNICATION = "communication", gettext_lazy("Good communication")
+        SAFE_DRIVING = "safe_driving", gettext_lazy("Safe driving")
+        CLEAN_CAR = "clean_car", gettext_lazy("Comfortable car")
+
+    class Review(models.TextChoices):
+        """
+        The co-riders' answers about each other disagree, e.g. one says the
+        other did not show up and the other rated them (ratings.disputed):
+        neither counts until the admins decide.
+        """
+        NONE = "", gettext_lazy("Not disputed")
+        PENDING = "pending", gettext_lazy("Disputed, waiting for review")
+        UPHELD = "upheld", gettext_lazy("Counted after review")
+        DISCARDED = "discarded", gettext_lazy("Discarded after review")
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # Kept when the ride is deleted, so that the trip can still be rated and
+    # the rating still counts; route keeps its name
+    ride = models.ForeignKey(Ride, on_delete=models.SET_NULL, null=True, blank=True, related_name="ratings")
+    route = models.CharField(max_length=300)
+    rater = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ratings_given")
+    rated = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ratings_received")
+    rated_is_driver = models.BooleanField(default=False)
+    # The day of the trip rated (a recurring ride's first trip together),
+    # and when it can be rated from (ratings.RATE_AFTER after the trip)
+    trip_date = models.DateField()
+    due_at = models.DateTimeField()
+    outcome = models.CharField(max_length=15, choices=Outcome.choices, default=Outcome.PENDING)
+    # 1-10, only when outcome is RATED
+    score = models.PositiveSmallIntegerField(null=True, blank=True)
+    tags = ArrayField(models.CharField(max_length=20, choices=Tag.choices), blank=True, default=list)
+    # Only the admins see it
+    comment = models.TextField(blank=True, default="", max_length=1000)
+    review = models.CharField(max_length=10, choices=Review.choices, blank=True, default=Review.NONE)
+    # Whether the rater was told the trip can be rated (ratings.remind)
+    reminded = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [models.Index(fields=["rater", "due_at"]), models.Index(fields=["rated", "outcome"])]
+        constraints = [
+            models.UniqueConstraint(fields=["ride", "rater", "rated"], name="one_rating_per_ride_and_pair"),
+            models.CheckConstraint(
+                condition=models.Q(outcome="rated", score__gte=1, score__lte=10) | (~models.Q(outcome="rated") & models.Q(score=None)),
+                name="score_only_when_rated",
+            ),
+            models.CheckConstraint(condition=~models.Q(rater=models.F("rated")), name="no_rating_oneself"),
+        ]
+
+    def __str__(self):
+        return f"{self.rater} → {self.rated}: {self.score or self.get_outcome_display()}"
+
+    def tag_choices(self):
+        """The tags the rater can tick for the rated member, as (value, label)."""
+        tags = DRIVER_TAGS if self.rated_is_driver else PASSENGER_TAGS
+        return [(tag.value, tag.label) for tag in tags]
+
+DRIVER_TAGS = list(Rating.Tag)
+PASSENGER_TAGS = [Rating.Tag.ON_TIME, Rating.Tag.FRIENDLY, Rating.Tag.COMMUNICATION]
+
+
+class Report(models.Model):
+    """
+    A member reporting another member to the admins, from a ride they
+    share or that one of them posted (ride_detail.html). The admins are
+    emailed (home.views.report_member) and mark it handled in the admin.
+    """
+    class Reason(models.TextChoices):
+        SAFETY = "safety", gettext_lazy("Safety concern")
+        BEHAVIOUR = "behaviour", gettext_lazy("Rude or inappropriate behaviour")
+        MISLEADING = "misleading", gettext_lazy("Fake or misleading ride")
+        PAYMENT = "payment", gettext_lazy("Payment problem")
+        OTHER = "other", gettext_lazy("Something else")
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    reporter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reports_made")
+    reported = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reports_received")
+    ride = models.ForeignKey(Ride, on_delete=models.SET_NULL, null=True, blank=True, related_name="reports")
+    route = models.CharField(max_length=300, blank=True, default="")
+    reason = models.CharField(max_length=15, choices=Reason.choices)
+    message = models.TextField(max_length=2000)
+    created_at = models.DateTimeField(auto_now_add=True)
+    handled_at = models.DateTimeField(null=True, blank=True)
+    # The admins' notes on what was done
+    note = models.TextField(blank=True, default="")
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.reporter} → {self.reported}: {self.get_reason_display()}"

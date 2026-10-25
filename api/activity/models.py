@@ -73,6 +73,13 @@ class Kind(models.TextChoices):
     REQUEST_WITHDRAWN = "request_withdrawn", _("Withdrew a request")
     PASSENGER_LEFT = "passenger_left", _("Left a ride")
 
+    # Drivers and passengers (rides/ratings.py). data: rated, no_show,
+    # skipped, not_happened (how many co-riders were answered each way),
+    # changed (whether it changed earlier answers), days (since the trip)
+    RIDE_RATED = "ride_rated", _("Rated co-riders")
+    # data: reason, reported_driver (whether the driver was reported, or a passenger)
+    MEMBER_REPORTED = "member_reported", _("Reported a member")
+
     # Groups (groups/services.py)
     GROUP_CREATED = "group_created", _("Made a group")
     GROUP_JOINED = "group_joined", _("Joined a group")
