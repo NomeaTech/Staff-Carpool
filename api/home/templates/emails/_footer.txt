@@ -1,0 +1,4 @@
+{% load i18n %}
+--
+LUT Kyyti
+{% blocktrans %}You can choose to get emails about all notifications or only essential ones in your settings: {{ account_url }}{% endblocktrans %}

@@ -1,0 +1,1550 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-23 02:42+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: fi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: landing/forms.py:11
+msgid "Human verification could not be completed. Please try again."
+msgstr "Ihmisen tunnistusta ei voitu suorittaa loppuun. Yritä uudelleen."
+
+#: landing/forms.py:12
+msgid "Human verification failed. Please try again."
+msgstr "Ihmisen tunnistus epäonnistui. Yritä uudelleen."
+
+#: landing/forms.py:13
+msgid "Please complete the human verification."
+msgstr "Suorita ihmisen tunnistus."
+
+#: landing/templates/contact.html:6 landing/templates/contact.html:12
+#: landing/templates/index.html:140 landing/templates/landing.html:50
+#: landing/templates/landing.html:88
+msgid "Contact"
+msgstr "Yhteystiedot"
+
+#: landing/templates/contact.html:14
+#| msgid ""
+#| "Have a question, suggestion, or problem to report? Send us a message using "
+#| "the form below"
+msgid ""
+"Have a question, suggestion, or problem to report? Send us a message using "
+"the form below."
+msgstr ""
+"Onko sinulla kysyttävää, ehdotus tai ongelma, josta haluat kertoa? Lähetä "
+"meille viesti alla olevalla lomakkeella."
+
+#: landing/templates/contact.html:26 landing/templates/contact.html:27
+msgid "Name *"
+msgstr "Nimi *"
+
+#: landing/templates/contact.html:31 landing/templates/contact.html:32
+msgid "Email *"
+msgstr "Sähköposti *"
+
+#: landing/templates/contact.html:36
+msgid "Message *"
+msgstr "Viesti *"
+
+#: landing/templates/contact.html:45
+msgid "Send"
+msgstr "Lähetä"
+
+#: landing/templates/faq.html:6 landing/templates/index.html:88
+#: landing/templates/landing.html:46 landing/templates/landing.html:84
+msgid "FAQ"
+msgstr "UKK"
+
+#: landing/templates/faq.html:9
+msgid "FAQ (Frequently Asked Questions)"
+msgstr "UKK (usein kysytyt kysymykset)"
+
+#: landing/templates/faq.html:11
+msgid ""
+"Find answers to common questions about LUT Kyyti. Choose a topic below or "
+"scroll through all questions."
+msgstr ""
+"Löydä vastauksia yleisiin kysymyksiin LUT Kyydistä. Valitse aihe alta tai "
+"selaa kaikkia kysymyksiä."
+
+#: landing/templates/faq.html:13
+msgid "Jump to a section"
+msgstr "Siirry osioon"
+
+#: landing/templates/faq.html:15
+msgid "[About LUT Kyyti]"
+msgstr "[Tietoa LUT Kyydistä]"
+
+#: landing/templates/faq.html:16
+msgid "[Accounts and privacy]"
+msgstr "[Tilit ja yksityisyys]"
+
+#: landing/templates/faq.html:17
+msgid "[Posting and joining trips]"
+msgstr "[Matkojen julkaiseminen ja niihin liittyminen]"
+
+#: landing/templates/faq.html:18
+msgid "[Costs and payments]"
+msgstr "[Kustannukset ja maksut]"
+
+#: landing/templates/faq.html:19
+msgid "[Safety and responsibilities]"
+msgstr "[Turvallisuus ja vastuut]"
+
+#: landing/templates/faq.html:20
+msgid "[Help and support]"
+msgstr "[Apu ja tuki]"
+
+#: landing/templates/faq.html:24
+msgid "About LUT Kyyti"
+msgstr "Tietoa LUT Kyydistä"
+
+#: landing/templates/faq.html:24 landing/templates/index.html:95
+msgid "Who can use LUT Kyyti?"
+msgstr "Kuka voi käyttää LUT Kyytiä?"
+
+#: landing/templates/faq.html:24
+msgid ""
+"LUT Kyyti is intended for LUT and LAB employees. Access is limited to users "
+"with a verified LUT or LAB email address."
+msgstr ""
+"LUT Kyyti on tarkoitettu LUTin ja LABin työntekijöille. Pääsy on rajattu "
+"käyttäjille, joilla on vahvistettu LUT- tai LAB-sähköpostiosoite."
+
+#: landing/templates/faq.html:24
+msgid ""
+"During the pilot phase, the service is not available to the general public."
+msgstr "Pilottivaiheen aikana palvelu ei ole suuren yleisön käytettävissä."
+
+#: landing/templates/faq.html:24 landing/templates/index.html:99
+msgid "How does LUT Kyyti work?"
+msgstr "Miten LUT Kyyti toimii?"
+
+#: landing/templates/faq.html:24
+msgid ""
+"Drivers post rides they are already planning to make. Passengers can search "
+"for suitable rides and request to join them."
+msgstr ""
+"Kuljettajat julkaisevat kyytejä matkoille, jotka he ovat jo tekemässä. "
+"Matkustajat voivat hakea sopivia kyytejä ja pyytää päästä mukaan."
+
+#: landing/templates/faq.html:24
+msgid ""
+"Passengers can also post ride requests when they are looking for a ride. The"
+" driver and passenger then agree on practical details such as the exact "
+"pickup point and timing."
+msgstr ""
+"Matkustajat voivat myös julkaista kyytipyyntöjä, kun he etsivät kyytiä. "
+"Kuljettaja ja matkustaja sopivat sitten käytännön yksityiskohdista, kuten "
+"tarkasta noutopaikasta ja ajasta."
+
+#: landing/templates/faq.html:24 landing/templates/index.html:103
+msgid "Is LUT Kyyti a taxi or transport service?"
+msgstr "Onko LUT Kyyti taksi- tai kuljetuspalvelu?"
+
+#: landing/templates/faq.html:24
+msgid "No. LUT Kyyti is not a taxi, bus, or transport provider."
+msgstr "Ei. LUT Kyyti ei ole taksi, bussi eikä kuljetuspalvelun tarjoaja."
+
+#: landing/templates/faq.html:24
+msgid ""
+"It is a platform that helps members of the LUT and LAB community find other "
+"people travelling in the same direction. LUT Kyyti does not operate vehicles"
+" or employ drivers."
+msgstr ""
+"Se on alusta, joka auttaa LUT- ja LAB-yhteisön jäseniä löytämään muita "
+"samaan suuntaan matkustavia. LUT Kyyti ei liikennöi ajoneuvoja eikä "
+"työllistä kuljettajia."
+
+#: landing/templates/faq.html:24
+msgid "Does LUT Kyyti plan routes for me?"
+msgstr "Suunnitteleeko LUT Kyyti reittejä puolestani?"
+
+#: landing/templates/faq.html:24
+msgid "No. LUT Kyyti does not provide route planning."
+msgstr "Ei. LUT Kyyti ei tarjoa reittisuunnittelua."
+
+#: landing/templates/faq.html:24
+msgid ""
+"Drivers and passengers enter their own trip details, including the departure"
+" area, destination, date, and time."
+msgstr ""
+"Kuljettajat ja matkustajat syöttävät itse matkansa tiedot, kuten "
+"lähtöalueen, määränpään, päivän ja kellonajan."
+
+#: landing/templates/faq.html:24 landing/templates/index.html:125
+msgid "Can students use LUT Kyyti?"
+msgstr "Voivatko opiskelijat käyttää LUT Kyytiä?"
+
+#: landing/templates/faq.html:24
+msgid ""
+"During the pilot phase, LUT Kyyti is available only to LUT and LAB "
+"employees."
+msgstr ""
+"Pilottivaiheen aikana LUT Kyyti on vain LUTin ja LABin työntekijöiden "
+"käytettävissä."
+
+#: landing/templates/faq.html:24
+msgid ""
+"The service may later be opened to LUT and LAB students after the pilot has "
+"been successfully completed and evaluated."
+msgstr ""
+"Palvelu voidaan myöhemmin avata LUTin ja LABin opiskelijoille, kun pilotti "
+"on saatu onnistuneesti päätökseen ja arvioitu."
+
+#: landing/templates/faq.html:24
+msgid "Can I use LUT Kyyti for trips other than commuting?"
+msgstr "Voinko käyttää LUT Kyytiä muihinkin matkoihin kuin työmatkoihin?"
+
+#: landing/templates/faq.html:24
+msgid ""
+"The main purpose of LUT Kyyti is to support commuting to and from LUT and "
+"LAB campuses and workplaces."
+msgstr ""
+"LUT Kyydin päätarkoitus on tukea työmatkoja LUTin ja LABin kampuksille ja "
+"työpaikoille sekä sieltä pois."
+
+#: landing/templates/faq.html:24
+msgid ""
+"Other suitable trips may also be allowed, depending on the service rules "
+"during the pilot."
+msgstr ""
+"Myös muut sopivat matkat voivat olla sallittuja pilotin aikaisten "
+"palvelusääntöjen mukaan."
+
+#: landing/templates/faq.html:24
+msgid "Why should I use LUT Kyyti?"
+msgstr "Miksi minun kannattaisi käyttää LUT Kyytiä?"
+
+#: landing/templates/faq.html:24
+msgid ""
+"LUT Kyyti can help reduce commuting costs, make everyday travel more social,"
+" and lower transport-related emissions by filling empty seats in vehicles "
+"already making the journey."
+msgstr ""
+"LUT Kyyti voi auttaa pienentämään työmatkakuluja, tekemään arjen matkoista "
+"sosiaalisempia ja vähentämään liikenteen päästöjä täyttämällä tyhjiä "
+"paikkoja autoissa, jotka ovat jo tekemässä saman matkan."
+
+#: landing/templates/faq.html:24
+msgid "You can learn more on the"
+msgstr "Voit lukea lisää"
+
+#: landing/templates/faq.html:26
+msgid "Impact page"
+msgstr "Vaikutukset-sivulta"
+
+#: landing/templates/faq.html:28
+msgid "Accounts and privacy"
+msgstr "Tilit ja yksityisyys"
+
+#: landing/templates/faq.html:28
+msgid "Is my LUT/LAB account connected to my LUT Kyyti account?"
+msgstr "Onko LUT/LAB-tilini yhdistetty LUT Kyyti -tiliini?"
+
+#: landing/templates/faq.html:28
+msgid ""
+"No. Your LUT Kyyti account is separate from your LUT or LAB user account."
+msgstr "Ei. LUT Kyyti -tilisi on erillinen LUT- tai LAB-käyttäjätilistäsi."
+
+#: landing/templates/faq.html:28
+msgid ""
+"You register using your LUT or LAB email address and create a separate "
+"password for LUT Kyyti."
+msgstr ""
+"Rekisteröidyt LUT- tai LAB-sähköpostiosoitteellasi ja luot LUT Kyytiä varten"
+" erillisen salasanan."
+
+#: landing/templates/faq.html:28
+msgid "Can I use my LUT/LAB account password for LUT Kyyti?"
+msgstr "Voinko käyttää LUT/LAB-tilini salasanaa LUT Kyydissä?"
+
+#: landing/templates/faq.html:28
+msgid "You should not reuse your LUT or LAB account password."
+msgstr "Älä käytä LUT- tai LAB-tilisi salasanaa uudelleen."
+
+#: landing/templates/faq.html:28
+msgid ""
+"Create a separate and unique password for LUT Kyyti. LUT Kyyti will never "
+"ask for your LUT or LAB account password."
+msgstr ""
+"Luo LUT Kyytiä varten erillinen ja ainutlaatuinen salasana. LUT Kyyti ei "
+"koskaan kysy LUT- tai LAB-tilisi salasanaa."
+
+#: landing/templates/faq.html:28
+msgid "How is my LUT/LAB email address verified?"
+msgstr "Miten LUT/LAB-sähköpostiosoitteeni vahvistetaan?"
+
+#: landing/templates/faq.html:28
+msgid ""
+"When registering, you will be asked to verify your LUT or LAB email address."
+msgstr ""
+"Rekisteröityessäsi sinua pyydetään vahvistamaan LUT- tai LAB-"
+"sähköpostiosoitteesi."
+
+#: landing/templates/faq.html:28
+msgid ""
+"Verification confirms that you are eligible to use the service. Follow the "
+"instructions sent to your email address to complete the registration "
+"process."
+msgstr ""
+"Vahvistus osoittaa, että sinulla on oikeus käyttää palvelua. Viimeistele "
+"rekisteröityminen sähköpostiisi lähetettyjen ohjeiden mukaan."
+
+#: landing/templates/faq.html:28
+msgid "What should I do if I forget my password?"
+msgstr "Mitä teen, jos unohdan salasanani?"
+
+#: landing/templates/faq.html:28
+msgid "Use the password reset option on the login page."
+msgstr "Käytä kirjautumissivun salasanan palautusta."
+
+#: landing/templates/faq.html:28
+msgid ""
+"A password reset message will be sent to the email address connected to your"
+" LUT Kyyti account."
+msgstr ""
+"Salasanan palautusviesti lähetetään LUT Kyyti -tiliisi liitettyyn "
+"sähköpostiosoitteeseen."
+
+#: landing/templates/faq.html:28
+msgid "Do I need to provide my home address?"
+msgstr "Pitääkö minun antaa kotiosoitteeni?"
+
+#: landing/templates/faq.html:28
+msgid "No. LUT Kyyti does not ask you to provide your home address."
+msgstr "Ei. LUT Kyyti ei pyydä sinulta kotiosoitettasi."
+
+#: landing/templates/faq.html:28
+msgid ""
+"When posting a trip, you can enter a city, town, neighbourhood, campus, or "
+"another suitable meeting area as the departure point. You and the other "
+"rider can agree on the exact pickup location separately."
+msgstr ""
+"Kun julkaiset matkan, voit antaa lähtöpaikaksi kaupungin, taajaman, "
+"kaupunginosan, kampuksen tai muun sopivan tapaamisalueen. Voitte sopia "
+"tarkasta noutopaikasta toisen matkustajan kanssa erikseen."
+
+#: landing/templates/faq.html:28
+msgid "What information can other users see about me?"
+msgstr "Mitä tietoja muut käyttäjät näkevät minusta?"
+
+#: landing/templates/faq.html:28
+msgid ""
+"Other users may see limited information needed to arrange a trip, such as "
+"your first name and relevant trip details."
+msgstr ""
+"Muut käyttäjät voivat nähdä rajatusti matkan järjestämiseen tarvittavia "
+"tietoja, kuten etunimesi ja matkan tiedot."
+
+#: landing/templates/faq.html:28
+#| msgid ""
+#| "Your contact information is shared according to the contact preferences you "
+#| "select and the way the service is configured. Exact visibility rules should "
+#| "be explained in the Privacy Policy."
+msgid ""
+"Your contact information is shared according to the contact preferences you "
+"select and the way the service is configured. Exact visibility rules are "
+"explained in the Privacy Policy."
+msgstr ""
+"Yhteystietosi jaetaan valitsemiesi yhteydenpitoasetusten ja palvelun "
+"määritysten mukaisesti. Tarkat näkyvyyssäännöt kerrotaan "
+"tietosuojaselosteessa."
+
+#: landing/templates/faq.html:28
+msgid "How can I communicate with another rider?"
+msgstr "Miten voin olla yhteydessä toiseen matkustajaan?"
+
+#: landing/templates/faq.html:28
+msgid ""
+"When creating your account, you may be asked to provide contact information "
+"such as your email address and phone number."
+msgstr ""
+"Tiliä luodessasi sinua voidaan pyytää antamaan yhteystietoja, kuten "
+"sähköpostiosoitteesi ja puhelinnumerosi."
+
+#: landing/templates/faq.html:28
+msgid ""
+"You can choose which available contact methods other riders may use. Drivers"
+" and passengers are responsible for agreeing on practical details directly "
+"with each other."
+msgstr ""
+"Voit valita, mitä käytettävissä olevia yhteystapoja muut matkustajat voivat "
+"käyttää. Kuljettajat ja matkustajat sopivat käytännön asioista suoraan "
+"keskenään."
+
+#: landing/templates/faq.html:28
+msgid "Can I delete my LUT Kyyti account?"
+msgstr "Voinko poistaa LUT Kyyti -tilini?"
+
+#: landing/templates/faq.html:28
+msgid ""
+"Yes. You can request the deletion of your LUT Kyyti account and associated "
+"personal information."
+msgstr ""
+"Kyllä. Voit pyytää LUT Kyyti -tilisi ja siihen liittyvien henkilötietojen "
+"poistamista."
+
+#: landing/templates/faq.html:28
+msgid ""
+"Some information may need to be retained for a limited period where required"
+" by law or for legitimate administrative, security, or dispute-resolution "
+"purposes. Further information is available in the Privacy Policy."
+msgstr ""
+"Joitakin tietoja voidaan joutua säilyttämään rajoitetun ajan, jos laki sitä "
+"edellyttää tai se on tarpeen perusteltuja hallinnollisia, tietoturva- tai "
+"riidanratkaisutarkoituksia varten. Lisätietoja on tietosuojaselosteessa."
+
+#: landing/templates/faq.html:28
+msgid "What happens to my account if I leave LUT or LAB?"
+msgstr "Mitä tililleni tapahtuu, jos lähden LUTista tai LABista?"
+
+#: landing/templates/faq.html:28
+msgid "LUT Kyyti is intended for current LUT and LAB community members."
+msgstr "LUT Kyyti on tarkoitettu LUT- ja LAB-yhteisön nykyisille jäsenille."
+
+#: landing/templates/faq.html:28
+msgid ""
+"If you no longer have an eligible LUT or LAB email address or employment "
+"relationship, your access may be restricted or your account may be closed in"
+" accordance with the Terms of Service."
+msgstr ""
+"Jos sinulla ei enää ole kelpoista LUT- tai LAB-sähköpostiosoitetta tai "
+"työsuhdetta, pääsyäsi voidaan rajoittaa tai tilisi voidaan sulkea "
+"käyttöehtojen mukaisesti."
+
+#: landing/templates/faq.html:29
+msgid "Posting and joining trips"
+msgstr "Matkojen julkaiseminen ja niihin liittyminen"
+
+#: landing/templates/faq.html:29 landing/templates/index.html:113
+msgid "Can I offer a recurring ride?"
+msgstr "Voinko tarjota toistuvaa kyytiä?"
+
+#: landing/templates/faq.html:29 landing/templates/index.html:114
+msgid ""
+"Yes. If you regularly commute on the same route, you can post a recurring "
+"ride so others can join when suitable."
+msgstr ""
+"Kyllä. Jos kuljet säännöllisesti samaa reittiä, voit julkaista toistuvan "
+"kyydin, jotta muut voivat liittyä mukaan silloin, kun se sopii heille."
+
+#: landing/templates/faq.html:29
+msgid ""
+"Make sure the days, times, and recurrence details are accurate and update "
+"the ride if your schedule changes."
+msgstr ""
+"Varmista, että päivät, ajat ja toistuvuuden tiedot ovat oikein, ja päivitä "
+"kyyti, jos aikataulusi muuttuu."
+
+#: landing/templates/faq.html:29
+msgid "Can I join a ride as a passenger?"
+msgstr "Voinko liittyä kyytiin matkustajana?"
+
+#: landing/templates/faq.html:29
+msgid ""
+"Yes. You can browse available rides and request to join a ride that matches "
+"your travel needs."
+msgstr ""
+"Kyllä. Voit selata tarjolla olevia kyytejä ja pyytää päästä kyytiin, joka "
+"sopii matkatarpeisiisi."
+
+#: landing/templates/faq.html:29
+msgid ""
+"A ride is not necessarily confirmed until the driver accepts your request."
+msgstr ""
+"Kyyti ei välttämättä ole vahvistettu ennen kuin kuljettaja hyväksyy "
+"pyyntösi."
+
+#: landing/templates/faq.html:29
+msgid "Can I post a ride request?"
+msgstr "Voinko julkaista kyytipyynnön?"
+
+#: landing/templates/faq.html:29
+msgid ""
+"Yes. If you cannot find a suitable posted ride, you can create a ride "
+"request describing where and when you would like to travel."
+msgstr ""
+"Kyllä. Jos et löydä sopivaa julkaistua kyytiä, voit luoda kyytipyynnön, "
+"jossa kerrot, minne ja milloin haluaisit matkustaa."
+
+#: landing/templates/faq.html:29
+msgid ""
+"Other users can then respond if they are able to offer a suitable ride."
+msgstr ""
+"Muut käyttäjät voivat sitten vastata, jos he pystyvät tarjoamaan sopivan "
+"kyydin."
+
+#: landing/templates/faq.html:29 landing/templates/index.html:117
+msgid "Can I look for travel companions for train, bus, or taxi trips?"
+msgstr "Voinko etsiä matkaseuraa juna-, bussi- tai taksimatkoille?"
+
+#: landing/templates/faq.html:29
+msgid ""
+"Yes. You can also post a trip if you are looking for other people to share "
+"public transport or taxi travel."
+msgstr ""
+"Kyllä. Voit julkaista matkan myös, jos etsit muita, joiden kanssa jakaa "
+"julkisen liikenteen tai taksin."
+
+#: landing/templates/faq.html:29
+msgid ""
+"The users are responsible for making the booking and agreeing on any costs "
+"directly with each other."
+msgstr ""
+"Käyttäjät vastaavat itse varauksen tekemisestä ja sopivat mahdollisista "
+"kuluista suoraan keskenään."
+
+#: landing/templates/faq.html:29
+msgid "Does a driver have to accept every passenger request?"
+msgstr "Pitääkö kuljettajan hyväksyä jokainen matkustajan pyyntö?"
+
+#: landing/templates/faq.html:29
+msgid ""
+"No. Drivers can decide whether to accept or decline a passenger request."
+msgstr ""
+"Ei. Kuljettajat voivat päättää, hyväksyvätkö vai hylkäävätkö he matkustajan "
+"pyynnön."
+
+#: landing/templates/faq.html:29
+msgid ""
+"They may consider factors such as available seats, pickup arrangements, "
+"timing, and whether the requested trip fits their planned route."
+msgstr ""
+"He voivat ottaa huomioon esimerkiksi vapaat paikat, noutojärjestelyt, "
+"ajankohdan ja sen, sopiiko pyydetty matka heidän suunnittelemalleen "
+"reitille."
+
+#: landing/templates/faq.html:29
+msgid "How many passengers can join a ride?"
+msgstr "Montako matkustajaa kyytiin voi liittyä?"
+
+#: landing/templates/faq.html:29
+msgid ""
+"The driver decides how many seats are available and enters this information "
+"when posting the ride."
+msgstr ""
+"Kuljettaja päättää, montako paikkaa on vapaana, ja kertoo sen julkaistessaan"
+" kyydin."
+
+#: landing/templates/faq.html:29
+msgid ""
+"The number of accepted passengers should not exceed the available seating "
+"capacity of the vehicle."
+msgstr ""
+"Hyväksyttyjen matkustajien määrä ei saa ylittää ajoneuvon istumapaikkojen "
+"määrää."
+
+#: landing/templates/faq.html:29
+msgid "What happens after I request to join a ride?"
+msgstr "Mitä tapahtuu, kun olen pyytänyt päästä kyytiin?"
+
+#: landing/templates/faq.html:29
+msgid "The driver reviews the request and can accept or decline it."
+msgstr "Kuljettaja käy pyynnön läpi ja voi hyväksyä tai hylätä sen."
+
+#: landing/templates/faq.html:29
+msgid ""
+"Once the request is accepted, the driver and passenger can agree on the "
+"exact pickup point, timing, and any other practical arrangements."
+msgstr ""
+"Kun pyyntö on hyväksytty, kuljettaja ja matkustaja voivat sopia tarkasta "
+"noutopaikasta, ajasta ja muista käytännön järjestelyistä."
+
+#: landing/templates/faq.html:29
+msgid "How will I know if someone requests to join my ride?"
+msgstr "Mistä tiedän, jos joku pyytää päästä kyytiini?"
+
+#: landing/templates/faq.html:29
+msgid ""
+"LUT Kyyti will notify you through the notification methods available in the "
+"service."
+msgstr ""
+"LUT Kyyti ilmoittaa sinulle palvelun käytettävissä olevilla "
+"ilmoitustavoilla."
+
+#: landing/templates/faq.html:29
+msgid ""
+"You should also check your account regularly for new requests and changes to"
+" existing trips."
+msgstr ""
+"Tarkista myös tilisi säännöllisesti uusien pyyntöjen ja olemassa olevien "
+"matkojen muutosten varalta."
+
+#: landing/templates/faq.html:29
+msgid "Who decides the pickup and drop-off points?"
+msgstr "Kuka päättää nouto- ja jättöpaikat?"
+
+#: landing/templates/faq.html:29
+msgid "The driver sets the main trip details when posting the ride."
+msgstr "Kuljettaja määrittää matkan päätiedot julkaistessaan kyydin."
+
+#: landing/templates/faq.html:29
+msgid ""
+"The driver and passenger can then agree on suitable pickup and drop-off "
+"arrangements. Neither person is required to share their home address."
+msgstr ""
+"Kuljettaja ja matkustaja voivat sitten sopia sopivista nouto- ja "
+"jättöjärjestelyistä. Kenenkään ei tarvitse kertoa kotiosoitettaan."
+
+#: landing/templates/faq.html:29
+msgid "Can I edit or delete a trip after posting it?"
+msgstr "Voinko muokata tai poistaa matkan julkaisun jälkeen?"
+
+#: landing/templates/faq.html:29
+msgid "Yes. You can update or remove a trip if your plans change."
+msgstr ""
+"Kyllä. Voit päivittää tai poistaa matkan, jos suunnitelmasi muuttuvat."
+
+#: landing/templates/faq.html:29
+msgid ""
+"If another user has already requested or agreed to join the trip, inform "
+"them as early as possible about any changes or cancellation."
+msgstr ""
+"Jos joku muu käyttäjä on jo pyytänyt päästä matkalle tai sopinut liittyvänsä"
+" siihen, kerro hänelle muutoksista tai peruutuksesta mahdollisimman "
+"aikaisin."
+
+#: landing/templates/faq.html:29
+msgid "Can I cancel a ride or passenger request?"
+msgstr "Voinko perua kyydin tai matkustajan pyynnön?"
+
+#: landing/templates/faq.html:29
+msgid "Yes. Plans can change, and both drivers and passengers may cancel."
+msgstr ""
+"Kyllä. Suunnitelmat voivat muuttua, ja sekä kuljettajat että matkustajat "
+"voivat perua."
+
+#: landing/templates/faq.html:29
+msgid ""
+"Cancel as early as possible and inform the other person so they have time to"
+" make alternative arrangements."
+msgstr ""
+"Peru mahdollisimman aikaisin ja kerro siitä toiselle, jotta hänellä on aikaa"
+" järjestää muuta."
+
+#: landing/templates/faq.html:29
+msgid "What if the driver or passenger is late?"
+msgstr "Entä jos kuljettaja tai matkustaja myöhästyy?"
+
+#: landing/templates/faq.html:29
+msgid ""
+"Drivers and passengers are responsible for communicating with each other."
+msgstr "Kuljettajat ja matkustajat vastaavat itse yhteydenpidosta keskenään."
+
+#: landing/templates/faq.html:29
+msgid ""
+"Agree on the timing clearly in advance and contact the other person as soon "
+"as possible if you expect to be late."
+msgstr ""
+"Sopikaa ajasta selvästi etukäteen, ja ota yhteyttä toiseen mahdollisimman "
+"pian, jos arvelet myöhästyväsi."
+
+#: landing/templates/faq.html:30
+msgid "Costs and payments"
+msgstr "Kustannukset ja maksut"
+
+#: landing/templates/faq.html:30 landing/templates/index.html:107
+msgid "Is using LUT Kyyti free?"
+msgstr "Onko LUT Kyydin käyttö maksutonta?"
+
+#: landing/templates/faq.html:30
+msgid "Yes. Using the LUT Kyyti platform is free."
+msgstr "Kyllä. LUT Kyyti -alustan käyttö on maksutonta."
+
+#: landing/templates/faq.html:30
+msgid ""
+"Any cost sharing between the driver and passenger, such as a contribution "
+"towards fuel costs, is agreed directly between the users."
+msgstr ""
+"Kuljettajan ja matkustajan välisestä kulujen jakamisesta, kuten "
+"osallistumisesta polttoainekuluihin, sovitaan suoraan käyttäjien kesken."
+
+#: landing/templates/faq.html:30
+msgid "Does LUT Kyyti handle payments?"
+msgstr "Hoitaako LUT Kyyti maksuja?"
+
+#: landing/templates/faq.html:30
+msgid "No. LUT Kyyti does not process or collect payments."
+msgstr "Ei. LUT Kyyti ei käsittele eikä kerää maksuja."
+
+#: landing/templates/faq.html:30
+msgid ""
+"Drivers and passengers are responsible for agreeing on any possible cost "
+"sharing and arranging payment directly with each other."
+msgstr ""
+"Kuljettajat ja matkustajat sopivat mahdollisesta kulujen jakamisesta ja "
+"maksamisesta suoraan keskenään."
+
+#: landing/templates/faq.html:30
+msgid "How should ride costs be shared?"
+msgstr "Miten kyydin kulut pitäisi jakaa?"
+
+#: landing/templates/faq.html:30
+msgid "Any contribution should be agreed before the trip."
+msgstr "Mahdollisesta osuudesta kannattaa sopia ennen matkaa."
+
+#: landing/templates/faq.html:30
+msgid ""
+"The purpose of LUT Kyyti is to support shared travel, not commercial "
+"passenger transport. Drivers are responsible for ensuring that any cost-"
+"sharing arrangement complies with applicable laws, insurance terms, and tax "
+"rules."
+msgstr ""
+"LUT Kyydin tarkoitus on tukea yhteistä matkustamista, ei kaupallista "
+"henkilökuljetusta. Kuljettajat vastaavat siitä, että kulujen jakaminen "
+"noudattaa lakeja, vakuutusehtoja ja verosääntöjä."
+
+#: landing/templates/faq.html:31
+msgid "Safety and responsibilities"
+msgstr "Turvallisuus ja vastuut"
+
+#: landing/templates/faq.html:31 landing/templates/index.html:121
+msgid "Is LUT Kyyti safe to use?"
+msgstr "Onko LUT Kyyti turvallinen käyttää?"
+
+#: landing/templates/faq.html:31
+msgid ""
+"LUT Kyyti is intended for verified LUT and LAB community members, which "
+"makes it different from an open public marketplace."
+msgstr ""
+"LUT Kyyti on tarkoitettu LUT- ja LAB-yhteisön vahvistetuille jäsenille, mikä"
+" erottaa sen avoimesta julkisesta palvelusta."
+
+#: landing/templates/faq.html:31
+msgid ""
+"However, verification does not guarantee another user’s behaviour, driving "
+"ability, identity beyond the information verified by the service, or the "
+"safety of a particular trip. Users should use normal care when arranging and"
+" sharing rides."
+msgstr ""
+"Vahvistus ei kuitenkaan takaa toisen käyttäjän käytöstä, ajotaitoa, "
+"henkilöllisyyttä palvelun vahvistamia tietoja pidemmälle eikä yksittäisen "
+"matkan turvallisuutta. Käyttäjien tulee noudattaa tavallista huolellisuutta "
+"kyytejä sopiessaan ja jakaessaan."
+
+#: landing/templates/faq.html:31
+msgid "Who is responsible for the vehicle and the journey?"
+msgstr "Kuka vastaa ajoneuvosta ja matkasta?"
+
+#: landing/templates/faq.html:31
+msgid ""
+"The driver is responsible for the vehicle, driving licence, insurance, "
+"roadworthiness, legal compliance, and safe operation of the vehicle."
+msgstr ""
+"Kuljettaja vastaa ajoneuvosta, ajokortista, vakuutuksesta, ajoneuvon "
+"kunnosta, lakien noudattamisesta ja ajoneuvon turvallisesta käytöstä."
+
+#: landing/templates/faq.html:31
+msgid ""
+"Passengers are responsible for behaving appropriately and following "
+"reasonable safety instructions. LUT Kyyti only helps users find and contact "
+"each other."
+msgstr ""
+"Matkustajat vastaavat asianmukaisesta käytöksestä ja kohtuullisten "
+"turvallisuusohjeiden noudattamisesta. LUT Kyyti vain auttaa käyttäjiä "
+"löytämään toisensa ja ottamaan yhteyttä toisiinsa."
+
+#: landing/templates/faq.html:31
+msgid "Does LUT Kyyti provide insurance?"
+msgstr "Tarjoaako LUT Kyyti vakuutuksen?"
+
+#: landing/templates/faq.html:31
+msgid ""
+"No additional vehicle, passenger, accident, or travel insurance is provided "
+"by LUT Kyyti unless explicitly stated otherwise."
+msgstr ""
+"LUT Kyyti ei tarjoa erillistä ajoneuvo-, matkustaja-, tapaturma- tai "
+"matkavakuutusta, ellei toisin erikseen mainita."
+
+#: landing/templates/faq.html:31
+msgid ""
+"Drivers should ensure that their vehicle insurance covers the planned "
+"journey and any permitted cost-sharing arrangement."
+msgstr ""
+"Kuljettajien tulee varmistaa, että heidän ajoneuvovakuutuksensa kattaa "
+"suunnitellun matkan ja mahdollisen sallitun kulujen jakamisen."
+
+#: landing/templates/faq.html:31
+msgid "What should I do if I feel uncomfortable about a ride?"
+msgstr "Mitä teen, jos kyyti tuntuu epämukavalta?"
+
+#: landing/templates/faq.html:31
+msgid ""
+"Do not join or continue with a ride if you feel uncomfortable or believe the"
+" situation may be unsafe."
+msgstr ""
+"Älä lähde kyytiin tai jatka sitä, jos olosi on epämukava tai uskot tilanteen"
+" olevan vaarallinen."
+
+#: landing/templates/faq.html:31
+msgid ""
+"You may cancel the arrangement, leave the ride when it is safe to do so, and"
+" contact the LUT Kyyti team to report your concern."
+msgstr ""
+"Voit perua järjestelyn, poistua kyydistä, kun se on turvallista, ja ottaa "
+"yhteyttä LUT Kyyti -tiimiin kertoaksesi huolestasi."
+
+#: landing/templates/faq.html:31
+msgid "In an emergency, contact the appropriate emergency services."
+msgstr "Hätätilanteessa ota yhteyttä hätäkeskukseen."
+
+#: landing/templates/faq.html:31
+msgid "What should I do if another user does not arrive?"
+msgstr "Mitä teen, jos toinen käyttäjä ei saavu paikalle?"
+
+#: landing/templates/faq.html:31
+msgid "Try to contact the person using the agreed contact method."
+msgstr "Yritä tavoittaa hänet sovitulla yhteystavalla."
+
+#: landing/templates/faq.html:31
+msgid ""
+"If they do not respond, make alternative travel arrangements where possible."
+" Repeated no-shows or misuse of the service can be reported to the LUT Kyyti"
+" team."
+msgstr ""
+"Jos hän ei vastaa, järjestä mahdollisuuksien mukaan muu kulkutapa. "
+"Toistuvista saapumatta jäämisistä tai palvelun väärinkäytöstä voi ilmoittaa "
+"LUT Kyyti -tiimille."
+
+#: landing/templates/faq.html:31
+msgid "Can I report inappropriate behaviour or misuse?"
+msgstr "Voinko ilmoittaa epäasiallisesta käytöksestä tai väärinkäytöstä?"
+
+#: landing/templates/faq.html:31
+msgid ""
+"Yes. You should report harassment, threatening behaviour, unsafe driving, "
+"misleading trip information, repeated no-shows, misuse of personal "
+"information, or other violations of the service rules."
+msgstr ""
+"Kyllä. Ilmoita häirinnästä, uhkaavasta käytöksestä, vaarallisesta "
+"ajamisesta, harhaanjohtavista matkatiedoista, toistuvista saapumatta "
+"jäämisistä, henkilötietojen väärinkäytöstä tai muista palvelusääntöjen "
+"rikkomuksista."
+
+#: landing/templates/faq.html:31
+msgid ""
+"Reports can be submitted through the contact or reporting method provided by"
+" LUT Kyyti."
+msgstr ""
+"Ilmoituksia voi tehdä LUT Kyydin tarjoaman yhteydenotto- tai ilmoituskanavan"
+" kautta."
+
+#: landing/templates/faq.html:31
+msgid "Can LUT Kyyti suspend or remove a user account?"
+msgstr "Voiko LUT Kyyti jäädyttää tai poistaa käyttäjätilin?"
+
+#: landing/templates/faq.html:31
+msgid ""
+"Yes. Access may be restricted, suspended, or removed if a user violates the "
+"Terms of Service, misuses the platform, provides misleading information, or "
+"creates safety or security concerns."
+msgstr ""
+"Kyllä. Pääsyä voidaan rajoittaa, se voidaan keskeyttää tai poistaa, jos "
+"käyttäjä rikkoo käyttöehtoja, käyttää alustaa väärin, antaa harhaanjohtavia "
+"tietoja tai aiheuttaa turvallisuus- tai tietoturvahuolia."
+
+#: landing/templates/faq.html:31
+msgid ""
+"Any action will be handled in accordance with the Terms of Service and "
+"applicable university procedures."
+msgstr ""
+"Toimenpiteet käsitellään käyttöehtojen ja yliopiston menettelyjen "
+"mukaisesti."
+
+#: landing/templates/faq.html:32
+msgid "Help and support"
+msgstr "Apu ja tuki"
+
+#: landing/templates/faq.html:32
+msgid "Where can I find instructions for using LUT Kyyti?"
+msgstr "Mistä löydän ohjeet LUT Kyydin käyttöön?"
+
+#: landing/templates/faq.html:32
+msgid ""
+"Detailed instructions for using account features, posting trips, joining "
+"rides, managing requests, and changing settings are available on the Help "
+"page after you log in."
+msgstr ""
+"Yksityiskohtaiset ohjeet tilin ominaisuuksien käyttöön, matkojen "
+"julkaisemiseen, kyyteihin liittymiseen, pyyntöjen hallintaan ja asetusten "
+"muuttamiseen löytyvät Ohje-sivulta kirjautumisen jälkeen."
+
+#: landing/templates/faq.html:32
+msgid "Who can I contact for help or feedback?"
+msgstr "Keneen voin ottaa yhteyttä avun tai palautteen vuoksi?"
+
+#: landing/templates/faq.html:32
+msgid "You can contact the LUT Kyyti team through the"
+msgstr "Voit ottaa yhteyttä LUT Kyyti -tiimiin"
+
+#: landing/templates/faq.html:34
+msgid "Contact page"
+msgstr "yhteydenottosivun kautta"
+
+#: landing/templates/faq.html:35
+msgid ""
+"Questions, feedback, problem reports, and improvement ideas are welcome, "
+"especially during the pilot phase."
+msgstr ""
+"Kysymykset, palaute, ongelmailmoitukset ja kehitysideat ovat tervetulleita, "
+"etenkin pilottivaiheen aikana."
+
+#: landing/templates/how-it-works.html:6 landing/templates/index.html:27
+#: landing/templates/landing.html:42 landing/templates/landing.html:80
+msgid "How it works"
+msgstr "Näin se toimii"
+
+#: landing/templates/how-it-works.html:10
+#| msgid "Under Construction"
+msgid "Under construction"
+msgstr "Työn alla"
+
+#: landing/templates/impact.html:6 landing/templates/index.html:38
+#: landing/templates/landing.html:44 landing/templates/landing.html:82
+msgid "Impact"
+msgstr "Vaikutukset"
+
+#: landing/templates/impact.html:12
+msgid "Why LUT Kyyti?"
+msgstr "Miksi LUT Kyyti?"
+
+#: landing/templates/impact.html:15
+msgid ""
+"LUT University aims to reach net zero by 2050 and is working systematically "
+"to reduce the climate impact of its operations. One important part of this "
+"work is everyday mobility: how staff and students travel to and from campus."
+msgstr ""
+"LUT-yliopisto tavoittelee hiilineutraaliutta vuoteen 2050 mennessä ja "
+"vähentää järjestelmällisesti toimintansa ilmastovaikutuksia. Yksi tärkeä osa"
+" tätä työtä on arjen liikkuminen: miten henkilöstö ja opiskelijat kulkevat "
+"kampukselle ja sieltä pois."
+
+#: landing/templates/impact.html:19
+msgid ""
+"Staff and student commuting is one of the largest sources of LUT "
+"University’s carbon footprint, accounting for around a third of total "
+"emissions. LUT’s Climate Action Plan 2025–2030 recognises commuting as a key"
+" area for action and includes measures to support more sustainable travel "
+"choices, such as cooperation with campus cities and transport providers, "
+"incentives for sustainable commuting, parking management, cycling support, "
+"and awareness-raising."
+msgstr ""
+"Henkilöstön ja opiskelijoiden työ- ja opiskelumatkat ovat yksi LUT-"
+"yliopiston hiilijalanjäljen suurimmista lähteistä, noin kolmannes "
+"kokonaispäästöistä. LUTin ilmasto-ohjelma 2025–2030 tunnistaa työmatkat "
+"keskeiseksi toiminta-alueeksi ja sisältää toimia kestävämpien "
+"liikkumisvalintojen tukemiseksi, kuten yhteistyötä kampuskaupunkien ja "
+"liikennepalvelujen tarjoajien kanssa, kannustimia kestävään "
+"työmatkaliikkumiseen, pysäköinnin hallintaa, pyöräilyn tukemista ja "
+"tietoisuuden lisäämistä."
+
+#: landing/templates/impact.html:23
+msgid ""
+"LUT Kyyti is one practical step in this direction. The service helps LUT and"
+" LAB community members find others travelling in the same direction, so that"
+" existing car journeys can be shared instead of made alone. While the long-"
+"term electrification of private commuting will reduce emissions, sharing "
+"rides can already help make current commuting more efficient by filling "
+"empty seats in cars that are already making the trip."
+msgstr ""
+"LUT Kyyti on yksi käytännön askel tähän suuntaan. Palvelu auttaa LUT- ja "
+"LAB-yhteisön jäseniä löytämään muita samaan suuntaan matkustavia, jotta jo "
+"tehtävät automatkat voidaan jakaa sen sijaan, että ne ajetaan yksin. Vaikka "
+"yksityisen työmatkaliikenteen sähköistyminen vähentää päästöjä pitkällä "
+"aikavälillä, kyytien jakaminen voi jo nyt tehostaa nykyisiä työmatkoja "
+"täyttämällä tyhjiä paikkoja autoissa, jotka ovat jo tekemässä saman matkan."
+
+#: landing/templates/impact.html:27
+msgid ""
+"The impact of LUT Kyyti is not only environmental. Sharing commutes can also"
+" help colleagues from different departments, campuses, and functions get to "
+"know each other. In this way, LUT Kyyti can support a stronger sense of "
+"community while contributing to LUT’s climate goals."
+msgstr ""
+"LUT Kyydin vaikutukset eivät ole vain ympäristöllisiä. Yhteiset työmatkat "
+"voivat myös auttaa eri yksiköiden, kampusten ja toimintojen työntekijöitä "
+"tutustumaan toisiinsa. Näin LUT Kyyti voi vahvistaa yhteisöllisyyttä ja "
+"samalla edistää LUTin ilmastotavoitteita."
+
+#: landing/templates/impact.html:31
+msgid ""
+"Every shared ride is a small step, but together these choices can make a "
+"meaningful difference. By offering a seat, joining a colleague’s ride, or "
+"simply checking whether someone is travelling the same way, LUT and LAB "
+"community members can help reduce commuting emissions and make everyday "
+"travel more connected."
+msgstr ""
+"Jokainen jaettu kyyti on pieni askel, mutta yhdessä nämä valinnat voivat "
+"tehdä merkittävän eron. Tarjoamalla paikan, liittymällä kollegan kyytiin tai"
+" vain tarkistamalla, onko joku menossa samaan suuntaan, LUT- ja LAB-yhteisön"
+" jäsenet voivat vähentää työmatkojen päästöjä ja tehdä arjen liikkumisesta "
+"yhteisöllisempää."
+
+#: landing/templates/index.html:11
+msgid "Share your commute with LUT Kyyti"
+msgstr "Jaa työmatkasi LUT Kyydillä"
+
+#: landing/templates/index.html:12
+msgid ""
+"Find or offer rides between campus and home with other LUT/LAB community "
+"members."
+msgstr ""
+"Löydä tai tarjoa kyytejä kampuksen ja kodin välillä muiden LUT/LAB-yhteisön "
+"jäsenten kanssa."
+
+#: landing/templates/index.html:14
+msgid "Get started"
+msgstr "Aloita"
+
+#: landing/templates/index.html:15
+msgid "Learn more"
+msgstr "Lue lisää"
+
+#: landing/templates/index.html:29
+msgid "Create your LUT Kyyti profile"
+msgstr "Luo LUT Kyyti -profiilisi"
+
+#: landing/templates/index.html:30
+msgid "Search for rides, offer a ride, or post a ride request"
+msgstr "Hae kyytejä, tarjoa kyytiä tai julkaise kyytipyyntö"
+
+#: landing/templates/index.html:31
+msgid "Contact someone going the same way"
+msgstr "Ota yhteyttä samaan suuntaan menevään"
+
+#: landing/templates/index.html:32
+msgid "Agree on pickup, timing, and possible cost-sharing"
+msgstr "Sopikaa noudosta, ajasta ja mahdollisesta kulujen jakamisesta"
+
+#: landing/templates/index.html:48
+msgid "Save costs"
+msgstr "Säästä kuluissa"
+
+#: landing/templates/index.html:49
+msgid ""
+"Share commute costs by filling empty seats. Drivers can reduce fuel "
+"expenses, while passengers get a practical alternative to driving alone."
+msgstr ""
+"Jaa työmatkakuluja täyttämällä tyhjiä paikkoja. Kuljettajat voivat pienentää"
+" polttoainekulujaan, ja matkustajat saavat käytännöllisen vaihtoehdon yksin "
+"ajamiselle."
+
+#: landing/templates/index.html:63
+msgid "Get to know each other"
+msgstr "Tutustu muihin"
+
+#: landing/templates/index.html:64
+msgid ""
+"Turn everyday commutes into opportunities to meet LUT and LAB staff "
+"travelling in the same direction."
+msgstr ""
+"Tee arjen työmatkoista tilaisuuksia tavata samaan suuntaan kulkevia LUTin ja"
+" LABin työntekijöitä."
+
+#: landing/templates/index.html:74
+#| msgid "Reduce commute emmissions"
+msgid "Reduce commute emissions"
+msgstr "Vähennä työmatkojen päästöjä"
+
+#: landing/templates/index.html:75
+msgid ""
+"Fewer cars driving the same routes means lower commute emissions and a more "
+"climate-friendly campus community."
+msgstr ""
+"Vähemmän samoja reittejä ajavia autoja tarkoittaa pienempiä työmatkapäästöjä"
+" ja ilmastoystävällisempää kampusyhteisöä."
+
+#: landing/templates/index.html:82
+msgid ""
+"LUT Kyyti is a LUT University-funded initiative that helps its community "
+"reduce commute-related emissions by sharing rides."
+msgstr ""
+"LUT Kyyti on LUT-yliopiston rahoittama hanke, joka auttaa yhteisöään "
+"vähentämään työmatkojen päästöjä jakamalla kyytejä."
+
+#: landing/templates/index.html:83
+msgid "See the sustainability impact"
+msgstr "Katso vaikutukset kestävyyteen"
+
+#: landing/templates/index.html:96
+msgid ""
+"LUT Kyyti is intended for LUT and LAB employees. Access is limited to "
+"verified LUT/LAB users."
+msgstr ""
+"LUT Kyyti on tarkoitettu LUTin ja LABin työntekijöille. Pääsy on rajattu "
+"vahvistetuille LUT/LAB-käyttäjille."
+
+#: landing/templates/index.html:100
+msgid ""
+"Drivers post rides they are already planning to make. Passengers can search "
+"for suitable rides and request to join. They can also post ride requests. "
+"The driver and passenger then agree on the practical details."
+msgstr ""
+"Kuljettajat julkaisevat kyytejä matkoille, jotka he ovat jo tekemässä. "
+"Matkustajat voivat hakea sopivia kyytejä ja pyytää päästä mukaan. He voivat "
+"myös julkaista kyytipyyntöjä. Kuljettaja ja matkustaja sopivat sitten "
+"käytännön yksityiskohdista."
+
+#: landing/templates/index.html:104
+msgid ""
+"No. LUT Kyyti is not a taxi, bus, or transport provider. It is a platform "
+"that helps members of the LUT/LAB community find others travelling in the "
+"same direction."
+msgstr ""
+"Ei. LUT Kyyti ei ole taksi, bussi eikä kuljetuspalvelun tarjoaja. Se on "
+"alusta, joka auttaa LUT/LAB-yhteisön jäseniä löytämään muita samaan suuntaan"
+" matkustavia."
+
+#: landing/templates/index.html:108
+msgid ""
+"Using the platform is free. Any cost sharing between driver and passenger, "
+"such as fuel costs, is agreed directly between the users. LUT Kyyti does not"
+" handle payments."
+msgstr ""
+"Alustan käyttö on maksutonta. Kuljettajan ja matkustajan välisestä kulujen "
+"jakamisesta, kuten polttoainekuluista, sovitaan suoraan käyttäjien kesken. "
+"LUT Kyyti ei käsittele maksuja."
+
+#: landing/templates/index.html:118
+msgid ""
+"Yes. You can also post a trip if you are looking for others to share public "
+"transport or taxi travel."
+msgstr ""
+"Kyllä. Voit julkaista matkan myös, jos etsit muita, joiden kanssa jakaa "
+"julkisen liikenteen tai taksin."
+
+#: landing/templates/index.html:122
+msgid ""
+"LUT Kyyti is intended for verified LUT/LAB community members, which makes it"
+" different from an open public marketplace. Users should still use normal "
+"care when agreeing to share a ride."
+msgstr ""
+"LUT Kyyti on tarkoitettu vahvistetuille LUT/LAB-yhteisön jäsenille, mikä "
+"erottaa sen avoimesta julkisesta palvelusta. Käyttäjien tulee silti "
+"noudattaa tavallista huolellisuutta kyydin jakamisesta sopiessaan."
+
+#: landing/templates/index.html:126
+msgid ""
+"During the pilot phase, LUT Kyyti is only available to LUT and LAB "
+"employees. The service may be opened to LUT and LAB students after "
+"successful deployment of the pilot."
+msgstr ""
+"Pilottivaiheen aikana LUT Kyyti on vain LUTin ja LABin työntekijöiden "
+"käytettävissä. Palvelu voidaan avata LUTin ja LABin opiskelijoille, kun "
+"pilotti on otettu onnistuneesti käyttöön."
+
+#: landing/templates/index.html:131
+msgid "View all FAQs"
+msgstr "Näytä kaikki usein kysytyt kysymykset"
+
+#: landing/templates/index.html:136
+msgid ""
+"Help our university reach its climate goals by reducing commute emissions"
+msgstr ""
+"Auta yliopistoamme saavuttamaan ilmastotavoitteensa vähentämällä työmatkojen"
+" päästöjä"
+
+#: landing/templates/index.html:138
+msgid "Get in touch"
+msgstr "Ota yhteyttä"
+
+#: landing/templates/index.html:139
+msgid "Questions, feedback, or ideas for improving LUT Kyyti? Contact us!"
+msgstr ""
+"Kysyttävää, palautetta tai ideoita LUT Kyydin kehittämiseksi? Ota yhteyttä!"
+
+#: landing/templates/landing.html:48 landing/templates/landing.html:86
+#: landing/templates/safety.html:6
+msgid "Safety"
+msgstr "Turvallisuus"
+
+#: landing/templates/landing.html:56 landing/templates/landing.html:91
+msgid "Find a ride"
+msgstr "Etsi kyytiä"
+
+#: landing/templates/landing.html:57 landing/templates/landing.html:93
+msgid "Log in / Join"
+msgstr "Kirjaudu / liity"
+
+#: landing/templates/landing.html:131
+msgid "Privacy policy"
+msgstr "Tietosuojaseloste"
+
+#: landing/templates/landing.html:132
+msgid "Terms of use"
+msgstr "Käyttöehdot"
+
+#: landing/templates/landing.html:135
+msgid "LUT Kyyti is operated by LUT University."
+msgstr "LUT Kyytiä ylläpitää LUT-yliopisto."
+
+#: landing/templates/offline.html:9
+msgid "Offline"
+msgstr "Ei yhteyttä"
+
+#: landing/templates/offline.html:15
+msgid "You are offline"
+msgstr "Olet offline-tilassa"
+
+#: landing/templates/offline.html:16
+msgid "Check your internet connection and try again."
+msgstr "Tarkista internetyhteytesi ja yritä uudelleen."
+
+#: landing/templates/privacy-policy.html:6
+#: landing/templates/privacy-policy.html:9
+msgid "Privacy Policy"
+msgstr "Tietosuojaseloste"
+
+#: landing/templates/privacy-policy.html:12
+msgid ""
+"The Privacy Policy explains how LUT Kyyti collects, uses, stores, and "
+"protects personal data when you use the service. It also describes your "
+"rights regarding your personal data in accordance with the General Data "
+"Protection Regulation (GDPR)."
+msgstr ""
+"Tietosuojaseloste kertoo, miten LUT Kyyti kerää, käyttää, säilyttää ja "
+"suojaa henkilötietoja, kun käytät palvelua. Se kuvaa myös henkilötietoihisi "
+"liittyvät oikeutesi yleisen tietosuoja-asetuksen (GDPR) mukaisesti."
+
+#: landing/templates/privacy-policy.html:16
+msgid ""
+"The current version of the Privacy Policy can be viewed or downloaded below."
+msgstr ""
+"Tietosuojaselosteen voimassa olevan version voi katsoa tai ladata alta."
+
+#: landing/templates/privacy-policy.html:19
+msgid "LUT Kyyti Privacy Notice (PDF)"
+msgstr "LUT Kyydin tietosuojaseloste (PDF)"
+
+#: landing/templates/privacy-policy.html:22
+#: landing/templates/terms-of-use.html:25
+msgid "Last updated: October 2026"
+msgstr "Päivitetty viimeksi: lokakuu 2026"
+
+#: landing/templates/safety.html:9
+msgid "Safety and Ride Etiquette"
+msgstr "Turvallisuus ja kyytietiketti"
+
+#: landing/templates/safety.html:12
+msgid ""
+"LUT Kyyti helps members of the LUT and LAB community find others travelling "
+"in the same direction. To keep the service useful, respectful, and safe for "
+"everyone, users are expected to communicate clearly, behave responsibly, and"
+" use normal care when arranging shared rides."
+msgstr ""
+"LUT Kyyti auttaa LUT- ja LAB-yhteisön jäseniä löytämään muita samaan "
+"suuntaan matkustavia. Jotta palvelu pysyy hyödyllisenä, kunnioittavana ja "
+"turvallisena kaikille, käyttäjiltä odotetaan selkeää viestintää, "
+"vastuullista käytöstä ja tavallista huolellisuutta yhteisistä kyydeistä "
+"sovittaessa."
+
+#: landing/templates/safety.html:12
+msgid ""
+"LUT Kyyti is not a taxi, bus, or transport service. It is a platform for "
+"connecting verified users. Drivers and passengers are responsible for "
+"agreeing on the practical details of each ride between themselves."
+msgstr ""
+"LUT Kyyti ei ole taksi, bussi eikä kuljetuspalvelu. Se on alusta, joka "
+"yhdistää vahvistettuja käyttäjiä. Kuljettajat ja matkustajat sopivat kunkin "
+"kyydin käytännön yksityiskohdista keskenään."
+
+#: landing/templates/safety.html:12
+msgid "Before sharing a ride"
+msgstr "Ennen kyydin jakamista"
+
+#: landing/templates/safety.html:12
+msgid ""
+"Before joining or offering a ride, make sure the key details are clear. "
+"These may include:"
+msgstr ""
+"Varmista ennen kyytiin liittymistä tai sen tarjoamista, että keskeiset "
+"tiedot ovat selvillä. Niitä voivat olla:"
+
+#: landing/templates/safety.html:12
+msgid "departure point and destination"
+msgstr "lähtöpaikka ja määränpää"
+
+#: landing/templates/safety.html:12
+msgid "pickup and drop-off location"
+msgstr "nouto- ja jättöpaikka"
+
+#: landing/templates/safety.html:12
+msgid "date and time"
+msgstr "päivä ja kellonaika"
+
+#: landing/templates/safety.html:12
+msgid "whether the time is flexible"
+msgstr "onko aika joustava"
+
+#: landing/templates/safety.html:12
+msgid "return-trip details, if relevant"
+msgstr "paluumatkan tiedot, jos tarpeen"
+
+#: landing/templates/safety.html:12
+msgid "possible cost sharing"
+msgstr "mahdollinen kulujen jakaminen"
+
+#: landing/templates/safety.html:12
+msgid "luggage or special arrangements"
+msgstr "matkatavarat tai erityisjärjestelyt"
+
+#: landing/templates/safety.html:12
+msgid "how to contact each other if plans change"
+msgstr "miten otatte yhteyttä toisiinne, jos suunnitelmat muuttuvat"
+
+#: landing/templates/safety.html:12
+msgid ""
+"Do not assume that all details are understood automatically. A short "
+"confirmation message before the ride can help avoid confusion."
+msgstr ""
+"Älä oleta, että kaikki tiedot ymmärretään itsestään. Lyhyt vahvistusviesti "
+"ennen kyytiä auttaa välttämään sekaannuksia."
+
+#: landing/templates/safety.html:12
+msgid "Communication"
+msgstr "Viestintä"
+
+#: landing/templates/safety.html:12
+msgid "Be polite, clear, and timely when communicating with other users."
+msgstr "Ole kohtelias, selkeä ja nopea viestiessäsi muiden käyttäjien kanssa."
+
+#: landing/templates/safety.html:12
+msgid ""
+"If you are offering a ride, describe the trip accurately. If you are "
+"requesting a ride, explain what you need clearly. If plans change, inform "
+"the other person as early as possible."
+msgstr ""
+"Jos tarjoat kyytiä, kuvaa matka tarkasti. Jos pyydät kyytiä, kerro selvästi,"
+" mitä tarvitset. Jos suunnitelmat muuttuvat, kerro siitä toiselle "
+"mahdollisimman aikaisin."
+
+#: landing/templates/safety.html:12
+msgid ""
+"Users should not pressure others to accept a ride, change their route, share"
+" personal information, or continue with an arrangement they are not "
+"comfortable with."
+msgstr ""
+"Käyttäjät eivät saa painostaa muita hyväksymään kyytiä, muuttamaan "
+"reittiään, jakamaan henkilötietojaan tai jatkamaan järjestelyä, joka ei "
+"tunnu heistä hyvältä."
+
+#: landing/templates/safety.html:12
+msgid "Cost sharing"
+msgstr "Kulujen jakaminen"
+
+#: landing/templates/safety.html:12
+msgid ""
+"LUT Kyyti does not handle payments. Any possible cost sharing is agreed "
+"directly between the driver and passenger."
+msgstr ""
+"LUT Kyyti ei käsittele maksuja. Mahdollisesta kulujen jakamisesta sovitaan "
+"suoraan kuljettajan ja matkustajan kesken."
+
+#: landing/templates/safety.html:12
+msgid ""
+"If cost sharing is expected, agree on it before the ride. The amount should "
+"be reasonable and related to sharing travel costs, such as fuel or parking. "
+"LUT Kyyti should not be used as a commercial taxi or transport service."
+msgstr ""
+"Jos kulut on tarkoitus jakaa, sopikaa siitä ennen kyytiä. Summan tulee olla "
+"kohtuullinen ja liittyä matkakulujen, kuten polttoaineen tai pysäköinnin, "
+"jakamiseen. LUT Kyytiä ei saa käyttää kaupallisena taksi- tai "
+"kuljetuspalveluna."
+
+#: landing/templates/safety.html:12
+msgid "During the ride"
+msgstr "Kyydin aikana"
+
+#: landing/templates/safety.html:12
+msgid "Drivers and passengers should behave respectfully during the trip."
+msgstr ""
+"Kuljettajien ja matkustajien tulee käyttäytyä matkan aikana kunnioittavasti."
+
+#: landing/templates/safety.html:12
+msgid ""
+"Please be on time, keep the vehicle clean, and respect the other person’s "
+"preferences. For example, agree before the ride if there are questions about"
+" music, food, pets, smoking, luggage, or other arrangements."
+msgstr ""
+"Ole ajoissa, pidä ajoneuvo siistinä ja kunnioita toisen toiveita. Sopikaa "
+"esimerkiksi ennen kyytiä, jos musiikista, ruoasta, lemmikeistä, "
+"tupakoinnista, matkatavaroista tai muista järjestelyistä on kysyttävää."
+
+#: landing/templates/safety.html:12
+msgid ""
+"Drivers are responsible for driving safely and following traffic laws. "
+"Passengers should not distract the driver or ask the driver to take unsafe "
+"actions."
+msgstr ""
+"Kuljettajat vastaavat turvallisesta ajamisesta ja liikennesääntöjen "
+"noudattamisesta. Matkustajat eivät saa häiritä kuljettajaa tai pyytää tätä "
+"toimimaan vaarallisesti."
+
+#: landing/templates/safety.html:12
+msgid "If you are late or need to cancel"
+msgstr "Jos myöhästyt tai joudut perumaan"
+
+#: landing/templates/safety.html:12
+msgid ""
+"Plans can change. If you are late or need to cancel, tell the other person "
+"as soon as possible."
+msgstr ""
+"Suunnitelmat voivat muuttua. Jos myöhästyt tai joudut perumaan, kerro siitä "
+"toiselle mahdollisimman pian."
+
+#: landing/templates/safety.html:12
+msgid ""
+"Repeated late cancellations, no-shows, or unclear communication make the "
+"service less reliable for everyone. Please respect the other person’s time "
+"and travel needs."
+msgstr ""
+"Toistuvat myöhäiset peruutukset, saapumatta jäämiset tai epäselvä viestintä "
+"tekevät palvelusta epäluotettavamman kaikille. Kunnioita toisen aikaa ja "
+"matkatarpeita."
+
+#: landing/templates/safety.html:12
+msgid "Personal safety"
+msgstr "Henkilökohtainen turvallisuus"
+
+#: landing/templates/safety.html:12
+msgid ""
+"LUT Kyyti is intended for verified LUT/LAB users, which makes it different "
+"from an open public marketplace. Users should still use normal care when "
+"arranging shared rides."
+msgstr ""
+"LUT Kyyti on tarkoitettu vahvistetuille LUT/LAB-käyttäjille, mikä erottaa "
+"sen avoimesta julkisesta palvelusta. Käyttäjien tulee silti noudattaa "
+"tavallista huolellisuutta yhteisistä kyydeistä sovittaessa."
+
+#: landing/templates/safety.html:12
+msgid ""
+"If something feels wrong, you are not required to join or continue with a "
+"ride. You can decline a ride, change your plans, or leave the situation if "
+"you feel uncomfortable."
+msgstr ""
+"Jos jokin tuntuu väärältä, sinun ei tarvitse liittyä kyytiin tai jatkaa "
+"sitä. Voit kieltäytyä kyydistä, muuttaa suunnitelmiasi tai poistua "
+"tilanteesta, jos olosi on epämukava."
+
+#: landing/templates/safety.html:12
+msgid ""
+"When meeting another user for the first time, you may choose a clear and "
+"familiar pickup location, such as a campus area, public transport station, "
+"or other public place."
+msgstr ""
+"Kun tapaat toisen käyttäjän ensimmäistä kertaa, voit valita selkeän ja tutun"
+" noutopaikan, kuten kampusalueen, joukkoliikenteen aseman tai muun julkisen "
+"paikan."
+
+#: landing/templates/safety.html:12
+msgid "Privacy and personal information"
+msgstr "Yksityisyys ja henkilötiedot"
+
+#: landing/templates/safety.html:12
+msgid ""
+"Only share personal information that is necessary for arranging the ride. Do"
+" not share another user’s contact details, travel plans, or personal "
+"information with others without permission."
+msgstr ""
+"Jaa vain kyydin järjestämiseen tarvittavat henkilötiedot. Älä jaa toisen "
+"käyttäjän yhteystietoja, matkasuunnitelmia tai henkilötietoja muille ilman "
+"lupaa."
+
+#: landing/templates/safety.html:12
+msgid ""
+"Use the contact information available through LUT Kyyti only for arranging "
+"rides or related communication."
+msgstr ""
+"Käytä LUT Kyydin kautta saatavia yhteystietoja vain kyytien järjestämiseen "
+"tai niihin liittyvään viestintään."
+
+#: landing/templates/safety.html:12
+msgid "Reporting concerns"
+msgstr "Huolista ilmoittaminen"
+
+#: landing/templates/safety.html:12
+msgid ""
+"If you experience inappropriate behaviour, repeated no-shows, misuse of the "
+"service, or anything that makes you feel unsafe, please contact the LUT "
+"Kyyti team."
+msgstr ""
+"Jos kohtaat epäasiallista käytöstä, toistuvia saapumatta jäämisiä, palvelun "
+"väärinkäyttöä tai jotain, mikä saa sinut tuntemaan olosi turvattomaksi, ota "
+"yhteyttä LUT Kyyti -tiimiin."
+
+#: landing/templates/safety.html:12
+msgid ""
+"In urgent situations or emergencies, contact the appropriate emergency "
+"services directly."
+msgstr ""
+"Kiireellisissä tilanteissa ja hätätapauksissa ota yhteyttä suoraan "
+"hätäkeskukseen."
+
+#: landing/templates/safety.html:12
+msgid "Shared responsibility"
+msgstr "Yhteinen vastuu"
+
+#: landing/templates/safety.html:12
+msgid ""
+"LUT Kyyti works best when users treat each other with respect and "
+"communicate clearly. By using the service, you help create a more practical,"
+" social, and climate-friendly commuting culture within the LUT and LAB "
+"community."
+msgstr ""
+"LUT Kyyti toimii parhaiten, kun käyttäjät kohtelevat toisiaan "
+"kunnioittavasti ja viestivät selkeästi. Palvelua käyttämällä autat luomaan "
+"LUT- ja LAB-yhteisöön käytännöllisemmän, yhteisöllisemmän ja "
+"ilmastoystävällisemmän työmatkakulttuurin."
+
+#: landing/templates/terms-of-use.html:6 landing/templates/terms-of-use.html:9
+msgid "Terms of Use"
+msgstr "Käyttöehdot"
+
+#: landing/templates/terms-of-use.html:12
+msgid ""
+"The Terms of Use describe the conditions for using the LUT Kyyti ride-"
+"sharing service. They explain the rights and responsibilities of users, "
+"acceptable use of the service, and the responsibilities of LUT University in"
+" providing the platform."
+msgstr ""
+"Käyttöehdot kuvaavat LUT Kyyti -kyytipalvelun käytön ehdot. Ne kertovat "
+"käyttäjien oikeuksista ja velvollisuuksista, palvelun hyväksyttävästä "
+"käytöstä sekä LUT-yliopiston vastuista alustan tarjoajana."
+
+#: landing/templates/terms-of-use.html:16
+msgid ""
+"By creating an account or using LUT Kyyti, users agree to comply with these "
+"Terms of Use."
+msgstr ""
+"Luomalla tilin tai käyttämällä LUT Kyytiä käyttäjät sitoutuvat noudattamaan "
+"näitä käyttöehtoja."
+
+#: landing/templates/terms-of-use.html:20
+msgid ""
+"The current version of the Terms of Use can be viewed or downloaded below."
+msgstr "Käyttöehtojen voimassa olevan version voi katsoa tai ladata alta."
+
+#: landing/templates/terms-of-use.html:23
+msgid "LUT Kyyti Terms of Use (PDF)"
+msgstr "LUT Kyydin käyttöehdot (PDF)"
+
+#: landing/views.py:48
+msgid "Your message could not be sent. Please try again later."
+msgstr "Viestiäsi ei voitu lähettää. Yritä myöhemmin uudelleen."
+
+#: landing/views.py:52
+msgid "Thank you! Your message has been sent."
+msgstr "Kiitos! Viestisi on lähetetty."

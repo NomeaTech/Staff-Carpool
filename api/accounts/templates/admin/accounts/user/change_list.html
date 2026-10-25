@@ -1,0 +1,7 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+{# The users list links to the user statistics (CustomUserAdmin.stats_view) #}
+{% block object-tools-items %}
+  <li><a href="{% url 'admin:accounts_user_stats' %}">{% translate "Statistics" %}</a></li>
+  {{ block.super }}
+{% endblock %}

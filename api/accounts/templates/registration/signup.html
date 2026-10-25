@@ -6,86 +6,85 @@
 {% load tailwind_tags %}
 {% load i18n %}
 
-{% block title %}Sign Up{% endblock %}
+{% block title %}{% trans "Sign up" %} | LUT Kyyti{% endblock %}
 {% block content %}
 
-<!-- <h2>Sign up</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form }}
-  <button type="submit">Sign Up</button>
-</form> -->
-
-<div>
-  <div class="card bg-base-100 w-96 shadow-sm font-display">
-      <div class="card-body">
-        <div class="flex flex-nowrap mb-4 justify-between">
-          <h2 class="card-title mb-0 mt-0">{% trans "Sign Up" %}</h2>
-            <label class="swap swap-rotate">
-              <!-- this hidden checkbox controls the state -->
-              <input type="checkbox" class="theme-controller" value="dark" />
-            
-              <!-- sun icon -->
-              <svg
-                class="swap-off h-10 w-10 fill-current"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24">
-                <path
-                  d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" />
-              </svg>
-            
-              <!-- moon icon -->
-              <svg
-                class="swap-on h-10 w-10 fill-current"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24">
-                <path
-                  d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
-              </svg>
-            </label>
-        </div>
-        <form method="post">
-          
-          <div class="grid grid-cols-3 gap-4">
-            {% csrf_token %}
-            {{ form.email }}
-            <div class="hidden validator-hint col-span-3">{% trans "Enter valid email address" %}</div>
-            {{ form.first_name }}
-            <div class="hidden validator-hint col-span-3">{% trans "First name is required" %}</div>
-            {{ form.last_name }}
-            <div class="hidden validator-hint col-span-3">{% trans "Last name is required" %}</div>
-            {{ form.username }}
-            <div class="hidden validator-hint col-span-3">{% trans "Username is required" %}</div>
-            {{ form.password1 }}
-            <p class="hidden validator-hint col-span-3">
-              {% blocktranslate %}
-                Your password can't be a commonly used password.
-                Your password can't be too similar to your other personal information.
-                Your password can’t be entirely numeric.
-                Must be more than 8 characters, including
-                <br/>At least one number
-                <br/>At least one lowercase letter
-                <br/>At least one uppercase letter
-              {% endblocktranslate %}
-            </p>
-            {{ form.password2 }}
-            
-            {% if form.errors %}
-              <div class="col-span-3" style="color:var(--color-error)">{% trans "Error in account creation. Check that passwords match" %}</div>
-            {% endif %}
-
-            <button type="submit" class="btn btn-md btn-secondary col-span-3">{% trans "Sign Up" %}</button> 
-            <!-- <a href="{% url 'signup' %}" class="btn btn-md btn-secondary col-span-1 col-start-3">Sign up</a>   -->
-            <!-- <a href="{% url 'password_reset' %}" class="btn btn-sm btn-ghost col-span-3">Password Reset</a> -->
-            
-            {% blocktranslate context "Full sentence: By creating an account you agree to the Terms of Service and Privacy Policy." %}
-              <p class="col-span-3">By creating an account you agree to the <a class="link link-primary" href="/">Terms of Service </a>and <a class="link link-secondary" href="/">Privacy Policy</a>.</p>
-            {% endblocktranslate %}
-          </div>
-        </form>
-      </div>
+<div class="card bg-base-100 border border-base-300 shadow-sm">
+  <div class="card-body p-6 sm:p-8 gap-4">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight">{% trans "Sign up" %}</h1>
+      <p class="text-sm text-base-content/60 mt-1">{% trans "* = required" %}</p>
     </div>
-  <!-- <input type="checkbox" value="dark" class="toggle theme-controller" /> -->
+    <form method="post" id="signup-form" class="grid gap-3"
+          data-mismatch="{% trans "The passwords don't match. Type the same password in both fields." %}"
+          data-similar="{% trans "Your password can't contain your name or email address." %}">
+      {% csrf_token %}
+      {% comment %}
+        The browser checks what it can before posting (required fields,
+        lengths, the LUT/LAB address, the password rules and that both
+        passwords match, see the script below). The server checks
+        everything again, and also whether the address already has an
+        account and whether the password is too common.
+      {% endcomment %}
+      {% blocktrans with example="firstname.lastname@lut.fi" asvar email_hint %}Use your LUT or LAB email address, e.g. {{ example }}{% endblocktrans %}
+      {% include "registration/_field.html" with field=form.email hint=email_hint %}
+      <div class="grid sm:grid-cols-2 gap-x-4 gap-y-3">
+        {% trans "Enter your first name (at most 50 characters)" as first_name_hint %}
+        {% include "registration/_field.html" with field=form.first_name hint=first_name_hint %}
+        {% trans "Enter your last name (at most 50 characters)" as last_name_hint %}
+        {% include "registration/_field.html" with field=form.last_name hint=last_name_hint %}
+      </div>
+      {% trans "At least 8 characters, including a number, a lower case letter and an upper case letter. It can't contain your name or email address." as password_hint %}
+      {% include "registration/_field.html" with field=form.password1 hint=password_hint %}
+      {% trans "Type the same password again" as password2_hint %}
+      {% include "registration/_field.html" with field=form.password2 hint=password2_hint %}
 
+      {% if form.non_field_errors %}
+        <ul role="alert" class="text-error text-sm">
+          {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+        </ul>
+      {% endif %}
+      {% if form.unconfirmed_user %}
+        <a href="{% url 'confirmation_sent' %}" class="link link-primary text-sm">{% trans "Didn't get the email?" %}</a>
+      {% endif %}
+
+      <button type="submit" class="btn btn-primary w-full mt-2">{% trans "Sign up" %}</button>
+      {% blocktranslate context "Full sentence: By creating an account you agree to the Terms of Use and Privacy Policy." %}
+                <p class="text-[0.8125rem]">By creating an account you agree to the <a class="link link-primary" href="/terms-of-use">Terms of Use</a> and <a class="link link-secondary" href="/privacy-policy">Privacy Policy</a>.</p>
+              {% endblocktranslate %}
+    </form>
+    <div class="divider my-0"></div>
+    <p class="text-sm text-center">{% trans "Already have a LUT Kyyti account?" %} <a class="link link-primary font-semibold" href="{% url "login" %}">{% trans "Log in" %}</a></p>
+  </div>
 </div>
+<script>
+  // Checks the browser can do before posting, besides the fields' own
+  // attributes: that both passwords match, and that the password does not
+  // contain the name or the start of the email address (as Django's
+  // UserAttributeSimilarityValidator would refuse).
+  (function () {
+    const form = document.getElementById("signup-form");
+    const password = form.elements.password1;
+    const confirm = form.elements.password2;
+    const personal = ["email", "first_name", "last_name"].map((name) => form.elements[name]);
+
+    function personalParts() {
+      const [email, first, last] = personal.map((input) => input.value.toLowerCase().trim());
+      return [email.split("@")[0], ...email.split("@")[0].split(/[._-]/), first, last]
+        .filter((part) => part.length >= 3);
+    }
+
+    function check() {
+      const value = password.value.toLowerCase();
+      const similar = value && personalParts().some((part) => value.includes(part));
+      password.setCustomValidity(similar ? form.dataset.similar : "");
+      confirm.setCustomValidity(confirm.value && confirm.value !== password.value ? form.dataset.mismatch : "");
+    }
+
+    for (const input of [password, confirm, ...personal]) {
+      input.addEventListener("input", check);
+    }
+    check();
+  })();
+</script>
 {% endblock %}

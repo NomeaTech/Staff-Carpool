@@ -1,0 +1,13 @@
+{% load i18n %}{% comment %}
+  Sends a new confirmation link to email (resend_confirmation). Without an
+  email, it asks for one.
+{% endcomment %}
+<form method="post" action="{% url 'resend_confirmation' %}" class="grid gap-2">
+  {% csrf_token %}
+  {% if email %}
+    <input type="hidden" name="email" value="{{ email }}">
+  {% else %}
+    <input type="email" name="email" class="input validator w-full" placeholder="{% trans "Email" %}" autocomplete="email" required>
+  {% endif %}
+  <button type="submit" class="btn btn-outline btn-primary w-full">{% trans "Send a new link" %}</button>
+</form>

@@ -3,69 +3,1306 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-01 16:16+0200\n"
+"POT-Creation-Date: 2026-10-23 02:42+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-#: home/templates/app.html:11 home/templates/app.html:44
-msgid "Campus Carpool"
-msgstr ""
 
+#: home/campuses.py:12
+msgid "Lappeenranta campus"
+msgstr "Lappeenrannan kampus"
+
+#: home/campuses.py:22
+msgid "Lahti Mukkula campus"
+msgstr "Lahden Mukkulan kampus"
+
+#: home/campuses.py:32
+msgid "Lahti Niemi campus"
+msgstr "Lahden Niemen kampus"
+
+#: home/campuses.py:42
+msgid "Kouvola campus"
+msgstr "Kouvolan kampus"
+
+#: home/campuses.py:52
+msgid "Mikkeli campus"
+msgstr "Mikkelin kampus"
+
+#: home/templates/_home_groups.html:12 home/templates/_home_groups.html:19
+msgid "Your groups"
+msgstr "Omat ryhmäsi"
+
+#: home/templates/_home_groups.html:13
+#, python-format
+msgid "%(counter)s new ride"
+msgid_plural "%(counter)s new rides"
+msgstr[0] "%(counter)s uusi kyyti"
+msgstr[1] "%(counter)s uutta kyytiä"
+
+#: home/templates/_home_groups.html:15
+msgid "All groups"
+msgstr "Kaikki ryhmät"
+
+#: home/templates/_home_groups.html:25
+msgid "New rides since your last visit"
+msgstr "Uudet kyydit edellisen käyntisi jälkeen"
+
+#: home/templates/_home_groups.html:25
+#, python-format
+msgid "%(counter)s new"
+msgid_plural "%(counter)s new"
+msgstr[0] "%(counter)s uusi"
+msgstr[1] "%(counter)s uutta"
+
+#: home/templates/_home_groups.html:26
+msgid "Requests to join waiting for an admin"
+msgstr "Ylläpitäjää odottavat liittymispyynnöt"
+
+#: home/templates/_home_groups.html:26
+#, python-format
+msgid "%(counter)s to answer"
+msgid_plural "%(counter)s to answer"
+msgstr[0] "%(counter)s vastattavana"
+msgstr[1] "%(counter)s vastattavana"
+
+#: home/templates/_home_groups.html:38
+msgid "New"
+msgstr "Uusi"
+
+#: home/templates/_home_groups.html:42 home/templates/home.html:105
+#: home/templates/search_results.html:59
+#, python-format
+msgid "%(counter)s seat"
+msgid_plural "%(counter)s seats"
+msgstr[0] "%(counter)s paikka"
+msgstr[1] "%(counter)s paikkaa"
+
+#: home/templates/_home_groups.html:56
+msgid "Each group's page lists all of its rides."
+msgstr "Kunkin ryhmän sivulla on kaikki sen kyydit."
+
+#: home/templates/_home_groups.html:59
+msgid "Nobody has posted an upcoming ride to your groups yet."
+msgstr "Kukaan ei ole vielä julkaissut tulevaa kyytiä ryhmiisi."
+
+#: home/templates/_home_groups.html:60
+msgid "Offer a ride to your groups"
+msgstr "Tarjoa kyytiä ryhmillesi"
+
+#: home/templates/_page_footer.html:4 home/templates/more.html:87
+msgid "Contact"
+msgstr "Yhteystiedot"
+
+#: home/templates/_page_footer.html:5 home/templates/more.html:89
+msgid "Terms of use"
+msgstr "Käyttöehdot"
+
+#: home/templates/_page_footer.html:6 home/templates/more.html:88
+msgid "Privacy policy"
+msgstr "Tietosuojaseloste"
+
+#: home/templates/_ride_entry.html:10
+#, python-format
+msgid "%(counter)s request"
+msgid_plural "%(counter)s requests"
+msgstr[0] "%(counter)s pyyntö"
+msgstr[1] "%(counter)s pyyntöä"
+
+#: home/templates/_ride_entry.html:12 home/templates/search_results.html:42
+msgid "Your ride"
+msgstr "Oma kyytisi"
+
+#: home/templates/_ride_entry.html:15
+msgid "Confirmed"
+msgstr "Vahvistettu"
+
+#: home/templates/_ride_entry.html:17
+msgid "Requested"
+msgstr "Pyydetty"
+
+#: home/templates/_ride_entry.html:19
+msgid "Declined"
+msgstr "Hylätty"
+
+#: home/templates/_ride_entry.html:28
+msgid "You posted this ride"
+msgstr "Julkaisit tämän kyydin"
+
+#: home/templates/_ride_entry.html:29
+#, python-format
+msgid "%(counter)s seat available"
+msgid_plural "%(counter)s seats available"
+msgstr[0] "%(counter)s paikka vapaana"
+msgstr[1] "%(counter)s paikkaa vapaana"
+
+#: home/templates/_ride_entry.html:31
+msgid "You're a passenger"
+msgstr "Olet matkustaja"
+
+#: home/templates/_ride_entry.html:33
+msgid "Awaiting the driver's response"
+msgstr "Odottaa kuljettajan vastausta"
+
+#: home/templates/_ride_entry.html:35
+msgid "The driver declined your request"
+msgstr "Kuljettaja hylkäsi pyyntösi"
+
+#: home/templates/_ride_entry.html:38 home/templates/search_results.html:67
+msgid "Details"
+msgstr "Tiedot"
+
+#: home/templates/add_ride.html:6 home/templates/add_ride.html:74
+#: home/templates/ride_detail.html:226
+msgid "Edit ride"
+msgstr "Muokkaa kyytiä"
+
+#: home/templates/add_ride.html:6
+msgid "Post a ride"
+msgstr "Julkaise kyyti"
+
+#: home/templates/add_ride.html:25
+msgid "Select a start location"
+msgstr "Valitse lähtöpaikka"
+
+#: home/templates/add_ride.html:26 home/templates/search.html:15
+msgid "Other destination"
+msgstr "Muu määränpää"
+
+#: home/templates/add_ride.html:27
+msgid "Select a destination"
+msgstr "Valitse määränpää"
+
+#: home/templates/add_ride.html:57
+msgid "Choose at least one day for a recurring ride."
+msgstr "Valitse toistuvalle kyydille vähintään yksi päivä."
+
+#: home/templates/add_ride.html:74
+msgid "Ride options"
+msgstr "Kyydin asetukset"
+
+#: home/templates/add_ride.html:75 home/templates/app.html:105
+msgid "Offer"
+msgstr "Tarjous"
+
+#: home/templates/add_ride.html:75
+msgid "Request"
+msgstr "Pyyntö"
+
+#: home/templates/add_ride.html:75 home/templates/search.html:39
+msgid "Train"
+msgstr "Juna"
+
+#: home/templates/add_ride.html:75 home/templates/search.html:39
+msgid "Bus"
+msgstr "Bussi"
+
+#: home/templates/add_ride.html:75 home/templates/search.html:39
+msgid "Taxi"
+msgstr "Taksi"
+
+#: home/templates/add_ride.html:75 home/templates/add_ride.html:104
+#: home/templates/search.html:39
+msgid "Other"
+msgstr "Muu"
+
+#: home/templates/add_ride.html:78
+msgid "Car ride"
+msgstr "Autokyyti"
+
+#: home/templates/add_ride.html:85
+msgid "Other transport"
+msgstr "Muu kulkuneuvo"
+
+#: home/templates/add_ride.html:98
+msgid "Maximum passengers"
+msgstr "Matkustajia enintään"
+
+#: home/templates/add_ride.html:114
+msgid "Route"
+msgstr "Reitti"
+
+#: home/templates/add_ride.html:117 home/templates/search.html:49
+msgid "From"
+msgstr "Mistä"
+
+#: home/templates/add_ride.html:121 home/templates/ride_detail.html:211
+msgid "Remove"
+msgstr "Poista"
+
+#: home/templates/add_ride.html:123 home/templates/search.html:53
+msgid "To"
+msgstr "Minne"
+
+#: home/templates/add_ride.html:128
+msgid "Add a stop"
+msgstr "Lisää välipysähdys"
+
+#: home/templates/add_ride.html:140 home/templates/ride_detail.html:102
+msgid "Schedule"
+msgstr "Aikataulu"
+
+#: home/templates/add_ride.html:143
+#| msgid "Recurrance"
+msgid "Recurrence"
+msgstr "Toistuvuus"
+
+#: home/templates/add_ride.html:145
+msgid "One-time"
+msgstr "Kertakyyti"
+
+#: home/templates/add_ride.html:146 home/templates/ride_detail.html:100
+msgid "Recurring"
+msgstr "Toistuva"
+
+#: home/templates/add_ride.html:150 home/templates/add_ride.html:153
+#: home/templates/ride_detail.html:94
+msgid "Return"
+msgstr "Meno-paluu"
+
+#: home/templates/add_ride.html:152 home/templates/ride_detail.html:94
+msgid "One-way"
+msgstr "Vain meno"
+
+#: home/templates/add_ride.html:160 home/templates/add_ride.html:179
+msgid "Leaving at"
+msgstr "Lähtöaika"
+
+#: home/templates/add_ride.html:164 home/templates/add_ride.html:185
+msgid "Returning at"
+msgstr "Paluuaika"
+
+#: home/templates/add_ride.html:180
+#, python-format
+msgid "%(day)s: leaving at"
+msgstr "%(day)s: lähtöaika"
+
+#: home/templates/add_ride.html:186
+#, python-format
+msgid "%(day)s: returning at"
+msgstr "%(day)s: paluuaika"
+
+#: home/templates/add_ride.html:236 home/templates/add_ride.html:239
+msgid "Who can see this ride"
+msgstr "Kuka näkee tämän kyydin"
+
+#: home/templates/add_ride.html:242
+msgid "Everyone"
+msgstr "Kaikki"
+
+#: home/templates/add_ride.html:242
+msgid "All LUT Kyyti members can find it"
+msgstr "Kaikki LUT Kyydin jäsenet voivat löytää sen"
+
+#: home/templates/add_ride.html:246
+msgid "Only my groups"
+msgstr "Vain omat ryhmäni"
+
+#: home/templates/add_ride.html:246
+msgid "Only members of the groups you choose can find it"
+msgstr "Vain valitsemiesi ryhmien jäsenet voivat löytää sen"
+
+#: home/templates/add_ride.html:250 home/templates/more.html:46
+msgid "Groups"
+msgstr "Ryhmät"
+
+#: home/templates/add_ride.html:257
+msgid "You are not in any groups."
+msgstr "Et ole yhdessäkään ryhmässä."
+
+#: home/templates/add_ride.html:257
+msgid "Make or join one"
+msgstr "Luo ryhmä tai liity johonkin"
+
+#: home/templates/add_ride.html:271
+msgid "Price and note for passengers"
+msgstr "Hinta ja viesti matkustajille"
+
+#: home/templates/add_ride.html:274 home/templates/ride_detail.html:115
+msgid "Price"
+msgstr "Hinta"
+
+#: home/templates/add_ride.html:274 home/templates/add_ride.html:278
+msgid "(optional)"
+msgstr "(valinnainen)"
+
+#: home/templates/add_ride.html:275
+msgid "e.g. €10 per passenger"
+msgstr "esim. 10 € matkustajalta"
+
+#: home/templates/add_ride.html:278
+msgid "Note"
+msgstr "Viesti"
+
+#: home/templates/add_ride.html:282 home/templates/ride_detail.html:340
+#: home/templates/ride_detail.html:350
+msgid "Cancel"
+msgstr "Peruuta"
+
+#: home/templates/add_ride.html:283
+msgid "Save changes"
+msgstr "Tallenna muutokset"
+
+#: home/templates/add_ride.html:283
+msgid "Add ride"
+msgstr "Lisää kyyti"
+
+#: home/templates/app.html:56
+msgid "LUT Kyyti"
+msgstr "LUT Kyyti"
+
+#: home/templates/app.html:66 home/templates/app.html:97
 #: home/templates/home.html:4
 msgid "Home"
-msgstr ""
+msgstr "Etusivu"
 
-#: home/templates/home.html:13
-msgid "Friends"
-msgstr ""
+#: home/templates/app.html:67 home/templates/app.html:101
+msgid "Find"
+msgstr "Hae"
 
-#: home/templates/home.html:41 home/templates/search.html:38
+#: home/templates/app.html:68
+msgid "Post"
+msgstr "Julkaise"
+
+#: home/templates/app.html:73 home/templates/more.html:31
+msgid "Notifications"
+msgstr "Ilmoitukset"
+
+#: home/templates/app.html:85 home/templates/app.html:117
+#: home/templates/more.html:4 home/templates/more.html:13
+msgid "More"
+msgstr "Lisää"
+
+#: home/templates/app.html:109 home/templates/more.html:39
+#: home/templates/my_rides.html:4 home/templates/my_rides.html:11
+msgid "My rides"
+msgstr "Omat kyydit"
+
+#: home/templates/app.html:115
+msgid "Unread notifications"
+msgstr "Lukemattomat ilmoitukset"
+
+#: home/templates/emails/_footer.txt:4
 #, python-format
 msgid ""
-"%(driver)s's Trip to <span class=\"text-secondary inline\">%(destName)s </"
-"span>on <span class=\"text-primary inline\">%(leaving_at_weekday)s </span>at "
-"<span class=\"text-primary inline\">%(leaving_at_hour)s:"
-"%(leaving_at_minute)s "
+"You can choose to get emails about all notifications or only essential ones "
+"in your settings: %(account_url)s"
 msgstr ""
+"Voit valita asetuksistasi, saatko sähköpostia kaikista ilmoituksista vai "
+"vain tärkeistä: %(account_url)s"
 
-#: home/templates/home.html:65
-msgid "No active trips found. Create your own"
+#: home/templates/emails/group_admin_granted.txt:1
+#: home/templates/emails/group_admin_handed_over.txt:1
+#: home/templates/emails/group_closed.txt:1
+#: home/templates/emails/group_deleted.txt:1
+#: home/templates/emails/group_join_accepted.txt:1
+#: home/templates/emails/group_join_declined.txt:1
+#: home/templates/emails/group_join_requested.txt:1
+#: home/templates/emails/group_removed.txt:1
+#: home/templates/emails/passenger_left.txt:1
+#: home/templates/emails/passenger_removed.txt:1
+#: home/templates/emails/request_accepted.txt:1
+#: home/templates/emails/request_declined.txt:1
+#: home/templates/emails/request_received.txt:1
+#: home/templates/emails/request_withdrawn.txt:1
+#: home/templates/emails/ride_cancelled.txt:1
+#: home/templates/emails/ride_hidden.txt:1
+#: home/templates/emails/ride_updated.txt:1
+#, python-format
+msgid "Hi %(name)s,"
+msgstr "Hei %(name)s,"
+
+#: home/templates/emails/group_admin_granted.txt:3
+#, python-format
+msgid ""
+"%(name)s made you an admin of the group %(group)s. You can now accept or "
+"decline requests to join it, and make other members admins."
 msgstr ""
+"%(name)s teki sinusta ryhmän %(group)s ylläpitäjän. Voit nyt hyväksyä tai "
+"hylätä liittymispyyntöjä ja tehdä muista jäsenistä ylläpitäjiä."
 
-#: home/templates/home.html:65
-msgctxt "Create your own -here-"
-msgid "here"
+#: home/templates/emails/group_admin_handed_over.txt:3
+#, python-format
+msgid ""
+"You are now an admin of the group %(group)s. Its admins have left or have "
+"not used LUT Kyyti for a long time, and you have been a member the longest, "
+"so requests to join it now come to you."
 msgstr ""
+"Olet nyt ryhmän %(group)s ylläpitäjä. Sen ylläpitäjät ovat poistuneet tai "
+"eivät ole käyttäneet LUT Kyytiä pitkään aikaan, ja sinä olet ollut jäsenenä "
+"pisimpään, joten sen liittymispyynnöt tulevat nyt sinulle."
 
-#: home/templates/home.html:65
-msgctxt "Create your own here, or look for a trip under Search"
-msgid ", or look for a trip under"
+#: home/templates/emails/group_admin_handed_over.txt:5
+msgid ""
+"If you would rather not, you can hand the role over to another member on the"
+" group's page:"
 msgstr ""
+"Jos et halua roolia, voit luovuttaa sen toiselle jäsenelle ryhmän sivulla:"
 
-#: home/templates/home.html:65
-msgctxt "Create your own here, or look for a trip under Search"
+#: home/templates/emails/group_closed.txt:3
+#, python-format
+msgid ""
+"The group %(group)s was closed, as its last member left. Your request to "
+"join it was cancelled."
+msgstr ""
+"Ryhmä %(group)s suljettiin, koska sen viimeinen jäsen poistui. Pyyntösi "
+"liittyä siihen peruttiin."
+
+#: home/templates/emails/group_deleted.txt:3
+#, python-format
+msgid "%(name)s deleted the group %(group)s."
+msgstr "%(name)s poisti ryhmän %(group)s."
+
+#: home/templates/emails/group_join_accepted.txt:3
+#, python-format
+msgid ""
+"%(name)s accepted you into the group %(group)s. You can now see the rides "
+"posted to it, and post rides to it yourself."
+msgstr ""
+"%(name)s hyväksyi sinut ryhmään %(group)s. Näet nyt siihen julkaistut kyydit"
+" ja voit julkaista sinne kyytejä itsekin."
+
+#: home/templates/emails/group_join_declined.txt:3
+#, python-format
+msgid "%(name)s declined your request to join the group %(group)s."
+msgstr "%(name)s hylkäsi pyyntösi liittyä ryhmään %(group)s."
+
+#: home/templates/emails/group_join_requested.txt:3
+#, python-format
+msgid "%(name)s would like to join your group %(group)s."
+msgstr "%(name)s haluaisi liittyä ryhmääsi %(group)s."
+
+#: home/templates/emails/group_join_requested.txt:5
+msgid "Accept or decline the request on the group's page:"
+msgstr "Hyväksy tai hylkää pyyntö ryhmän sivulla:"
+
+#: home/templates/emails/group_removed.txt:3
+#, python-format
+msgid "%(name)s removed you from the group %(group)s."
+msgstr "%(name)s poisti sinut ryhmästä %(group)s."
+
+#: home/templates/emails/passenger_left.txt:3
+#, python-format
+msgid "%(name)s has left your ride %(route)s. Their seat is available again."
+msgstr ""
+"%(name)s poistui kyydistäsi %(route)s. Hänen paikkansa on taas vapaana."
+
+#: home/templates/emails/passenger_removed.txt:3
+#, python-format
+msgid ""
+"%(name)s removed you from the ride %(route)s. You can look for another ride "
+"on LUT Kyyti."
+msgstr ""
+"%(name)s poisti sinut kyydistä %(route)s. Voit etsiä toisen kyydin LUT "
+"Kyydistä."
+
+#: home/templates/emails/request_accepted.txt:3
+#, python-format
+msgid ""
+"%(name)s accepted your request to join the ride %(route)s. You can now see "
+"the driver's contact details on the ride's page. Agree on the meeting point "
+"and time before the trip."
+msgstr ""
+"%(name)s hyväksyi pyyntösi liittyä kyytiin %(route)s. Näet nyt kuljettajan "
+"yhteystiedot kyydin sivulla. Sopikaa tapaamispaikasta ja -ajasta ennen "
+"matkaa."
+
+#: home/templates/emails/request_declined.txt:3
+#, python-format
+msgid ""
+"%(name)s declined your request to join the ride %(route)s. You can look for "
+"another ride on LUT Kyyti."
+msgstr ""
+"%(name)s hylkäsi pyyntösi liittyä kyytiin %(route)s. Voit etsiä toisen "
+"kyydin LUT Kyydistä."
+
+#: home/templates/emails/request_received.txt:3
+#, python-format
+msgid "%(name)s would like to join your ride %(route)s."
+msgstr "%(name)s haluaisi liittyä kyytiisi %(route)s."
+
+#: home/templates/emails/request_received.txt:5
+msgid "Their message:"
+msgstr "Hänen viestinsä:"
+
+#: home/templates/emails/request_received.txt:8
+msgid "Accept or decline the request on the ride's page:"
+msgstr "Hyväksy tai hylkää pyyntö kyydin sivulla:"
+
+#: home/templates/emails/request_withdrawn.txt:3
+#, python-format
+msgid "%(name)s withdrew their request to join your ride %(route)s."
+msgstr "%(name)s perui pyyntönsä liittyä kyytiisi %(route)s."
+
+#: home/templates/emails/ride_cancelled.txt:3
+#, python-format
+msgid ""
+"%(name)s has cancelled the ride %(route)s. You can look for another ride on "
+"LUT Kyyti."
+msgstr ""
+"%(name)s perui kyydin %(route)s. Voit etsiä toisen kyydin LUT Kyydistä."
+
+#: home/templates/emails/ride_hidden.txt:3
+#, python-format
+msgid ""
+"Your ride %(route)s was only shown to the group %(group)s, which you are no "
+"longer in, so nobody can find it now. The people who already joined or asked"
+" to join it can still see it."
+msgstr ""
+"Kyytisi %(route)s näkyi vain ryhmälle %(group)s, jossa et enää ole, joten "
+"kukaan ei löydä sitä nyt. Siihen jo liittyneet tai liittymistä pyytäneet "
+"näkevät sen yhä."
+
+#: home/templates/emails/ride_hidden.txt:5
+msgid "Edit the ride to choose who sees it:"
+msgstr "Muokkaa kyytiä ja valitse, kenelle se näkyy:"
+
+#: home/templates/emails/ride_updated.txt:3
+#, python-format
+msgid ""
+"%(name)s has changed the ride %(route)s. Check the new details, such as the "
+"time and the route, on the ride's page:"
+msgstr ""
+"%(name)s muutti kyytiä %(route)s. Tarkista uudet tiedot, kuten aika ja "
+"reitti, kyydin sivulta:"
+
+#: home/templates/emails/ride_updated.txt:7
+msgid "If the new details don't work for you, you can leave the ride there."
+msgstr "Jos uudet tiedot eivät sovi sinulle, voit poistua kyydistä siellä."
+
+#: home/templates/home.html:11
+msgid "Your dashboard"
+msgstr "Oma näkymäsi"
+
+#: home/templates/home.html:12
+#, python-format
+msgid "Welcome back, %(name)s"
+msgstr "Tervetuloa takaisin, %(name)s"
+
+#: home/templates/home.html:13
+msgid "Share your commute. Make every journey count."
+msgstr "Jaa työmatkasi. Tee jokaisesta matkasta merkityksellinen."
+
+#: home/templates/home.html:16
+msgid "Main actions"
+msgstr "Päätoiminnot"
+
+#: home/templates/home.html:20 home/templates/my_rides.html:28
+#: home/templates/search.html:7 home/templates/search.html:36
+msgid "Find a ride"
+msgstr "Etsi kyytiä"
+
+#: home/templates/home.html:21
+msgid "Explore upcoming shared journeys"
+msgstr "Tutustu tuleviin yhteisiin matkoihin"
+
+#: home/templates/home.html:28 home/templates/my_rides.html:29
+msgid "Offer a ride"
+msgstr "Tarjoa kyytiä"
+
+#: home/templates/home.html:29
+msgid "Post a trip and share your seats"
+msgstr "Julkaise matka ja jaa vapaat paikkasi"
+
+#: home/templates/home.html:44
+msgid "Needs your attention"
+msgstr "Vaatii huomiotasi"
+
+#: home/templates/home.html:45
+#, python-format
+msgid "%(counter)s pending"
+msgid_plural "%(counter)s pending"
+msgstr[0] "%(counter)s odottaa"
+msgstr[1] "%(counter)s odottaa"
+
+#: home/templates/home.html:52
+msgid "New ride request"
+msgstr "Uusi kyytipyyntö"
+
+#: home/templates/home.html:54
+#, python-format
+msgid "%(name)s would like to join your ride %(route)s"
+msgstr "%(name)s haluaisi liittyä kyytiisi %(route)s"
+
+#: home/templates/home.html:56
+msgid "Review request"
+msgstr "Käsittele pyyntö"
+
+#: home/templates/home.html:68
+msgid "Your upcoming rides"
+msgstr "Tulevat kyytisi"
+
+#: home/templates/home.html:69 home/templates/home.html:93
+msgid "View all"
+msgstr "Näytä kaikki"
+
+#: home/templates/home.html:80 home/templates/my_rides.html:25
+msgid "No upcoming rides yet"
+msgstr "Ei vielä tulevia kyytejä"
+
+#: home/templates/home.html:81 home/templates/my_rides.html:26
+msgid ""
+"Find a ride for your next commute, or offer a seat on a trip you're already "
+"taking."
+msgstr ""
+"Etsi kyyti seuraavalle työmatkallesi tai tarjoa paikkaa matkalla, jonka teet"
+" joka tapauksessa."
+
+#: home/templates/home.html:92
+msgid "Recently posted rides"
+msgstr "Äskettäin julkaistut kyydit"
+
+#: home/templates/home.html:114
+msgid "No other upcoming rides have been posted yet."
+msgstr "Muita tulevia kyytejä ei ole vielä julkaistu."
+
+#: home/templates/home.html:124
+msgid "Ride with people you know"
+msgstr "Kulje tuttujen kanssa"
+
+#: home/templates/home.html:125
+msgid ""
+"Join a group, e.g. your team or the people on your route, and see the rides "
+"its members share."
+msgstr ""
+"Liity ryhmään, esimerkiksi tiimisi tai samaa reittiä kulkevien, ja näe sen "
+"jäsenten jakamat kyydit."
+
+#: home/templates/home.html:151
+#, python-format
+msgid "Welcome to LUT Kyyti, %(name)s!"
+msgstr "Tervetuloa LUT Kyytiin, %(name)s!"
+
+#: home/templates/home.html:152
+msgid ""
+"Find a ride to where you're going, or offer the empty seats in your car. "
+"Before your first shared trip, take a moment to read these:"
+msgstr ""
+"Etsi kyyti sinne, minne olet menossa, tai tarjoa autosi vapaita paikkoja. "
+"Lue nämä hetki ennen ensimmäistä yhteistä matkaasi:"
+
+#: home/templates/home.html:159 home/templates/more.html:85
+msgid "Help & FAQ"
+msgstr "Ohjeet ja UKK"
+
+#: home/templates/home.html:160
+msgid "How rides, requests and seats work"
+msgstr "Miten kyydit, pyynnöt ja paikat toimivat"
+
+#: home/templates/home.html:169 home/templates/more.html:86
+msgid "Safety tips"
+msgstr "Turvallisuusvinkit"
+
+#: home/templates/home.html:170
+msgid "Sharing a ride safely"
+msgstr "Kyydin jakaminen turvallisesti"
+
+#: home/templates/home.html:179 home/templates/more.html:20
+msgid "Profile & settings"
+msgstr "Profiili ja asetukset"
+
+#: home/templates/home.html:180
+msgid "Add a photo and choose what others see"
+msgstr "Lisää kuva ja valitse, mitä muut näkevät"
+
+#: home/templates/home.html:187
+msgid "Get started"
+msgstr "Aloita"
+
+#: home/templates/home.html:190
+msgid "Close"
+msgstr "Sulje"
+
+#: home/templates/more.html:58
+msgid "Dark mode"
+msgstr "Tumma tila"
+
+#: home/templates/more.html:71 home/templates/more.html:72
+msgid "Language"
+msgstr "Kieli"
+
+#: home/templates/more.html:95
+msgid "Log out"
+msgstr "Kirjaudu ulos"
+
+#: home/templates/more.html:98
+#, python-format
+msgid "LUT Kyyti, version %(version)s"
+msgstr "LUT Kyyti, versio %(version)s"
+
+#: home/templates/my_rides.html:10
+msgid "Your rides"
+msgstr "Omat kyytisi"
+
+#: home/templates/my_rides.html:12
+msgid "Rides you have posted and rides you have asked to join."
+msgstr "Julkaisemasi kyydit ja kyydit, joihin olet pyytänyt päästä."
+
+#: home/templates/my_rides.html:17
+msgid "Upcoming"
+msgstr "Tulevat"
+
+#: home/templates/my_rides.html:38
+msgid "Show past rides"
+msgstr "Näytä menneet kyydit"
+
+#: home/templates/my_rides.html:39
+#, python-format
+msgid "%(counter)s past ride"
+msgid_plural "%(counter)s past rides"
+msgstr[0] "%(counter)s mennyt kyyti"
+msgstr[1] "%(counter)s mennyttä kyytiä"
+
+#: home/templates/ride_detail.html:12
+msgid "Back to ride search"
+msgstr "Takaisin kyytihakuun"
+
+#: home/templates/ride_detail.html:17
+msgid "Ride details"
+msgstr "Kyydin tiedot"
+
+#: home/templates/ride_detail.html:21
+msgid "Past ride"
+msgstr "Mennyt kyyti"
+
+#: home/templates/ride_detail.html:27
+msgid ""
+"Nobody can find this ride: it was only shown to groups you are no longer in,"
+" or that were deleted."
+msgstr ""
+"Kukaan ei löydä tätä kyytiä: se näkyi vain ryhmille, joissa et enää ole tai "
+"jotka on poistettu."
+
+#: home/templates/ride_detail.html:27
+msgid "Choose who sees it"
+msgstr "Valitse, kenelle se näkyy"
+
+#: home/templates/ride_detail.html:32
+#, python-format
+msgid "Recurring · %(days)s"
+msgstr "Toistuva · %(days)s"
+
+#: home/templates/ride_detail.html:33
+msgid "One-way trip"
+msgstr "Yhdensuuntainen matka"
+
+#: home/templates/ride_detail.html:33 home/templates/search_results.html:58
+msgid "Return trip"
+msgstr "Meno-paluumatka"
+
+#: home/templates/ride_detail.html:42
+msgid "Route & departure"
+msgstr "Reitti ja lähtö"
+
+#: home/templates/ride_detail.html:48 home/templates/ride_detail.html:85
+msgid "Departure"
+msgstr "Lähtö"
+
+#: home/templates/ride_detail.html:58
+msgid "Passing by"
+msgstr "Kulkee ohi"
+
+#: home/templates/ride_detail.html:69
+msgid "Destination"
+msgstr "Määränpää"
+
+#: home/templates/ride_detail.html:69
+#, python-format
+msgid "returning %(time)s"
+msgstr "paluu %(time)s"
+
+#: home/templates/ride_detail.html:75
+msgid ""
+"Pickup and drop-off points should be agreed before the trip. Passing near a "
+"place does not guarantee a convenient stop."
+msgstr ""
+"Nouto- ja jättöpaikoista on sovittava ennen matkaa. Paikan ohi kulkeminen ei"
+" takaa sopivaa pysähdystä."
+
+#: home/templates/ride_detail.html:82
+msgid "Trip information"
+msgstr "Matkan tiedot"
+
+#: home/templates/ride_detail.html:89
+msgid "Available seats"
+msgstr "Vapaat paikat"
+
+#: home/templates/ride_detail.html:90
+msgid "Not specified"
+msgstr "Ei määritetty"
+
+#: home/templates/ride_detail.html:93
+msgid "Trip type"
+msgstr "Matkan tyyppi"
+
+#: home/templates/ride_detail.html:99
+msgid "Frequency"
+msgstr "Toistuvuus"
+
+#: home/templates/ride_detail.html:100
+msgid "One-time trip"
+msgstr "Kertamatka"
+
+#: home/templates/ride_detail.html:109
+msgid "Return journey"
+msgstr "Paluumatka"
+
+#: home/templates/ride_detail.html:112
+msgid "Transport"
+msgstr "Kulkuneuvo"
+
+#: home/templates/ride_detail.html:118
+msgid "Posted"
+msgstr "Julkaistu"
+
+#: home/templates/ride_detail.html:127
+msgid "Additional information from the poster"
+msgstr "Julkaisijan lisätiedot"
+
+#: home/templates/ride_detail.html:135
+msgid "Safety & arrangements"
+msgstr "Turvallisuus ja järjestelyt"
+
+#: home/templates/ride_detail.html:136
+msgid ""
+"Confirm the meeting point, departure time, and any costs before travelling. "
+"Avoid sharing sensitive personal information publicly."
+msgstr ""
+"Varmista tapaamispaikka, lähtöaika ja mahdolliset kulut ennen matkaa. Vältä "
+"arkaluonteisten henkilötietojen jakamista julkisesti."
+
+#: home/templates/ride_detail.html:137
+msgid "View safety guidance"
+msgstr "Katso turvallisuusohjeet"
+
+#: home/templates/ride_detail.html:150
+msgid "Ride posted by"
+msgstr "Kyydin julkaisija"
+
+#: home/templates/ride_detail.html:154
+msgid "you"
+msgstr "sinä"
+
+#: home/templates/ride_detail.html:155
+msgid "Verified LUT/LAB account"
+msgstr "Vahvistettu LUT/LAB-tili"
+
+#: home/templates/ride_detail.html:161
+msgid "Contact details shared with you:"
+msgstr "Sinulle jaetut yhteystiedot:"
+
+#: home/templates/ride_detail.html:164
+msgid ""
+"The driver has not shared any contact details. Check the ride's notes for "
+"how to get in touch."
+msgstr ""
+"Kuljettaja ei ole jakanut yhteystietoja. Katso kyydin viestistä, miten saat "
+"häneen yhteyden."
+
+#: home/templates/ride_detail.html:167
+msgid "Accepted passengers see your name and the contact details you share."
+msgstr "Hyväksytyt matkustajat näkevät nimesi ja jakamasi yhteystiedot."
+
+#: home/templates/ride_detail.html:167
+msgid "Privacy settings"
+msgstr "Yksityisyysasetukset"
+
+#: home/templates/ride_detail.html:169
+msgid "Contact details are shared once the driver accepts your request."
+msgstr "Yhteystiedot jaetaan, kun kuljettaja hyväksyy pyyntösi."
+
+#: home/templates/ride_detail.html:177
+msgid "Manage your ride"
+msgstr "Hallitse kyytiäsi"
+
+#: home/templates/ride_detail.html:179
+msgid "Requests"
+msgstr "Pyynnöt"
+
+#: home/templates/ride_detail.html:192
+msgid "The ride is full"
+msgstr "Kyyti on täynnä"
+
+#: home/templates/ride_detail.html:192
+msgid "Accept"
+msgstr "Hyväksy"
+
+#: home/templates/ride_detail.html:193
+msgid "Decline"
+msgstr "Hylkää"
+
+#: home/templates/ride_detail.html:197
+msgid "No requests waiting for an answer."
+msgstr "Ei vastausta odottavia pyyntöjä."
+
+#: home/templates/ride_detail.html:201
+msgid "Passengers"
+msgstr "Matkustajat"
+
+#: home/templates/ride_detail.html:209
+msgid "Remove this passenger from the ride?"
+msgstr "Poistetaanko tämä matkustaja kyydistä?"
+
+#: home/templates/ride_detail.html:217
+msgid "This passenger has not shared any contact details."
+msgstr "Tämä matkustaja ei ole jakanut yhteystietoja."
+
+#: home/templates/ride_detail.html:221
+msgid "Nobody has joined yet."
+msgstr "Kukaan ei ole vielä liittynyt."
+
+#: home/templates/ride_detail.html:227 home/templates/ride_detail.html:345
+msgid "Delete ride"
+msgstr "Poista kyyti"
+
+#: home/templates/ride_detail.html:234
+msgid "Join this ride"
+msgstr "Liity tähän kyytiin"
+
+#: home/templates/ride_detail.html:237
+msgid "This ride has already taken place."
+msgstr "Tämä kyyti on jo mennyt."
+
+#: home/templates/ride_detail.html:239
+msgid "All seats on this ride are taken."
+msgstr "Kaikki tämän kyydin paikat on varattu."
+
+#: home/templates/ride_detail.html:240
+msgid "Ride full"
+msgstr "Kyyti täynnä"
+
+#: home/templates/ride_detail.html:243
+#, python-format
+msgid "There is currently %(counter)s seat available."
+msgid_plural "There are currently %(counter)s seats available."
+msgstr[0] "Tällä hetkellä vapaana on %(counter)s paikka."
+msgstr[1] "Tällä hetkellä vapaana on %(counter)s paikkaa."
+
+#: home/templates/ride_detail.html:244
+msgid ""
+"Send a request to the driver. Your seat is confirmed once they accept it."
+msgstr ""
+"Lähetä pyyntö kuljettajalle. Paikkasi vahvistuu, kun hän hyväksyy sen."
+
+#: home/templates/ride_detail.html:249
+msgid "Message to the driver (optional)"
+msgstr "Viesti kuljettajalle (valinnainen)"
+
+#: home/templates/ride_detail.html:250
+msgid "Hi, could I join from Kouvola?"
+msgstr "Hei, voisinko tulla kyytiin Kouvolasta?"
+
+#: home/templates/ride_detail.html:251
+msgid ""
+"Only the driver sees your message. Don't include sensitive personal "
+"information."
+msgstr ""
+"Vain kuljettaja näkee viestisi. Älä lisää siihen arkaluonteisia "
+"henkilötietoja."
+
+#: home/templates/ride_detail.html:253
+msgid "Request to join"
+msgstr "Pyydä päästä kyytiin"
+
+#: home/templates/ride_detail.html:257
+msgid ""
+"Your request is awaiting a response from the driver. You will get an email "
+"when they answer."
+msgstr ""
+"Pyyntösi odottaa kuljettajan vastausta. Saat sähköpostia, kun hän vastaa."
+
+#: home/templates/ride_detail.html:260
+msgid "Withdraw request"
+msgstr "Peru pyyntö"
+
+#: home/templates/ride_detail.html:264
+msgid ""
+"Your request has been accepted. Agree on the meeting point and time with the"
+" driver using the contact details above."
+msgstr ""
+"Pyyntösi on hyväksytty. Sovi tapaamispaikasta ja -ajasta kuljettajan kanssa "
+"yllä olevien yhteystietojen avulla."
+
+#: home/templates/ride_detail.html:266
+msgid "Leave this ride? The driver will be notified."
+msgstr "Poistutaanko tästä kyydistä? Kuljettajalle ilmoitetaan."
+
+#: home/templates/ride_detail.html:268
+msgid "Leave ride"
+msgstr "Poistu kyydistä"
+
+#: home/templates/ride_detail.html:272
+msgid "The driver declined your request for this ride."
+msgstr "Kuljettaja hylkäsi pyyntösi tähän kyytiin."
+
+#: home/templates/ride_detail.html:274 home/templates/ride_not_shown.html:29
+msgid "Find another ride"
+msgstr "Etsi toinen kyyti"
+
+#: home/templates/ride_detail.html:282
+msgid "Share this ride"
+msgstr "Jaa tämä kyyti"
+
+#: home/templates/ride_detail.html:283
+msgid "Only signed-in LUT Kyyti members can open the link."
+msgstr "Vain kirjautuneet LUT Kyydin jäsenet voivat avata linkin."
+
+#: home/templates/ride_detail.html:288
+msgid "Link copied"
+msgstr "Linkki kopioitu"
+
+#: home/templates/ride_detail.html:289
+msgid "Copy link"
+msgstr "Kopioi linkki"
+
+#: home/templates/ride_detail.html:330
+#| msgid "Delete this trip?"
+msgid "Delete this ride?"
+msgstr "Poistetaanko tämä kyyti?"
+
+#: home/templates/ride_detail.html:332
+#| msgid "The trip will be removed for everyone and cannot be restored."
+msgid "The ride will be removed for everyone and cannot be restored."
+msgstr "Kyyti poistetaan kaikilta, eikä sitä voi palauttaa."
+
+#: home/templates/ride_detail.html:335
+msgid ""
+"Everyone who has joined or requested to join will be notified by email."
+msgstr ""
+"Kaikille liittyneille tai liittymistä pyytäneille ilmoitetaan sähköpostilla."
+
+#: home/templates/ride_not_shown.html:4
+msgid "Ride for group members"
+msgstr "Kyyti ryhmien jäsenille"
+
+#: home/templates/ride_not_shown.html:16
+msgid "This ride is only shown to group members"
+msgstr "Tämä kyyti näkyy vain ryhmien jäsenille"
+
+#: home/templates/ride_not_shown.html:18
+msgid "Ask to join one of these groups to see it:"
+msgstr "Pyydä liittymistä johonkin näistä ryhmistä nähdäksesi sen:"
+
+#: home/templates/ride_not_shown.html:27
+msgid "Its groups no longer exist, so nobody can see it."
+msgstr "Sen ryhmiä ei enää ole, joten kukaan ei näe sitä."
+
+#: home/templates/search.html:14
+msgid "Select a start location from the list"
+msgstr "Valitse lähtöpaikka luettelosta"
+
+#: home/templates/search.html:16
+msgid "Select a destination from the list"
+msgstr "Valitse määränpää luettelosta"
+
+#: home/templates/search.html:39
+#| msgid "Offer car ride"
+msgid "Offer a car ride"
+msgstr "Tarjoa autokyytiä"
+
+#: home/templates/search.html:39
+#| msgid "Request car ride"
+msgid "Request a car ride"
+msgstr "Pyydä autokyytiä"
+
+#: home/templates/search.html:57 home/templates/search.html:58
+msgid "Date"
+msgstr "Päivämäärä"
+
+#: home/templates/search.html:60
 msgid "Search"
-msgstr ""
+msgstr "Hae"
 
-#: home/templates/home.html:122
-msgid "Add Recurring Trip"
-msgstr ""
+#: home/templates/search.html:74
+#| msgid "Search failed, please try again."
+msgid "Search failed. Please try again."
+msgstr "Haku epäonnistui. Yritä uudelleen."
 
-#: home/templates/search.html:6
-msgctxt "Page title"
-msgid "Search"
-msgstr ""
+#: home/templates/search_results.html:21
+msgid "Rides passing by on the way"
+msgstr "Matkan varrelta kulkevat kyydit"
 
-#: home/templates/search.html:61
+#: home/templates/search_results.html:24
+msgid ""
+"These rides don't start or end where you searched, but their route passes "
+"nearby. Ask the driver whether they can pick you up or drop you off on the "
+"way."
+msgstr ""
+"Nämä kyydit eivät ala tai pääty hakemaasi paikkaan, mutta niiden reitti "
+"kulkee läheltä. Kysy kuljettajalta, voiko hän noutaa sinut tai jättää sinut "
+"matkan varrella."
+
+#: home/templates/search_results.html:40
+msgid "On the way"
+msgstr "Matkan varrella"
+
+#: home/templates/search_results.html:74
 msgid "No results found"
-msgstr ""
+msgstr "Tuloksia ei löytynyt"
+
+#: home/templates/search_results.html:88
+msgid "Previous page"
+msgstr "Edellinen sivu"
+
+#: home/templates/search_results.html:90
+#, python-format
+msgid "Page %(number)s of %(total)s"
+msgstr "Sivu %(number)s / %(total)s"
+
+#: home/templates/search_results.html:94
+msgid "Next page"
+msgstr "Seuraava sivu"
+
+#: home/views.py:228
+msgid "You cannot request to join your own ride."
+msgstr "Et voi pyytää päästä omaan kyytiisi."
+
+#: home/views.py:230
+msgid "This ride has no free seats left."
+msgstr "Tässä kyydissä ei ole enää vapaita paikkoja."
+
+#: home/views.py:237
+msgid "Request sent. You will be notified when the driver responds."
+msgstr "Pyyntö lähetetty. Saat ilmoituksen, kun kuljettaja vastaa."
+
+#: home/views.py:259
+msgid "You have left the ride."
+msgstr "Poistuit kyydistä."
+
+#: home/views.py:263
+msgid "Your request was withdrawn."
+msgstr "Pyyntösi peruttiin."
+
+#: home/views.py:284
+msgid "The ride is full. Increase its seats or remove a passenger first."
+msgstr "Kyyti on täynnä. Lisää ensin paikkoja tai poista matkustaja."
+
+#: home/views.py:290
+msgid ""
+"Request accepted. You can now see the passenger's shared contact details."
+msgstr "Pyyntö hyväksytty. Näet nyt matkustajan jakamat yhteystiedot."
+
+#: home/views.py:300
+msgid "The passenger was removed from the ride."
+msgstr "Matkustaja poistettiin kyydistä."
+
+#: home/views.py:303
+msgid "Request declined."
+msgstr "Pyyntö hylätty."
+
+#: home/views.py:325
+msgid "The ride was deleted."
+msgstr "Kyyti poistettiin."
+
+#: home/views.py:535
+msgid "The ride could not be saved. Please try again."
+msgstr "Kyytiä ei voitu tallentaa. Yritä uudelleen."
+
+#: home/views.py:551
+msgid "The ride was updated."
+msgstr "Kyyti päivitettiin."
+
+#~ msgid "One way"
+#~ msgstr "Yhdensuuntainen"
+
+#~ msgid "Delete trip"
+#~ msgstr "Poista matka"
+
+#: home/templates/add_ride.html:276 home/templates/ride_detail.html:119
+msgid "Time flexibility"
+msgstr "Joustava aikataulu"
+
+#: home/templates/add_ride.html:277
+msgid "The departure times are flexible. Passengers can suggest a different time."
+msgstr "Lähtöajat ovat joustavia. Matkustajat voivat ehdottaa toista aikaa."
+
+#: home/templates/ride_detail.html:120
+msgid "Departure times are flexible"
+msgstr "Lähtöajat ovat joustavia"
+
+#: home/templates/add_ride.html:170
+msgid "Leave the return time empty on days without a return journey."
+msgstr "Jätä paluuaika tyhjäksi päivinä, joina ei ole paluumatkaa."
+
+#: home/views.py:233
+msgid "Choose the days you would like to join the ride on."
+msgstr "Valitse päivät, joina haluat liittyä kyytiin."
+
+#: home/views.py:235
+#, python-format
+msgid "There are no free seats left on %(days)s."
+msgstr "Vapaita paikkoja ei ole enää jäljellä: %(days)s."
+
+#: home/views.py:290
+#, python-format
+msgid "The ride is full on %(days)s. Increase its seats or remove a passenger first."
+msgstr "Kyyti on täynnä: %(days)s. Lisää ensin paikkoja tai poista matkustaja."
+
+#: home/templates/ride_detail.html:265
+msgid "Which days would you like to join?"
+msgstr "Minä päivinä haluat liittyä mukaan?"
+
+#: home/templates/ride_detail.html:272
+msgid "Full"
+msgstr "Täynnä"
+
+#: home/templates/ride_detail.html:273
+#, python-format
+msgid "%(counter)s seat left"
+msgid_plural "%(counter)s seats left"
+msgstr[0] "%(counter)s paikka jäljellä"
+msgstr[1] "%(counter)s paikkaa jäljellä"
+
+#: home/templates/ride_detail.html:291
+#, python-format
+msgid "You asked to join on %(days)s."
+msgstr "Pyysit liittyä mukaan näinä päivinä: %(days)s."
+
+#: home/templates/ride_detail.html:302
+#, python-format
+msgid "You are joining on %(days)s."
+msgstr "Olet mukana näinä päivinä: %(days)s."
+
+#: home/templates/ride_detail.html:72
+msgid "Returning"
+msgstr "Paluu"
+
+#: home/templates/ride_detail.html:136
+msgid "Last updated"
+msgstr "Päivitetty viimeksi"
+
+#: home/templates/ride_detail.html:84
+msgid "One-time trip, no return"
+msgstr "Kertamatka, ei paluuta"
+
+#: home/templates/ride_detail.html:84
+msgid "One-time trip with return"
+msgstr "Kertamatka ja paluu"
+
+#: home/templates/ride_detail.html:85
+msgid "Recurring trip, no return"
+msgstr "Toistuva matka, ei paluuta"
+
+#: home/templates/ride_detail.html:85
+msgid "Recurring trip with return"
+msgstr "Toistuva matka ja paluu"
+
+#: home/templates/ride_detail.html:90
+msgid "Departure journey"
+msgstr "Menomatka"
+
+#: home/templates/ride_detail.html:112
+msgid "Flexibility"
+msgstr "Joustavuus"
+
+#: home/templates/ride_detail.html:113
+msgid "The departure time is flexible"
+msgstr "Lähtöaika on joustava"

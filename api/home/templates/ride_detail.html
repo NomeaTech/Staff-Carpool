@@ -1,0 +1,385 @@
+{% extends "app.html" %}
+
+{% load i18n privacy %}
+
+{% block title %}{{ ride.route_name }} | LUT Kyyti{% endblock %}
+
+{% block content %}
+<section class="h-app w-full overflow-y-auto pt-[calc(1.75rem+env(safe-area-inset-top))] lg:pt-24 pb-dock lg:pb-10">
+  <div class="max-w-6xl mx-auto px-4 lg:px-7">
+
+    <div class="text-xs mb-4">
+      <a href="{% url 'search' %}" class="link link-hover text-base-content/60">← {% trans "Back to ride search" %}</a>
+    </div>
+
+    <header class="mb-6">
+      <div class="flex flex-wrap items-center gap-2 mb-2">
+        <span class="text-xs font-bold uppercase tracking-widest text-primary">{% trans "Ride details" %}</span>
+        {% for option in ride.transport_options %}
+          <span class="badge badge-sm {{ option.badge_class }}">{{ option.label }}</span>
+        {% endfor %}
+        {% if not is_upcoming %}<span class="badge badge-sm badge-ghost">{% trans "Past ride" %}</span>{% endif %}
+        {% for group in ride_groups %}<a href="{% url 'group_detail' group.pk %}" class="badge badge-sm badge-soft badge-secondary">{% include "_icon.html" with name="user" class="size-3" %}{{ group.name }}</a>{% endfor %}
+      </div>
+      {% if is_driver and ride_groups is not None and not ride_groups %}
+        <div role="alert" class="alert alert-warning alert-soft text-sm my-3">
+          {% include "_icon.html" with name="alert" class="size-5" %}
+          <span>{% trans "Nobody can find this ride: it was only shown to groups you are no longer in, or that were deleted." %} <a href="{% url 'edit_ride' ride.pk %}" class="link font-semibold">{% trans "Choose who sees it" %}</a></span>
+        </div>
+      {% endif %}
+      <h1 class="text-3xl font-bold tracking-tight mb-1 break-words">{{ ride.route_name }}</h1>
+      <p class="text-base-content/60">
+        {% if ride.one_time %}{{ ride.leaving_at|date:"l, j F Y" }}{% else %}{% blocktrans with days=ride.days %}Recurring · {{ days }}{% endblocktrans %}{% endif %}
+        · {% if ride.one_way %}{% trans "One-way trip" %}{% else %}{% trans "Return trip" %}{% endif %}
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(285px,1fr)] gap-5 items-start">
+      <div class="contents lg:grid lg:gap-5">
+
+        <section class="card bg-base-100 border border-base-300 shadow-sm order-2 lg:order-none">
+          <div class="card-body p-5 sm:p-6">
+            <h2 class="card-title text-lg mb-2">{% trans "Route & departure" %}</h2>
+            <ul class="timeline timeline-vertical timeline-compact timeline-snap-icon -ms-2">
+              <li>
+                <div class="timeline-middle"><span class="block size-3.5 rounded-full border-3 border-primary bg-base-100"></span></div>
+                <div class="timeline-end pb-6">
+                  <strong class="block">{{ ride.start_json.displayName }}</strong>
+                  {# One-time rides only: a recurring ride's times are in its schedule, and differ from day to day #}
+                  {% if ride.one_time and ride.departure_time %}<small class="text-base-content/60">{% trans "Departure" %} · {{ ride.departure_time }}</small>{% endif %}
+                </div>
+                <hr class="bg-primary/25">
+              </li>
+              {% for via in vias %}
+              <li>
+                <hr class="bg-primary/25">
+                <div class="timeline-middle"><span class="block size-2.5 rounded-full border-2 border-primary/50 bg-base-100 mx-0.5"></span></div>
+                <div class="timeline-end pb-6">
+                  <strong class="block">{{ via.via_json.displayName }}</strong>
+                  <small class="text-base-content/60">{% trans "Passing by" %}</small>
+                </div>
+                <hr class="bg-primary/25">
+              </li>
+              {% endfor %}
+              <li>
+                <hr class="bg-primary/25">
+                <div class="timeline-middle"><span class="block size-3.5 rounded-full border-3 border-primary bg-base-100"></span></div>
+                <div class="timeline-end">
+                  <strong class="block">{{ ride.destination_json.displayName }}</strong>
+                  {# A one-time ride's return: its time, and its date when it is not the day the ride leaves #}
+                  {% with returning=ride.returning_at %}{% if returning %}
+                  <small class="text-base-content/60">{% trans "Returning" %} · {% if returning|date:"Ymd" != ride.leaving_at|date:"Ymd" %}{{ returning|date:"j.n." }} {% endif %}{{ returning|date:"H:i" }}</small>
+                  {% endif %}{% endwith %}
+                </div>
+              </li>
+            </ul>
+            <div role="note" class="alert border-info/40 bg-info/10 text-base-content text-xs mt-4">
+              {% trans "Pickup and drop-off points should be agreed before the trip. Passing near a place does not guarantee a convenient stop." %}
+            </div>
+          </div>
+        </section>
+
+        <section class="card bg-base-100 border border-base-300 shadow-sm order-3 lg:order-none">
+          <div class="card-body p-5 sm:p-6">
+            <h2 class="card-title text-lg mb-2">{% trans "Trip information" %}</h2>
+            {# The trip itself; below the line, what the poster added, and when it was posted. Optional rows only when filled in #}
+            <dl class="grid grid-cols-[7rem_minmax(0,1fr)] sm:grid-cols-[9rem_minmax(0,1fr)] gap-x-3 gap-y-2 text-sm">
+              <dt class="text-base-content/60">{% trans "Trip type" %}</dt>
+              <dd class="font-semibold">
+                {% if ride.one_time %}{% if ride.one_way %}{% trans "One-time trip, no return" %}{% else %}{% trans "One-time trip with return" %}{% endif %}
+                {% else %}{% if ride.one_way %}{% trans "Recurring trip, no return" %}{% else %}{% trans "Recurring trip with return" %}{% endif %}{% endif %}
+              </dd>
+              <dt class="text-base-content/60">{% trans "Transport" %}</dt>
+              <dd class="font-semibold">{% for option in ride.transport_options %}{{ option.label }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if ride.other and ride.other_field %} ({{ ride.other_field }}){% endif %}</dd>
+              {% if ride.one_time %}
+                <dt class="text-base-content/60">{% trans "Departure journey" %}</dt>
+                <dd class="font-semibold">{{ ride.leaving_at|date:"D j M, H:i"|default:"–" }}</dd>
+                {% if ride.returning_at %}
+                <dt class="text-base-content/60">{% trans "Return journey" %}</dt>
+                <dd class="font-semibold">{{ ride.returning_at|date:"D j M, H:i" }}</dd>
+                {% endif %}
+                {% with seats=ride.seats_left %}{% if seats is not None %}
+                <dt class="text-base-content/60">{% trans "Available seats" %}</dt>
+                <dd class="font-semibold tabular-nums">{{ seats }} / {{ ride.max_passengers }}</dd>
+                {% endif %}{% endwith %}
+              {% else %}
+                {# Each day with its times, and its free seats after them #}
+                <dt class="text-base-content/60">{% trans "Schedule" %}</dt>
+                <dd class="grid gap-1">
+                  {% for day in ride.seat_days %}
+                    <span><span class="font-semibold">{{ day.label }} <span class="tabular-nums">{{ day.leaving }}{% if day.returning %} {{ ride.sign }} {{ day.returning }}{% endif %}</span></span>{% if day.full %}<span class="text-base-content/60"> · {% trans "Full" %}</span>{% elif day.seats_left is not None %}<span class="text-base-content/60"> · {% blocktrans count counter=day.seats_left %}{{ counter }} seat left{% plural %}{{ counter }} seats left{% endblocktrans %}</span>{% endif %}</span>
+                  {% endfor %}
+                </dd>
+              {% endif %}
+            </dl>
+            <div class="divider my-1"></div>
+            <dl class="grid grid-cols-[7rem_minmax(0,1fr)] sm:grid-cols-[9rem_minmax(0,1fr)] gap-x-3 gap-y-2 text-sm">
+              {% if ride.flexible_time %}
+              <dt class="text-base-content/60">{% trans "Flexibility" %}</dt>
+              <dd class="font-semibold">{% if ride.one_time %}{% trans "The departure time is flexible" %}{% else %}{% trans "Departure times are flexible" %}{% endif %}</dd>
+              {% endif %}
+              {% if ride.price %}
+              <dt class="text-base-content/60">{% trans "Price" %}</dt>
+              <dd class="font-semibold break-words">{{ ride.price }}</dd>
+              {% endif %}
+              {% if ride.note %}
+              {# The label on a line of its own, and the note under it at full width #}
+              <dt class="text-base-content/60 col-span-2">{% trans "Additional information from the poster" %}</dt>
+              <dd class="col-span-2 -mt-1 mb-1 whitespace-pre-line break-words rounded-field bg-base-200 p-3">{{ ride.note }}</dd>
+              {% endif %}
+              <dt class="text-base-content/60">{% trans "Posted" %}</dt>
+              <dd class="font-semibold">{{ ride.created_at|date:"j F Y" }}</dd>
+              {% if ride.updated_at %}
+              <dt class="text-base-content/60">{% trans "Last updated" %}</dt>
+              <dd class="font-semibold">{{ ride.updated_at|date:"j F Y, H:i" }}</dd>
+              {% endif %}
+            </dl>
+          </div>
+        </section>
+
+        <section class="card bg-base-100 border border-base-300 shadow-sm order-6 lg:order-none">
+          <div class="card-body p-5 sm:p-6">
+            <h2 class="card-title text-lg mb-1">{% trans "Safety & arrangements" %}</h2>
+            <p class="text-sm text-base-content/60">{% trans "Confirm the meeting point, departure time, and any costs before travelling. Avoid sharing sensitive personal information publicly." %}</p>
+            <a href="{% url 'safety' %}" class="link link-primary link-hover text-sm font-semibold">{% trans "View safety guidance" %} →</a>
+          </div>
+        </section>
+      </div>
+
+      {% comment %}
+        The two columns are only for desktops: on phones their sections are all
+        in one column, in the order of their order- classes.
+      {% endcomment %}
+      <aside class="contents lg:grid lg:gap-5">
+        <section class="card bg-base-100 border border-base-300 shadow-sm order-1 lg:order-none">
+          <div class="card-body p-5 sm:p-6">
+            <h2 class="card-title text-lg mb-2">{% trans "Ride posted by" %}</h2>
+            <div class="flex items-center gap-3">
+              {% avatar ride.driver "w-12" "text-base" %}
+              <div>
+                <strong class="block">{% if is_driver %}{{ ride.driver }} <span class="font-normal text-base-content/60">({% trans "you" %})</span>{% else %}{{ ride.driver|display_name:is_partner }}{% endif %}</strong>
+                <span class="text-xs text-base-content/60">{% trans "Verified LUT/LAB account" %}</span>
+              </div>
+            </div>
+            <div class="divider my-1"></div>
+            {% if is_partner %}
+              {% if driver_contacts %}
+                <p class="text-xs text-base-content/60 mb-1">{% trans "Contact details shared with you:" %}</p>
+                {% include "_contacts.html" with contacts=driver_contacts %}
+              {% else %}
+                <p class="text-xs text-base-content/60">{% trans "The driver has not shared any contact details. Check the ride's notes for how to get in touch." %}</p>
+              {% endif %}
+            {% elif is_driver %}
+              <p class="text-xs text-base-content/60">{% trans "Accepted passengers see your name and the contact details you share." %} <a href="{% url 'account' %}#privacy" class="link link-primary">{% trans "Privacy settings" %}</a></p>
+            {% else %}
+              <p class="text-xs text-base-content/60 flex gap-2">{% include "_icon.html" with name="lock" class="size-4" %}{% trans "Contact details are shared once the driver accepts your request." %}</p>
+            {% endif %}
+          </div>
+        </section>
+
+        {% if is_driver %}
+        <section id="requests" class="card bg-base-100 border border-base-300 shadow-sm order-5 lg:order-none scroll-mt-24">
+          <div class="card-body p-5 sm:p-6">
+            <h2 class="card-title text-lg mb-2">{% trans "Manage your ride" %}</h2>
+
+            <h3 class="text-sm font-bold mb-1">{% trans "Requests" %}</h3>
+            {% for ride_request in pending_requests %}
+              <div class="rounded-field border border-warning/40 bg-warning/5 p-3 mb-2">
+                <div class="flex items-center gap-2">
+                  {% avatar ride_request.passenger "w-8" "text-xs" %}
+                  <strong class="text-sm">{{ ride_request.passenger|display_name }}</strong>
+                  <span class="text-xs text-base-content/50 ms-auto">{{ ride_request.created_at|date:"j.n. H:i" }}</span>
+                </div>
+                {% with days=ride_request.day_labels %}{% if days %}
+                  <p class="text-sm mt-2">{% include "_icon.html" with name="calendar" class="size-4 inline align-text-bottom" %} {{ days }}</p>
+                {% endif %}{% endwith %}
+                {% if ride_request.message %}
+                  <p class="text-sm mt-2 whitespace-pre-line bg-base-100 rounded-field p-2">{{ ride_request.message }}</p>
+                {% endif %}
+                <form method="post" action="{% url 'answer_request' ride_request.id %}" class="flex gap-2 mt-2">
+                  {% csrf_token %}
+                  {# Full on one of the days the passenger asked for #}
+                  <button class="btn btn-primary btn-sm grow" name="action" value="accept" {% if not ride_request.fits %}disabled title="{% trans "The ride is full" %}"{% endif %}>{% trans "Accept" %}</button>
+                  <button class="btn btn-outline btn-sm grow" name="action" value="decline">{% trans "Decline" %}</button>
+                </form>
+              </div>
+            {% empty %}
+              <p class="text-sm text-base-content/60 mb-2">{% trans "No requests waiting for an answer." %}</p>
+            {% endfor %}
+
+            <h3 class="text-sm font-bold mt-3 mb-1">
+              {% trans "Passengers" %}
+              {% if ride.max_passengers is not None and ride.one_time %}<span class="font-normal text-base-content/60">({{ passengers|length }} / {{ ride.max_passengers }})</span>{% endif %}
+            </h3>
+            {% for ride_request, contacts in passengers %}
+              <div class="rounded-field border border-base-300 p-3 mb-2">
+                <div class="flex items-center gap-2">
+                  {% avatar ride_request.passenger "w-8" "text-xs" %}
+                  <strong class="text-sm grow">{{ ride_request.passenger|display_name:True }}</strong>
+                  <form method="post" action="{% url 'answer_request' ride_request.id %}" data-confirm="{% trans "Remove this passenger from the ride?" %}">
+                    {% csrf_token %}
+                    <button class="btn btn-ghost btn-xs text-error" name="action" value="decline">{% trans "Remove" %}</button>
+                  </form>
+                </div>
+                {% with days=ride_request.day_labels %}{% if days %}
+                  <p class="text-sm mt-2">{% include "_icon.html" with name="calendar" class="size-4 inline align-text-bottom" %} {{ days }}</p>
+                {% endif %}{% endwith %}
+                {% if contacts %}
+                  <div class="mt-2">{% include "_contacts.html" %}</div>
+                {% else %}
+                  <p class="text-xs text-base-content/60 mt-2">{% trans "This passenger has not shared any contact details." %}</p>
+                {% endif %}
+              </div>
+            {% empty %}
+              <p class="text-sm text-base-content/60">{% trans "Nobody has joined yet." %}</p>
+            {% endfor %}
+
+            <div class="divider my-1"></div>
+            <div class="grid grid-cols-2 gap-2">
+              <a href="{% url 'edit_ride' ride.id %}" class="btn btn-primary btn-sm">{% trans "Edit ride" %}</a>
+              <button class="btn btn-outline btn-error btn-sm" type="button" onclick="document.getElementById('delete-ride-modal').showModal()">{% trans "Delete ride" %}</button>
+            </div>
+          </div>
+        </section>
+        {% else %}
+        <section class="card bg-base-100 border border-base-300 shadow-sm order-5 lg:order-none">
+          <div class="card-body p-5 sm:p-6">
+            <h2 class="card-title text-lg mb-1">{% trans "Join this ride" %}</h2>
+            {% if not own_request %}
+              {% if not is_upcoming %}
+                <p class="text-sm text-base-content/60">{% trans "This ride has already taken place." %}</p>
+              {% elif ride.is_full %}
+                <p class="text-sm text-base-content/60 mb-3">{% trans "All seats on this ride are taken." %}</p>
+                <button class="btn btn-block" disabled>{% trans "Ride full" %}</button>
+              {% else %}
+                <p class="text-sm text-base-content/60 mb-3">
+                  {% if ride.one_time %}{% with seats=ride.seats_left %}{% if seats is not None %}{% blocktrans count counter=seats %}There is currently {{ counter }} seat available.{% plural %}There are currently {{ counter }} seats available.{% endblocktrans %} {% endif %}{% endwith %}{% endif %}
+                  {% trans "Send a request to the driver. Your seat is confirmed once they accept it." %}
+                </p>
+                <form method="post" action="{% url 'request_ride' ride.id %}">
+                  {% csrf_token %}
+                  {% if not ride.one_time %}
+                  {# A recurring ride is joined on some of its days; full days cannot be chosen #}
+                  <fieldset class="fieldset mb-3">
+                    <legend class="fieldset-legend text-sm">{% trans "Which days would you like to join?" %}</legend>
+                    <div class="grid gap-2">
+                      {% for day in ride.seat_days %}
+                      <label class="flex items-center gap-3 rounded-field border border-base-300 p-3 transition has-[:checked]:border-primary/40 has-[:checked]:bg-primary/5 {% if day.full %}opacity-60{% else %}cursor-pointer{% endif %}">
+                        <input type="checkbox" name="days" value="{{ day.key }}" class="checkbox checkbox-sm checkbox-primary" {% if day.full %}disabled{% endif %}/>
+                        <span class="grow min-w-0"><span class="font-semibold">{{ day.label }}</span> <span class="text-base-content/60 tabular-nums">{{ day.leaving }}{% if day.returning %} {{ ride.sign }} {{ day.returning }}{% endif %}</span></span>
+                        {% if day.full %}<span class="text-xs font-semibold text-base-content/60">{% trans "Full" %}</span>
+                        {% elif day.seats_left is not None %}<span class="text-xs text-base-content/60 shrink-0">{% blocktrans count counter=day.seats_left %}{{ counter }} seat left{% plural %}{{ counter }} seats left{% endblocktrans %}</span>{% endif %}
+                      </label>
+                      {% endfor %}
+                    </div>
+                  </fieldset>
+                  {% endif %}
+                  <fieldset class="fieldset rounded-field border border-primary/20 bg-primary/5 p-3 mb-3">
+                    <legend class="fieldset-legend text-sm">{% trans "Message to the driver (optional)" %}</legend>
+                    <textarea name="message" maxlength="500" rows="3" class="textarea w-full" placeholder="{% trans "Hi, could I join from Kouvola?" %}"></textarea>
+                    <p class="label text-xs whitespace-normal">{% trans "Only the driver sees your message. Don't include sensitive personal information." %}</p>
+                  </fieldset>
+                  <button class="btn btn-primary btn-block" type="submit">{% trans "Request to join" %}</button>
+                </form>
+              {% endif %}
+            {% elif own_request.status == "pending" %}
+              <p class="text-sm text-base-content/60 mb-3">{% trans "Your request is awaiting a response from the driver. You will get an email when they answer." %}</p>
+              {% with days=own_request.day_labels %}{% if days %}<p class="text-sm mb-3">{% blocktrans %}You asked to join on {{ days }}.{% endblocktrans %}</p>{% endif %}{% endwith %}
+              <form method="post" action="{% url 'withdraw_request' ride.id %}">
+                {% csrf_token %}
+                <button class="btn btn-outline btn-primary btn-block" type="submit">{% trans "Withdraw request" %}</button>
+              </form>
+            {% elif own_request.status == "accepted" %}
+              <div role="status" class="alert border-success/50 bg-success/15 text-base-content text-sm mb-3">
+                {% trans "Your request has been accepted. Agree on the meeting point and time with the driver using the contact details above." %}
+              </div>
+              {% with days=own_request.day_labels %}{% if days %}<p class="text-sm mb-3">{% blocktrans %}You are joining on {{ days }}.{% endblocktrans %}</p>{% endif %}{% endwith %}
+              <form method="post" action="{% url 'withdraw_request' ride.id %}" data-confirm="{% trans "Leave this ride? The driver will be notified." %}">
+                {% csrf_token %}
+                <button class="btn btn-outline btn-error btn-block" type="submit">{% trans "Leave ride" %}</button>
+              </form>
+            {% else %}
+              <div role="status" class="alert alert-error alert-soft text-sm">
+                {% trans "The driver declined your request for this ride." %}
+              </div>
+              <a href="{% url 'search' %}" class="btn btn-primary btn-block mt-3">{% trans "Find another ride" %}</a>
+            {% endif %}
+          </div>
+        </section>
+        {% endif %}
+
+        <section class="card bg-base-100 border border-base-300 shadow-sm order-7 lg:order-none">
+          <div class="card-body p-5 sm:p-6">
+            <h2 class="card-title text-lg mb-1">{% trans "Share this ride" %}</h2>
+            <p class="text-xs text-base-content/60">{% trans "Only signed-in LUT Kyyti members can open the link." %}</p>
+            {# On desktops the link stays on one line, its text shrunk to fit the box. In Noto Sans a link's characters are at most 0.51em wide on average, so it fits in 0.53em per character #}
+            <div class="@container rounded-field bg-base-200 px-3 py-2 text-xs break-all lg:break-normal mt-2">
+              <span class="lg:whitespace-nowrap lg:text-[length:min(0.75rem,100cqi/(var(--chars)*0.53))]" style="--chars: {{ share_url|length }}">{{ share_url }}</span>
+            </div>
+            <button class="btn btn-outline btn-sm w-full mt-3" type="button" id="copy-link" data-url="{{ share_url }}" data-copied="{% trans "Link copied" %}">
+              {% include "_icon.html" with name="link" class="size-4" %}{% trans "Copy link" %}
+            </button>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    {% include "_page_footer.html" %}
+  </div>
+</section>
+
+{% if mark_read_when_shown %}
+{# This page was loaded early (turbo-setup.js) and is now shown: its notifications are seen (see ride_detail) #}
+<script>
+  (function () {
+    const data = new FormData();
+    data.append("ride", "{{ ride.id }}");
+    fetch("{% url 'notifications_mark_all_read' %}", {
+      method: "POST", body: data,
+      headers: { "X-CSRFToken": "{{ csrf_token }}", "X-Requested-With": "XMLHttpRequest" },
+    }).then(() => window.kyytiNotifications?.poll());
+  })();
+</script>
+{% endif %}
+<script>
+  document.querySelectorAll("form[data-confirm]").forEach((form) => {
+    form.addEventListener("submit", (event) => { if (!confirm(form.dataset.confirm)) event.preventDefault(); });
+  });
+  document.getElementById("copy-link").addEventListener("click", function () {
+    navigator.clipboard?.writeText(this.dataset.url).then(() => { this.textContent = this.dataset.copied; });
+  });
+</script>
+
+{% if is_driver %}
+{% comment %}
+  Asks for confirmation before deleting. Cancel, Escape or clicking outside closes it.
+{% endcomment %}
+<dialog id="delete-ride-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="delete-ride-title">
+    <div class="modal-box">
+        <div role="alert" class="alert alert-warning">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <h3 id="delete-ride-title" class="font-bold">{% trans "Delete this ride?" %}</h3>
+        </div>
+        <p class="py-4">{% trans "The ride will be removed for everyone and cannot be restored." %}</p>
+        {% if passengers or pending_requests %}
+        <p class="pb-4">
+            {% trans "Everyone who has joined or requested to join will be notified by email." %}
+        </p>
+        {% endif %}
+        <div class="modal-action">
+            <form method="dialog">
+                <button class="btn" autofocus>{% trans "Cancel" %}</button>
+            </form>
+            <form action="{% url 'delete_ride' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="ride" value="{{ ride.id }}">
+                <button class="btn btn-error" type="submit">{% trans "Delete ride" %}</button>
+            </form>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>{% trans "Cancel" %}</button>
+    </form>
+</dialog>
+{% endif %}
+{% endblock %}

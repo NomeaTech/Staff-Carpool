@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#
+# scripts/metabase/backup: save Metabase's own database (its users, questions
+# and dashboards). The app's data is not in it.
+#
+#   sudo scripts/metabase/backup [directory]
+#
+# Saves to /var/backups/metabase unless given a directory, and keeps the
+# latest 14. To run it daily at 03:00, add to "sudo crontab -e":
+#   0 3 * * * /path/to/Staff-Carpool/scripts/metabase/backup
+set -euo pipefail
+
+dir="${1:-/var/backups/metabase}"
+mkdir -p "$dir"
+sudo -u postgres pg_dump metabase_app | gzip > "$dir/metabase_app-$(date +%F).sql.gz"
+ls -1t "$dir"/metabase_app-*.sql.gz | tail -n +15 | xargs -r rm --

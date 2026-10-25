@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% comment %}
+  Card layout shared by the account pages (password reset and change), matching
+  the login and signup pages. Pages fill in the title, card_title and card_body
+  blocks.
+{% endcomment %}
+
+{% block content %}
+<div class="card bg-base-100 border border-base-300 shadow-sm">
+  <div class="card-body p-6 sm:p-8 gap-4">
+    <h1 class="text-2xl font-bold tracking-tight">{% block card_title %}{% endblock %}</h1>
+    {% block card_body %}{% endblock %}
+  </div>
+</div>
+{% endblock %}

@@ -9,25 +9,84 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-
+    # The code is pulled on the server itself, so the repository is not checked
+    # out here. The key is set up directly instead of with an action, as the
+    # previous actions ran on the deprecated Node 20.
+    # The server's host key comes from the SSH_KNOWN_HOSTS secret (the output
+    # of "ssh-keyscan <host>", checked against the server), so that the key
+    # and the deploy cannot be handed to another machine posing as it.
     - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.7.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+      run: |
+        if [ -z "$SSH_KNOWN_HOSTS" ]; then
+          echo "::error::The SSH_KNOWN_HOSTS secret is missing. Add the output of 'ssh-keyscan <server>' (checked against the server's own keys) as a repository secret."
+          exit 1
+        fi
+        install -m 700 -d ~/.ssh
+        printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+        chmod 600 ~/.ssh/known_hosts
 
     - name: Deploy to Server
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+        ssh -o StrictHostKeyChecking=yes ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'bash -s' << 'EOF'
+          # Stop at the first failing command, so a failed step fails the
+          # workflow instead of restarting the server with outdated code.
+          set -eo pipefail
+
           cd ${{ secrets.PROJECT_PATH }}
-          git pull origin testing
+
+          # Every file must be writable by the deploy user, or git and npm
+          # fail with "insufficient permission" / EACCES. Python's __pycache__
+          # folders are left out: git ignores them, and they are made by
+          # whoever runs a command (e.g. "sudo python manage.py ...").
+          not_owned=$(find . -name __pycache__ -prune -o ! -user "$(id -un)" -print -quit)
+          if [ -n "$not_owned" ]; then
+            echo "::error::Files in the project are not owned by $(id -un) (e.g. $not_owned). Run once on the server: sudo chown -R $(id -un): ${{ secrets.PROJECT_PATH }}"
+            exit 1
+          fi
+
+          # npm install (which "tailwind install" ran) rewrote package-lock.json
+          # here, and the changed file then stopped the next pull. It always
+          # comes from the repository, so any change to it is undone.
+          git checkout -- api/theme/static_src/package-lock.json
+          # Any other changed file was edited on the server: stop rather than
+          # overwrite it, saying which files they are.
+          changed=$(git status --porcelain --untracked-files=no)
+          if [ -n "$changed" ]; then
+            echo "::error::Files were changed on the server, so the new code cannot be pulled. Commit them, or undo them with git checkout -- <file>:"
+            echo "$changed"
+            exit 1
+          fi
+
+          git pull --ff-only origin testing
           source env/bin/activate
           cd api
-          pip install -r api/requirements.txt
-          python manage.py tailwind install
+          pip install -r requirements.txt
+          # npm ci installs exactly what package-lock.json lists and never
+          # changes it, unlike npm install
+          npm ci --prefix theme/static_src
           python manage.py tailwind build
           python manage.py migrate --noinput
+          # Store the driving route of rides that do not have one yet
+          python manage.py compute_routes
+          # The translations (.po) are compiled here, as the compiled .mo files
+          # are not in the repository. This needs GNU gettext's msgfmt.
+          if ! command -v msgfmt > /dev/null; then
+            echo "::error::msgfmt not found, so the translations cannot be compiled. Run once on the server: sudo apt install gettext"
+            exit 1
+          fi
+          python manage.py compilemessages --ignore "node_modules" --ignore "env"
           python manage.py collectstatic --noinput
+          # Profile photos once kept in static/ are no longer collected
+          # (carpool/apps.py); remove the copies collected before
+          static_root=$(python manage.py shell -c "from django.conf import settings; print(settings.STATIC_ROOT or '')" | tail -n 1)
+          if [ -n "$static_root" ] && [ -d "$static_root/images/user_images" ]; then
+            rm -rf -- "$static_root/images/user_images"
+          fi
           sudo systemctl restart django_ride
+          systemctl is-active --quiet django_ride
         EOF

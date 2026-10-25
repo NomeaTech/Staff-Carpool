@@ -1,0 +1,63 @@
+{% load static tailwind_tags pwa cache %}
+
+<!DOCTYPE html>
+<html data-theme="light">
+{% comment %}
+  The static parts of the layout are cached as fragments. Blocks and anything
+  else that is per-request must stay outside the cache tags.
+{% endcomment %}
+<head>
+    <title>{% block title %}LUT Kyyti{% endblock %}</title>
+    {% cache 86400 base_head using="templates" %}
+    {% progressive_web_app_meta %}
+    {% include "_favicons.html" %}
+    <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="{% static "js/funcs.js" %}?v={{ STATIC_VERSION }}"></script>
+    {% tailwind_css v=TAILWIND_CSS_VERSION %}
+    {% endcache %}
+</head>
+<!-- <body class="bg-gray-50 text-black font-serif leading-normal tracking-normal"> -->
+<body class="bg-base-200">
+    {% cache 86400 base_body_top using="templates" %}
+    <script>
+        theme = localStorage["theme"];
+        document.documentElement.setAttribute("data-theme", theme);
+        
+        window.onload = function() {
+            switcher = document.getElementById("theme-switcher")
+            if (theme == "dark") {
+                switcher.checked = true;
+            }
+        }
+    </script>
+    <!-- <h1><a href="/">Campus Ride</a></h1> -->
+    {% comment %}
+      Phones: the card starts near the top, with room around it for its
+      shadow. Larger screens: centred, without pushing the top of a card
+      taller than the screen out of reach (my-auto rather than items-center).
+    {% endcomment %}
+    {% comment %}
+      Above the card: the app's name, linking to the landing page, and the
+      theme switch (the account pages have no navbar).
+    {% endcomment %}
+    <div class="container mx-auto">
+        <section class="flex justify-center min-h-screen px-4 py-6 sm:py-12">
+            <main class="w-full max-w-md sm:my-auto">
+                <div class="flex items-center justify-between gap-3 mb-5">
+                    <a href="{% url 'landing' %}" class="flex items-center gap-2">
+                        {% include "_logo.html" with width="40px" %}
+                        <span class="text-2xl font-bold tracking-tight">LUT Kyyti</span>
+                    </a>
+                    {% include "registration/_theme_switcher.html" %}
+                </div>
+    {% endcache %}
+                {% block content %}
+                {% endblock %}
+            </main>
+        </section>
+    </div>
+</body>
+</html>

@@ -2,68 +2,244 @@
 
 {% load widget_tweaks %}
 {% load i18n %}
+{% load static %}
 
-{% block title %}{% trans "Search" context "Page title" %}{% endblock %}
+{% block title %}{% trans "Find a ride" %} | LUT Kyyti{% endblock %}
+{# Google Maps inputs don't work in a copy of the page: going back reloads it, and it shows the last search again from the browser history #}
+{% block head %}<meta name="turbo-cache-control" content="no-cache">{% endblock %}
 {% block content %}
-<!-- <section class="grid grid-cols-1 xl:grid-cols-3 gap-10 pt-3 lg:pt-20 justify-center h-screen mx-auto"> -->
-<section class="flex justify-content-center items-center flex-col pt-5 lg:pt-20 h-screen mx-auto">
-    <div class="flex justify-content-center items-center w-full">
-        <form class="w-full" action="/app/search/" method="post">
-            {% csrf_token %}
-            <label class="input w-full">
-                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <g
-                    stroke-linejoin="round"
-                    stroke-linecap="round"
-                    stroke-width="2.5"
-                    fill="none"
-                    stroke="currentColor"
-                    >
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.3-4.3"></path>
-                    </g>
-                </svg>
-                {{ form.search_query|add_class:"grow"|append_attr:"type:search"|append_attr:"placeholder:Search" }}
-            </label>
-            
-            <input class="hidden" type="submit" value="Submit">
-        </form>
-    </div>
-    <div class="mb-15 md:mb-0 lg:pb-2 pb-15 pt-5 col-span-1 xl:px-0 justify-self-center overflow-scroll scrollbar-hide">
-        {% if searched and recurring_trips %}
-            {% for recurring_trip in recurring_trips %}
-                <a href="/recurring-trip/{{recurring_trip.id}}/">
-                    <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
-                        <div class="card-body">
-                            <h2 class="card-title"><div>{% blocktranslate with driver=recurring_trip.driver destName=recurring_trip.destName leaving_at_weekday=recurring_trip.leaving_at_weekday|title leaving_at_hour=recurring_trip.leaving_at_hour leaving_at_minute=recurring_trip.leaving_at_minute %}{{ driver }}'s Trip to <span class="text-secondary inline">{{ destName }} </span>on <span class="text-primary inline">{{ leaving_at_weekday }} </span>at <span class="text-primary inline">{{ leaving_at_hour }}:{{ leaving_at_minute }} {% endblocktranslate %}</span></div></h2>
+{{ campuses|json_script:"campus-data" }}
 
-                            {% if recurring_trip.note != "" %}
-                            <p>{{ recurring_trip.note }}</p>
-                            {% endif %}
+{# Looked up here, so that the script below is plain JavaScript to editors #}
+{% trans "Select a start location from the list" as start_hint %}
+{% trans "Other destination" as other_destination_label %}
+{% trans "Select a destination from the list" as destination_hint %}
+<script>
+    (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+        key: "{{ GOOGLE_MAPS_API_KEY }}"
+    });
+    
+    // Resolves once the From and To inputs have been created
+    window.searchFormReady = new Promise((resolve) => {
+        onPageReady(() => resolve(Promise.all([
+            autocomplete_init("div-autocomplete-start", "start", "From", "{{ start_hint|escapejs }}", true),
+            destination_init("div-autocomplete-destination", "campus-data", "To", "{{ other_destination_label|escapejs }}", "{{ destination_hint|escapejs }}", true),
+        ])));
+    });
+</script>
 
-                            {% if recurring_trip.passenger.all.count != 0 %}
-                                <div class="flex gap-2">
-                                {% for p in recurring_trip.passenger.all %}
-                                    <!-- <a href="/profile/{{p.id}}"><div class="badge badge-soft badge-primary badge-sm">{{p}}</div></a> -->
-                                    <div class="badge badge-soft badge-primary badge-sm">{{p}}</div>    
-                                {% endfor %}
-                                </div>
-                            {% endif %}
-                            <p class="text-secondary">Trip in 2 days</p>
-                        </div>
-                    </div>
-                </a>
-            {% endfor %}
-        {% elif searched %}
-        <div class="card card-border md:mb-5 mb-0 mx-0 md:mx-3 scale-90 md:scale-100 md:gap-5 bg-base-100 transition duration-200 ease-in-out hover:drop-shadow-xl/10 drop-shadow-md">
-            <div class="card-body">
-                <h2 class="card-title">
-                    {% trans "No results found" %}
-                </h2>
-            </div>
+<section class="h-app w-full overflow-y-auto pt-[calc(1.75rem+env(safe-area-inset-top))] lg:pt-24 pb-dock lg:pb-10">
+  <div class="max-w-6xl mx-auto px-4 lg:px-7">
+    <form id="search-form" class="card bg-base-100 border border-base-300 shadow-sm mb-5" action="/app/search/" method="post">
+      {% csrf_token %}
+      <div class="card-body p-5 sm:p-6 gap-4">
+        <!-- <h2 class="card-title text-lg">{% trans "Find a ride" %}</h2> -->
+        {# The ways of travelling to show: rides with any of the ticked ones, or all rides when none is ticked #}
+        <div class="flex flex-wrap gap-2">
+          {% trans "Offer a car ride" as offer_label %}{% trans "Request a car ride" as request_label %}{% trans "Train" as train_label %}{% trans "Bus" as bus_label %}{% trans "Taxi" as taxi_label %}{% trans "Other" as other_label %}
+          {% include "_search_filter.html" with option=transport.offer label=offer_label %}
+          {% include "_search_filter.html" with option=transport.request label=request_label %}
+          {% include "_search_filter.html" with option=transport.train label=train_label %}
+          {% include "_search_filter.html" with option=transport.bus label=bus_label %}
+          {% include "_search_filter.html" with option=transport.taxi label=taxi_label %}
+          {% include "_search_filter.html" with option=transport.other label=other_label %}
         </div>
-        {% endif %}
+        <div class="grid gap-3 md:grid-cols-[1fr_1fr_1fr_auto] md:items-end">
+          <fieldset class="fieldset py-0">
+            <legend class="fieldset-legend">{% trans "From" %}</legend>
+            <div id="div-autocomplete-start" class="w-full skeleton h-12 rounded-field"></div>
+          </fieldset>
+          <fieldset class="fieldset py-0">
+            <legend class="fieldset-legend">{% trans "To" %}</legend>
+            <div id="div-autocomplete-destination" class="w-full skeleton h-12 rounded-field"></div>
+          </fieldset>
+          <fieldset class="fieldset py-0">
+            <legend class="fieldset-legend">{% trans "Date" %}</legend>
+            <input type="date" name="date" aria-label="{% trans "Date" %}" class="input w-full h-12">
+          </fieldset>
+          <button class="btn btn-primary h-12" type="submit">{% include "_icon.html" with name="search" %}{% trans "Search" %}</button>
+        </div>
+      </div>
+    </form>
+
+    <div id="search-results" aria-live="polite" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {% include "search_results.html" %}
     </div>
+
+    {% include "_page_footer.html" %}
+  </div>
 </section>
+
+<template id="search-error">
+  <p class="col-span-full text-center text-error">{% trans "Search failed. Please try again." %}</p>
+</template>
+
+<script>
+    // Search without reloading the page: the form is posted with fetch and
+    // the server returns only the results (search_results.html).
+    //
+    // The last search (its form fields and results) is saved in the browser
+    // history entry, so going back to this page, e.g. from a ride, shows the
+    // same search again without querying the server.
+    (function() {
+        const form = document.getElementById("search-form");
+        const results = document.getElementById("search-results");
+        const scroller = results.closest("section");
+        let lastSearch = null;
+        let controller = null;
+        // The form as it was when the shown results were searched
+        let searchedForm = null;
+
+        // From/To autocompletes: the visible text and the selected place's JSON
+        function placeState(div) {
+            if (!div) {
+                return null;
+            }
+            return {
+                text: div.querySelector('input[type="text"]')?.value ?? "",
+                json: div.querySelector('input[name$="_json"]')?.value ?? "",
+            };
+        }
+
+        function setPlace(div, place) {
+            if (!div || !place) {
+                return;
+            }
+            div.querySelector('input[type="text"]').value = place.text;
+            div.querySelector('input[name$="_json"]').value = place.json;
+        }
+
+        function snapshotForm() {
+            return {
+                checks: Object.fromEntries([...form.querySelectorAll('input[type="checkbox"]')].map((check) => [check.name, check.checked])),
+                date: form.elements.date.value,
+                start: placeState(document.getElementById("div-autocomplete-start")),
+                destination: {
+                    choice: document.querySelector("#div-autocomplete-destination select").value,
+                    other: placeState(document.getElementById("div-autocomplete-destination-other")),
+                },
+            };
+        }
+
+        async function restoreForm(saved) {
+            for (const [name, checked] of Object.entries(saved.checks)) {
+                // Searches saved before a filter was renamed may name one that is gone
+                if (form.elements[name]) {
+                    form.elements[name].checked = checked;
+                }
+            }
+            form.elements.date.value = saved.date;
+            setPlace(document.getElementById("div-autocomplete-start"), saved.start);
+
+            const select = document.querySelector("#div-autocomplete-destination select");
+            select.value = saved.destination.choice;
+            select.dispatchEvent(new Event("change"));
+            if (saved.destination.choice === "other") {
+                const otherDiv = document.getElementById("div-autocomplete-destination-other");
+                await otherDiv.ready;
+                setPlace(otherDiv, saved.destination.other);
+            }
+        }
+
+        function saveState(changes) {
+            const state = history.state || {};
+            try {
+                history.replaceState({ ...state, search: { ...state.search, ...changes } }, "");
+            } catch (error) {
+                // e.g. the browser's size limit for history state
+                console.warn("Could not save the search", error);
+            }
+        }
+
+        const saved = history.state && history.state.search;
+        if (saved) {
+            lastSearch = saved.entries;
+            searchedForm = saved.form;
+            results.innerHTML = saved.results;
+            scroller.scrollTop = saved.scroll || 0;
+            // The form is not saved for the results shown when the page opens
+            if (saved.form) {
+                window.searchFormReady
+                    .then(() => restoreForm(saved.form))
+                    .catch((error) => console.error("Could not restore the search form", error));
+            }
+        } else {
+            // The page opens with the results of a search without filters
+            // (see the search view). Save them like any other search, so that
+            // paging works and going back here restores them.
+            lastSearch = [...new FormData(form).entries()];
+            saveState({ form: null, entries: lastSearch, results: results.innerHTML, scroll: 0 });
+        }
+
+        // Remember how far down the results were scrolled
+        let scrollTimer = null;
+        scroller.addEventListener("scroll", () => {
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(() => {
+                if (history.state && history.state.search) {
+                    saveState({ scroll: scroller.scrollTop });
+                }
+            }, 200);
+        });
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            let data;
+            const changingPage = Boolean(event.submitter && event.submitter.name === "page" && lastSearch);
+            if (changingPage) {
+                // Changing page keeps the filters of the last search,
+                // even if the form has been edited since.
+                data = new FormData();
+                for (const [key, value] of lastSearch) {
+                    data.append(key, value);
+                }
+                data.set("page", event.submitter.value);
+            } else {
+                data = new FormData(form);
+                lastSearch = [...data.entries()];
+                searchedForm = snapshotForm();
+            }
+
+            // Only the latest search is shown
+            if (controller) {
+                controller.abort();
+            }
+            controller = new AbortController();
+            results.setAttribute("aria-busy", "true");
+            results.classList.add("opacity-50");
+
+            try {
+                const response = await fetch(form.action, {
+                    method: "POST",
+                    body: data,
+                    headers: { "X-Requested-With": "XMLHttpRequest" },
+                    signal: controller.signal,
+                });
+                if (response.redirected) {
+                    // e.g. the session expired and we were sent to the login page
+                    window.location.href = response.url;
+                    return;
+                }
+                if (!response.ok) {
+                    throw new Error(`Search failed: ${response.status}`);
+                }
+                const html = await response.text();
+                results.innerHTML = html;
+                saveState({ form: searchedForm, entries: lastSearch, results: html, scroll: 0 });
+                scroller.scrollTo({ top: 0, behavior: "smooth" });
+            } catch (error) {
+                if (error.name === "AbortError") {
+                    return;
+                }
+                console.error(error);
+                results.replaceChildren(document.getElementById("search-error").content.cloneNode(true));
+            } finally {
+                results.removeAttribute("aria-busy");
+                results.classList.remove("opacity-50");
+            }
+        });
+    })();
+</script>
 
 {% endblock %}

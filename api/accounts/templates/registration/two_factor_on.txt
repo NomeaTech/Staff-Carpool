@@ -1,0 +1,8 @@
+{% load i18n %}{% autoescape off %}{% trans "Hi" %} {{ user.first_name }},
+
+{% blocktrans %}Two-step verification is now on for your LUT Kyyti account. When you log in, you'll also enter a code from your authenticator app.{% endblocktrans %}
+
+{% blocktrans %}Keep your backup codes somewhere safe: they let you log in if you lose your phone.{% endblocktrans %}
+
+{% trans "The LUT Kyyti team" %}
+{% endautoescape %}

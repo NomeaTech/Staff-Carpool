@@ -1,0 +1,115 @@
+{% extends "app.html" %}
+{% load i18n widget_tweaks %}
+
+{% block title %}{% trans "Groups" %} | LUT Kyyti{% endblock %}
+
+{% block content %}
+{% comment %}
+  The user's groups and requests to join, the other groups (to ask to join
+  them), and making a group (groups.views.group_list).
+{% endcomment %}
+<section class="h-app w-full overflow-y-auto pt-[calc(1.75rem+env(safe-area-inset-top))] lg:pt-24 pb-dock lg:pb-10">
+  <div class="max-w-3xl mx-auto px-4 lg:px-7 grid gap-5">
+
+    <section class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <h1 class="card-title text-lg">{% trans "Your groups" %}</h1>
+          <button class="btn btn-primary btn-sm" type="button" onclick="document.getElementById('new-group-modal').showModal()">
+            {% include "_icon.html" with name="plus" class="size-4" %}{% trans "New group" %}
+          </button>
+        </div>
+        <p class="text-sm text-base-content/60 mb-3">{% trans "Post rides to a group to share them only with its members, e.g. your team or the people on your route." %}</p>
+        {% if member_of or asked %}
+          <ul class="grid gap-3">
+            {% for membership in member_of %}
+              <li>
+                <a href="{% url 'group_detail' membership.group.pk %}" class="flex items-center justify-between gap-3 rounded-field border border-base-300 p-4 transition hover:border-primary/40 hover:shadow-sm">
+                  <span class="min-w-0">
+                    <span class="block font-bold truncate">{{ membership.group.name }}</span>
+                    <span class="block text-xs text-base-content/60">{% blocktrans count counter=membership.members %}{{ counter }} member{% plural %}{{ counter }} members{% endblocktrans %}</span>
+                  </span>
+                  <span class="flex items-center gap-2 shrink-0">
+                    {% if membership.is_admin %}
+                      {% if membership.waiting %}<span class="badge border-0 bg-warning/30 text-warning-content badge-sm">{% blocktrans count counter=membership.waiting %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}</span>{% endif %}
+                      <span class="badge badge-soft badge-primary badge-sm">{% trans "Admin" %}</span>
+                    {% endif %}
+                    {% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}
+                  </span>
+                </a>
+              </li>
+            {% endfor %}
+            {% for membership in asked %}
+              <li>
+                <a href="{% url 'group_detail' membership.group.pk %}" class="flex items-center justify-between gap-3 rounded-field border border-dashed border-base-300 p-4 transition hover:border-primary/40">
+                  <span class="font-bold truncate min-w-0">{{ membership.group.name }}</span>
+                  <span class="badge badge-soft badge-secondary badge-sm shrink-0">{% trans "Requested" %}</span>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="rounded-field border border-dashed border-primary/40 bg-primary/5 text-center px-4 py-8">
+            {% include "_icon.html" with name="user" class="size-8 mx-auto text-primary" %}
+            <p class="font-bold mt-2 mb-1">{% trans "You are not in any groups yet" %}</p>
+            <p class="text-sm text-base-content/60 max-w-xs mx-auto">{% trans "Ask to join one below, or make your own." %}</p>
+          </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body p-5 sm:p-6">
+        <h2 class="card-title text-lg mb-2">{% trans "Find a group" %}</h2>
+        <form method="get" class="join w-full mb-3" role="search">
+          <input id="group-search" name="q" value="{{ query }}" class="input join-item w-full" placeholder="{% trans "Group name" %}" aria-label="{% trans "Group name" %}">
+          <button class="btn join-item" type="submit">{% include "_icon.html" with name="search" class="size-4" %}<span class="sr-only">{% trans "Search" %}</span></button>
+        </form>
+        <ul class="grid gap-2">
+          {% for group in others %}
+            <li>
+              <a href="{% url 'group_detail' group.pk %}" class="flex items-center justify-between gap-3 rounded-field p-3 hover:bg-base-200">
+                <span class="min-w-0">
+                  <span class="block font-semibold truncate">{{ group.name }}</span>
+                  {% if group.description %}<span class="block text-xs text-base-content/60 line-clamp-1">{{ group.description }}</span>{% endif %}
+                </span>
+                <span class="text-xs text-base-content/60 whitespace-nowrap">{% blocktrans count counter=group.members %}{{ counter }} member{% plural %}{{ counter }} members{% endblocktrans %}</span>
+              </a>
+            </li>
+          {% empty %}
+            <li class="text-sm text-base-content/60">{% if query %}{% trans "No groups match the search." %}{% else %}{% trans "There are no other groups yet." %}{% endif %}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+
+    {% include "_page_footer.html" %}
+  </div>
+</section>
+
+<dialog id="new-group-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="new-group-title">
+  <div class="modal-box">
+    <h3 id="new-group-title" class="text-lg font-bold">{% trans "New group" %}</h3>
+    <p class="text-sm text-base-content/70 mt-1">{% trans "You will be its admin: you decide who can join, and can make other members admins." %}</p>
+    <form method="post" id="new-group-form" class="mt-2">
+      {% csrf_token %}
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">{% trans "Name" %}</legend>
+        {% render_field form.name class="input w-full" required="" %}
+        {% for error in form.name.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+      </fieldset>
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">{% trans "Description" %} <span class="font-normal text-base-content/60">{% trans "(optional)" %}</span></legend>
+        {% render_field form.description class="textarea w-full" rows="3" %}
+        <p class="label">{% trans "Who the group is for, so the right people ask to join." %}</p>
+      </fieldset>
+    </form>
+    <div class="modal-action">
+      <form method="dialog"><button class="btn">{% trans "Cancel" %}</button></form>
+      <button class="btn btn-primary" type="submit" form="new-group-form">{% trans "Make group" %}</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>{% trans "Cancel" %}</button></form>
+</dialog>
+{% if show_form %}<script>document.getElementById("new-group-modal").showModal();</script>{% endif %}
+{% endblock %}

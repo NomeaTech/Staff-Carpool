@@ -1,0 +1,242 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+{% comment %}
+  User statistics (CustomUserAdmin.stats_view, accounts/stats.py). The filters
+  above everything choose the users and the period that all of the numbers,
+  charts and the table below are for. static/js/admin-stats.js draws the
+  charts from the stats-charts JSON; each chart also has its numbers as a table.
+{% endcomment %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  /* Chart colours (validated for colour blindness against these surfaces), in
+     the admin's light and dark themes. admin-stats.js reads them from here. */
+  .viz-root {
+    --surface-1: #fcfcfb;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #6f6d68;
+    --grid: #e1e0d9;
+    --axis: #c3c2b7;
+    --border: rgba(11, 11, 11, 0.10);
+    --series-1: #2a78d6;
+    --series-2: #eb6834;
+    --status-good: #0ca30c;
+    --status-warning: #fab219;
+    --status-critical: #d03b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      --surface-1: #1a1a19;
+      --text-primary: #f0efec;
+      --text-secondary: #c3c2b7;
+      --text-muted: #9a988f;
+      --grid: #2c2c2a;
+      --axis: #383835;
+      --border: rgba(255, 255, 255, 0.10);
+      --series-1: #3987e5;
+      --series-2: #d95926;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    --surface-1: #1a1a19;
+    --text-primary: #f0efec;
+    --text-secondary: #c3c2b7;
+    --text-muted: #9a988f;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255, 255, 255, 0.10);
+    --series-1: #3987e5;
+    --series-2: #d95926;
+  }
+
+  .viz-root { color: var(--text-primary); max-width: 1400px; }
+  .viz-root h2 { background: none; color: var(--text-primary); padding: 0; margin: 0; font-size: 1rem; font-weight: 600; text-transform: none; letter-spacing: 0; }
+  .viz-sub { color: var(--text-secondary); margin: 2px 0 12px; font-size: 0.8125rem; }
+  .viz-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px; padding: 16px; min-width: 0; }
+
+  .viz-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin-bottom: 20px; }
+  .viz-filters label { display: block; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 4px; font-weight: 600; }
+  .viz-filters select, .viz-filters input { min-height: 32px; }
+  .viz-filters .errorlist { flex-basis: 100%; margin: 0; }
+  .viz-actions { display: flex; gap: 8px; align-items: center; margin-left: auto; }
+
+  .viz-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 12px; margin-bottom: 20px; }
+  .viz-tile-label { font-size: 0.8125rem; color: var(--text-secondary); }
+  .viz-tile-value { font-size: 1.75rem; font-weight: 600; margin: 4px 0 2px; line-height: 1.2; }
+  .viz-tile-note { font-size: 0.75rem; color: var(--text-muted); }
+
+  .viz-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 16px; margin-bottom: 20px; }
+  .viz-wide { grid-column: 1 / -1; }
+  .viz-canvas { position: relative; height: 260px; }
+  .viz-root details { margin-top: 8px; font-size: 0.8125rem; }
+  .viz-root summary { cursor: pointer; color: var(--text-secondary); }
+
+  .viz-table-wrap { overflow-x: auto; }
+  .viz-root table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .viz-root th, .viz-root td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--grid); white-space: nowrap; background: none; }
+  .viz-root th { color: var(--text-secondary); font-weight: 600; }
+  .viz-root td.num, .viz-root th.num { text-align: right; }
+  .viz-root th a { color: inherit; }
+  .viz-root th[aria-sort] a::after { content: " ▼"; font-size: 0.7em; }
+  .viz-root th[aria-sort="ascending"] a::after { content: " ▲"; }
+  /* Place names wrap, so that the counts stay in view */
+  .viz-root table.viz-wrap td { white-space: normal; }
+  .viz-pages { display: flex; gap: 12px; align-items: center; margin-top: 12px; color: var(--text-secondary); }
+</style>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'js/vendor/chart-4.4.1.umd.min.js' %}" defer></script>
+<script src="{% static 'js/admin-stats.js' %}?v={{ STATIC_VERSION }}" defer></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% translate "Home" %}</a>
+  &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+  &rsaquo; <a href="{% url 'admin:accounts_user_changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+  &rsaquo; {{ title }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main" class="viz-root">
+  <form method="get" class="viz-filters" aria-label="{% translate "Filters" %}">
+    {% for field in form %}
+      <div>
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+      </div>
+    {% endfor %}
+    <div><button type="submit" class="button default">{% translate "Apply" %}</button></div>
+    <div><a href="{% url 'admin:accounts_user_stats' %}">{% translate "Reset" %}</a></div>
+    <div class="viz-actions">
+      {% if metabase_url %}<a class="button" href="{{ metabase_url }}" target="_blank" rel="noopener">{% translate "Open Metabase" %}</a>{% endif %}
+      <a class="button" href="{% url 'admin:accounts_user_stats_csv' %}{% if csv_query %}?{{ csv_query }}{% endif %}">{% translate "Download CSV" %}</a>
+    </div>
+    {% if form.errors %}{{ form.non_field_errors }}{% for field in form %}{{ field.errors }}{% endfor %}{% endif %}
+  </form>
+  <p class="viz-sub">
+    {% blocktranslate with period=stats.period_label %}Counts are for {{ period }}. Users are everyone matching the filters who had joined by its end.{% endblocktranslate %}
+    {{ stats.log_label }}
+  </p>
+
+  <div class="viz-tiles">
+    {% for label, value, note in tiles %}
+      <div class="viz-card">
+        <div class="viz-tile-label">{{ label }}</div>
+        <div class="viz-tile-value">{{ value }}</div>
+        <div class="viz-tile-note">{{ note }}</div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div class="viz-grid">
+    {% for chart in charts %}
+      <section class="viz-card{% if chart.wide %} viz-wide{% endif %}" aria-labelledby="chart-{{ chart.id }}-title">
+        <h2 id="chart-{{ chart.id }}-title">{{ chart.title }}</h2>
+        <p class="viz-sub">{{ chart.subtitle }}</p>
+        <div class="viz-canvas"{% if chart.height %} style="height: {{ chart.height }}px"{% endif %}>
+          <canvas data-chart="{{ chart.id }}" role="img" aria-label="{{ chart.title }}: {{ chart.subtitle }}"></canvas>
+        </div>
+        <details>
+          <summary>{% translate "Show as table" %}</summary>
+          <div class="viz-table-wrap">
+            <table>
+              <thead><tr><th></th>{% for series in chart.series %}<th class="num">{{ series.name }}{% if chart.percent %} (%){% endif %}</th>{% endfor %}</tr></thead>
+              <tbody>
+                {% for row in chart.rows %}
+                  <tr>{% for cell in row %}{% if forloop.first %}<td>{{ cell }}</td>{% else %}<td class="num">{{ cell }}</td>{% endif %}{% endfor %}</tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </section>
+    {% endfor %}
+
+    <section class="viz-card" aria-labelledby="routes-title">
+      <h2 id="routes-title">{% translate "Most common routes" %}</h2>
+      <p class="viz-sub">{% translate "Rides posted in the period, by start and destination" %}</p>
+      <div class="viz-table-wrap">
+        <table class="viz-wrap">
+          <thead><tr><th>{% translate "From" %}</th><th>{% translate "To" %}</th><th class="num">{% translate "Rides" %}</th></tr></thead>
+          <tbody>
+            {% for start, destination, count in routes %}
+              <tr><td>{{ start|default:"–" }}</td><td>{{ destination|default:"–" }}</td><td class="num">{{ count }}</td></tr>
+            {% empty %}
+              <tr><td colspan="3">{% translate "No rides were posted in the period." %}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="viz-card" aria-labelledby="retention-title">
+      <h2 id="retention-title">{% translate "Retention" %}</h2>
+      <p class="viz-sub">{% translate "Users by the month they joined, and the share of them who used the app 1, 2, 3, 6 and 12 months later (30-day months). Only users who joined after the activity log started." %}</p>
+      <div class="viz-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>{% translate "Joined" %}</th><th class="num">{% translate "Users" %}</th>
+              {% for month in retention_months %}<th class="num">{% blocktranslate count counter=month %}Month {{ counter }}{% plural %}Month {{ counter }}{% endblocktranslate %}</th>{% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for month, users, cells in retention %}
+              <tr><td>{{ month }}</td><td class="num">{{ users }}</td>{% for cell in cells %}<td class="num">{{ cell|default:"–" }}</td>{% endfor %}</tr>
+            {% empty %}
+              <tr><td colspan="{{ retention_months|length|add:2 }}">{% translate "No users have joined since the activity log started." %}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <section class="viz-card" aria-labelledby="users-title">
+    <h2 id="users-title">{% translate "Users" %}</h2>
+    <p class="viz-sub">{% blocktranslate count counter=page.paginator.count %}{{ counter }} user. Counts are for the period; the CSV has every column.{% plural %}{{ counter }} users. Counts are for the period; the CSV has every column.{% endblocktranslate %}</p>
+    <div class="viz-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{% translate "Name" %}</th>
+            {% for column in columns %}
+              <th{% if forloop.counter > 3 %} class="num"{% endif %}{% if column.sorted %} aria-sort="{% if column.sorted == "asc" %}ascending{% else %}descending{% endif %}"{% endif %}>
+                <a href="?{{ column.query }}">{{ column.label }}</a>
+              </th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+            <tr>
+              <td><a href="{% url 'admin:accounts_user_change' row.user.pk %}">{{ row.user.first_name }} {{ row.user.last_name }}</a></td>
+              <td>{{ row.user.email }}</td>
+              <td>{{ row.user.date_joined|date:"SHORT_DATE_FORMAT" }}</td>
+              <td>{{ row.user.last_login|date:"SHORT_DATE_FORMAT"|default:"–" }}</td>
+              {% for cell in row.cells %}<td class="num">{{ cell }}</td>{% endfor %}
+            </tr>
+          {% empty %}
+            <tr><td colspan="{{ columns|length|add:1 }}">{% translate "No users match the filters." %}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if page.paginator.num_pages > 1 %}
+      <div class="viz-pages">
+        {% if previous_query %}<a href="?{{ previous_query }}">‹ {% translate "Previous" %}</a>{% endif %}
+        <span>{% blocktranslate with number=page.number total=page.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktranslate %}</span>
+        {% if next_query %}<a href="?{{ next_query }}">{% translate "Next" %} ›</a>{% endif %}
+      </div>
+    {% endif %}
+  </section>
+
+  {{ charts|json_script:"stats-charts" }}
+</div>
+{% endblock %}

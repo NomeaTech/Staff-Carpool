@@ -1,0 +1,20 @@
+{% load i18n %}{% comment %}
+  The bell's menu (notifications.views.menu), fetched when it opens.
+{% endcomment %}
+<div class="flex items-center justify-between gap-2 px-2 pt-1 pb-2">
+  <h2 class="font-bold">{% trans "Notifications" %}</h2>
+  {% if unread_count %}
+  <form method="post" action="{% url 'notifications_mark_all_read' %}" data-mark-all-read>
+    {% csrf_token %}
+    <button class="btn btn-ghost btn-xs text-primary" type="submit">{% trans "Mark all as read" %}</button>
+  </form>
+  {% endif %}
+</div>
+{% if notifications %}
+  <ul class="grid gap-1 max-h-96 overflow-y-auto">
+    {% for notification in notifications %}{% include "notifications/_item.html" %}{% endfor %}
+  </ul>
+{% else %}
+  <p class="text-sm text-base-content/60 px-2 py-6 text-center">{% trans "No notifications yet. You'll be notified here about your ride requests and rides." %}</p>
+{% endif %}
+<a href="{% url 'notifications' %}" class="btn btn-ghost btn-sm w-full mt-1 rounded-full">{% trans "See all notifications" %}</a>

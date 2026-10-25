@@ -1,0 +1,50 @@
+{% extends "registration/account_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Your backup codes" %} | LUT Kyyti{% endblock %}
+{% block card_title %}{% trans "Save your backup codes" %}{% endblock %}
+{% block card_body %}
+{% if setup %}
+  {% include "registration/_two_factor_steps.html" with step=3 %}
+  <div role="status" class="alert alert-success alert-soft text-sm">
+    {% include "_icon.html" with name="check" class="size-5" %}
+    <span>{% trans "Two-step verification is on." %}</span>
+  </div>
+{% else %}
+  <div role="status" class="alert alert-info alert-soft text-sm">
+    {% include "_icon.html" with name="check" class="size-5" %}
+    <span>{% trans "You have new backup codes. Your old ones no longer work." %}</span>
+  </div>
+{% endif %}
+<p class="text-sm">{% trans "If you lose your phone, log in with one of these codes instead. Each code works once. Keep them somewhere safe, such as your password manager, and don't share them." %}</p>
+
+<ul class="grid grid-cols-2 gap-2 rounded-box border border-base-300 bg-base-200 p-4 font-mono text-center tracking-wider" id="backup-codes">
+  {% for code in codes %}<li>{{ code }}</li>{% endfor %}
+</ul>
+
+<div class="grid grid-cols-2 gap-2">
+  <button type="button" class="btn btn-outline btn-primary" data-copy-list="#backup-codes">{% trans "Copy" %}</button>
+  <button type="button" class="btn btn-outline btn-primary" id="download-codes">{% trans "Download" %}</button>
+</div>
+
+<div role="alert" class="alert alert-warning text-sm">
+  {% include "_icon.html" with name="alert" class="size-5" %}
+  <span>{% trans "This is the only time these codes are shown. You can make new ones on your profile page." %}</span>
+</div>
+
+<a href="{% url 'account' %}" class="btn btn-primary w-full">{% trans "I've saved my codes" %}</a>
+
+{% include "registration/_copy.html" %}
+<script>
+  document.getElementById("download-codes").addEventListener("click", function () {
+    const codes = Array.from(document.querySelectorAll("#backup-codes li"), li => li.textContent);
+    {% trans "LUT Kyyti backup codes" as title %}
+    const text = "{{ title|escapejs }} ({{ user.email|escapejs }})\n\n" + codes.join("\n") + "\n";
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(new Blob([text], { type: "text/plain" }));
+    link.download = "lut-kyyti-backup-codes.txt";
+    link.click();
+    URL.revokeObjectURL(link.href);
+  });
+</script>
+{% endblock %}

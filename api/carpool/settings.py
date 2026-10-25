@@ -24,22 +24,73 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-b5#5d$r5xiwkx@dn$crcifariwfxt)q$$&qb3it$$+30u6vn_6'
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+TURNSTILE_SITEKEY = "0x4AAAAAAE2oNzI8rEvw5G_l"
+
+TURNSTILE_SECRET = os.getenv("TURNSTILE_SECRET")
+
+TURNSTILE_DEFAULT_CONFIG = {
+    # 'onload': 'name_of_js_function',
+    # 'render': 'explicit',
+    'theme': 'light',  # do not use data- prefix
+    # 'size': 'compact',  # do not use data- prefix
+}
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG")
+# Only "true" (or 1, yes, on) turns it on: os.getenv gives a string, and any
+# non-empty string, "False" too, would count as on.
+DEBUG = os.getenv("DEBUG", "").strip().lower() in ("1", "true", "yes", "on")
 
-ALLOWED_HOSTS = ['192.168.1.170', 'localhost', '127.0.0.1', 'https://ride.fentorweb.hu']
+ALLOWED_HOSTS = ['localhost', 'kyyti.net']
 
-CSRF_TRUSTED_ORIGINS = ['https://ride.fentorweb.hu', 'https://localhost']
+# Public address of the site, used for links in emails (e.g. password reset).
+# Requests reach Django through a proxy on localhost, so the address cannot be
+# taken from the request. Leave unset in development to use the request's.
+SITE_URL = os.getenv("SITE_URL", "").rstrip("/")
+# Metabase (scripts/metabase), linked from the admin's user statistics when set
+METABASE_URL = os.getenv("METABASE_URL", "").rstrip("/")
+# After how many days the activity log's events (activity/models.py) are
+# kept without their user and ride. The app does it itself, once a day.
+ACTIVITY_ANONYMISE_DAYS = int(os.getenv("ACTIVITY_ANONYMISE_DAYS", 730))
+# A group admin who has not logged in or used the app for this many days no
+# longer counts as one who can answer requests to join, and the group gets
+# another admin (groups/services.py ensure_admin)
+GROUP_ADMIN_AWAY_DAYS = int(os.getenv("GROUP_ADMIN_AWAY_DAYS", 180))
+
+# The development server's address is only trusted in development
+DEV_ORIGINS = ['http://localhost:8120'] if DEBUG else []
+
+CSRF_TRUSTED_ORIGINS = ['https://kyyti.net', *DEV_ORIGINS]
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT")
+
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SECURE = True
+
+# Browsers only use HTTPS for the site once they have seen it. Not for
+# subdomains, which may be served by others (e.g. Metabase's).
+SECURE_HSTS_SECONDS = 0 if DEBUG else 365 * 24 * 60 * 60
 
 CSRF_COOKIE_DOMAIN = os.getenv("CSRF_COOKIE_DOMAIN")
 
-CORS_REPLACE_HTTPS_REFERER = True
+# A form whose security token has expired gets the site's error page (carpool/errors.py)
+CSRF_FAILURE_VIEW = "carpool.errors.csrf_failure"
+
+# CORS_REPLACE_HTTPS_REFERER = True
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = False
+
+CORS_ALLOWED_ORIGINS = [
+    'https://kyyti.net',
+    *DEV_ORIGINS,
+]
+
 
 # Application definition
 
@@ -50,31 +101,54 @@ INSTALLED_APPS = [
     'tailwind',
     'pwa',
     'accounts',
+    'notifications',
+    'landing',
+    'rides',
+    'activity',
+    'groups',
     'test_app.apps.TestAppConfig',
     # 3rd party
+    'corsheaders',
     'widget_tweaks',
     'django_extensions',
     'crispy_forms',
     'crispy_tailwind',
     'rosetta',
+    'django_filters',
+    "turnstile",
+    # Two-step verification (accounts/two_factor.py)
+    "django_otp",
+    "django_otp.plugins.otp_totp",
+    "django_otp.plugins.otp_static",
     # 1st party
-    'django.contrib.admin',
+    # The admin needs two-step verification (carpool/admin_site.py)
+    'carpool.apps.AdminConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    # Leaves out old profile photos in static/ (carpool/apps.py)
+    'carpool.apps.StaticFilesConfig',
+    'django.contrib.gis',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # Serves the collected static files (STATIC_ROOT), with their hashed
+    # names, when DEBUG is off and Django's own static serving is too
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # request.user.is_verified(): logged in with two-step verification
+    'django_otp.middleware.OTPMiddleware',
+    # Records each logged-in user's first visit of the day (activity/)
+    'activity.middleware.DailyActivityMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'carpool.urls'
@@ -89,6 +163,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'notifications.context_processors.notifications',
+                'notifications.context_processors.static_version',
             ],
         },
     },
@@ -97,17 +173,39 @@ TEMPLATES = [
 WSGI_APPLICATION = 'carpool.wsgi.application'
 
 
+# Cache
+# Template fragments ({% cache ... using="templates" %}) are not cached while
+# DEBUG is on, so template edits show up immediately during development.
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    },
+    "templates": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache" if DEBUG
+            else "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "templates",
+    },
+}
+
+# Sessions are read from the cache, and only fetched from the database on a miss
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+
+
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
         "NAME": "campus_ride",
         "USER": "postgres",
-        "PASSWORD": "1234",
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
         "HOST": "127.0.0.1",
         "PORT": "5432",
+        # Keep connections open between requests instead of reconnecting each time
+        "CONN_MAX_AGE": 60,
+        "CONN_HEALTH_CHECKS": True,
     }
 }
 
@@ -129,13 +227,17 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    # A number, a lower case and an upper case letter, as the password fields
+    # check in the browser
+    {
+        'NAME': 'accounts.validators.CharacterMixValidator',
+    },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 TIME_ZONE = 'Europe/Helsinki'
 USE_I18N = True
 USER_L10N = True
@@ -151,17 +253,79 @@ LOCALE_PATHS = [
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+# Added to the URLs of the app's scripts (?v=...), so that a new release has
+# new URLs: the service worker keeps static files (static/js/serviceworker.js),
+# and with DEBUG on, they keep their names when they change. It is the
+# version bump-my-version keeps in pyproject.toml (git ship bumps it).
+def _app_version():
+    import tomllib
+    try:
+        with open(BASE_DIR / "pyproject.toml", "rb") as file:
+            return tomllib.load(file)["tool"]["bumpversion"]["current_version"]
+    except (OSError, KeyError, tomllib.TOMLDecodeError):
+        return "0"
+
+STATIC_VERSION = _app_version()
 STATIC_ROOT = os.getenv("STATIC_ROOT")
+
+# collectstatic adds a hash of each file's contents to its name (funcs.js ->
+# funcs.3f2a9c1b.js), and {% static %} links to that name. A changed file
+# therefore gets a new URL, so browsers never use an outdated cached copy.
+# (With DEBUG on, {% static %} links to the plain names.)
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+    },
+}
+USER_IMAGES_URL = '/user_images/'
+USER_IMAGES_ROOT = os.path.join(STATIC_ROOT, '/images/user_images/')
 
 TAILWIND_APP_NAME = "theme"
 
+LOGIN_URL = "/app/accounts/login"
 LOGIN_REDIRECT_URL = "home"
-LOGOUT_REDIRECT_URL = "index"
+LOGOUT_REDIRECT_URL = "landing"
 
 AUTH_USER_MODEL = "accounts.User"
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+AUTHENTICATION_BACKENDS = ['accounts.backends.EmailBackend']
+
+# The admin does not show the keys of users' authenticator apps
+OTP_ADMIN_HIDE_SENSITIVE_DATA = True
+
+# Translating (/rosetta/) needs two-step verification, as the admin does
+ROSETTA_ACCESS_CONTROL_FUNCTION = "carpool.admin_site.can_translate"
+
+# Email is sent through Resend's SMTP server, whose password is the API key.
+# Without a key (e.g. in development) emails are printed to the console.
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+if RESEND_API_KEY:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = "smtp.resend.com"
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = "resend"
+    EMAIL_HOST_PASSWORD = RESEND_API_KEY
+    EMAIL_TIMEOUT = 10
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "LUT Kyyti <noreply@kyyti.net>")
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+# Where messages from the contact page are sent
+CONTACT_EMAIL = "jubeen.sharbaf@lut.fi"
+
+# PWA push notifications (notifications/push.py). Generate the keys with
+# "python manage.py generate_vapid_keys" and put them in .env. Without them,
+# push notifications are turned off (the app still shows notifications).
+VAPID_PUBLIC_KEY = os.getenv("VAPID_PUBLIC_KEY", "")
+VAPID_PRIVATE_KEY = os.getenv("VAPID_PRIVATE_KEY", "")
+# Who the push services can contact about the notifications sent
+VAPID_SUBJECT = os.getenv("VAPID_SUBJECT", f"mailto:{CONTACT_EMAIL}")
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 CRISPY_TEMPLATE_PACK = "tailwind"
@@ -173,32 +337,78 @@ STATICFILES_DIRS = [
 
 PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js', 'serviceworker.js')
 
-PWA_APP_NAME = 'Campus Ride'
+PWA_APP_NAME = 'LUT Kyyti'
 PWA_APP_DESCRIPTION = "Ride sharing app for LUT staff"
 PWA_APP_THEME_COLOR = "#FFFFFF"
-PWA_APP_BACKGROUND_COLOR = '#F8F8F8'
+# The launch screen's colour: the app's page background (base-200 of the light
+# theme in theme/static_src/src/styles.css). home/templates/_splash.html uses it too.
+PWA_APP_BACKGROUND_COLOR = '#FCFBEC'
 PWA_APP_DISPLAY = 'standalone'
-PWA_APP_SCOPE = '/'
-PWA_APP_ORIENTATION = 'any'
-PWA_APP_START_URL = '/'
+PWA_APP_SCOPE = '/app/'
+PWA_APP_ORIENTATION = 'portrait'
+PWA_APP_START_URL = '/app/home'
 PWA_APP_STATUS_BAR_COLOR = 'default'
+# LUT's icons, from https://www.lut.fi (the largest it offers is 384x384).
+# The largest comes last: django-pwa also uses the last one as the favicon.
 PWA_APP_ICONS = [
     {
-        'src': '/static/images/icons/icon.png',
-        'sizes': '160x160'
-    }
+        'src': '/static/images/icons/android-chrome-192x192.png',
+        'sizes': '192x192',
+        'type': 'image/png',
+    },
+    {
+        'src': '/static/images/icons/android-chrome-384x384.png',
+        'sizes': '384x384',
+        'type': 'image/png',
+    },
 ]
 PWA_APP_ICONS_APPLE = [
     {
-        'src': '/static/images/icons/icon.png',
-        'sizes': '160x160'
+        'src': '/static/images/icons/apple-touch-icon.png',
+        'sizes': '180x180',
     }
 ]
+# iOS launch images: iOS shows the one whose media query matches the screen
+# exactly, so each iPhone and iPad screen needs its own. Screens are (width,
+# height, pixel ratio), in CSS px in portrait. The images are the LUT logo,
+# PWA_SPLASH_LOGO_WIDTH CSS px wide, in the middle; draw them anew with
+#   python manage.py make_splash
+# after changing these. home/templates/_splash.html draws the logo at the same
+# size and place, and animates it away when the app has loaded.
+PWA_SPLASH_LOGO_WIDTH = 128
+PWA_SPLASH_SCREENS = [
+    (320, 568, 2),    # iPhone SE (1st)
+    (375, 667, 2),    # iPhone 6-8, SE (2nd, 3rd)
+    (414, 736, 3),    # iPhone 6-8 Plus
+    (375, 812, 3),    # iPhone X, XS, 11 Pro, 12 mini, 13 mini
+    (414, 896, 2),    # iPhone XR, 11
+    (414, 896, 3),    # iPhone XS Max, 11 Pro Max
+    (390, 844, 3),    # iPhone 12, 13, 14, 16e
+    (428, 926, 3),    # iPhone 12, 13 Pro Max, 14 Plus
+    (393, 852, 3),    # iPhone 14 Pro, 15, 15 Pro, 16
+    (430, 932, 3),    # iPhone 14 Pro Max, 15 Plus, 15 Pro Max, 16 Plus
+    (402, 874, 3),    # iPhone 16 Pro, 17, 17 Pro
+    (440, 956, 3),    # iPhone 16 Pro Max, 17 Pro Max
+    (420, 912, 3),    # iPhone Air
+    (744, 1133, 2),   # iPad mini (6th, 7th)
+    (768, 1024, 2),   # iPad 9.7", iPad mini (5th)
+    (810, 1080, 2),   # iPad 10.2"
+    (820, 1180, 2),   # iPad Air (4th, 5th), iPad (10th, 11th)
+    (834, 1112, 2),   # iPad Air (3rd), iPad Pro 10.5"
+    (834, 1194, 2),   # iPad Pro 11"
+    (834, 1210, 2),   # iPad Pro 11" (M4)
+    (1024, 1366, 2),  # iPad Pro 12.9"
+    (1032, 1376, 2),  # iPad Pro 13" (M4)
+]
+# ?v=: iOS and browsers keep launch images they have loaded, so a new release
+# gives them new URLs
 PWA_APP_SPLASH_SCREEN = [
     {
-        'src': '/static/images/icons/splash-640x1136.png',
-        'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
+        'src': f'/static/images/splash/splash-{width * ratio}x{height * ratio}.png?v={STATIC_VERSION}',
+        'media': f'(device-width: {width}px) and (device-height: {height}px) '
+                 f'and (-webkit-device-pixel-ratio: {ratio}) and (orientation: portrait)',
     }
+    for width, height, ratio in PWA_SPLASH_SCREENS
 ]
 PWA_APP_DIR = 'ltr'
 PWA_APP_LANG = 'en-US'

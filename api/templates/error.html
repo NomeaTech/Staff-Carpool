@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% comment %}
+  The error pages (carpool/errors.py): the status code, what went wrong, and
+  the way back.
+{% endcomment %}
+
+{% block title %}{{ status }} {{ heading }} | LUT Kyyti{% endblock %}
+
+{% block content %}
+<div class="card bg-base-100 shadow-sm">
+    <div class="card-body items-center text-center gap-3 py-10">
+        {% include "_icon.html" with name=icon class="size-10 text-primary" %}
+        <p class="text-7xl font-bold tracking-tight tabular-nums text-primary">{{ status }}</p>
+        <h1 class="card-title text-2xl">{{ heading }}</h1>
+        <p class="text-base-content/70">{{ message }}</p>
+        <div class="flex flex-wrap justify-center gap-2 mt-3">
+            <button type="button" class="btn btn-outline rounded-full" onclick="history.back()">{% trans "Go back" %}</button>
+            {% if action %}
+                <a href="{{ action.0 }}" class="btn btn-primary rounded-full">{{ action.1 }}</a>
+            {% else %}
+                <a href="{% url 'landing' %}" class="btn btn-primary rounded-full">{% trans "Home page" %}</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

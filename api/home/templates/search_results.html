@@ -1,0 +1,96 @@
+{% load i18n %}
+{% load static privacy %}
+{% comment %}
+  Search results, rendered inside search.html and returned on its own for
+  asynchronous searches. They are the cells of #search-results' grid; headings,
+  messages and the page buttons span all of its columns.
+{% endcomment %}
+{% for error in form.errors %}
+    <p class="col-span-full text-center text-error">{{ error }}</p>
+{% endfor %}
+
+{% if searched %}
+    {% for ride in page %}
+        {% comment %}
+          Rides that only pass by on the way come after the matching rides
+          (see search_rides), under their own heading on every page.
+        {% endcomment %}
+        {% ifchanged ride.on_the_way %}{% if ride.on_the_way %}
+        <div class="col-span-full mt-4">
+            <h2 class="text-lg font-bold mb-2">{% trans "Rides passing by on the way" %}</h2>
+            <div role="alert" class="alert alert-info alert-soft items-start text-sm">
+                {% include "_icon.html" with name="alert" class="size-5" %}
+                <span>{% trans "These rides don't start or end where you searched, but their route passes nearby. Ask the driver whether they can pick you up or drop you off on the way." %}</span>
+            </div>
+        </div>
+        {% endif %}{% endifchanged %}
+        <a href="{% url 'ride_detail' ride.id %}" class="card bg-base-100 border shadow-sm transition duration-200 ease-out hover:scale-102 hover:shadow-lg {% if ride.on_the_way %}border-dashed border-info{% else %}border-base-300{% endif %}">
+            <div class="card-body p-5 gap-4">
+                <div class="@container grow flex items-start justify-between gap-3">
+                    <div class="grid {{ ride.icons.grid_class }} gap-1.5">
+                        {# Which icons, and how big: rides/transport.py icon_layout #}
+                        {% for option in ride.icons.options %}
+                            <span class="grid place-items-center {{ ride.icons.box_class }} rounded-field {{ option.bg_class }} {{ option.content_class }}" role="img" aria-label="{{ option.label }}" title="{{ option.label }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="{{ option.viewbox }}" fill="currentColor" class="{{ ride.icons.icon_class }} overflow-visible" aria-hidden="true">{{ option.icon }}</svg>
+                            </span>
+                        {% endfor %}
+                    </div>
+                    {% if ride.on_the_way %}
+                        <span class="badge badge-soft badge-info badge-sm whitespace-nowrap">{% trans "On the way" %}</span>
+                    {% elif ride.driver_id == user.id %}
+                        <span class="badge badge-soft badge-primary badge-sm whitespace-nowrap">{% trans "Your ride" %}</span>
+                    {% endif %}
+                </div>
+
+                {# The start and destination, joined like the route on the ride's page; names too long for the card end in an ellipsis #}
+                <div class="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 text-lg font-bold leading-snug">
+                    <span class="size-3 rounded-full border-3 border-primary" aria-hidden="true"></span>
+                    <p class="truncate" title="{{ ride.start_json.displayName }}">{{ ride.start_json.displayName }}<span class="sr-only"> {{ ride.sign }}</span></p>
+                    <span class="justify-self-center w-0.5 h-3 bg-base-300" aria-hidden="true"></span>
+                    <span></span>
+                    <span class="size-3 rounded-full bg-primary" aria-hidden="true"></span>
+                    <p class="truncate" title="{{ ride.destination_json.displayName }}">{{ ride.destination_json.displayName }}</p>
+                </div>
+
+                <div class="flex flex-wrap gap-x-3 gap-y-1 text-xs text-base-content/60">
+                    {% include "_ride_when.html" %}
+                    {% if not ride.one_way %}<span>⇄ {% trans "Return trip" %}</span>{% endif %}
+                    {% with seats=ride.seats_left %}{% if seats is not None %}<span>{% blocktrans count counter=seats %}{{ counter }} seat{% plural %}{{ counter }} seats{% endblocktrans %}</span>{% endif %}{% endwith %}
+                </div>
+
+                <div class="flex items-center justify-between gap-2 pt-3 border-t border-base-200 text-xs">
+                    <span class="flex items-center gap-2 min-w-0">
+                        {% avatar ride.driver "w-7" "text-[0.6rem]" %}
+                        <span class="truncate font-semibold">{{ ride.driver|display_name }}</span>
+                    </span>
+                    <span class="font-semibold text-primary whitespace-nowrap">{% trans "Details" %} →</span>
+                </div>
+            </div>
+        </a>
+    {% empty %}
+    <div class="col-span-full rounded-box border border-dashed border-primary/40 bg-primary/5 text-center px-4 py-10">
+        {% include "_icon.html" with name="road" class="size-8 mx-auto text-primary" %}
+        <p class="font-bold mt-2">{% trans "No results found" %}</p>
+    </div>
+    {% endfor %}
+
+    {% if page.paginator.num_pages > 1 %}
+    {% comment %}
+      The buttons submit the search form, so paging also works without JavaScript.
+      They skip validation, as paging keeps the filters of the last search.
+    {% endcomment %}
+    <div class="col-span-full flex justify-center pt-2">
+        <div class="join">
+            <button class="join-item btn btn-sm" type="submit" form="search-form" name="page" formnovalidate
+                value="{% if page.has_previous %}{{ page.previous_page_number }}{% endif %}"
+                {% if not page.has_previous %}disabled{% endif %} aria-label="{% trans "Previous page" %}">«</button>
+            <span class="join-item btn btn-sm pointer-events-none">
+                {% blocktrans with number=page.number total=page.paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}
+            </span>
+            <button class="join-item btn btn-sm" type="submit" form="search-form" name="page" formnovalidate
+                value="{% if page.has_next %}{{ page.next_page_number }}{% endif %}"
+                {% if not page.has_next %}disabled{% endif %} aria-label="{% trans "Next page" %}">»</button>
+        </div>
+    </div>
+    {% endif %}
+{% endif %}

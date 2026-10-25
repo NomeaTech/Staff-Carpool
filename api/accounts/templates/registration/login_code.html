@@ -1,0 +1,32 @@
+{% extends "registration/account_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Two-step verification" %} | LUT Kyyti{% endblock %}
+{% block card_title %}{% trans "Two-step verification" %}{% endblock %}
+{% block card_body %}
+<div class="flex gap-3 items-start">
+  <span class="rounded-full bg-primary/10 text-primary p-2.5">{% include "_icon.html" with name="shield" class="size-6" %}</span>
+  <p class="text-sm">
+    {% if backup %}{% trans "Enter one of the backup codes you saved when you turned on two-step verification. Each code works once." %}
+    {% else %}{% trans "Open your authenticator app and enter the 6-digit code it shows for LUT Kyyti." %}{% endif %}
+  </p>
+</div>
+<form method="post" class="grid gap-3">
+  {% csrf_token %}
+  {% if backup %}{% trans "Backup code" as label %}{% else %}{% trans "Code from your app" as label %}{% endif %}
+  {% include "registration/_code_input.html" with field=form.code label=label backup=backup %}
+  <button type="submit" class="btn btn-primary w-full">{% trans "Log in" %}</button>
+</form>
+<div class="divider my-0"></div>
+<div class="grid gap-1">
+  {% if backup %}
+    <a href="{% url 'login_code' %}" class="btn btn-ghost btn-sm w-full">{% trans "Use a code from my app instead" %}</a>
+  {% else %}
+    <a href="?backup=1" class="btn btn-ghost btn-sm w-full">{% trans "Lost your phone? Use a backup code" %}</a>
+  {% endif %}
+  <form method="post" action="{% url 'cancel_login_code' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-ghost btn-sm w-full">{% trans "Cancel and go back to login" %}</button>
+  </form>
+</div>
+{% endblock %}

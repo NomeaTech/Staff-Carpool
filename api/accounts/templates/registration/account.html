@@ -1,0 +1,556 @@
+{% extends "app.html" %}
+{% load i18n privacy static widget_tweaks %}
+
+{% block title %}{% trans "Profile & settings" %} | LUT Kyyti{% endblock %}
+{# The photo cropper does not work in a copy of the page, so going back reloads it #}
+{% block head %}<meta name="turbo-cache-control" content="no-cache">{% endblock %}
+
+{% block content %}
+<section class="h-app w-full overflow-y-auto pt-[calc(1.75rem+env(safe-area-inset-top))] lg:pt-24 pb-dock lg:pb-10">
+  <div class="max-w-6xl mx-auto px-4 lg:px-7">
+    <!-- <header class="mb-7">
+      <p class="text-xs font-bold uppercase tracking-widest text-primary mb-2">{% trans "Your account" %}</p>
+      <h1 class="text-3xl font-bold tracking-tight mb-1">{% trans "Profile & settings" %}</h1>
+      <p class="text-base-content/60">{% trans "Manage your personal information, privacy and account preferences." %}</p>
+    </header> -->
+
+    <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(285px,1fr)] gap-5 items-start">
+      <div class="grid gap-5">
+
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5 sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <div class="flex items-center gap-4">
+                {% avatar user "w-16" "text-xl" %}
+                <div>
+                  <strong class="block text-lg">{{ user.first_name }} {{ user.last_name }}</strong>
+                  <span class="text-xs text-base-content/60">{% trans "Verified LUT/LAB member" %}</span>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <form method="post" enctype="multipart/form-data" id="photo-form">
+                  {% csrf_token %}
+                  <input type="hidden" name="form" value="photo">
+                  {{ photo_form.crop_x }}{{ photo_form.crop_y }}{{ photo_form.crop_size }}
+                  <label class="btn btn-outline btn-primary btn-sm">
+                    {% if user.pfp %}{% trans "Change photo" %}{% else %}{% trans "Add photo" %}{% endif %}
+                    <input type="file" name="photo-photo" accept="image/*" class="hidden" id="photo-input"
+                      data-max-size="{{ photo_max_upload }}" data-too-large="{{ photo_too_large }}">
+                  </label>
+                </form>
+                {% if user.pfp %}
+                <form method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="form" value="remove_photo">
+                  <button class="btn btn-ghost btn-sm" type="submit">{% trans "Remove" %}</button>
+                </form>
+                {% endif %}
+              </div>
+            </div>
+            <div id="photo-errors" aria-live="polite">
+              {% for error in photo_form.photo.errors %}<p class="text-error text-sm mt-2">{{ error }}</p>{% endfor %}
+            </div>
+
+            <div class="divider my-2"></div>
+
+            <h2 class="card-title text-lg mb-2">{% trans "Personal information" %}</h2>
+            <form method="post" class="grid gap-1">
+              {% csrf_token %}
+              <input type="hidden" name="form" value="profile">
+              <div class="grid sm:grid-cols-2 gap-x-4">
+                <fieldset class="fieldset">
+                  <legend class="fieldset-legend">{% trans "First name" %}</legend>
+                  {% render_field profile_form.first_name class="input w-full" autocomplete="given-name" required="" %}
+                  {% for error in profile_form.first_name.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+                </fieldset>
+                <fieldset class="fieldset">
+                  <legend class="fieldset-legend">{% trans "Last name" %}</legend>
+                  {% render_field profile_form.last_name class="input w-full" autocomplete="family-name" required="" %}
+                  {% for error in profile_form.last_name.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+                </fieldset>
+              </div>
+              <fieldset class="fieldset">
+                <legend class="fieldset-legend">{% trans "University email" %}</legend>
+                <div class="join w-full">
+                  <input class="input join-item w-full" type="email" value="{{ user.email }}" readonly aria-readonly="true">
+                  <button class="btn btn-outline btn-primary join-item" type="button" onclick="document.getElementById('email-modal').showModal()">{% trans "Change" %}</button>
+                </div>
+                {% if user.pending_email %}
+                  {# The buttons belong to forms after this one, as forms cannot be nested #}
+                  <div role="status" class="rounded-field border border-warning/50 bg-warning/15 p-3 mt-1 grid gap-2 text-sm">
+                    <p>{% blocktrans with new=user.pending_email %}Waiting for you to confirm <strong>{{ new }}</strong>. Open the link we sent there. Until then, keep using your current address.{% endblocktrans %}</p>
+                    <div class="flex flex-wrap gap-2">
+                      <button class="btn btn-xs btn-outline" type="submit" form="email-resend-form">{% trans "Send the link again" %}</button>
+                      <button class="btn btn-xs btn-ghost" type="submit" form="email-cancel-form">{% trans "Cancel change" %}</button>
+                    </div>
+                  </div>
+                {% else %}
+                  <p class="label whitespace-normal">{% trans "You log in with this address. Changing it needs confirming from the new inbox." %}</p>
+                {% endif %}
+              </fieldset>
+              <fieldset class="fieldset">
+                <legend class="fieldset-legend">{% trans "Phone number (optional)" %}</legend>
+                {% render_field profile_form.phone class="input w-full" type="tel" placeholder="040 123 4567" autocomplete="tel" inputmode="tel" pattern="[+0-9 \(\)\-]{5,30}" %}
+                {% for error in profile_form.phone.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+                <p class="label whitespace-normal">{% trans "A Finnish number, or include the country code (e.g. +46) for numbers from elsewhere. Only shared with people on your rides, and only if you allow it under Privacy." %}</p>
+              </fieldset>
+              <div><button class="btn btn-primary mt-3" type="submit">{% trans "Save profile changes" %}</button></div>
+            </form>
+            {% if user.pending_email %}
+            <form id="email-resend-form" method="post" hidden>{% csrf_token %}<input type="hidden" name="form" value="email_resend"></form>
+            <form id="email-cancel-form" method="post" hidden>{% csrf_token %}<input type="hidden" name="form" value="email_cancel"></form>
+            {% endif %}
+          </div>
+        </section>
+
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5 sm:p-6">
+            <h2 class="card-title text-lg mb-2">{% trans "Security" %}</h2>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <strong class="block">{% trans "Password" %}</strong>
+                <span class="text-xs text-base-content/60">{% trans "Update your account password" %}</span>
+              </div>
+              <a class="btn btn-outline btn-primary btn-sm" href="{% url 'password_change' %}">{% trans "Change password" %}</a>
+            </div>
+            <div class="divider my-1"></div>
+            <div id="two-step" class="flex flex-wrap items-center justify-between gap-3 scroll-mt-24">
+              <div>
+                <strong class="flex items-center gap-2">
+                  {% trans "Two-step verification" %}
+                  {% if two_factor_on %}<span class="badge badge-success badge-sm">{% trans "On" %}</span>
+                  {% else %}<span class="badge badge-ghost badge-sm">{% trans "Off" %}</span>{% endif %}
+                </strong>
+                <span class="text-xs text-base-content/60">
+                  {% if two_factor_on %}
+                    {% blocktrans count count=backup_codes_left %}Logging in also needs a code from your authenticator app. {{ count }} backup code left.{% plural %}Logging in also needs a code from your authenticator app. {{ count }} backup codes left.{% endblocktrans %}
+                  {% else %}
+                    {% trans "Also ask for a code from an app on your phone when logging in, so your password alone isn't enough" %}
+                  {% endif %}
+                </span>
+              </div>
+              {% if two_factor_on %}
+                <div class="flex flex-wrap gap-2">
+                  <button class="btn btn-outline btn-primary btn-sm" type="button" onclick="document.getElementById('backup-codes-modal').showModal()">{% trans "New backup codes" %}</button>
+                  <button class="btn btn-ghost btn-sm text-error" type="button" onclick="document.getElementById('two-factor-off-modal').showModal()">{% trans "Turn off" %}</button>
+                </div>
+              {% else %}
+                <a class="btn btn-primary btn-sm" href="{% url 'two_factor_setup' %}">{% include "_icon.html" with name="shield" class="size-4" %}{% trans "Turn on" %}</a>
+              {% endif %}
+            </div>
+            {% if two_factor_on and backup_codes_left < 3 %}
+              <div role="alert" class="alert alert-warning alert-soft text-sm mt-2">
+                {% include "_icon.html" with name="alert" class="size-5" %}
+                <span>{% trans "You're running out of backup codes. Make new ones so you can still log in if you lose your phone." %}</span>
+              </div>
+            {% endif %}
+          </div>
+        </section>
+      </div>
+
+      <aside class="grid gap-5">
+        <form method="post" class="grid gap-5">
+          {% csrf_token %}
+          <input type="hidden" name="form" value="settings">
+
+          <section id="notifications" class="card bg-base-100 border border-base-300 shadow-sm scroll-mt-24">
+            <div class="card-body p-5 sm:p-6">
+              <h2 class="card-title text-lg mb-1">{% trans "Notifications" %}</h2>
+              <p class="text-sm text-base-content/60 mb-2">{% url 'notifications' as notifications_url %}{% blocktrans %}All notifications are shown in the app, under the bell and on the <a href="{{ notifications_url }}" class="link">notifications page</a>. Choose which ones are also emailed to you.{% endblocktrans %}</p>
+              <fieldset class="fieldset">
+                <legend class="fieldset-legend">{% trans "Email me about" %}</legend>
+                {% for radio in settings_form.email_notifications %}
+                <label class="flex items-start gap-3 cursor-pointer py-1">
+                  {{ radio.tag }}
+                  <span>
+                    <strong class="block text-sm">{{ radio.choice_label }}</strong>
+                    <span class="text-xs text-base-content/60">
+                      {% if radio.data.value == "all" %}{% trans "Also new requests on your rides and withdrawn requests" %}{% else %}{% trans "Only changes to your trips: answers to your requests, passengers leaving, and rides being changed or cancelled" %}{% endif %}
+                    </span>
+                  </span>
+                </label>
+                {% endfor %}
+                <p class="label whitespace-normal">{% trans "Emails about your account, such as confirming your email address or resetting your password, are always sent." %}</p>
+              </fieldset>
+              {% if push_public_key %}
+              {# Filled in by static/js/push.js, which knows what this device can do #}
+              <div id="push-settings" class="rounded-field border border-base-300 p-3 mt-3 grid gap-2"
+                   data-on="{% trans "On: notifications appear on this device even when LUT Kyyti is closed." %}"
+                   data-off="{% trans "Get notifications on this device even when LUT Kyyti is closed." %}"
+                   data-ios="{% trans "On iPhone and iPad, add LUT Kyyti to your Home Screen first (Share, then Add to Home Screen) and open it from there to turn on notifications." %}"
+                   data-unsupported="{% trans "This browser can't show push notifications. You'll still see them in the app and by email." %}"
+                   data-denied="{% trans "Notifications are blocked for LUT Kyyti in this browser. Allow them in the browser's site settings to turn them on." %}"
+                   data-error="{% trans "Push notifications could not be turned on. Please try again." %}"
+                   data-turn-on="{% trans "Turn on" %}" data-turn-off="{% trans "Turn off" %}">
+                <strong class="text-sm">{% trans "Push notifications on this device" %}</strong>
+                <p class="text-xs text-base-content/60" data-push-status>{% trans "Checking what this device can do…" %}</p>
+                <div><button type="button" class="btn btn-sm" data-push-toggle hidden></button></div>
+              </div>
+              {% endif %}
+            </div>
+          </section>
+
+          <section id="privacy" class="card bg-base-100 border border-base-300 shadow-sm scroll-mt-24">
+            <div class="card-body p-5 sm:p-6">
+              <h2 class="card-title text-lg mb-1">{% trans "Privacy & visibility" %}</h2>
+              <p class="text-sm text-base-content/60 mb-2">{% trans "Choose what other LUT Kyyti members can see about you." %}</p>
+
+              <fieldset class="fieldset">
+                <legend class="fieldset-legend">{% trans "Name shown on rides and requests" %}</legend>
+                {% for radio in settings_form.name_visibility %}
+                <label class="flex items-center gap-3 cursor-pointer py-1">
+                  {{ radio.tag }}
+                  <span class="text-sm">
+                    {{ radio.choice_label }}
+                    <span class="text-base-content/50">·
+                      {% if radio.data.value == "first" %}{{ user.first_name }}{% elif radio.data.value == "initial" %}{{ user.first_name }} {{ user.last_name|first }}.{% else %}{{ user.first_name }} {{ user.last_name }}{% endif %}
+                    </span>
+                  </span>
+                </label>
+                {% endfor %}
+                <p class="label whitespace-normal">{% trans "People on the same ride as you always see your full name." %}</p>
+              </fieldset>
+
+              <div class="grid gap-3 mt-2">
+                <label class="flex gap-3 cursor-pointer">
+                  {% render_field settings_form.show_photo class="toggle toggle-primary toggle-sm mt-0.5" %}
+                  <span>
+                    <strong class="block text-sm">{% trans "Show my profile photo" %}</strong>
+                    <span class="text-xs text-base-content/60">{% trans "Otherwise others see your initials" %}</span>
+                  </span>
+                </label>
+                <label class="flex gap-3 cursor-pointer">
+                  {% render_field settings_form.share_email class="toggle toggle-primary toggle-sm mt-0.5" %}
+                  <span>
+                    <strong class="block text-sm">{% trans "Share my email with ride partners" %}</strong>
+                    <span class="text-xs text-base-content/60">{% trans "The driver of a ride you join, or passengers you accept" %}</span>
+                  </span>
+                </label>
+                <label class="flex gap-3 cursor-pointer">
+                  {% render_field settings_form.share_phone class="toggle toggle-primary toggle-sm mt-0.5" %}
+                  <span>
+                    <strong class="block text-sm">{% trans "Share my phone number with ride partners" %}</strong>
+                    <span class="text-xs text-base-content/60">
+                      {% if user.phone %}{% trans "The driver of a ride you join, or passengers you accept" %}{% else %}{% trans "Add a phone number to your profile first" %}{% endif %}
+                    </span>
+                  </span>
+                </label>
+              </div>
+
+              <div class="rounded-field bg-primary/5 text-sm p-3 mt-3 flex gap-2">
+                {% include "_icon.html" with name="lock" class="size-5 text-primary" %}
+                <span>{% trans "Your email and phone number never appear on ride listings. They are only shown to people sharing a ride with you." %}</span>
+              </div>
+
+              <button class="btn btn-primary mt-3" type="submit">{% trans "Save settings" %}</button>
+              <a href="{% url 'privacy-policy' %}" class="link link-primary link-hover text-sm font-semibold mt-1">{% trans "Read the privacy policy" %} →</a>
+            </div>
+          </section>
+        </form>
+
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5 sm:p-6">
+            <h2 class="card-title text-lg mb-2">{% trans "Account management" %}</h2>
+            <div class="grid gap-3 text-sm font-semibold">
+              <a href="{% url 'faq' %}" class="link link-primary link-hover">{% trans "Help & support" %} →</a>
+              <a href="{% url 'contact' %}" class="link link-primary link-hover">{% trans "Contact support" %} →</a>
+              <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button class="link link-primary link-hover" type="submit">{% trans "Log out" %} →</button>
+              </form>
+              <button class="link link-error link-hover text-start" type="button" onclick="document.getElementById('delete-account-modal').showModal()">{% trans "Delete account" %} →</button>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    {% include "_page_footer.html" %}
+  </div>
+</section>
+
+<dialog id="email-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="email-modal-title">
+  <div class="modal-box">
+    <h3 id="email-modal-title" class="text-lg font-bold">{% trans "Change email address" %}</h3>
+    <p class="text-sm text-base-content/70 mt-1">{% blocktrans with email=user.email %}We'll send a link to the new address. Your account keeps using <strong>{{ email }}</strong> until you open it, so a typo can't lock you out.{% endblocktrans %}</p>
+    <form method="post" id="email-form" class="mt-2">
+      {% csrf_token %}
+      <input type="hidden" name="form" value="email">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">{% trans "New email address" %}</legend>
+        {% render_field email_form.new_email class="input w-full" type="email" autocomplete="email" placeholder="firstname.lastname@lut.fi" required="" %}
+        {% for error in email_form.new_email.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+      </fieldset>
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">{% trans "Current password" %}</legend>
+        {% render_field email_form.password class="input w-full" autocomplete="current-password" required="" %}
+        {% for error in email_form.password.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+      </fieldset>
+    </form>
+    <div class="modal-action">
+      <form method="dialog"><button class="btn">{% trans "Cancel" %}</button></form>
+      <button class="btn btn-primary" type="submit" form="email-form">{% trans "Send confirmation link" %}</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>{% trans "Cancel" %}</button></form>
+</dialog>
+
+<dialog id="delete-account-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="delete-account-title">
+  <div class="modal-box">
+    <div role="alert" class="alert alert-error alert-soft">
+      {% include "_icon.html" with name="alert" class="size-6" %}
+      <h3 id="delete-account-title" class="font-bold">{% trans "Delete your account?" %}</h3>
+    </div>
+    <p class="py-4 text-sm">{% trans "Your account, your profile photo, the rides you have posted and your ride requests are deleted permanently. People who joined or requested your rides are notified that they are cancelled." %}</p>
+    {% if group_effects %}
+      {# The groups the user is the only admin of (groups.services.without) #}
+      <div role="alert" class="alert alert-warning alert-soft items-start text-sm mb-4">
+        {% include "_icon.html" with name="alert" class="size-5" %}
+        <div class="grid gap-1">
+          <strong>{% trans "You are the only admin of these groups:" %}</strong>
+          <ul class="list-disc ps-4">
+            {% for effect in group_effects %}
+              <li>
+                <a href="{% url 'group_detail' effect.group.pk %}" class="link font-semibold">{{ effect.group.name }}</a>:
+                {% if effect.closes %}{% trans "you are its last member, so it will be deleted." %}
+                {% elif effect.successor %}{% blocktrans with name=effect.successor.user|display_name %}{{ name }} will become its admin, as the longest-standing member.{% endblocktrans %}
+                {% else %}{% trans "none of its members have used LUT Kyyti lately; the first to come back will become its admin." %}{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+          <span>{% trans "To choose someone else, hand the admin role over on the group's page first." %}</span>
+        </div>
+      </div>
+    {% endif %}
+    <form method="post" id="delete-account-form" data-no-submit-shortcut>
+      {% csrf_token %}
+      <input type="hidden" name="form" value="delete">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">{% trans "Enter your password to confirm" %}</legend>
+        {% render_field delete_form.password class="input w-full" autocomplete="current-password" required="" %}
+        {% for error in delete_form.password.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+      </fieldset>
+    </form>
+    <div class="modal-action">
+      <form method="dialog"><button class="btn" autofocus>{% trans "Cancel" %}</button></form>
+      <button class="btn btn-error" type="submit" form="delete-account-form">{% trans "Delete account" %}</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>{% trans "Cancel" %}</button></form>
+</dialog>
+{% if two_factor_on %}
+<dialog id="backup-codes-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="backup-codes-modal-title">
+  <div class="modal-box">
+    <h3 id="backup-codes-modal-title" class="text-lg font-bold">{% trans "Make new backup codes?" %}</h3>
+    <p class="text-sm text-base-content/70 mt-1">{% trans "You'll get 10 new codes, and the ones you have now stop working." %}</p>
+    <form method="post" id="backup-codes-form" class="mt-2">
+      {% csrf_token %}
+      <input type="hidden" name="form" value="backup_codes">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">{% trans "Enter your password to confirm" %}</legend>
+        {% render_field backup_codes_form.password class="input w-full" autocomplete="current-password" required="" %}
+        {% for error in backup_codes_form.password.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+      </fieldset>
+    </form>
+    <div class="modal-action">
+      <form method="dialog"><button class="btn">{% trans "Cancel" %}</button></form>
+      <button class="btn btn-primary" type="submit" form="backup-codes-form">{% trans "Make new codes" %}</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>{% trans "Cancel" %}</button></form>
+</dialog>
+
+<dialog id="two-factor-off-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="two-factor-off-title">
+  <div class="modal-box">
+    <div role="alert" class="alert alert-warning alert-soft">
+      {% include "_icon.html" with name="alert" class="size-6" %}
+      <h3 id="two-factor-off-title" class="font-bold">{% trans "Turn off two-step verification?" %}</h3>
+    </div>
+    <p class="py-4 text-sm">{% trans "Logging in will only need your password, and your authenticator app and backup codes stop working for LUT Kyyti. You can turn it on again at any time." %}</p>
+    <form method="post" id="two-factor-off-form" data-no-submit-shortcut>
+      {% csrf_token %}
+      <input type="hidden" name="form" value="two_factor_off">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">{% trans "Enter your password to confirm" %}</legend>
+        {% render_field two_factor_off_form.password class="input w-full" autocomplete="current-password" required="" %}
+        {% for error in two_factor_off_form.password.errors %}<p class="text-error">{{ error }}</p>{% endfor %}
+      </fieldset>
+    </form>
+    <div class="modal-action">
+      <form method="dialog"><button class="btn" autofocus>{% trans "Cancel" %}</button></form>
+      <button class="btn btn-error" type="submit" form="two-factor-off-form">{% trans "Turn off" %}</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>{% trans "Cancel" %}</button></form>
+</dialog>
+{% endif %}
+{% comment %}
+  Photo framing dialog. Picking a photo opens it: the user moves and zooms
+  the photo behind a fixed circle, and the square around the circle is sent
+  with the photo (photo-crop_*) for the server to cut out (accounts.models.shrink_photo).
+{% endcomment %}
+<link rel="stylesheet" href="{% static 'css/vendor/cropper-1.6.2.min.css' %}">
+<script src="{% static 'js/vendor/cropper-1.6.2.min.js' %}"></script>
+<style>
+  /* The crop square is shown as a circle. The photo is dimmed outside it
+     (the circle shows its own, undimmed copy of the photo), and the space
+     around the photo keeps the card's background. */
+  #photo-cropper .cropper-view-box,
+  #photo-cropper .cropper-face { border-radius: 50%; }
+  #photo-cropper .cropper-view-box { outline: 0; box-shadow: 0 0 0 2px rgb(255 255 255 / 0.9); }
+  #photo-cropper .cropper-canvas img { filter: brightness(0.45); }
+</style>
+
+<dialog id="photo-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="photo-modal-title">
+  <div class="modal-box">
+    <h3 id="photo-modal-title" class="text-lg font-bold">{% trans "Frame your photo" %}</h3>
+    <p class="text-sm text-base-content/60 mt-1">{% trans "Drag the photo to place your face inside the circle. Zoom with the slider, the mouse wheel or by pinching." %}</p>
+    <div id="photo-cropper" class="mt-4 h-72 sm:h-80 rounded-field overflow-hidden bg-base-100">
+      <img id="photo-preview" alt="{% trans "Your new photo" %}" class="block max-w-full">
+    </div>
+    <label class="flex items-center gap-3 mt-4">
+      <span class="sr-only">{% trans "Zoom" %}</span>
+      {% include "_icon.html" with name="search" class="size-4 text-base-content/50" %}
+      <input id="photo-zoom" type="range" min="0" max="100" value="0" step="1" class="range range-primary range-xs grow" aria-label="{% trans "Zoom" %}">
+      {% include "_icon.html" with name="search" class="size-6 text-base-content/50" %}
+    </label>
+    <div class="modal-action">
+      <form method="dialog"><button class="btn">{% trans "Cancel" %}</button></form>
+      <button id="photo-save" class="btn btn-primary" type="button">{% trans "Save photo" %}</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>{% trans "Cancel" %}</button></form>
+</dialog>
+
+<script>
+  (function () {
+    const input = document.getElementById("photo-input");
+    const form = document.getElementById("photo-form");
+    const errors = document.getElementById("photo-errors");
+    const modal = document.getElementById("photo-modal");
+    const preview = document.getElementById("photo-preview");
+    const zoom = document.getElementById("photo-zoom");
+    const save = document.getElementById("photo-save");
+    // The slider goes from the photo filling the circle to MAX_ZOOM times that
+    const MAX_ZOOM = 4;
+    // Space between the circle and the edge of the frame, so its ring shows
+    const CIRCLE_MARGIN = 4;
+    let cropper = null;
+    let minRatio = 1;
+    let submitting = false;
+
+    function showError(message) {
+      const error = document.createElement("p");
+      error.className = "text-error text-sm mt-2";
+      error.textContent = message;
+      errors.replaceChildren(error);
+    }
+
+    input.addEventListener("change", function () {
+      const file = input.files[0];
+      if (!file) return;
+      // Photos over the limit are refused here instead of being uploaded, so
+      // a very large file never gets Nginx's "413 Request Entity Too Large" page
+      if (file.size > Number(input.dataset.maxSize)) {
+        showError(input.dataset.tooLarge);
+        input.value = "";
+        return;
+      }
+      errors.replaceChildren();
+      preview.src = URL.createObjectURL(file);
+      modal.showModal();
+    });
+
+    // The cropper is created once the photo has loaded in the open dialog,
+    // as it measures the space it has
+    preview.addEventListener("load", function () {
+      cropper = new Cropper(preview, {
+        aspectRatio: 1,
+        viewMode: 1,             // the photo always covers the circle
+        dragMode: "move",        // dragging moves the photo, not the circle
+        cropBoxMovable: false,
+        cropBoxResizable: false,
+        toggleDragModeOnDblclick: false,
+        guides: false,
+        center: false,
+        highlight: false,
+        background: false,
+        modal: false,            // the photo is dimmed by the styles above instead
+        restore: false,
+        // Browsers already show photos upright; the server turns them the same way
+        checkOrientation: false,
+        ready() {
+          // The circle is as large as the frame allows, and the photo starts
+          // zoomed out as far as it can while still covering the circle
+          const frame = cropper.getContainerData();
+          const image = cropper.getImageData();
+          const size = Math.min(frame.width, frame.height) - 2 * CIRCLE_MARGIN;
+          minRatio = size / Math.min(image.naturalWidth, image.naturalHeight);
+          const width = image.naturalWidth * minRatio;
+          const height = image.naturalHeight * minRatio;
+          cropper.setCanvasData({ left: (frame.width - width) / 2, top: (frame.height - height) / 2, width, height });
+          cropper.setCropBoxData({ left: (frame.width - size) / 2, top: (frame.height - size) / 2, width: size, height: size });
+          zoom.value = 0;
+        },
+        zoom(event) {
+          // Not smaller than filling the circle, nor larger than the slider allows
+          const ratio = event.detail.ratio;
+          if (ratio < minRatio || ratio > minRatio * MAX_ZOOM) {
+            event.preventDefault();
+            cropper.zoomTo(Math.min(Math.max(ratio, minRatio), minRatio * MAX_ZOOM));
+            return;
+          }
+          zoom.value = Math.round((ratio / minRatio - 1) / (MAX_ZOOM - 1) * 100);
+        },
+      });
+    });
+
+    // A photo the browser cannot show (e.g. some HEIC photos) is uploaded
+    // without framing, and the server checks it as before
+    preview.addEventListener("error", function () {
+      if (!preview.getAttribute("src")) return;
+      submitting = true;
+      modal.close();
+      form.submit();
+    });
+
+    zoom.addEventListener("input", function () {
+      cropper?.zoomTo(minRatio * (1 + zoom.value / 100 * (MAX_ZOOM - 1)));
+    });
+
+    save.addEventListener("click", function () {
+      if (!cropper) return;
+      const data = cropper.getData(true);
+      form.elements["photo-crop_x"].value = data.x;
+      form.elements["photo-crop_y"].value = data.y;
+      form.elements["photo-crop_size"].value = Math.min(data.width, data.height);
+      submitting = true;
+      save.disabled = true;
+      save.insertAdjacentHTML("afterbegin", '<span class="loading loading-spinner loading-sm"></span>');
+      form.submit();
+    });
+
+    // Closed with Cancel, Escape or by clicking outside: nothing is uploaded
+    modal.addEventListener("close", function () {
+      if (submitting) return;
+      cropper?.destroy();
+      cropper = null;
+      URL.revokeObjectURL(preview.src);
+      preview.removeAttribute("src");
+      input.value = "";
+    });
+  })();
+</script>
+{% if delete_form.errors %}
+<script>document.getElementById("delete-account-modal").showModal();</script>
+{% endif %}
+{% if email_form.errors %}
+<script>document.getElementById("email-modal").showModal();</script>
+{% endif %}
+{% if backup_codes_form.errors %}
+<script>document.getElementById("backup-codes-modal").showModal();</script>
+{% endif %}
+{% if two_factor_off_form.errors %}
+<script>document.getElementById("two-factor-off-modal").showModal();</script>
+{% endif %}
+{% endblock %}

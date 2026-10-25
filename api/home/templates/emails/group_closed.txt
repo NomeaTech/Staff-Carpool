@@ -1,0 +1,4 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=recipient.first_name %}Hi {{ name }},{% endblocktrans %}
+
+{% blocktrans %}The group {{ group }} was closed, as its last member left. Your request to join it was cancelled.{% endblocktrans %}
+{% include "emails/_footer.txt" %}{% endautoescape %}

@@ -1,0 +1,40 @@
+{% load i18n %}{% comment %}
+  One of the user's rides, as listed by my_ride_entries(): ride_request is
+  the user's request to join it, or None when the user posted the ride.
+{% endcomment %}
+<a href="{% url 'ride_detail' ride.id %}" class="block rounded-field border border-base-300 p-4 transition hover:border-primary/40 hover:shadow-sm">
+  <div class="flex items-start justify-between gap-2">
+    <span class="font-bold">{{ ride.route_name }}</span>
+    {% if not ride_request %}
+      {% if ride.pending %}
+        <span class="badge border-0 bg-warning/30 text-warning-content badge-sm whitespace-nowrap">{% blocktrans count counter=ride.pending %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}</span>
+      {% else %}
+        <span class="badge badge-soft badge-primary badge-sm whitespace-nowrap">{% trans "Your ride" %}</span>
+      {% endif %}
+    {% elif ride_request.status == "accepted" %}
+      <span class="badge border-0 bg-success/30 text-success-content badge-sm">{% trans "Confirmed" %}</span>
+    {% elif ride_request.status == "pending" %}
+      <span class="badge badge-soft badge-secondary badge-sm">{% trans "Requested" %}</span>
+    {% else %}
+      <span class="badge badge-soft badge-error badge-sm">{% trans "Declined" %}</span>
+    {% endif %}
+  </div>
+  <div class="flex flex-wrap gap-3 mt-2 text-xs text-base-content/60">
+    {% include "_ride_when.html" %}
+  </div>
+  <div class="flex items-center justify-between gap-2 mt-3 pt-3 border-t border-base-200 text-xs">
+    <span class="text-base-content/60">
+      {% if not ride_request %}
+        {% trans "You posted this ride" %}
+        {% with seats=ride.seats_left %}{% if seats is not None %} · {% blocktrans count counter=seats %}{{ counter }} seat available{% plural %}{{ counter }} seats available{% endblocktrans %}{% endif %}{% endwith %}
+      {% elif ride_request.status == "accepted" %}
+        {% trans "You're a passenger" %}
+      {% elif ride_request.status == "pending" %}
+        {% trans "Awaiting the driver's response" %}
+      {% else %}
+        {% trans "The driver declined your request" %}
+      {% endif %}
+    </span>
+    <span class="font-semibold text-primary whitespace-nowrap">{% trans "Details" %} →</span>
+  </div>
+</a>

@@ -3,26 +3,1150 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-26 17:05+0200\n"
+"POT-Creation-Date: 2026-10-23 02:42+0300\n"
 "PO-Revision-Date: 2026-07-01 16:50+0300\n"
 "Last-Translator: Balazs Fentor <fentorb24@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Translated-Using: django-rosetta 0.10.3\n"
 
-#: carpool/settings.py:144
+#: activity/models.py:25
+msgid "Used the app"
+msgstr "Käytti sovellusta"
+
+#: activity/models.py:28
+msgid "Signed up"
+msgstr "Rekisteröityi"
+
+#: activity/models.py:29
+msgid "Confirmed the email address"
+msgstr "Vahvisti sähköpostiosoitteen"
+
+#: activity/models.py:30
+msgid "Logged in"
+msgstr "Kirjautui sisään"
+
+#: activity/models.py:31
+msgid "Logged out"
+msgstr "Kirjautui ulos"
+
+#: activity/models.py:32
+msgid "Saw the welcome popup"
+msgstr "Näki tervetuloikkunan"
+
+#: activity/models.py:34
+msgid "Changed the profile"
+msgstr "Muutti profiilia"
+
+#: activity/models.py:36
+msgid "Changed the settings"
+msgstr "Muutti asetuksia"
+
+#: activity/models.py:37
+msgid "Added a photo"
+msgstr "Lisäsi kuvan"
+
+#: activity/models.py:38
+msgid "Removed the photo"
+msgstr "Poisti kuvan"
+
+#: activity/models.py:39
+msgid "Asked to change the email address"
+msgstr "Pyysi sähköpostiosoitteen vaihtoa"
+
+#: activity/models.py:40
+msgid "Changed the email address"
+msgstr "Vaihtoi sähköpostiosoitteen"
+
+#: activity/models.py:41
+msgid "Turned on two-step verification"
+msgstr "Otti kaksivaiheisen tunnistautumisen käyttöön"
+
+#: activity/models.py:42
+msgid "Turned off two-step verification"
+msgstr "Poisti kaksivaiheisen tunnistautumisen käytöstä"
+
+#: activity/models.py:45
+msgid "Deleted the account"
+msgstr "Poisti tilin"
+
+#: activity/models.py:51
+msgid "Searched for rides"
+msgstr "Haki kyytejä"
+
+#: activity/models.py:53
+msgid "Opened a ride"
+msgstr "Avasi kyydin"
+
+#: activity/models.py:59
+msgid "Posted a ride"
+msgstr "Julkaisi kyydin"
+
+#: activity/models.py:61
+msgid "Changed a ride"
+msgstr "Muutti kyytiä"
+
+#: activity/models.py:64
+msgid "Deleted a ride"
+msgstr "Poisti kyydin"
+
+#: activity/models.py:66
+msgid "Accepted a request"
+msgstr "Hyväksyi pyynnön"
+
+#: activity/models.py:67
+msgid "Declined a request"
+msgstr "Hylkäsi pyynnön"
+
+#: activity/models.py:68
+msgid "Removed a passenger"
+msgstr "Poisti matkustajan"
+
+#: activity/models.py:71
+msgid "Asked to join a ride"
+msgstr "Pyysi päästä kyytiin"
+
+#: activity/models.py:73
+msgid "Withdrew a request"
+msgstr "Perui pyynnön"
+
+#: activity/models.py:74
+msgid "Left a ride"
+msgstr "Poistui kyydistä"
+
+#: activity/models.py:77
+msgid "Made a group"
+msgstr "Loi ryhmän"
+
+#: activity/models.py:78 notifications/models.py:29
+msgid "Joined a group"
+msgstr "Liittyi ryhmään"
+
+#: activity/models.py:79
+msgid "Left a group"
+msgstr "Poistui ryhmästä"
+
+#: activity/models.py:82
+msgid "Opened a notification"
+msgstr "Avasi ilmoituksen"
+
+#: activity/models.py:83
+msgid "Marked notifications read"
+msgstr "Merkitsi ilmoitukset luetuiksi"
+
+#: activity/models.py:84
+msgid "Turned push notifications on"
+msgstr "Otti push-ilmoitukset käyttöön"
+
+#: activity/models.py:85
+msgid "Turned push notifications off"
+msgstr "Poisti push-ilmoitukset käytöstä"
+
+#: activity/models.py:107
+msgid "deleted user"
+msgstr "poistettu käyttäjä"
+
+#: carpool/admin_site.py:28
+msgid "Turn on two-step verification to use the admin."
+msgstr ""
+"Ota kaksivaiheinen tunnistautuminen käyttöön, jotta voit käyttää ylläpitoa."
+
+#: carpool/settings.py:235
 msgid "English"
 msgstr "Englanti"
 
-#: carpool/settings.py:145
+#: carpool/settings.py:236
 msgid "Finnish"
 msgstr "Suomi"
+
+#: groups/admin.py:22
+msgid "admin"
+msgstr "ylläpitäjä"
+
+#: groups/admin.py:26
+msgid "Has no admin who can act"
+msgstr "Ei ylläpitäjää, joka voisi toimia"
+
+#: groups/admin.py:51
+msgid "members"
+msgstr "jäsenet"
+
+#: groups/admin.py:55
+msgid "admins"
+msgstr "ylläpitäjät"
+
+#: groups/admin.py:59
+msgid "requests to join"
+msgstr "liittymispyynnöt"
+
+#: groups/forms.py:17
+msgid "Enter a name for the group."
+msgstr "Anna ryhmälle nimi."
+
+#: groups/forms.py:20
+#, python-format
+msgid "There is already a group called %(name)s. Choose another name."
+msgstr "Ryhmä nimeltä %(name)s on jo olemassa. Valitse toinen nimi."
+
+#: groups/models.py:32
+msgid "name"
+msgstr "nimi"
+
+#: groups/models.py:33
+msgid "description"
+msgstr "kuvaus"
+
+#: groups/models.py:86
+msgid "Asked to join"
+msgstr "Pyysi liittymistä"
+
+#: groups/models.py:87 groups/models.py:90
+#: groups/templates/groups/detail.html:22
+msgid "Member"
+msgstr "Jäsen"
+
+#: groups/models.py:91 groups/templates/groups/detail.html:112
+#: groups/templates/groups/list.html:35
+msgid "Admin"
+msgstr "Ylläpitäjä"
+
+#: groups/services.py:129
+#, python-format
+msgid ""
+"%(name)s cannot be made an admin, as they have not used their account "
+"lately."
+msgstr ""
+"Käyttäjää %(name)s ei voi tehdä ylläpitäjäksi, koska hän ei ole käyttänyt "
+"tiliään viime aikoina."
+
+#: groups/services.py:142
+msgid "You are the only admin. Choose someone to hand the role over to."
+msgstr "Olet ainoa ylläpitäjä. Valitse, kenelle luovutat roolin."
+
+#: groups/services.py:162
+msgid "Admins cannot remove other admins. An admin can step down themselves."
+msgstr ""
+"Ylläpitäjät eivät voi poistaa muita ylläpitäjiä. Ylläpitäjä voi luopua "
+"roolistaan itse."
+
+#: groups/templates/groups/detail.html:15
+msgid "All groups"
+msgstr "Kaikki ryhmät"
+
+#: groups/templates/groups/detail.html:20
+msgid "Group"
+msgstr "Ryhmä"
+
+#: groups/templates/groups/detail.html:21
+msgid "You are an admin"
+msgstr "Olet ylläpitäjä"
+
+#: groups/templates/groups/detail.html:23 groups/templates/groups/list.html:46
+msgid "Requested"
+msgstr "Pyydetty"
+
+#: groups/templates/groups/detail.html:28 groups/templates/groups/list.html:30
+#: groups/templates/groups/list.html:76
+#, python-format
+msgid "%(counter)s member"
+msgid_plural "%(counter)s members"
+msgstr[0] "%(counter)s jäsen"
+msgstr[1] "%(counter)s jäsentä"
+
+#: groups/templates/groups/detail.html:29
+msgid "Admins:"
+msgstr "Ylläpitäjät:"
+
+#: groups/templates/groups/detail.html:37
+msgid ""
+"You asked to join this group. An admin will accept or decline your request, "
+"and you will be notified."
+msgstr ""
+"Pyysit liittyä tähän ryhmään. Ylläpitäjä hyväksyy tai hylkää pyyntösi, ja "
+"saat siitä ilmoituksen."
+
+#: groups/templates/groups/detail.html:39
+msgid "Withdraw request"
+msgstr "Peru pyyntö"
+
+#: groups/templates/groups/detail.html:42
+msgid ""
+"Rides posted to this group are only shown to its members. Ask to join, and "
+"one of its admins will accept or decline you."
+msgstr ""
+"Tähän ryhmään julkaistut kyydit näkyvät vain sen jäsenille. Pyydä "
+"liittymistä, niin joku sen ylläpitäjistä hyväksyy tai hylkää sinut."
+
+#: groups/templates/groups/detail.html:44
+msgid "Ask to join"
+msgstr "Pyydä liittymistä"
+
+#: groups/templates/groups/detail.html:54
+msgid "Requests to join"
+msgstr "Liittymispyynnöt"
+
+#: groups/templates/groups/detail.html:62
+#: notifications/templates/notifications/_item.html:14
+#, python-format
+msgid "%(time)s ago"
+msgstr "%(time)s sitten"
+
+#: groups/templates/groups/detail.html:67
+msgid "Accept"
+msgstr "Hyväksy"
+
+#: groups/templates/groups/detail.html:68
+msgid "Decline"
+msgstr "Hylkää"
+
+#: groups/templates/groups/detail.html:80
+msgid "Rides posted to this group"
+msgstr "Tähän ryhmään julkaistut kyydit"
+
+#: groups/templates/groups/detail.html:96
+msgid "No upcoming rides have been posted to this group."
+msgstr "Tähän ryhmään ei ole julkaistu tulevia kyytejä."
+
+#: groups/templates/groups/detail.html:96
+msgid "Offer a ride"
+msgstr "Tarjoa kyytiä"
+
+#: groups/templates/groups/detail.html:103
+msgid "Members"
+msgstr "Jäsenet"
+
+#: groups/templates/groups/detail.html:110
+msgid "you"
+msgstr "sinä"
+
+#: groups/templates/groups/detail.html:113
+msgid ""
+"Blocked, email address not confirmed, or not seen for a long time. Away "
+"admins do not count as admins who can answer requests."
+msgstr ""
+"Estetty, sähköpostiosoite vahvistamatta tai ei nähty pitkään aikaan. Poissa "
+"olevia ylläpitäjiä ei lasketa ylläpitäjiksi, jotka voivat vastata "
+"pyyntöihin."
+
+#: groups/templates/groups/detail.html:113
+msgid "Away"
+msgstr "Poissa"
+
+#: groups/templates/groups/detail.html:119
+#, python-format
+msgid "Manage %(name)s"
+msgstr "Hallitse: %(name)s"
+
+#: groups/templates/groups/detail.html:123
+msgid "Make admin"
+msgstr "Tee ylläpitäjäksi"
+
+#: groups/templates/groups/detail.html:124
+msgid "Hand over my admin role"
+msgstr "Luovuta ylläpitäjän roolini"
+
+#: groups/templates/groups/detail.html:126
+msgid "Remove from group"
+msgstr "Poista ryhmästä"
+
+#: groups/templates/groups/detail.html:133
+#: groups/templates/groups/detail.html:211
+msgid "Leave group"
+msgstr "Poistu ryhmästä"
+
+#: groups/templates/groups/detail.html:141
+msgid "Group settings"
+msgstr "Ryhmän asetukset"
+
+#: groups/templates/groups/detail.html:145
+#: groups/templates/groups/list.html:97
+msgid "Name"
+msgstr "Nimi"
+
+#: groups/templates/groups/detail.html:150
+#: groups/templates/groups/list.html:102
+msgid "Description"
+msgstr "Kuvaus"
+
+#: groups/templates/groups/detail.html:153
+msgid "Save"
+msgstr "Tallenna"
+
+#: groups/templates/groups/detail.html:158
+msgid ""
+"You are the only admin. To stop being one, hand the role over to a member "
+"from the member list."
+msgstr ""
+"Olet ainoa ylläpitäjä. Jos haluat luopua roolista, luovuta se jollekin "
+"jäsenelle jäsenluettelosta."
+
+#: groups/templates/groups/detail.html:161
+msgid "Stop being an admin"
+msgstr "Luovu ylläpitäjän roolista"
+
+#: groups/templates/groups/detail.html:164
+#: groups/templates/groups/detail.html:179
+msgid "Delete group"
+msgstr "Poista ryhmä"
+
+#: groups/templates/groups/detail.html:173
+#, python-format
+msgid "Delete %(name)s?"
+msgstr "Poistetaanko %(name)s?"
+
+#: groups/templates/groups/detail.html:175
+msgid ""
+"The group is deleted for everyone, and its members are told. Rides posted "
+"only to it are no longer shown to anyone until their drivers choose again; "
+"people who already joined them keep their seats."
+msgstr ""
+"Ryhmä poistetaan kaikilta, ja sen jäsenille kerrotaan siitä. Vain siihen "
+"julkaistut kyydit eivät näy kenellekään ennen kuin niiden kuljettajat "
+"valitsevat uudelleen; jo mukaan liittyneet pitävät paikkansa."
+
+#: groups/templates/groups/detail.html:178
+#: groups/templates/groups/detail.html:182
+#: groups/templates/groups/detail.html:210
+#: groups/templates/groups/detail.html:214
+#: groups/templates/groups/list.html:108 groups/templates/groups/list.html:112
+#: rides/templates/admin/rides/ride/generate_test_rides.html:23
+msgid "Cancel"
+msgstr "Peruuta"
+
+#: groups/templates/groups/detail.html:189
+#, python-format
+msgid "Leave %(name)s?"
+msgstr "Poistutaanko ryhmästä %(name)s?"
+
+#: groups/templates/groups/detail.html:192
+msgid ""
+"You will no longer see rides posted only to this group, except those you "
+"have joined. Rides you posted to it are taken off it."
+msgstr ""
+"Et enää näe vain tähän ryhmään julkaistuja kyytejä, paitsi niitä, joihin "
+"olet liittynyt. Siihen julkaisemasi kyydit poistetaan siitä."
+
+#: groups/templates/groups/detail.html:194
+msgid "You are the last member, so the group will be deleted."
+msgstr "Olet viimeinen jäsen, joten ryhmä poistetaan."
+
+#: groups/templates/groups/detail.html:198
+msgid "You are the only admin. Who should take over?"
+msgstr "Olet ainoa ylläpitäjä. Kuka ottaa roolin?"
+
+#: groups/templates/groups/detail.html:202
+msgid "The member who has been in the group longest comes first."
+msgstr "Pisimpään ryhmässä ollut jäsen on ensimmäisenä."
+
+#: groups/templates/groups/detail.html:205
+msgid ""
+"You are the only admin, and no other member has used LUT Kyyti lately. The "
+"first of them to come back becomes admin."
+msgstr ""
+"Olet ainoa ylläpitäjä, eikä kukaan muu jäsen ole käyttänyt LUT Kyytiä viime "
+"aikoina. Ensimmäinen palaava jäsen tulee ylläpitäjäksi."
+
+#: groups/templates/groups/list.html:4
+msgid "Groups"
+msgstr "Ryhmät"
+
+#: groups/templates/groups/list.html:17
+msgid "Your groups"
+msgstr "Omat ryhmäsi"
+
+#: groups/templates/groups/list.html:19 groups/templates/groups/list.html:92
+msgid "New group"
+msgstr "Uusi ryhmä"
+
+#: groups/templates/groups/list.html:22
+msgid ""
+"Post rides to a group to share them only with its members, e.g. your team or"
+" the people on your route."
+msgstr ""
+"Julkaise kyytejä ryhmään, niin ne näkyvät vain sen jäsenille, esimerkiksi "
+"tiimillesi tai samaa reittiä kulkeville."
+
+#: groups/templates/groups/list.html:34
+#, python-format
+msgid "%(counter)s request"
+msgid_plural "%(counter)s requests"
+msgstr[0] "%(counter)s pyyntö"
+msgstr[1] "%(counter)s pyyntöä"
+
+#: groups/templates/groups/list.html:54
+msgid "You are not in any groups yet"
+msgstr "Et ole vielä yhdessäkään ryhmässä"
+
+#: groups/templates/groups/list.html:55
+msgid "Ask to join one below, or make your own."
+msgstr "Pyydä liittymistä johonkin alla olevista tai luo oma."
+
+#: groups/templates/groups/list.html:63
+msgid "Find a group"
+msgstr "Etsi ryhmää"
+
+#: groups/templates/groups/list.html:65
+msgid "Group name"
+msgstr "Ryhmän nimi"
+
+#: groups/templates/groups/list.html:66
+msgid "Search"
+msgstr "Hae"
+
+#: groups/templates/groups/list.html:80
+msgid "No groups match the search."
+msgstr "Yksikään ryhmä ei vastaa hakua."
+
+#: groups/templates/groups/list.html:80
+msgid "There are no other groups yet."
+msgstr "Muita ryhmiä ei ole vielä."
+
+#: groups/templates/groups/list.html:93
+msgid ""
+"You will be its admin: you decide who can join, and can make other members "
+"admins."
+msgstr ""
+"Sinusta tulee sen ylläpitäjä: päätät, kuka voi liittyä, ja voit tehdä muista"
+" jäsenistä ylläpitäjiä."
+
+#: groups/templates/groups/list.html:102
+msgid "(optional)"
+msgstr "(valinnainen)"
+
+#: groups/templates/groups/list.html:104
+msgid "Who the group is for, so the right people ask to join."
+msgstr ""
+"Kenelle ryhmä on tarkoitettu, jotta oikeat ihmiset pyytävät liittymistä."
+
+#: groups/templates/groups/list.html:109
+msgid "Make group"
+msgstr "Luo ryhmä"
+
+#: groups/views.py:21
+#, python-format
+msgid "The group %(name)s was made. You are its admin."
+msgstr "Ryhmä %(name)s luotiin. Olet sen ylläpitäjä."
+
+#: groups/views.py:82
+msgid "Request sent. You will be notified when an admin answers."
+msgstr "Pyyntö lähetetty. Saat ilmoituksen, kun ylläpitäjä vastaa."
+
+#: groups/views.py:85
+msgid "Your request was withdrawn."
+msgstr "Pyyntösi peruttiin."
+
+#: groups/views.py:89
+#, python-format
+msgid "You left %(name)s."
+msgstr "Poistuit ryhmästä %(name)s."
+
+#: groups/views.py:95
+msgid "They are now an admin."
+msgstr "Hän on nyt ylläpitäjä."
+
+#: groups/views.py:98
+msgid "You handed the admin role over."
+msgstr "Luovutit ylläpitäjän roolin."
+
+#: groups/views.py:101
+msgid "You are no longer an admin."
+msgstr "Et ole enää ylläpitäjä."
+
+#: groups/views.py:104
+msgid "The member was removed."
+msgstr "Jäsen poistettiin."
+
+#: groups/views.py:111
+msgid "The group was saved."
+msgstr "Ryhmä tallennettiin."
+
+#: groups/views.py:114
+#, python-format
+msgid "The group %(name)s was deleted."
+msgstr "Ryhmä %(name)s poistettiin."
+
+#: notifications/models.py:15
+msgid "New ride request"
+msgstr "Uusi kyytipyyntö"
+
+#: notifications/models.py:16
+msgid "Ride request withdrawn"
+msgstr "Kyytipyyntö peruttu"
+
+#: notifications/models.py:17
+msgid "Passenger left"
+msgstr "Matkustaja poistui"
+
+#: notifications/models.py:19
+msgid "Request accepted"
+msgstr "Pyyntö hyväksytty"
+
+#: notifications/models.py:20
+msgid "Request declined"
+msgstr "Pyyntö hylätty"
+
+#: notifications/models.py:21
+msgid "Removed from a ride"
+msgstr "Poistettu kyydistä"
+
+#: notifications/models.py:22
+msgid "Ride changed"
+msgstr "Kyyti muuttui"
+
+#: notifications/models.py:23
+msgid "Ride cancelled"
+msgstr "Kyyti peruttu"
+
+#: notifications/models.py:25
+msgid "Ride no longer shown"
+msgstr "Kyyti ei enää näy"
+
+#: notifications/models.py:27
+msgid "Request to join a group"
+msgstr "Pyyntö liittyä ryhmään"
+
+#: notifications/models.py:30
+msgid "Group request declined"
+msgstr "Ryhmäpyyntö hylätty"
+
+#: notifications/models.py:31
+msgid "Removed from a group"
+msgstr "Poistettu ryhmästä"
+
+#: notifications/models.py:32 notifications/models.py:34
+msgid "You are now a group admin"
+msgstr "Olet nyt ryhmän ylläpitäjä"
+
+#: notifications/models.py:35
+msgid "Group deleted"
+msgstr "Ryhmä poistettu"
+
+#: notifications/models.py:37
+msgid "Group closed"
+msgstr "Ryhmä suljettu"
+
+#: notifications/models.py:62
+#, python-format
+msgid "%(name)s would like to join your ride %(route)s."
+msgstr "%(name)s haluaisi liittyä kyytiisi %(route)s."
+
+#: notifications/models.py:63
+#, python-format
+msgid "%(name)s withdrew their request to join your ride %(route)s."
+msgstr "%(name)s perui pyyntönsä liittyä kyytiisi %(route)s."
+
+#: notifications/models.py:64
+#, python-format
+msgid "%(name)s left your ride %(route)s. Their seat is free again."
+msgstr ""
+"%(name)s poistui kyydistäsi %(route)s. Hänen paikkansa on taas vapaana."
+
+#: notifications/models.py:65
+#, python-format
+msgid "%(name)s accepted your request to join %(route)s."
+msgstr "%(name)s hyväksyi pyyntösi liittyä kyytiin %(route)s."
+
+#: notifications/models.py:66
+#, python-format
+msgid "%(name)s declined your request to join %(route)s."
+msgstr "%(name)s hylkäsi pyyntösi liittyä kyytiin %(route)s."
+
+#: notifications/models.py:67
+#, python-format
+msgid "%(name)s removed you from the ride %(route)s."
+msgstr "%(name)s poisti sinut kyydistä %(route)s."
+
+#: notifications/models.py:68
+#, python-format
+msgid "%(name)s changed the ride %(route)s. Check the new details."
+msgstr "%(name)s muutti kyytiä %(route)s. Tarkista uudet tiedot."
+
+#: notifications/models.py:69
+#, python-format
+msgid "%(name)s cancelled the ride %(route)s."
+msgstr "%(name)s perui kyydin %(route)s."
+
+#: notifications/models.py:70
+#, python-format
+msgid ""
+"Your ride %(route)s was only shown to %(group)s, which you are no longer in,"
+" so nobody can find it now. Edit the ride to choose who sees it."
+msgstr ""
+"Kyytisi %(route)s näkyi vain ryhmälle %(group)s, jossa et enää ole, joten "
+"kukaan ei löydä sitä nyt. Muokkaa kyytiä ja valitse, kenelle se näkyy."
+
+#: notifications/models.py:71
+#, python-format
+msgid "%(name)s would like to join %(group)s."
+msgstr "%(name)s haluaisi liittyä ryhmään %(group)s."
+
+#: notifications/models.py:72
+#, python-format
+msgid ""
+"%(name)s accepted you into %(group)s. You can now see the rides posted to "
+"it."
+msgstr ""
+"%(name)s hyväksyi sinut ryhmään %(group)s. Näet nyt siihen julkaistut "
+"kyydit."
+
+#: notifications/models.py:73
+#, python-format
+msgid "%(name)s declined your request to join %(group)s."
+msgstr "%(name)s hylkäsi pyyntösi liittyä ryhmään %(group)s."
+
+#: notifications/models.py:74
+#, python-format
+msgid "%(name)s removed you from %(group)s."
+msgstr "%(name)s poisti sinut ryhmästä %(group)s."
+
+#: notifications/models.py:75
+#, python-format
+msgid ""
+"%(name)s made you an admin of %(group)s. You can now answer requests to join"
+" it."
+msgstr ""
+"%(name)s teki sinusta ryhmän %(group)s ylläpitäjän. Voit nyt vastata sen "
+"liittymispyyntöihin."
+
+#: notifications/models.py:76
+#, python-format
+msgid ""
+"You are now an admin of %(group)s, as it had no admin left who could answer "
+"requests to join. You have been a member the longest. You can hand the role "
+"over to someone else on the group's page."
+msgstr ""
+"Olet nyt ryhmän %(group)s ylläpitäjä, koska sillä ei ollut enää ylläpitäjää,"
+" joka voisi vastata liittymispyyntöihin. Olet ollut jäsenenä pisimpään. Voit"
+" luovuttaa roolin jollekulle toiselle ryhmän sivulla."
+
+#: notifications/models.py:77
+#, python-format
+msgid "%(name)s deleted the group %(group)s."
+msgstr "%(name)s poisti ryhmän %(group)s."
+
+#: notifications/models.py:78
+#, python-format
+msgid ""
+"The group %(group)s was closed, as its last member left. Your request to "
+"join it was cancelled."
+msgstr ""
+"Ryhmä %(group)s suljettiin, koska sen viimeinen jäsen poistui. Pyyntösi "
+"liittyä siihen peruttiin."
+
+#: notifications/templates/notifications/_item.html:10
+msgid "Unread"
+msgstr "Lukematon"
+
+#: notifications/templates/notifications/_menu.html:5
+#: notifications/templates/notifications/list.html:4
+#: notifications/templates/notifications/list.html:12
+msgid "Notifications"
+msgstr "Ilmoitukset"
+
+#: notifications/templates/notifications/_menu.html:9
+#: notifications/templates/notifications/list.html:17
+msgid "Mark all as read"
+msgstr "Merkitse kaikki luetuiksi"
+
+#: notifications/templates/notifications/_menu.html:18
+#: notifications/templates/notifications/list.html:29
+msgid ""
+"No notifications yet. You'll be notified here about your ride requests and "
+"rides."
+msgstr ""
+"Ei vielä ilmoituksia. Saat täällä ilmoituksia kyytipyynnöistäsi ja "
+"kyydeistäsi."
+
+#: notifications/templates/notifications/_menu.html:20
+msgid "See all notifications"
+msgstr "Näytä kaikki ilmoitukset"
+
+#: notifications/templates/notifications/list.html:11
+msgid "Your account"
+msgstr "Tilisi"
+
+#: notifications/templates/notifications/list.html:36
+msgid "Previous page"
+msgstr "Edellinen sivu"
+
+#: notifications/templates/notifications/list.html:37
+#, python-format
+msgid "Page %(number)s of %(total)s"
+msgstr "Sivu %(number)s / %(total)s"
+
+#: notifications/templates/notifications/list.html:38
+msgid "Next page"
+msgstr "Seuraava sivu"
+
+#: notifications/templates/notifications/list.html:43
+#, python-format
+msgid ""
+"Choose which notifications are also emailed to you in your <a "
+"href=\"%(account_url)s#notifications\" class=\"link\">settings</a>."
+msgstr ""
+"Valitse <a href=\"%(account_url)s#notifications\" "
+"class=\"link\">asetuksissa</a>, mitkä ilmoitukset lähetetään sinulle myös "
+"sähköpostilla."
+
+#: rides/forms.py:14 rides/models.py:330
+msgid "Monday"
+msgstr "Maanantai"
+
+#: rides/forms.py:15 rides/models.py:331
+msgid "Tuesday"
+msgstr "Tiistai"
+
+#: rides/forms.py:16 rides/models.py:332
+msgid "Wednesday"
+msgstr "Keskiviikko"
+
+#: rides/forms.py:17 rides/models.py:333
+msgid "Thursday"
+msgstr "Torstai"
+
+#: rides/forms.py:18 rides/models.py:334
+msgid "Friday"
+msgstr "Perjantai"
+
+#: rides/forms.py:19 rides/models.py:335
+msgid "Saturday"
+msgstr "Lauantai"
+
+#: rides/forms.py:20 rides/models.py:336
+msgid "Sunday"
+msgstr "Sunnuntai"
+
+#: rides/forms.py:80
+msgid "One-time"
+msgstr "Kertakyyti"
+
+#: rides/forms.py:80
+msgid "Recurring"
+msgstr "Toistuva"
+
+#: rides/forms.py:82
+msgid "Choose whether the ride is one-time or recurring."
+msgstr "Valitse, onko kyyti kertaluontoinen vai toistuva."
+
+#: rides/forms.py:85
+msgid "One-way"
+msgstr "Vain meno"
+
+#: rides/forms.py:85
+msgid "Return"
+msgstr "Meno-paluu"
+
+#: rides/forms.py:87
+msgid "Choose whether the ride is one-way or has a return journey."
+msgstr "Valitse, onko kyyti yhdensuuntainen vai onko sillä paluumatka."
+
+#: rides/forms.py:91
+msgid "Everyone"
+msgstr "Kaikki"
+
+#: rides/forms.py:91
+msgid "Only my groups"
+msgstr "Vain omat ryhmäni"
+
+#: rides/forms.py:139
+msgid "Choose each stop on the way from the list of suggestions."
+msgstr "Valitse jokainen välipysähdys ehdotusten luettelosta."
+
+#: rides/forms.py:143
+#, python-format
+msgid "A ride can have at most %(count)s stops on the way."
+msgstr "Kyydillä voi olla enintään %(count)s välipysähdystä."
+
+#: rides/forms.py:148
+msgid "Choose at least one way of travelling."
+msgstr "Valitse vähintään yksi kulkutapa."
+
+#: rides/forms.py:152
+msgid "Describe the other way of travelling."
+msgstr "Kuvaile muu kulkutapa."
+
+#: rides/forms.py:161
+msgid "Enter how many passengers you can take."
+msgstr "Kerro, montako matkustajaa voit ottaa kyytiin."
+
+#: rides/forms.py:164
+#, python-format
+msgid "Enter a number of passengers from 1 to %(max)s."
+msgstr "Anna matkustajien määrä väliltä 1–%(max)s."
+
+#: rides/forms.py:169
+#, python-format
+msgid ""
+"%(count)s passengers have already joined. Remove passengers before lowering "
+"the seats below that."
+msgstr ""
+"%(count)s matkustajaa on jo liittynyt. Poista matkustajia ennen kuin lasket "
+"paikkamäärän sitä pienemmäksi."
+
+#: rides/forms.py:195
+msgid "Choose at least one of your groups, or show the ride to everyone."
+msgstr "Valitse vähintään yksi ryhmistäsi tai näytä kyyti kaikille."
+
+#: rides/forms.py:205
+msgid "Enter the date and time the ride leaves."
+msgstr "Anna kyydin lähtöpäivä ja -aika."
+
+#: rides/forms.py:207
+msgid "The ride cannot leave in the past."
+msgstr "Kyyti ei voi lähteä menneisyydessä."
+
+#: rides/forms.py:216
+msgid "Enter the date and time of the return journey."
+msgstr "Anna paluumatkan päivä ja aika."
+
+#: rides/forms.py:218
+msgid "The return journey must be after the departure."
+msgstr "Paluumatkan on oltava lähdön jälkeen."
+
+#: rides/forms.py:224
+msgid "Choose at least one day for a recurring ride."
+msgstr "Valitse toistuvalle kyydille vähintään yksi päivä."
+
+#: rides/forms.py:234
+#, python-format
+msgid "Enter the time the ride leaves on %(day)s."
+msgstr "Anna kyydin lähtöaika päivälle %(day)s."
+
+#: rides/forms.py:243
+#, python-format
+msgid "Enter the time of the return journey on %(day)s."
+msgstr "Anna paluumatkan aika päivälle %(day)s."
+
+#: rides/forms.py:245
+#, python-format
+msgid "The return journey on %(day)s must be after the departure."
+msgstr "Paluumatkan on oltava lähdön jälkeen päivänä %(day)s."
+
+#: rides/forms.py:297
+msgid "Choose a start location from the list."
+msgstr "Valitse lähtöpaikka luettelosta."
+
+#: rides/forms.py:298
+msgid "Choose a destination from the list."
+msgstr "Valitse määränpää luettelosta."
+
+#: rides/models.py:181 rides/models.py:282
+#| msgid "Everyday"
+msgid "Every day"
+msgstr "Joka päivä"
+
+#: rides/models.py:183 rides/models.py:284
+msgid "Weekdays"
+msgstr "Arkipäivät"
+
+#: rides/models.py:185 rides/models.py:286
+msgid "Weekends"
+msgstr "Viikonloput"
+
+#: rides/models.py:186 rides/models.py:270
+msgid "Mon"
+msgstr "Ma"
+
+#: rides/models.py:186 rides/models.py:271
+msgid "Tue"
+msgstr "Ti"
+
+#: rides/models.py:186 rides/models.py:272
+msgid "Wed"
+msgstr "Ke"
+
+#: rides/models.py:186 rides/models.py:273
+msgid "Thu"
+msgstr "To"
+
+#: rides/models.py:186 rides/models.py:274
+msgid "Fri"
+msgstr "Pe"
+
+#: rides/models.py:186 rides/models.py:275
+msgid "Sat"
+msgstr "La"
+
+#: rides/models.py:186 rides/models.py:276
+msgid "Sun"
+msgstr "Su"
+
+#: rides/models.py:426
+msgid "Pending"
+msgstr "Odottaa"
+
+#: rides/models.py:427
+msgid "Accepted"
+msgstr "Hyväksytty"
+
+#: rides/models.py:428
+msgid "Declined"
+msgstr "Hylätty"
+
+#: rides/templates/admin/rides/ride/generate_test_rides.html:6
+msgid "Home"
+msgstr "Etusivu"
+
+#: rides/transport.py:38
+msgid "Ride offer"
+msgstr "Kyytitarjous"
+
+#: rides/transport.py:48
+msgid "Request"
+msgstr "Kyytipyyntö"
+
+#: rides/transport.py:58
+msgid "Train"
+msgstr "Juna"
+
+#: rides/transport.py:68
+msgid "Bus"
+msgstr "Bussi"
+
+#: rides/transport.py:78
+msgid "Taxi"
+msgstr "Taksi"
+
+#: rides/transport.py:88
+msgid "Other"
+msgstr "Muu"
+
+#: carpool/errors.py:23
+msgid "Bad request"
+msgstr "Virheellinen pyyntö"
+
+#: carpool/errors.py:23
+msgid "The page could not handle the request. Go back and try again."
+msgstr "Sivu ei pystynyt käsittelemään pyyntöä. Palaa takaisin ja yritä uudelleen."
+
+#: carpool/errors.py:24
+msgid "No access"
+msgstr "Ei käyttöoikeutta"
+
+#: carpool/errors.py:24
+msgid "You do not have permission to see this page."
+msgstr "Sinulla ei ole oikeutta nähdä tätä sivua."
+
+#: carpool/errors.py:25
+msgid "Page not found"
+msgstr "Sivua ei löytynyt"
+
+#: carpool/errors.py:25
+msgid ""
+"The page does not exist or has moved. Check the address, or start again from "
+"the home page."
+msgstr ""
+"Sivua ei ole olemassa tai se on siirretty. Tarkista osoite tai aloita alusta "
+"etusivulta."
+
+#: carpool/errors.py:26
+msgid "Something went wrong"
+msgstr "Jotain meni pieleen"
+
+#: carpool/errors.py:26
+msgid "There was an error on our side. Try again in a moment."
+msgstr "Meillä tapahtui virhe. Yritä hetken kuluttua uudelleen."
+
+#: carpool/errors.py:66
+msgid "The form had expired. Go back, reload the page and try again."
+msgstr "Lomake vanheni. Palaa takaisin, lataa sivu uudelleen ja yritä uudelleen."
+
+#: templates/error.html:19
+msgid "Go back"
+msgstr "Takaisin"
+
+#: templates/error.html:20
+msgid "Home page"
+msgstr "Etusivu"
+
+#: carpool/errors.py:35 carpool/errors.py:38
+msgid "Ride not found"
+msgstr "Kyytiä ei löytynyt"
+
+#: carpool/errors.py:36
+msgid ""
+"This ride does not exist, or you are not its driver. Only drivers can edit "
+"their rides."
+msgstr ""
+"Tätä kyytiä ei ole olemassa, tai et ole sen kuljettaja. Vain kuljettaja voi "
+"muokata kyytiään."
+
+#: carpool/errors.py:39
+msgid ""
+"This ride does not exist. Its driver may have deleted it, or the link may be "
+"wrong."
+msgstr ""
+"Tätä kyytiä ei ole olemassa. Kuljettaja on ehkä poistanut sen, tai linkki on "
+"virheellinen."
+
+#: carpool/errors.py:41
+msgid "Request not found"
+msgstr "Pyyntöä ei löytynyt"
+
+#: carpool/errors.py:42
+msgid ""
+"This request to join a ride no longer exists. The passenger may have "
+"withdrawn it, or the ride was deleted."
+msgstr ""
+"Tätä kyytipyyntöä ei ole enää olemassa. Matkustaja on ehkä perunut sen, tai "
+"kyyti on poistettu."
+
+#: carpool/errors.py:44
+msgid "Group not found"
+msgstr "Ryhmää ei löytynyt"
+
+#: carpool/errors.py:45
+msgid ""
+"This group does not exist. Its admin may have deleted it, or the link may be "
+"wrong."
+msgstr ""
+"Tätä ryhmää ei ole olemassa. Ylläpitäjä on ehkä poistanut sen, tai linkki on "
+"virheellinen."
+
+#: carpool/errors.py:47
+msgid "Notification not found"
+msgstr "Ilmoitusta ei löytynyt"
+
+#: carpool/errors.py:48
+msgid "This notification does not exist, or it is not yours."
+msgstr "Tätä ilmoitusta ei ole olemassa, tai se ei ole sinun."
+
+#: rides/forms.py:705 home/templates/add_ride.html:57
+msgid "Enter a return time on at least one day, or choose one-way."
+msgstr "Anna paluuaika vähintään yhdelle päivälle tai valitse yhdensuuntainen."
+
+#: rides/models.py:18
+msgid "Mondays"
+msgstr "Maanantaisin"
+
+#: rides/models.py:19
+msgid "Tuesdays"
+msgstr "Tiistaisin"
+
+#: rides/models.py:20
+msgid "Wednesdays"
+msgstr "Keskiviikkoisin"
+
+#: rides/models.py:21
+msgid "Thursdays"
+msgstr "Torstaisin"
+
+#: rides/models.py:22
+msgid "Fridays"
+msgstr "Perjantaisin"
+
+#: rides/models.py:23
+msgid "Saturdays"
+msgstr "Lauantaisin"
+
+#: rides/models.py:24
+msgid "Sundays"
+msgstr "Sunnuntaisin"

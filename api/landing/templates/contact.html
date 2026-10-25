@@ -1,0 +1,48 @@
+{% extends "landing.html" %}
+
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block title %}{% trans "Contact" %} | LUT Kyyti{% endblock %}
+
+{% block cardClass %}card h-fit shrink bg-base-100 shadow-sm my-30 mx-4{% endblock %}
+{% block cardBodyClass %}card-body rounded-4xl px-5 max-w-100{% endblock %}
+
+{% block content %}
+<h1 class="card-title text-5xl pb-1 text-end justify-center">{% trans "Contact" %}</h1>
+<div class="grid justify-items-center">
+    <p class="pb-5">{% trans "Have a question, suggestion, or problem to report? Send us a message using the form below." %}</p>
+    {% for message in messages %}
+    <div role="alert" class="alert alert-success alert-soft w-full mb-4">
+        <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+    <form class="grid gap-4 justify-items-center w-full" action="{% url 'contact' %}" name="ContactForm" method="post">
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}
+        <div role="alert" class="alert alert-error alert-soft w-full"><span>{{ error }}</span></div>
+        {% endfor %}
+        <label class="floating-label w-full">
+            <span>{% trans "Name *" %}</span>
+            <input id="id_name" name="name" class="input w-full{% if form.name.errors %} input-error{% endif %}" placeholder="{% trans "Name *" %}" maxlength="100" required value="{{ form.name.value|default_if_none:'' }}"/>
+        </label>
+        {% for error in form.name.errors %}<p class="text-error text-sm w-full -mt-3">{{ error }}</p>{% endfor %}
+        <label class="floating-label w-full">
+            <span>{% trans "Email *" %}</span>
+            <input id="id_email" name="email" type="email" class="input w-full{% if form.email.errors %} input-error{% endif %}" placeholder="{% trans "Email *" %}" required value="{{ form.email.value|default_if_none:'' }}"/>
+        </label>
+        {% for error in form.email.errors %}<p class="text-error text-sm w-full -mt-3">{{ error }}</p>{% endfor %}
+        <fieldset class="fieldset w-full">
+            <textarea id="id_message" name="message" class="textarea h-24 w-full{% if form.message.errors %} textarea-error{% endif %}" placeholder="{% trans "Message *" %}" maxlength="5000" required>{{ form.message.value|default_if_none:'' }}</textarea>
+            {% for error in form.message.errors %}<p class="text-error text-sm">{{ error }}</p>{% endfor %}
+        </fieldset>
+        {{ form.turnstile }}
+        {# Cloudflare's widget is 300 px wide; on the narrowest phones use its compact size #}
+        <script>if (matchMedia("(max-width: 359px)").matches) document.getElementById("id_turnstile").dataset.size = "compact";</script>
+        {% for error in form.turnstile.errors %}
+        <div role="alert" class="alert alert-error alert-soft w-full"><span>{{ error }}</span></div>
+        {% endfor %}
+        <button class="btn btn-success btn-outline w-full">{% trans "Send" %}</button>
+    </form>
+</div>
+{% endblock %}

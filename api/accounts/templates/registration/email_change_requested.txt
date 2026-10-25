@@ -1,0 +1,10 @@
+{% load i18n %}{% autoescape off %}{% trans "Hi" %} {{ user.first_name }},
+
+{% blocktrans %}Someone asked to change the email address of your LUT Kyyti account to {{ new_email }}. The change only happens once it is confirmed from that inbox, and until then your account keeps using this address.{% endblocktrans %}
+
+{% trans "If this was you, there is nothing else to do here." %}
+
+{% blocktrans %}If it wasn't you, cancel the change on your profile page and change your password: {{ account_url }}{% endblocktrans %}
+
+{% trans "The LUT Kyyti team" %}
+{% endautoescape %}

@@ -1,0 +1,9 @@
+{% load static %}
+{% comment %}
+  Browser tab icons (LUT's, from https://www.lut.fi), included in the <head>
+  of every page layout. The home screen icons for phones are set by the PWA_*
+  settings.
+{% endcomment %}
+<link rel="icon" href="{% static 'images/icons/favicon.ico' %}" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/icons/favicon-32x32.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/icons/favicon-16x16.png' %}">

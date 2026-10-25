@@ -1,109 +1,140 @@
-{% load static tailwind_tags %}
+{% load static tailwind_tags pwa i18n cache privacy %}
 
 <!DOCTYPE html>
 <html data-theme="light" class="h-full overflow-hidden">
-{% load pwa %}
-{% progressive_web_app_meta %}
-{% load i18n %}
-
-<link rel="manifest" href="manifest.json">
+{% get_current_language as LANGUAGE_CODE %}
 <head>
-    <title>{% block title%}{% trans "Campus Carpool" %}{% endblock %}</title>
+    <title>{% block title %}LUT Kyyti{% endblock %}</title>
+    {% cache 86400 app_head using="templates" %}
+    {% progressive_web_app_meta %}
+    {% include "_favicons.html" %}
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta meta name="viewport" content= "width=device-width, user-scalable=no" />
-    {% tailwind_css %}
+    {# viewport-fit=cover: the app draws under the iPhone's status bar and home indicator; the env(safe-area-inset-*) paddings keep content clear of them #}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="{% static "js/funcs.js" %}?v={{ STATIC_VERSION }}"></script>
+    {% tailwind_css v=TAILWIND_CSS_VERSION %}
+    {% comment %}
+      Turbo Drive (static/js/turbo-setup.js): links within /app/ change the
+      page without reloading it, and pages are loaded early when a link is
+      hovered or touched. Forms are posted as usual. The scripts below load
+      once and work on every page shown.
+    {% endcomment %}
+    <meta name="turbo-root" content="/app">
+    <script src="{% static "js/vendor/turbo-8.0.23.umd.min.js" %}" defer></script>
+    <script src="{% static "js/turbo-setup.js" %}?v={{ STATIC_VERSION }}" defer></script>
+    <script src="{% static "js/notifications.js" %}?v={{ STATIC_VERSION }}" defer></script>
+    <script src="{% static "js/push.js" %}?v={{ STATIC_VERSION }}" defer></script>
+    {% endcache %}
+    {# Pages can add their own Turbo settings, e.g. turbo-cache-control #}
+    {% block head %}{% endblock %}
 </head>
 
-<body class="flex bg-base-200 justify-content-center h-full">
-    <div class="hidden navbar fixed bg-base-100 lg:flex">
-        <div class="navbar-start">
-          <div class="dropdown">
-            <div for="account-drawer" aria-label="open sidebar" class="btn btn-ghost btn-circle drawer-toggler">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /> </svg>
-            </div>
-<!-- 
-            <div class="drawer">
-              <input id="account-drawer" type="checkbox" class="drawer-toggle" />
-              <div class="drawer-content">
-
-              </div>
-              <div class="drawer-side">
-                <label for="account-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-                <ul class="menu bg-base-200 min-h-full w-80 p-4">
-                  <li><a>Sidebar Item 1</a></li>
-                  <li><a>Sidebar Item 2</a></li>
-                </ul>
-              </div>
-            </div> -->
-
-          </div>
-        </div>
-        <div class="navbar-center">
-          <a href="/app/home/" class="btn btn-ghost text-xl">{% trans "Campus Carpool" %}</a>
-        </div>
-        <div class="navbar-end">
-          <a href="/app/search/" class="btn btn-ghost btn-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /> </svg>
-          </a>
-          <a href="/create-recurring-trip/" class="btn btn-ghost btn-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-          </a>
-          <!-- <button class="btn btn-ghost btn-circle">
-            <div class="indicator">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /> </svg>
-              <span class="badge badge-xs badge-primary indicator-item"></span>
-            </div>
-          </button> -->
-        </div>
+{% with page=request.resolver_match.url_name %}
+{# data-dock-tab: the dock tab (1-5) of this page, which static/js/turbo-setup.js shows as chosen #}
+<body class=" flex bg-base-200 justify-content-center h-full" data-dock-tab="{% if page == 'home' %}1{% elif page == 'search' %}2{% elif page == 'add' %}3{% elif page == 'my_rides' %}4{% elif page == 'more' or page == 'account' or page == 'notifications' %}5{% else %}0{% endif %}">
+{% endwith %}
+    {% cache 86400 app_body_top using="templates" %}
+    {% include "_splash.html" %}
+    <script>
+      theme = localStorage["theme"];
+      document.documentElement.setAttribute("data-theme", theme);
+    </script>
+    {% endcache %}
+    {# Full width, so that each page's scrolling area covers the whole screen #}
+    <div class="flex w-full">
+      {% block content %}
+      {% endblock %}
     </div>
-
-    <div class="flex justify-items-center mx-auto">
-        {% block content %}
-        {% endblock %}
+    {% with page=request.resolver_match.url_name %}
+    <div class="z-5 hidden navbar fixed bg-base-100 border-b border-base-300 lg:flex px-6 pt-[calc(0.5rem+env(safe-area-inset-top))]">
+        <div class="navbar-start w-auto shrink-0">
+          <a href="{% url 'home' %}" class="btn btn-ghost text-xl px-2">
+            {% include "_logo.html" with width="40px" %}
+            <span class="leading-none text-2xl font-bold tracking-tight">{% trans "LUT Kyyti" %}</span>
+          </a>
+        </div>
+        <div class="navbar-end gap-2 w-auto grow">
+          <ul class="menu menu-horizontal flex-nowrap whitespace-nowrap gap-1 font-semibold text-base">
+            {% comment %}
+              My rides and Help are on the More page (and My rides in the mobile dock).
+              The current page is not highlighted; hovering a link turns it green.
+            {% endcomment %}
+            <li><a href="{% url 'home' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Home" %}{% include "_icon.html" with name="home" class="size-6" %}</a></li>
+            <li><a href="{% url 'search' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Find" %}{% include "_icon.html" with name="search" class="size-6" %}</a></li>
+            <li><a href="{% url 'add' %}" class="hover:bg-primary/10 hover:text-primary">{% trans "Post" %}{% include "_icon.html" with name="car" class="size-6" %}</a></li>
+          </ul>
+          {# The bell's menu is fetched when it opens; see static/js/notifications.js #}
+          {% with count=unread_notification_count %}
+          <div class="dropdown dropdown-end" data-notifications data-menu-url="{% url 'notifications_menu' %}" data-poll-url="{% url 'notifications_poll' %}" data-since="{% now 'c' %}">
+            <div tabindex="0" role="button" class="btn btn-ghost btn-circle" aria-label="{% trans "Notifications" %}">
+              <div class="indicator">
+                {% include "_icon.html" with name="bell" class="size-6" %}
+                <span class="badge badge-xs badge-error indicator-item {% if not count %}hidden{% endif %}" data-unread-badge>{% if count > 9 %}9+{% else %}{{ count }}{% endif %}</span>
+              </div>
+            </div>
+            <div tabindex="0" class="dropdown-content bg-base-100 border border-base-300 rounded-box shadow-lg w-96 max-w-[calc(100vw-2rem)] p-2 mt-3 z-50" data-notifications-menu>
+              <div class="skeleton h-32 w-full"></div>
+            </div>
+          </div>
+          {% endwith %}
+          {# The More page, as the dock's profile picture is on phones; it links to Profile & settings #}
+          <a href="{% url 'more' %}" class="btn btn-ghost btn-circle" aria-label="{% trans "More" %}">
+            {% avatar user %}
+          </a>
+        </div>
     </div>
 
 <!-- dock for mobile view, navbar for desktop view -->
-    <div class="dock lg:hidden pb-3">
-        <!-- <a href="/app/home">
-        <svg class="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><polyline points="1 11 12 2 23 11" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><path d="m5,13v7c0,1.105.895,2,2,2h10c1.105,0,2-.895,2-2v-7" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></path><line x1="12" y1="22" x2="12" y2="18" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></line></g></svg>
-        <span class="dock-label">Home</span>
+    {# Taller than daisyUI's dock, with room under each label for the current page's bar (dock-active), which would otherwise cross the label #}
+    {# Kept on screen across page changes (data-turbo-permanent); see static/js/turbo-setup.js #}
+    <div id="app-dock" data-turbo-permanent class="dock lg:hidden border-t border-base-300 z-5 pb-[max(0.75rem,env(safe-area-inset-bottom))] h-[calc(4rem+max(0.75rem,env(safe-area-inset-bottom)))] *:mb-0! *:pb-2.5">
+        <a href="{% url 'home' %}" class="{% if page == 'home' %}dock-active text-primary{% endif %}">
+          {% include "_icon.html" with name="home" class="size-6" %}
+          <span class="dock-label">{% trans "Home" %}</span>
         </a>
-        
-        <a href="/app/search/">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /> </svg>
-        <span class="dock-label">Search</span>
-        </a> -->
-
-        <a href="/app/home/" class="btn btn-ghost btn-circle shrink">
-          <svg class="size-[2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt">
-              <polyline points="1 11 12 2 23 11" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline>
-              <path d="m5,13v7c0,1.105.895,2,2,2h10c1.105,0,2-.895,2-2v-7" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></path>
-              <line x1="12" y1="22" x2="12" y2="18" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></line>
-            </g>
-          </svg>
+        <a href="{% url 'search' %}" class="{% if page == 'search' %}dock-active text-primary{% endif %}">
+          {% include "_icon.html" with name="search" class="size-6" %}
+          <span class="dock-label">{% trans "Find" %}</span>
         </a>
-
-        <a href="/app/search/" class="btn btn-ghost btn-circle shrink">
-          <svg class="size-[2em]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"> 
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /> 
-          </svg>
+        <a href="{% url 'add' %}" class="{% if page == 'add' %}dock-active text-primary{% endif %}">
+          {% include "_icon.html" with name="car" class="size-6" %}
+          <span class="dock-label">{% trans "Offer" %}</span>
         </a>
-
-        <a href="/create-recurring-trip/" class="btn btn-ghost btn-circle shrink">
-          <svg class="size-[2.2em]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
+        <a href="{% url 'my_rides' %}" class="{% if page == 'my_rides' %}dock-active text-primary{% endif %}">
+          {% include "_icon.html" with name="calendar" class="size-6" %}
+          <span class="dock-label">{% trans "My rides" %}</span>
         </a>
-
-        <a href="/profile/settings/" class="btn btn-ghost btn-circle shrink">
-          <svg class="size-[2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="currentColor" stroke-linejoin="miter" stroke-linecap="butt"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></circle><path d="m22,13.25v-2.5l-2.318-.966c-.167-.581-.395-1.135-.682-1.654l.954-2.318-1.768-1.768-2.318.954c-.518-.287-1.073-.515-1.654-.682l-.966-2.318h-2.5l-.966,2.318c-.581.167-1.135.395-1.654.682l-2.318-.954-1.768,1.768.954,2.318c-.287.518-.515,1.073-.682,1.654l-2.318.966v2.5l2.318.966c.167.581.395,1.135.682,1.654l-.954,2.318,1.768,1.768,2.318-.954c.518.287,1.073.515,1.654.682l.966,2.318h2.5l.966-2.318c.581-.167,1.135-.395,1.654-.682l2.318.954,1.768-1.768-.954-2.318c.287-.518.515-1.073.682-1.654l2.318-.966Z" fill="none" stroke="currentColor" stroke-linecap="square" stroke-miterlimit="10" stroke-width="2"></path></g></svg>
+        {# The More page; also the chosen tab on the pages it leads to. (On desktop, the navbar's profile picture links to it.) #}
+        <a href="{% url 'more' %}" class="{% if page == 'more' or page == 'account' or page == 'notifications' %}dock-active text-primary{% endif %}">
+          <div class="indicator">
+            {% avatar user "w-6" "text-[0.6rem]" %}
+            <span class="status status-error indicator-item {% if not unread_notification_count %}hidden{% endif %}" data-unread-dot aria-label="{% trans "Unread notifications" %}"></span>
+          </div>
+          <span class="dock-label">{% trans "More" %}</span>
         </a>
-
     </div>
+    {% endwith %}
+
+    {% if messages %}
+    <div class="toast toast-top toast-center z-50 mt-[calc(0.5rem+env(safe-area-inset-top))] lg:mt-16" id="messages">
+      {% for message in messages %}
+      <div role="alert" class="alert {% if message.tags == 'error' %}alert-error{% elif message.tags == 'success' %}alert-success{% else %}alert-info{% endif %} shadow-md">
+        <span>{{ message }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    <script>setTimeout(() => document.getElementById("messages")?.remove(), 6000);</script>
+    {% endif %}
+    {# Above the dock, which is 4rem + the home indicator's space tall #}
+    <div class="toast toast-end toast-bottom z-50 mb-[calc(4.5rem+max(0.75rem,env(safe-area-inset-bottom)))] lg:mb-2" id="notification-toasts" aria-live="polite"></div>
+    {# Behind the iPhone's status bar (viewport-fit=cover), so that pages scroll under it as in apps #}
+    <div class="fixed inset-x-0 top-0 z-4 h-[env(safe-area-inset-top)] bg-base-200 lg:hidden" aria-hidden="true"></div>
+    {% if push_public_key %}
+    {# Push notifications on this device (static/js/push.js, notifications/push.py) #}
+    <div hidden id="push-config" data-public-key="{{ push_public_key }}" data-csrf="{{ csrf_token }}"
+         data-subscribe-url="{% url 'push_subscribe' %}" data-unsubscribe-url="{% url 'push_unsubscribe' %}"></div>
+    {% endif %}
 </body>
 </html>

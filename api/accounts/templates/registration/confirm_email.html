@@ -1,0 +1,21 @@
+{% extends "registration/account_base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Confirm your email" %} | LUT Kyyti{% endblock %}
+{% block card_title %}{% trans "Confirm your email" %}{% endblock %}
+{% block card_body %}
+{% if not invalid %}
+  <p>{% blocktrans %}Confirm <strong>{{ email }}</strong> as the email address of your LUT Kyyti account.{% endblocktrans %}</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary w-full">{% trans "Confirm and log in" %}</button>
+  </form>
+{% elif already_confirmed %}
+  <p>{% trans "This email address is already confirmed. You can log in to your account." %}</p>
+  <a href="{% url 'login' %}" class="btn btn-primary w-full">{% trans "Log in" %}</a>
+{% else %}
+  <p>{% trans "This confirmation link is invalid or has expired. Enter your email address to get a new one." %}</p>
+  <div>{% include "registration/_resend_confirmation.html" with email="" %}</div>
+  <a href="{% url 'login' %}" class="btn btn-sm btn-ghost w-full">{% trans "Back to login" %}</a>
+{% endif %}
+{% endblock %}

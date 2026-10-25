@@ -1,0 +1,308 @@
+{% extends "app.html" %}
+
+{% load widget_tweaks %}
+{% load i18n %}
+
+{% block title %}{% if editing %}{% trans "Edit ride" %}{% else %}{% trans "Post a ride" %}{% endif %} | LUT Kyyti{% endblock %}
+{# The Google Maps inputs do not work in a copy of the page, so going back reloads it #}
+{% block head %}<meta name="turbo-cache-control" content="no-cache">{% endblock %}
+{% block content %}
+{{ campuses|json_script:"campus-data" }}
+{# The places the location pickers start with: the ride's when editing, the posted ones after a failed post #}
+{{ initial_places|json_script:"initial-places" }}
+
+<script>
+    // prettier-ignore
+    (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+        key: "{{ GOOGLE_MAPS_API_KEY }}"
+    });
+</script>
+
+<section class="h-app w-full overflow-y-auto pt-[calc(1.75rem+env(safe-area-inset-top))] lg:pt-24 pb-dock lg:pb-10">
+  {# One column: kept narrow (tablets); two columns from lg #}
+  <div class="max-w-2xl lg:max-w-6xl mx-auto px-4 lg:px-7">
+    {# Looked up here, so that the script below is plain JavaScript to editors #}
+    {% trans "Select a start location" as start_hint %}
+    {% trans "Other destination" as other_destination_label %}
+    {% trans "Select a destination" as destination_hint %}
+    <script>
+        // Set form to same state after reload
+        onPageReady(function() {
+            recurrenceRadio = document.getElementsByClassName("recurrence");
+            returnRadio = document.getElementsByClassName("return");
+            for (var i = 0; i < 2; i++) {
+                if (recurrenceRadio[i].checked == true) {
+                    changeRecurrence(recurrenceRadio[i]);
+                }
+                if (returnRadio[i].checked == true) {
+                    changeReturn(returnRadio[i]);
+                }
+            }
+
+            // Seats and "Other" are shown for the transport options already chosen
+            enableMaxPassengerField(document.getElementById("id_offer"));
+            enableOtherField(document.getElementById("id_other"));
+            // At least one option must be chosen (see funcs.js)
+            updateTransportRequired();
+
+            const places = JSON.parse(document.getElementById("initial-places").textContent) || {};
+            for (const via of places.vias || []) {
+                viaAdd(via);
+            }
+            autocomplete_init("div-autocomplete-start", "start", "From", "{{ start_hint|escapejs }}", false, places.start);
+            destination_init("div-autocomplete-destination", "campus-data", "To", "{{ other_destination_label|escapejs }}", "{{ destination_hint|escapejs }}", false, places.destination);
+        });
+    </script>
+
+    <form action="{% if editing %}{% url 'edit_ride' ride.pk %}{% else %}{% url 'add' %}{% endif %}" name="RideForm" method="post" class="grid lg:grid-cols-2 gap-5 items-start" data-day-required="{% trans "Choose at least one day for a recurring ride." %}" data-return-required="{% trans "Enter a return time on at least one day, or choose one-way." %}">
+      {% csrf_token %}
+
+      {% if ride_form.errors %}
+      <div role="alert" class="alert alert-error alert-soft items-start lg:col-span-2">
+        {% include "_icon.html" with name="alert" class="size-5" %}
+        <ul class="list-disc ps-4">
+          {% for error in ride_form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+          {% for field in ride_form %}{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {# Desktop: what and where on the left, when and the note on the right #}
+      <div class="grid gap-5">
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5 sm:p-6 @container">
+            <h2 class="card-title text-lg mb-1">{% if editing %}{% trans "Edit ride" %}{% else %}{% trans "Ride options" %}{% endif %}</h2>
+            {% trans "Offer" as offer_label %}{% trans "Request" as request_label %}{% trans "Train" as train_label %}{% trans "Bus" as bus_label %}{% trans "Taxi" as taxi_label %}{% trans "Other" as other_label %}
+            <div class="grid @2xl:grid-cols-[1fr_2fr] gap-x-5 gap-y-3">
+              <fieldset class="fieldset py-0">
+                <legend class="fieldset-legend">{% trans "Car ride" %}</legend>
+                <div class="grid @sm:grid-cols-2 @2xl:grid-cols-1 gap-2">
+                  {% include "_transport_choice.html" with option=transport.offer label=offer_label checked=ride_form.offer.value onchange="enableMaxPassengerField(this)" %}
+                  {# Shown for an offer, right under it: next to it in the list, or below it when Offer and Request are side by side #}
+                  <div hidden id="id_max_passengers_div" class="@sm:order-last @sm:col-start-1 @2xl:order-none">
+                    <fieldset class="fieldset py-0">
+                      <legend class="fieldset-legend">{% trans "Maximum passengers" %}</legend>
+                      <input disabled id="id_max_passengers" name="max_passengers" type="number" pattern="\d*" min="1" max="100" class="input w-full" value="{{ ride_form.max_passengers.value|default_if_none:"" }}"/>
+                    </fieldset>
+                  </div>
+                  {% include "_transport_choice.html" with option=transport.request label=request_label checked=ride_form.request.value %}
+                </div>
+              </fieldset>
+              <fieldset class="fieldset py-0">
+                <legend class="fieldset-legend">{% trans "Other transport" %}</legend>
+                <div class="grid grid-cols-2 gap-2">
+                  {% include "_transport_choice.html" with option=transport.train label=train_label checked=ride_form.train.value value="train" %}
+                  {% include "_transport_choice.html" with option=transport.bus label=bus_label checked=ride_form.bus.value value="bus" %}
+                  {% include "_transport_choice.html" with option=transport.taxi label=taxi_label checked=ride_form.taxi.value value="taxi" %}
+                  {% include "_transport_choice.html" with option=transport.other label=other_label checked=ride_form.other.value value="other" onchange="enableOtherField(this)" %}
+                </div>
+              </fieldset>
+            </div>
+            {# Shown for Other #}
+            <div class="flex flex-wrap gap-x-5 gap-y-3 has-[>:not([hidden])]:mt-2">
+              <div hidden id="other_div" class="grow basis-full @sm:basis-48">
+                <fieldset class="fieldset py-0">
+                  <legend class="fieldset-legend">{% trans "Other" %}</legend>
+                  <input disabled id="id_other_field" name="other_field" class="input w-full" maxlength="300" value="{{ ride_form.other_field.value|default_if_none:"" }}"/>
+                </fieldset>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5 sm:p-6 @container">
+            <h2 class="card-title text-lg mb-1">{% trans "Route" %}</h2>
+            <div id="div-inputs" class="grid gap-3">
+              <fieldset class="fieldset py-0">
+                <legend class="fieldset-legend">{% trans "From" %}</legend>
+                <div id="div-autocomplete-start" class="skeleton h-12 w-full rounded-field"></div>
+              </fieldset>
+              {# Stops on the way, added with the button below (viaAdd in funcs.js) #}
+              <div hidden id="div-via" class="grid gap-3" data-remove-label="{% trans "Remove" %}"></div>
+              <fieldset class="fieldset py-0">
+                <legend class="fieldset-legend">{% trans "To" %}</legend>
+                <div id="div-autocomplete-destination" class="skeleton h-12 w-full rounded-field"></div>
+              </fieldset>
+              <div>
+                <button id="add_via" class="btn btn-ghost btn-sm text-primary -ms-3" onclick="viaAdd()" type="button">
+                  {% include "_icon.html" with name="plus" class="size-4" %}{% trans "Add a stop" %}
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <div class="grid gap-5">
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5 sm:p-6 @container">
+            <h2 class="card-title text-lg mb-1">{% trans "Schedule" %}</h2>
+            <div class="grid @sm:grid-cols-2 gap-x-5 gap-y-3">
+              <fieldset class="fieldset py-0">
+                <legend class="fieldset-legend">{% trans "Recurrence" %}</legend>
+                <div class="tabs tabs-box w-full">
+                  <input id="id_one_time" type="radio" name="one_time" class="recurrence tab grow text-base-content/60 checked:text-primary checked:font-semibold" aria-label="{% trans "One-time" %}" onchange="changeRecurrence(this)" value="oneTime" {% if ride_form.one_time.value != "recurring" %}checked{% endif %}>
+                  <input id="id_one_time_recurring" type="radio" name="one_time" class="recurrence tab grow text-base-content/60 checked:text-primary checked:font-semibold" aria-label="{% trans "Recurring" %}" onchange="changeRecurrence(this)" value="recurring" {% if ride_form.one_time.value == "recurring" %}checked{% endif %}>
+                </div>
+              </fieldset>
+              <fieldset class="fieldset py-0">
+                <legend class="fieldset-legend">{% trans "Return" %}</legend>
+                <div class="tabs tabs-box w-full">
+                  <input id="id_one_way" type="radio" name="one_way" class="return tab grow text-base-content/60 checked:text-primary checked:font-semibold" aria-label="{% trans "One-way" %}" onchange="changeReturn(this)" value="oneWay" {% if ride_form.one_way.value != "twoWay" %}checked{% endif %}>
+                  <input id="id_one_way_return" type="radio" name="one_way" class="return tab grow text-base-content/60 checked:text-primary checked:font-semibold" aria-label="{% trans "Return" %}" onchange="changeReturn(this)" value="twoWay" {% if ride_form.one_way.value == "twoWay" %}checked{% endif %}>
+                </div>
+              </fieldset>
+            </div>
+
+            <div id="div-one-time" class="grid @sm:grid-cols-2 gap-x-5 gap-y-3 mt-2">
+              <fieldset class="fieldset py-0">
+                <legend class="fieldset-legend">{% trans "Leaving at" %}</legend>
+                <input class="input w-full h-12" id="id_leaving_at_date_time" name="leaving_at_date_time" type="datetime-local" onchange="updateMinDateTime(this.value)" value="{{ ride_form.leaving_at_date_time.value|default_if_none:"" }}">
+              </fieldset>
+              <fieldset hidden class="div-return fieldset py-0">
+                <legend class="fieldset-legend">{% trans "Returning at" %}</legend>
+                <input class="input w-full h-12" id="id_returning_at_date_time" name="returning_at_date_time" type="datetime-local" value="{{ ride_form.returning_at_date_time.value|default_if_none:"" }}">
+              </fieldset>
+            </div>
+
+            {# One row per weekday: ticked days get a leaving (and returning) time. In a narrow card (phones, the desktop column) the times are under the day, only once it is ticked. The labels have the same width, so the times line up #}
+            <div hidden id="div-recurring" class="grid gap-2 mt-3">
+              <p hidden class="div-return text-sm text-base-content/60">{% trans "Leave the return time empty on days without a return journey." %}</p>
+              {% for day in day_list %}
+              <div id="div-{{ day.key }}" class="group grid @xl:grid-cols-[8rem_minmax(0,1fr)_minmax(0,1fr)] @xl:items-center gap-x-3 gap-y-2 rounded-field border border-base-300 p-3 transition has-[:checked]:border-primary/40 has-[:checked]:bg-primary/5">
+                <label class="flex items-center gap-2 font-semibold cursor-pointer">
+                  <input id="id_{{ day.key }}_check" name="{{ day.key }}_check" type="checkbox" class="checkbox checkbox-sm checkbox-primary" {% if day.checked %}checked{% endif %}/>
+                  {{ day.label }}
+                </label>
+                <div class="div-departure @max-xl:hidden @max-xl:group-has-checked:block">
+                  <label class="input input-sm w-full">
+                    <span class="label w-24 shrink-0">{% trans "Leaving at" %}</span>
+                    <input id="id_{{ day.key }}_leaving_at_time" name="{{ day.key }}_leaving_at_time" type="time" class="min-w-0 grow @xl:text-sm" value="{{ day.leaving }}" aria-label="{% blocktrans with day=day.label %}{{ day }}: leaving at{% endblocktrans %}">
+                  </label>
+                </div>
+                <div hidden class="div-return @max-xl:hidden @max-xl:group-has-checked:block">
+                  <label class="input input-sm w-full">
+                    <span class="label w-24 shrink-0">{% trans "Returning at" %}</span>
+                    <input id="id_{{ day.key }}_returning_at_time" name="{{ day.key }}_returning_at_time" type="time" class="min-w-0 grow @xl:text-sm" value="{{ day.returning }}" aria-label="{% blocktrans with day=day.label %}{{ day }}: returning at{% endblocktrans %}">
+                  </label>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            <script>
+                // The ride cannot leave in the past. datetime-local inputs use local
+                // time, so the minimum is the local date and time (not UTC).
+                (function () {
+                    const now = new Date();
+                    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                    document.getElementById("id_leaving_at_date_time").min = now.toISOString().slice(0, 16);
+                })();
+    
+                // Marks the schedule inputs the chosen kind of ride needs as required,
+                // so that the browser asks for them before posting. Only shown inputs
+                // are required. The server checks the same (RideForm.clean).
+                function updateScheduleRequirements() {
+                    const form = document.forms.RideForm;
+                    const oneTime = form.querySelector('input[name="one_time"]:checked').value === "oneTime";
+                    const withReturn = form.querySelector('input[name="one_way"]:checked').value === "twoWay";
+                    const leaving = form.elements.leaving_at_date_time;
+                    const returning = form.elements.returning_at_date_time;
+                    leaving.required = oneTime;
+                    returning.required = oneTime && withReturn;
+                    returning.min = leaving.value;
+    
+                    // Return times are optional on each day (days without one are
+                    // one-way), but a return ride needs one on at least one day
+                    const checks = [...form.querySelectorAll('input[name$="_check"]')];
+                    const returnings = [];
+                    for (const check of checks) {
+                        const day = check.name.replace(/_check$/, "");
+                        const dayLeaving = form.elements[`${day}_leaving_at_time`];
+                        const dayReturning = form.elements[`${day}_returning_at_time`];
+                        dayLeaving.required = !oneTime && check.checked;
+                        dayReturning.min = dayLeaving.value;
+                        dayReturning.setCustomValidity("");
+                        if (check.checked) returnings.push(dayReturning);
+                    }
+                    const noReturn = !oneTime && withReturn && returnings.length && !returnings.some((input) => input.value);
+                    if (noReturn) returnings[0].setCustomValidity(form.dataset.returnRequired);
+                    // A recurring ride needs at least one day
+                    const noDays = !oneTime && !checks.some((check) => check.checked);
+                    checks[0].setCustomValidity(noDays ? form.dataset.dayRequired : "");
+                }
+                document.forms.RideForm.addEventListener("change", updateScheduleRequirements);
+                document.forms.RideForm.addEventListener("input", updateScheduleRequirements);
+                updateScheduleRequirements();
+            </script>
+          </div>
+        </section>
+
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5 sm:p-6">
+            <h2 class="card-title text-lg mb-1">{% trans "Who can see this ride" %}</h2>
+            {# Everyone, or only members of some of the driver's groups (groups/models.py) #}
+            {% with audience=ride_form.audience.value|default:"everyone" groups=ride_form.groups %}
+            <div class="grid gap-2" role="radiogroup" aria-label="{% trans "Who can see this ride" %}">
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input type="radio" name="audience" value="everyone" class="radio radio-primary radio-sm mt-0.5" {% if audience != "groups" %}checked{% endif %} onchange="showRideGroups()">
+                <span><strong class="block text-sm">{% trans "Everyone" %}</strong><span class="text-xs text-base-content/60">{% trans "All LUT Kyyti members can find it" %}</span></span>
+              </label>
+              <label class="flex items-start gap-3 {% if groups.field.queryset.exists %}cursor-pointer{% else %}opacity-60{% endif %}">
+                <input type="radio" name="audience" value="groups" class="radio radio-primary radio-sm mt-0.5" {% if audience == "groups" %}checked{% endif %} {% if not groups.field.queryset.exists and audience != "groups" %}disabled{% endif %} onchange="showRideGroups()">
+                <span><strong class="block text-sm">{% trans "Only my groups" %}</strong><span class="text-xs text-base-content/60">{% trans "Only members of the groups you choose can find it" %}</span></span>
+              </label>
+            </div>
+            <fieldset id="ride-groups" class="fieldset py-0 ps-7 {% if audience != "groups" %}hidden{% endif %}">
+              <legend class="sr-only">{% trans "Groups" %}</legend>
+              {% for choice in groups %}
+                <label class="flex items-center gap-2 text-sm cursor-pointer">{{ choice.tag }} {{ choice.choice_label }}</label>
+              {% endfor %}
+              {% for error in groups.errors %}<p class="text-error text-sm">{{ error }}</p>{% endfor %}
+            </fieldset>
+            {% if not groups.field.queryset.exists %}
+              <p class="text-xs text-base-content/60">{% trans "You are not in any groups." %} <a href="{% url 'groups' %}" class="link link-primary">{% trans "Make or join one" %}</a></p>
+            {% endif %}
+            {% endwith %}
+            <script>
+              function showRideGroups() {
+                  const groups = document.forms.RideForm.audience.value === "groups";
+                  document.getElementById("ride-groups").classList.toggle("hidden", !groups);
+              }
+            </script>
+          </div>
+        </section>
+
+        <section class="card bg-base-100 border border-base-300 shadow-sm">
+          <div class="card-body p-5 sm:p-6 @container">
+            <h2 class="card-title text-lg mb-1">{% trans "Price and note for passengers" %}</h2>
+            {# All optional, and only shown on the ride's page when filled in or ticked #}
+            <label class="flex items-start gap-3 rounded-field border border-base-300 p-3 cursor-pointer transition has-[:checked]:border-primary/40 has-[:checked]:bg-primary/5">
+              <input id="id_flexible_time" name="flexible_time" type="checkbox" class="checkbox checkbox-sm checkbox-primary mt-0.5" {% if ride_form.flexible_time.value %}checked{% endif %}/>
+              <span class="grid gap-0.5">
+                <span class="font-semibold">{% trans "Time flexibility" %}</span>
+                <span class="text-sm text-base-content/60">{% trans "The departure times are flexible. Passengers can suggest a different time." %}</span>
+              </span>
+            </label>
+            <fieldset class="fieldset py-0">
+              <legend class="fieldset-legend">{% trans "Price" %} <span class="font-normal text-base-content/60">{% trans "(optional)" %}</span></legend>
+              <input id="id_price" name="price" class="input w-full" maxlength="100" placeholder="{% trans "e.g. €10 per passenger" %}" value="{{ ride_form.price.value|default_if_none:"" }}"/>
+            </fieldset>
+            <fieldset class="fieldset py-0">
+              <legend class="fieldset-legend">{% trans "Note" %} <span class="font-normal text-base-content/60">{% trans "(optional)" %}</span></legend>
+              <textarea id="id_note" name="note" class="textarea w-full" rows="3">{{ ride_form.note.value|default_if_none:"" }}</textarea>
+            </fieldset>
+            <div class="flex flex-wrap justify-end gap-2 mt-3">
+              {% if editing %}<a href="{% url 'ride_detail' ride.pk %}" class="btn btn-ghost">{% trans "Cancel" %}</a>{% endif %}
+              <button class="btn btn-primary grow sm:grow-0 sm:px-8" type="submit">{% if editing %}{% trans "Save changes" %}{% else %}{% trans "Add ride" %}{% endif %}</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </form>
+
+    {% include "_page_footer.html" %}
+  </div>
+</section>
+{% endblock %}
