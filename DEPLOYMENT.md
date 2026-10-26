@@ -97,6 +97,19 @@ Open the dashboard at `http://<server>:8000` and log in **right away**.
 Sources › Add › GitHub App, and register it to the **NomeaTech** organisation
 with access to the Staff-Carpool repository only. Pushes then start deploys.
 
+On violetta the apps are added as a Public Repository instead (the repository
+is public), and the GitHub Action `.github/workflows/deploy.yml` starts the
+deploys: a push to `testing` deploys staging, one to `main` production, and
+the Action fails if the deploy does. It needs one repository secret:
+
+1. In Coolify, Keys & Tokens › API Tokens: a token named `github-actions`,
+   with the **deploy** and **read** permissions. Copy it (it is shown once).
+2. In GitHub, the repository's Settings › Secrets and variables › Actions ›
+   New repository secret: name `COOLIFY_TOKEN`, the token as its value.
+
+If an app is ever made again in Coolify, put its new UUID (in its URL in
+Coolify) in `deploy.yml`.
+
 ### Notifications
 
 Settings › Notifications: email, Slack, Discord or Telegram. Turn on at least
@@ -155,9 +168,13 @@ Copy the values from the current server's `api/.env` where it says so:
 | `WEB_CONCURRENCY` | Optional: Gunicorn's processes, 3 if unset (about 150 MB each) |
 
 Leave `DEBUG`, `STATIC_ROOT` and `POSTGRES_PASSWORD` unset: the image sets
-what it needs. Leave `CSRF_COOKIE_DOMAIN` unset too: set to `kyyti.net` in
-production, its cookie would also reach `test.kyyti.net`, and the two sites
-would overwrite each other's, so that forms fail on staging.
+what it needs. `SITE_URL` needs the `https://`.
+
+`CSRF_COOKIE_DOMAIN`: production keeps `kyyti.net`, as on the old server.
+Members' browsers have that cookie, and without the setting they would send
+it beside a new one, so that their forms fail. Leave it unset on staging. The
+production cookie also reaches `test.kyyti.net`, so someone who uses both
+sites may have to clear staging's cookies if its forms say they expired.
 
 For staging, also add `test.kyyti.net` to the hostnames of the Turnstile
 widget in Cloudflare, and to the allowed websites of the Google Maps key.
@@ -187,8 +204,8 @@ python manage.py createsuperuser
   deploys by itself.
 - **Production:** once staging is fine, bring `main` up to `testing`
   (a pull request from `testing` to `main`, or `git push origin testing:main`).
-  Production deploys by itself. To deploy production only by pressing Deploy
-  in the dashboard instead, turn off its Auto Deploy (the app's Advanced settings).
+  Production deploys by itself. Each deploy shows in the repository's Actions
+  tab, which can also start one again (Deploy with Coolify › Run workflow).
 - **Rolling back:** the app's Rollback lists the earlier images; one click
   switches back, the same way as a deploy. Migrations are not undone, which is
   one more reason for the rule in "Migrations".

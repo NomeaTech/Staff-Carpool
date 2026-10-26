@@ -28,8 +28,9 @@ set -euo pipefail
 APP_UID=10001
 DATA_DIR=/srv/kyyti
 ENVIRONMENTS="production staging"
-# Coolify's dashboard, and its live updates and terminal, before it has an address
-DASHBOARD_PORTS="8000 6001 6002"
+# Coolify's dashboard, and its live updates and terminal, before it has an
+# address; 8080 is the proxy's (Traefik's) own dashboard
+DASHBOARD_PORTS="8000 6001 6002 8080"
 FIREWALL_HELPER=/usr/local/sbin/coolify-dashboard-firewall
 FIREWALL_UNIT=/etc/systemd/system/coolify-dashboard-firewall.service
 
@@ -152,7 +153,14 @@ secure_ssh() {
 }
 
 ssh_port() {
-    sshd -T 2>/dev/null | awk '$1 == "port" {print $2; exit}' | grep . || echo 22
+    local port
+    # awk reads all of sshd's output: stopping early would end sshd with
+    # SIGPIPE, which pipefail counts as a failure
+    port=$(sshd -T 2>/dev/null | awk '$1 == "port" && !found {print $2; found = 1}') || true
+    case "$port" in
+        ''|*[!0-9]*) echo 22 ;;
+        *) echo "$port" ;;
+    esac
 }
 
 set_up_firewall() {
@@ -222,9 +230,17 @@ install_coolify() {
     local installer
     installer=$(mktemp)
     curl -fsSL https://cdn.coollabs.io/coolify/install.sh -o "$installer"
-    ROOT_USERNAME="${COOLIFY_EMAIL%%@*}" ROOT_USER_EMAIL="$COOLIFY_EMAIL" ROOT_USER_PASSWORD="$COOLIFY_PASSWORD" \
+    # Coolify's name for the account may only have letters, numbers, _, - and
+    # spaces: otherwise it makes no account at all, and leaves registering open
+    local name
+    name=$(printf '%s' "${COOLIFY_EMAIL%%@*}" | tr -c 'A-Za-z0-9_-' ' ')
+    [ "${#name}" -ge 3 ] || name=Admin
+    ROOT_USERNAME="$name" ROOT_USER_EMAIL="$COOLIFY_EMAIL" ROOT_USER_PASSWORD="$COOLIFY_PASSWORD" \
         bash "$installer"
     rm -f "$installer"
+    if ! docker exec coolify-db psql -U coolify -d coolify -Atc "select 1 from users limit 1" 2>/dev/null | grep -q 1; then
+        die "Coolify made no admin account, so anyone who opens the dashboard can register one. Register yours at http://$(hostname -I | awk '{print $1}'):8000 right now (see: docker logs coolify)."
+    fi
 
     echo "Waiting for the dashboard..."
     for _ in $(seq 60); do
