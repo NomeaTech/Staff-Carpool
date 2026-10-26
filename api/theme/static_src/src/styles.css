@@ -87,33 +87,38 @@
   --noise: 0;
 } */
 
+/* The light theme at night: the same hues, brightened to read on a dark
+   background, with dark text on them. The backgrounds are a near-black with
+   a hint of the primary's green, and the text the light theme's cream. As in
+   the light theme, cards (base-100) sit a step above the page (base-200), and
+   base-300 is a step above the cards, for their borders. */
 @plugin "daisyui/theme" {
   name: "dark";
   default: false;
   prefersdark: true;
   color-scheme: "dark";
-  --color-base-100: oklch(25.33% 0.016 252.42);
-  --color-base-200: oklch(23.26% 0.014 253.1);
-  --color-base-300: oklch(21.15% 0.012 254.09);
-  --color-base-content: oklch(97.807% 0.029 256.847);
-  --color-primary: oklch(58% 0.233 277.117);
-  --color-primary-content: oklch(96% 0.018 272.314);
-  --color-secondary: oklch(65% 0.241 354.308);
-  --color-secondary-content: oklch(94% 0.028 342.258);
-  --color-accent: oklch(77% 0.152 181.912);
-  --color-accent-content: oklch(38% 0.063 188.416);
-  --color-neutral: oklch(14% 0.005 285.823);
-  --color-neutral-content: oklch(92% 0.004 286.32);
-  --color-info: oklch(74% 0.16 232.661);
-  --color-info-content: oklch(29% 0.066 243.157);
-  --color-success: oklch(76% 0.177 163.223);
-  --color-success-content: oklch(37% 0.077 168.94);
-  --color-warning: oklch(82% 0.189 84.429);
-  --color-warning-content: oklch(41% 0.112 45.904);
-  --color-error: oklch(71% 0.194 13.428);
-  --color-error-content: oklch(27% 0.105 12.094);
-  --radius-selector: 2rem;
-  --radius-field: 1rem;
+  --color-base-100: oklch(21.5% 0.009 165);
+  --color-base-200: oklch(17% 0.008 165);
+  --color-base-300: oklch(30% 0.011 165);
+  --color-base-content: oklch(94% 0.012 110);
+  --color-primary: oklch(70% 0.14 162);
+  --color-primary-content: oklch(20% 0.04 165);
+  --color-secondary: oklch(72% 0.13 295);
+  --color-secondary-content: oklch(22% 0.05 295);
+  --color-accent: oklch(75% 0.1 0);
+  --color-accent-content: oklch(24% 0.05 0);
+  --color-neutral: oklch(32% 0.012 165);
+  --color-neutral-content: oklch(94% 0.012 110);
+  --color-info: oklch(74% 0.11 250);
+  --color-info-content: oklch(22% 0.05 255);
+  --color-success: oklch(77% 0.12 155);
+  --color-success-content: oklch(24% 0.05 158);
+  --color-warning: oklch(83% 0.13 88);
+  --color-warning-content: oklch(28% 0.06 80);
+  --color-error: oklch(68% 0.17 25);
+  --color-error-content: oklch(20% 0.06 25);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
   --radius-box: 2rem;
   --size-selector: 0.3125rem;
   --size-field: 0.3125rem;
@@ -246,6 +251,21 @@
 @utility checkbox-other {
   color: var(--color-other-content);
   --input-color: var(--color-other);
+}
+
+/* Text on a faint tint of a status colour (bg-warning/25 text-warning-ink,
+   e.g. the pending badges and notifications/models.py) or on the page: the
+   status's dark -content colour in the light theme, and the bright status
+   colour itself in the dark theme, where its -content is dark too. Follows
+   the theme's color-scheme. */
+@utility text-info-ink {
+  color: light-dark(var(--color-info-content), var(--color-info));
+}
+@utility text-success-ink {
+  color: light-dark(var(--color-success-content), var(--color-success));
+}
+@utility text-warning-ink {
+  color: light-dark(var(--color-warning-content), var(--color-warning));
 }
 
 /**

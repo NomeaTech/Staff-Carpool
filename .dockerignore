@@ -1,0 +1,27 @@
+# Kept out of the image (Dockerfile): local files, secrets, and what the
+# build makes itself
+
+.git
+.github
+.vscode
+.idea
+env
+backup
+local_documents
+scripts
+test.py
+test.html
+/static
+
+**/node_modules
+**/__pycache__
+**/*.py[cod]
+**/*.mo
+**/*.log
+
+# Secrets come from Coolify's environment variables, never from a file
+**/.env
+# Uploaded profile photos are on the server, outside the image
+api/private_media
+# Built in the image
+api/theme/static/css/dist

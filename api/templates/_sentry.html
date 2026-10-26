@@ -1,0 +1,12 @@
+{% load static %}
+{% comment %}
+  Sends errors in the browser to Sentry, and gives the "Report a bug" links
+  (data-bug-report) their form (carpool/sentry.py, static/js/sentry-setup.js).
+  Only there with SENTRY_DSN set. Outside the cached part of <head>: the
+  settings have the user's ID and the form's texts in the page's language.
+{% endcomment %}
+{% if sentry_config %}
+{{ sentry_config|json_script:"sentry-config" }}
+<script src="{% static "js/vendor/sentry-10.76.2.replay.feedback.min.js" %}" defer></script>
+<script src="{% static "js/sentry-setup.js" %}?v={{ STATIC_VERSION }}" defer></script>
+{% endif %}

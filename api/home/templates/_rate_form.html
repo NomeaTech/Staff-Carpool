@@ -52,7 +52,7 @@
       <p class="text-xs text-base-content/60 mt-1">{% trans "Only the LUT Kyyti team sees this, not the person you are rating. To report a safety problem, use Report on the ride's page." %}</p>
     </details>
     {% if rating.outcome == "not_happened" %}<p class="text-xs text-base-content/60 mt-2">{% trans "You said the ride did not take place." %}</p>{% endif %}
-    {% if rating.review == "pending" %}<p class="text-xs text-warning-content bg-warning/15 rounded-field p-2 mt-2">{% trans "Your answers about each other disagree, so the LUT Kyyti team will review them before they count." %}</p>{% endif %}
+    {% if rating.review == "pending" %}<p class="text-xs text-warning-ink bg-warning/15 rounded-field p-2 mt-2">{% trans "Your answers about each other disagree, so the LUT Kyyti team will review them before they count." %}</p>{% endif %}
   </fieldset>
   {% endfor %}
   <p class="text-xs text-base-content/50 mb-2">{% blocktrans with deadline=trip.deadline|date:"MONTH_DAY_FORMAT" %}You can answer or change your answer until {{ deadline }}.{% endblocktrans %}</p>

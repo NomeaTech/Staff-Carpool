@@ -42,7 +42,7 @@
           <div class="card-body p-5 sm:p-6">
             <div class="flex items-center justify-between gap-3 mb-2">
               <h2 class="card-title text-lg">{% trans "Needs your attention" %}</h2>
-              {% if pending_requests %}<span class="badge border-0 bg-warning/30 text-warning-content badge-sm">{% blocktrans count counter=pending_requests|length %}{{ counter }} pending{% plural %}{{ counter }} pending{% endblocktrans %}</span>{% endif %}
+              {% if pending_requests %}<span class="badge border-0 bg-warning/30 text-warning-ink badge-sm">{% blocktrans count counter=pending_requests|length %}{{ counter }} pending{% plural %}{{ counter }} pending{% endblocktrans %}</span>{% endif %}
             </div>
             <div class="grid gap-3">
               {% for ride_request in pending_requests %}

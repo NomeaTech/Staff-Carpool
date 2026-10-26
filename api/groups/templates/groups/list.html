@@ -31,7 +31,7 @@
                   </span>
                   <span class="flex items-center gap-2 shrink-0">
                     {% if membership.is_admin %}
-                      {% if membership.waiting %}<span class="badge border-0 bg-warning/30 text-warning-content badge-sm">{% blocktrans count counter=membership.waiting %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}</span>{% endif %}
+                      {% if membership.waiting %}<span class="badge border-0 bg-warning/30 text-warning-ink badge-sm">{% blocktrans count counter=membership.waiting %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}</span>{% endif %}
                       <span class="badge badge-soft badge-primary badge-sm">{% trans "Admin" %}</span>
                     {% endif %}
                     {% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}
