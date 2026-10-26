@@ -1,0 +1,8 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=recipient.first_name %}Hi {{ name }},{% endblocktrans %}
+
+{% blocktrans %}Co-riders have said that you did not show up for rides you had joined. Others now see this with your rating. If you cannot make a ride, leave it in time on the ride's page, so that the others can plan.{% endblocktrans %}
+
+{% blocktrans %}If you think this is a mistake, contact us through the contact form on LUT Kyyti.{% endblocktrans %}
+
+{{ url }}
+{% include "emails/_footer.txt" %}{% endautoescape %}

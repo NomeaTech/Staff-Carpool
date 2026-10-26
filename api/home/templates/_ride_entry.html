@@ -1,18 +1,19 @@
 {% load i18n %}{% comment %}
   One of the user's rides, as listed by my_ride_entries(): ride_request is
   the user's request to join it, or None when the user posted the ride.
+  Rides in rating_ride_ids have co-riders to rate, and lead to rating them.
 {% endcomment %}
-<a href="{% url 'ride_detail' ride.id %}" class="block rounded-field border border-base-300 p-4 transition hover:border-primary/40 hover:shadow-sm">
+<a href="{% url 'ride_detail' ride.id %}{% if ride.pk in rating_ride_ids %}#rate{% endif %}" class="block rounded-field border border-base-300 p-4 transition hover:border-primary/40 hover:shadow-sm">
   <div class="flex items-start justify-between gap-2">
     <span class="font-bold">{{ ride.route_name }}</span>
     {% if not ride_request %}
       {% if ride.pending %}
-        <span class="badge border-0 bg-warning/30 text-warning-content badge-sm whitespace-nowrap">{% blocktrans count counter=ride.pending %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}</span>
+        <span class="badge border-0 bg-warning/30 text-warning-ink badge-sm whitespace-nowrap">{% blocktrans count counter=ride.pending %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}</span>
       {% else %}
         <span class="badge badge-soft badge-primary badge-sm whitespace-nowrap">{% trans "Your ride" %}</span>
       {% endif %}
     {% elif ride_request.status == "accepted" %}
-      <span class="badge border-0 bg-success/30 text-success-content badge-sm">{% trans "Confirmed" %}</span>
+      <span class="badge border-0 bg-success/30 text-success-ink badge-sm">{% trans "Confirmed" %}</span>
     {% elif ride_request.status == "pending" %}
       <span class="badge badge-soft badge-secondary badge-sm">{% trans "Requested" %}</span>
     {% else %}
@@ -35,6 +36,10 @@
         {% trans "The driver declined your request" %}
       {% endif %}
     </span>
-    <span class="font-semibold text-primary whitespace-nowrap">{% trans "Details" %} →</span>
+    {% if ride.pk in rating_ride_ids %}
+      <span class="font-semibold text-primary whitespace-nowrap inline-flex items-center gap-1">{% include "_icon.html" with name="star" class="size-3.5" %}{% trans "Rate your ride" %} →</span>
+    {% else %}
+      <span class="font-semibold text-primary whitespace-nowrap">{% trans "Details" %} →</span>
+    {% endif %}
   </div>
 </a>

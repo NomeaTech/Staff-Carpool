@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% comment %}
+  Shown by the service worker (static/js/serviceworker.js) instead of a page
+  that cannot load without a connection. It is saved on the device when the
+  service worker installs, so it is the same for everyone and shows nothing
+  about the user. It is here rather than in landing/templates so that
+  django-pwa's own offline.html (pwa comes before landing in INSTALLED_APPS)
+  is not used instead. Once back online, the page the user wanted loads.
+{% endcomment %}
+
+{% block title %}{% trans "Offline" %} | LUT Kyyti{% endblock %}
+
+{% block content %}
+<div class="card bg-base-100 shadow-sm">
+    <div class="card-body items-center text-center gap-3 py-10">
+        <span class="grid place-items-center size-20 rounded-full bg-primary/10 text-primary">{% include "_icon.html" with name="offline" class="size-10" %}</span>
+        <h1 class="card-title text-2xl mt-2">{% trans "You are offline" %}</h1>
+        <p class="text-base-content/70">{% trans "LUT Kyyti needs an internet connection. Check your Wi-Fi or mobile data: the page will open by itself once you are back online." %}</p>
+        <p class="flex items-center gap-2 text-sm text-base-content/50" role="status">
+            <span class="loading loading-dots loading-sm"></span>{% trans "Waiting for a connection" %}
+        </p>
+        <div class="flex flex-wrap justify-center gap-2 mt-3">
+            <button type="button" class="btn btn-outline rounded-full" onclick="history.back()">{% trans "Go back" %}</button>
+            <button type="button" class="btn btn-primary rounded-full" onclick="location.reload()">{% trans "Try again" %}</button>
+        </div>
+    </div>
+</div>
+{# The address is still that of the page the user wanted, so reloading opens it #}
+<script>window.addEventListener("online", () => location.reload());</script>
+{% endblock %}

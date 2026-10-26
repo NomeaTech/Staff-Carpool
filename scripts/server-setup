@@ -1,0 +1,347 @@
+#!/usr/bin/env bash
+#
+# scripts/server-setup: prepare a new Ubuntu Server for the app, and install
+# Coolify, which then builds, deploys and runs it (DEPLOYMENT.md).
+#
+#   scp scripts/server-setup <you>@<server>:
+#   ssh -t <you>@<server> sudo bash server-setup
+#
+# It asks for the email and password of Coolify's admin account, then:
+#   - installs security updates, and from then on daily (not Docker's: those are left to you)
+#   - adds swap, so that building a release does not run out of memory
+#   - SSH: keys only, no passwords (if you have a key set up)
+#   - firewall (ufw) and fail2ban
+#   - /srv/kyyti/<environment>/private_media for the uploaded profile photos,
+#     with a daily copy to /var/backups/kyyti (the databases are backed up by Coolify)
+#   - Coolify (and Docker with it)
+#
+# Then carry on in DEPLOYMENT.md. Once Coolify's dashboard has its own
+# address with HTTPS, close the ports it was first opened on:
+#
+#   sudo bash server-setup lock-dashboard https://deploy.kyyti.net
+#
+# ("unlock-dashboard" opens them again.) It is safe to run again: each step
+# skips what is already done.
+set -euo pipefail
+
+# The app's user in the image (Dockerfile), who must be able to write the uploads
+APP_UID=10001
+DATA_DIR=/srv/kyyti
+ENVIRONMENTS="production staging"
+# Coolify's dashboard, and its live updates and terminal, before it has an address
+DASHBOARD_PORTS="8000 6001 6002"
+FIREWALL_HELPER=/usr/local/sbin/coolify-dashboard-firewall
+FIREWALL_UNIT=/etc/systemd/system/coolify-dashboard-firewall.service
+
+step() { printf '\n\033[1m==> %s\033[0m\n' "$*"; }
+warn() { printf '\033[33mWarning: %s\033[0m\n' "$*" >&2; }
+die() { printf '\033[31m%s\033[0m\n' "$*" >&2; exit 1; }
+
+require_root() {
+    [ "$(id -u)" -eq 0 ] || die "Run it as root: sudo bash $0 $*"
+}
+
+check_server() {
+    # shellcheck disable=SC1091
+    . /etc/os-release
+    [ "${ID:-}" = ubuntu ] || die "This is for Ubuntu Server, but this is ${PRETTY_NAME:-unknown}."
+    case "${VERSION_ID:-}" in
+        22.04|24.04|26.04) ;;
+        *) warn "Made for Ubuntu 22.04, 24.04 and 26.04 LTS, but this is $VERSION_ID." ;;
+    esac
+    local memory_mb
+    memory_mb=$(awk '/^MemTotal:/ {print int($2 / 1024)}' /proc/meminfo)
+    if [ "$memory_mb" -lt 3500 ]; then
+        warn "The server has ${memory_mb} MB of memory. Coolify, the app and its databases need about 4 GB (8 GB with Metabase)."
+    fi
+}
+
+coolify_installed() {
+    [ -f /data/coolify/source/.env ]
+}
+
+# Coolify's admin account is made during the install, so that nobody else can
+# make it first by opening the dashboard before you do
+ask_admin_account() {
+    if coolify_installed; then
+        return
+    fi
+    step "Coolify's admin account"
+    COOLIFY_EMAIL=${COOLIFY_EMAIL:-}
+    while [ -z "$COOLIFY_EMAIL" ]; do
+        read -rp "Email: " COOLIFY_EMAIL
+    done
+    COOLIFY_PASSWORD=${COOLIFY_PASSWORD:-}
+    while [ -z "$COOLIFY_PASSWORD" ]; do
+        echo "Password: at least 8 characters, with lower and upper case letters, a number and a symbol."
+        read -rsp "Password: " COOLIFY_PASSWORD; echo
+        local again
+        read -rsp "Again: " again; echo
+        if [ "$COOLIFY_PASSWORD" != "$again" ]; then
+            echo "They differ."
+            COOLIFY_PASSWORD=""
+        elif ! valid_password "$COOLIFY_PASSWORD"; then
+            echo "Coolify would not accept it."
+            COOLIFY_PASSWORD=""
+        fi
+    done
+}
+
+valid_password() {
+    [ "${#1}" -ge 8 ] && [[ "$1" =~ [a-z] ]] && [[ "$1" =~ [A-Z] ]] && [[ "$1" =~ [0-9] ]] && [[ "$1" =~ [^a-zA-Z0-9] ]]
+}
+
+install_updates() {
+    step "Updates"
+    export DEBIAN_FRONTEND=noninteractive
+    # needrestart restarts the updated services itself, instead of asking
+    export NEEDRESTART_MODE=a
+    apt-get update
+    # Keep the server's own version of a changed configuration file, without asking
+    apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold upgrade
+    apt-get -y install curl ca-certificates ufw fail2ban python3-systemd unattended-upgrades
+
+    # Security updates every day. The server is not restarted by itself: when
+    # an update needs it, the login message says so (restart at a quiet time).
+    cat > /etc/apt/apt.conf.d/20auto-upgrades <<'EOF'
+// scripts/server-setup: install security updates daily
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+EOF
+}
+
+add_swap() {
+    step "Swap"
+    if [ -n "$(swapon --show --noheadings)" ]; then
+        echo "Already has swap."
+        return
+    fi
+    fallocate -l 2G /swapfile
+    chmod 600 /swapfile
+    mkswap /swapfile >/dev/null
+    swapon /swapfile
+    grep -q '^/swapfile ' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+    # Only used when memory runs out, e.g. while a release is built
+    echo 'vm.swappiness = 10' > /etc/sysctl.d/60-swappiness.conf
+    sysctl -q -p /etc/sysctl.d/60-swappiness.conf
+    echo "Added 2 GB of swap."
+}
+
+secure_ssh() {
+    step "SSH"
+    local user=${SUDO_USER:-root} home keys_only=yes
+    home=$(getent passwd "$user" | cut -d: -f6)
+    if [ ! -s "$home/.ssh/authorized_keys" ]; then
+        keys_only=no
+        warn "$user has no SSH key (~/.ssh/authorized_keys), so logging in with a password stays on. Add your key with ssh-copy-id and run this again."
+    fi
+    {
+        echo "# scripts/server-setup"
+        echo "# Coolify logs in to this server as root, with its own key"
+        echo "PermitRootLogin prohibit-password"
+        if [ "$keys_only" = yes ]; then
+            echo "PasswordAuthentication no"
+            echo "KbdInteractiveAuthentication no"
+        fi
+    } > /etc/ssh/sshd_config.d/10-kyyti.conf
+    sshd -t || die "The SSH settings are not valid; see /etc/ssh/sshd_config.d/10-kyyti.conf"
+    systemctl reload ssh 2>/dev/null || systemctl reload sshd
+    if [ "$keys_only" = yes ]; then
+        echo "Logging in now needs an SSH key. Before you log out, check in another terminal that you can still log in."
+    fi
+}
+
+ssh_port() {
+    sshd -T 2>/dev/null | awk '$1 == "port" {print $2; exit}' | grep . || echo 22
+}
+
+set_up_firewall() {
+    step "Firewall"
+    # Docker's published ports (Coolify's proxy and dashboard) skip ufw, so
+    # these rules guard everything else. lock-dashboard closes the dashboard.
+    ufw default deny incoming >/dev/null
+    ufw default allow outgoing >/dev/null
+    ufw allow "$(ssh_port)/tcp" comment SSH >/dev/null
+    ufw allow 80/tcp comment HTTP >/dev/null
+    ufw allow 443 comment HTTPS >/dev/null
+    if ! systemctl is-enabled --quiet coolify-dashboard-firewall 2>/dev/null; then
+        for port in $DASHBOARD_PORTS; do
+            ufw allow "$port/tcp" comment "Coolify dashboard" >/dev/null
+        done
+    fi
+    ufw --force enable >/dev/null
+    ufw status
+
+    # Bans addresses that keep guessing SSH logins
+    cat > /etc/fail2ban/jail.d/kyyti.local <<'EOF'
+# scripts/server-setup
+[sshd]
+enabled = true
+backend = systemd
+# Coolify's containers log in to the server over SSH from these
+ignoreip = 127.0.0.1/8 ::1 10.0.0.0/8 172.16.0.0/12
+EOF
+    systemctl enable --quiet fail2ban
+    systemctl restart fail2ban || warn "fail2ban did not start; see: journalctl -u fail2ban"
+}
+
+make_data_folders() {
+    step "Folders for uploaded files"
+    install -d -m 755 "$DATA_DIR"
+    for environment in $ENVIRONMENTS; do
+        install -d -m 755 "$DATA_DIR/$environment"
+        install -d -m 750 -o "$APP_UID" -g "$APP_UID" "$DATA_DIR/$environment/private_media"
+        echo "$DATA_DIR/$environment/private_media"
+    done
+
+    cat > /usr/local/sbin/kyyti-backup-media <<'EOF'
+#!/usr/bin/env bash
+# kyyti-backup-media: a dated copy of the uploaded profile photos of every
+# environment (/srv/kyyti) in /var/backups/kyyti, keeping the latest 14.
+# Installed by scripts/server-setup; the databases are backed up by Coolify.
+set -euo pipefail
+dir=/var/backups/kyyti
+install -d -m 700 "$dir"
+tar -czf "$dir/media-$(date +%F).tar.gz" -C /srv/kyyti .
+ls -1t "$dir"/media-*.tar.gz | tail -n +15 | xargs -r rm --
+EOF
+    chmod 755 /usr/local/sbin/kyyti-backup-media
+    cat > /etc/cron.d/kyyti-backup-media <<'EOF'
+# Daily copy of the uploaded profile photos (scripts/server-setup)
+30 3 * * * root /usr/local/sbin/kyyti-backup-media
+EOF
+    echo "Daily copies at 03:30 in /var/backups/kyyti"
+}
+
+install_coolify() {
+    step "Coolify"
+    if coolify_installed; then
+        echo "Already installed. It updates itself; see Settings in its dashboard."
+        return
+    fi
+    local installer
+    installer=$(mktemp)
+    curl -fsSL https://cdn.coollabs.io/coolify/install.sh -o "$installer"
+    ROOT_USERNAME="${COOLIFY_EMAIL%%@*}" ROOT_USER_EMAIL="$COOLIFY_EMAIL" ROOT_USER_PASSWORD="$COOLIFY_PASSWORD" \
+        bash "$installer"
+    rm -f "$installer"
+
+    echo "Waiting for the dashboard..."
+    for _ in $(seq 60); do
+        if curl -fs -o /dev/null http://localhost:8000; then
+            return
+        fi
+        sleep 3
+    done
+    warn "The dashboard did not answer on port 8000 yet. See: docker ps; docker logs coolify"
+}
+
+print_next_steps() {
+    local address
+    address=$(hostname -I | awk '{print $1}')
+    step "Done"
+    cat <<EOF
+Open Coolify's dashboard at http://$address:8000 and log in as ${COOLIFY_EMAIL:-its admin}
+(right away: check that the login works). Then follow DEPLOYMENT.md from
+"In Coolify".
+
+Uploaded files: $DATA_DIR/<production|staging>/private_media
+EOF
+    if [ -f /var/run/reboot-required ]; then
+        echo
+        warn "The updates need a restart: sudo reboot (before the app is live)."
+    fi
+}
+
+setup() {
+    require_root
+    check_server
+    ask_admin_account
+    install_updates
+    add_swap
+    secure_ssh
+    set_up_firewall
+    make_data_folders
+    install_coolify
+    print_next_steps
+}
+
+lock_dashboard() {
+    require_root lock-dashboard "$@"
+    local url=${1:-}
+    case "$url" in
+        https://*) ;;
+        *) die "Give the dashboard's HTTPS address, e.g.: sudo bash $0 lock-dashboard https://deploy.kyyti.net" ;;
+    esac
+    # Closing the ports before the address works would leave only an SSH tunnel to reach it
+    curl -fsSL -o /dev/null --max-time 15 "$url" \
+        || die "Could not open $url. In Coolify, set it in Settings › Instance's Domain first, and wait for its certificate."
+
+    # Docker's published ports skip ufw, so they are closed in Docker's own
+    # DOCKER-USER chain, by the port they were asked for. The server itself can
+    # still reach them, e.g. through an SSH tunnel: ssh -L 8000:localhost:8000 <server>
+    cat > "$FIREWALL_HELPER" <<EOF
+#!/bin/sh
+# coolify-dashboard-firewall on|off: close Coolify's dashboard ports
+# ($DASHBOARD_PORTS) to the internet. Installed by scripts/server-setup.
+set -e
+# \$rule is split into iptables' arguments on purpose
+# shellcheck disable=SC2086
+for iptables in iptables ip6tables; do
+    \$iptables -nL DOCKER-USER >/dev/null 2>&1 || continue
+    for port in $DASHBOARD_PORTS; do
+        rule="-p tcp -m conntrack --ctorigdstport \$port --ctdir ORIGINAL -j DROP"
+        if [ "\$1" = on ]; then
+            \$iptables -C DOCKER-USER \$rule 2>/dev/null || \$iptables -I DOCKER-USER \$rule
+        else
+            while \$iptables -C DOCKER-USER \$rule 2>/dev/null; do \$iptables -D DOCKER-USER \$rule; done
+        fi
+    done
+done
+EOF
+    chmod 755 "$FIREWALL_HELPER"
+    # PartOf: added again whenever Docker restarts
+    cat > "$FIREWALL_UNIT" <<EOF
+[Unit]
+Description=Close Coolify's dashboard ports to the internet (scripts/server-setup)
+After=docker.service
+PartOf=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=$FIREWALL_HELPER on
+ExecStop=$FIREWALL_HELPER off
+
+[Install]
+WantedBy=docker.service multi-user.target
+EOF
+    systemctl daemon-reload
+    systemctl enable --quiet coolify-dashboard-firewall
+    systemctl restart coolify-dashboard-firewall
+    for port in $DASHBOARD_PORTS; do
+        ufw delete allow "$port/tcp" >/dev/null 2>&1 || true
+    done
+    echo "Ports $DASHBOARD_PORTS are closed. The dashboard is at $url"
+    echo "If you lose access to it: sudo bash $0 unlock-dashboard"
+}
+
+unlock_dashboard() {
+    require_root unlock-dashboard
+    if [ -f "$FIREWALL_UNIT" ]; then
+        systemctl disable --now --quiet coolify-dashboard-firewall
+        rm -f "$FIREWALL_UNIT"
+        systemctl daemon-reload
+    fi
+    for port in $DASHBOARD_PORTS; do
+        ufw allow "$port/tcp" comment "Coolify dashboard" >/dev/null
+    done
+    echo "Ports $DASHBOARD_PORTS are open again: http://$(hostname -I | awk '{print $1}'):8000"
+}
+
+case "${1:-setup}" in
+    setup) setup ;;
+    lock-dashboard) shift; lock_dashboard "$@" ;;
+    unlock-dashboard) unlock_dashboard ;;
+    *) die "Usage: sudo bash $0 [setup | lock-dashboard https://<dashboard address> | unlock-dashboard]" ;;
+esac

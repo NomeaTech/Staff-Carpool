@@ -12,6 +12,7 @@
         <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/icons/apple-touch-icon.png' %}">
         <script src="{% static "js/funcs.js" %}?v={{ STATIC_VERSION }}"></script>
         {% tailwind_css v=TAILWIND_CSS_VERSION %}
+        {% include "_sentry.html" %}
     </head>
     <div class="z-5 fixed max-xl:collapse lg:mb-48 bg-base-100 shadow-sm w-full rounded-md xl:flex xl:justify-center">
       <input id="navbar-1-toggle" class="peer hidden" type="checkbox" />
@@ -55,20 +56,14 @@
           <div class="flex gap-4">
             <!-- <input type="text" placeholder="{% trans "Find a ride" %}" class="input w-64 lg:w-auto" /> -->
             <a href="{% url 'login' %}" class="btn btn-primary">{% trans "Log in / Join" %}</a>
-            <form id="id_lang_form" class="w-full" action="{% url 'set_language' %}" method="post">
+            <form class="w-full" action="{% url 'set_language' %}" method="post">
               {% csrf_token %}
-              <input name="next" type="hidden" value="{{ redirect_to }}">
-              <select id="id_language" class="select col-span-2" name="language">
-                <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                  {% get_current_language as LANGUAGE_CODE %}
-                  {% get_available_languages as LANGUAGES %}
-                  {% get_language_info_list for LANGUAGES as languages %}
-                  {% for language in languages %}
-                  <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
-                    {{ language.code.upper }}
-                  </option>
-                  {% endfor %}
-                </ul>
+              <input name="next" type="hidden" value="{{ request.get_full_path }}">
+              {% get_current_language as LANGUAGE_CODE %}{% get_available_languages as LANGUAGES %}{% get_language_info_list for LANGUAGES as languages %}
+              <select class="select" name="language" data-language-select aria-label="{% trans "Language" %}">
+                {% for language in languages %}
+                <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>{{ language.code.upper }}</option>
+                {% endfor %}
               </select>
             </form>
           </div>
@@ -91,20 +86,14 @@
           <!-- <input type="text" placeholder="{% trans "Find a ride" %}" class="input w-64 lg:w-auto" /> -->
           <div class="sm:hidden flex gap-4">
             <a href="{% url 'login' %}" class="btn btn-primary">{% trans "Log in / Join" %}</a>
-            <form class="" action="{% url 'set_language' %}" method="post">
+            <form action="{% url 'set_language' %}" method="post">
               {% csrf_token %}
-              <input name="next" type="hidden" value="{{ redirect_to }}">
-              <select class="select col-span-2" name="language">
-                <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                  {% get_current_language as LANGUAGE_CODE %}
-                  {% get_available_languages as LANGUAGES %}
-                  {% get_language_info_list for LANGUAGES as languages %}
-                  {% for language in languages %}
-                  <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
-                    {{ language.code.upper }}
-                  </option>
-                  {% endfor %}
-                </ul>
+              <input name="next" type="hidden" value="{{ request.get_full_path }}">
+              {% get_current_language as LANGUAGE_CODE %}{% get_available_languages as LANGUAGES %}{% get_language_info_list for LANGUAGES as languages %}
+              <select class="select" name="language" data-language-select aria-label="{% trans "Language" %}">
+                {% for language in languages %}
+                <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>{{ language.code.upper }}</option>
+                {% endfor %}
               </select>
             </form>
           </div>

@@ -23,6 +23,10 @@ class Kind(models.TextChoices):
     RIDE_CANCELLED = "ride_cancelled", _("Ride cancelled")
     # To drivers of rides posted only to groups that are all gone
     RIDE_HIDDEN = "ride_hidden", _("Ride no longer shown")
+    # Ratings (rides/ratings.py). To drivers and passengers after a trip:
+    RATE_RIDE = "rate_ride", _("Rate your ride")
+    # When enough co-riders have said the member did not show up
+    NO_SHOW_WARNING = "no_show_warning", _("Missed rides")
     # Groups (groups/services.py). To admins:
     GROUP_JOIN_REQUESTED = "group_join_requested", _("Request to join a group")
     # To members, and people asking to join:
@@ -47,6 +51,7 @@ ESSENTIAL = {
     Kind.RIDE_UPDATED,
     Kind.RIDE_CANCELLED,
     Kind.RIDE_HIDDEN,
+    Kind.NO_SHOW_WARNING,
     Kind.GROUP_JOIN_ACCEPTED,
     Kind.GROUP_JOIN_DECLINED,
     Kind.GROUP_REMOVED,
@@ -68,6 +73,8 @@ MESSAGES = {
     Kind.RIDE_UPDATED: _("%(name)s changed the ride %(route)s. Check the new details."),
     Kind.RIDE_CANCELLED: _("%(name)s cancelled the ride %(route)s."),
     Kind.RIDE_HIDDEN: _("Your ride %(route)s was only shown to %(group)s, which you are no longer in, so nobody can find it now. Edit the ride to choose who sees it."),
+    Kind.RATE_RIDE: _("How was your trip %(route)s? Rate your co-riders."),
+    Kind.NO_SHOW_WARNING: _("Co-riders have said that you did not show up for rides you had joined. Others now see this with your rating. If you cannot make a ride, leave it in time so that the others can plan."),
     Kind.GROUP_JOIN_REQUESTED: _("%(name)s would like to join %(group)s."),
     Kind.GROUP_JOIN_ACCEPTED: _("%(name)s accepted you into %(group)s. You can now see the rides posted to it."),
     Kind.GROUP_JOIN_DECLINED: _("%(name)s declined your request to join %(group)s."),
@@ -84,19 +91,21 @@ MESSAGES = {
 STYLES = {
     Kind.REQUEST_RECEIVED: ("user", "bg-secondary/15 text-secondary"),
     Kind.REQUEST_WITHDRAWN: ("user", "bg-base-300 text-base-content/70"),
-    Kind.PASSENGER_LEFT: ("user", "bg-warning/25 text-warning-content"),
-    Kind.REQUEST_ACCEPTED: ("check", "bg-success/25 text-success-content"),
+    Kind.PASSENGER_LEFT: ("user", "bg-warning/25 text-warning-ink"),
+    Kind.REQUEST_ACCEPTED: ("check", "bg-success/25 text-success-ink"),
     Kind.REQUEST_DECLINED: ("x", "bg-error/15 text-error"),
     Kind.PASSENGER_REMOVED: ("x", "bg-error/15 text-error"),
-    Kind.RIDE_UPDATED: ("calendar", "bg-info/20 text-info-content"),
+    Kind.RIDE_UPDATED: ("calendar", "bg-info/20 text-info-ink"),
     Kind.RIDE_CANCELLED: ("x", "bg-error/15 text-error"),
-    Kind.RIDE_HIDDEN: ("alert", "bg-warning/25 text-warning-content"),
+    Kind.RIDE_HIDDEN: ("alert", "bg-warning/25 text-warning-ink"),
+    Kind.RATE_RIDE: ("star", "bg-primary/10 text-primary"),
+    Kind.NO_SHOW_WARNING: ("alert", "bg-warning/25 text-warning-ink"),
     Kind.GROUP_JOIN_REQUESTED: ("user", "bg-secondary/15 text-secondary"),
-    Kind.GROUP_JOIN_ACCEPTED: ("check", "bg-success/25 text-success-content"),
+    Kind.GROUP_JOIN_ACCEPTED: ("check", "bg-success/25 text-success-ink"),
     Kind.GROUP_JOIN_DECLINED: ("x", "bg-error/15 text-error"),
     Kind.GROUP_REMOVED: ("x", "bg-error/15 text-error"),
-    Kind.GROUP_ADMIN_GRANTED: ("shield", "bg-info/20 text-info-content"),
-    Kind.GROUP_ADMIN_HANDED_OVER: ("shield", "bg-warning/25 text-warning-content"),
+    Kind.GROUP_ADMIN_GRANTED: ("shield", "bg-info/20 text-info-ink"),
+    Kind.GROUP_ADMIN_HANDED_OVER: ("shield", "bg-warning/25 text-warning-ink"),
     Kind.GROUP_DELETED: ("x", "bg-base-300 text-base-content/70"),
     Kind.GROUP_CLOSED: ("x", "bg-base-300 text-base-content/70"),
 }
@@ -154,6 +163,8 @@ class Notification(models.Model):
         if self.kind in GROUP_KINDS:
             gone = self.kind in (Kind.GROUP_DELETED, Kind.GROUP_CLOSED)
             return reverse("group_detail", args=[self.group_id]) if self.group_id and not gone else None
+        if self.kind in (Kind.RATE_RIDE, Kind.NO_SHOW_WARNING):
+            return reverse("ratings")
         if self.kind == Kind.RIDE_CANCELLED or not self.ride_id:
             return None
         if self.kind == Kind.RIDE_HIDDEN:

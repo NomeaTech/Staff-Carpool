@@ -23,7 +23,7 @@
             {% include "_icon.html" with name="user" class="size-4 text-primary" %}
             <span class="max-w-48 truncate">{{ membership.group.name }}</span>
             {% if membership.new_rides %}<span class="badge badge-primary badge-xs" title="{% trans "New rides since your last visit" %}">{% blocktrans count counter=membership.new_rides %}{{ counter }} new{% plural %}{{ counter }} new{% endblocktrans %}</span>{% endif %}
-            {% if membership.waiting %}<span class="badge border-0 bg-warning/30 text-warning-content badge-xs" title="{% trans "Requests to join waiting for an admin" %}">{% blocktrans count counter=membership.waiting %}{{ counter }} to answer{% plural %}{{ counter }} to answer{% endblocktrans %}</span>{% endif %}
+            {% if membership.waiting %}<span class="badge border-0 bg-warning/30 text-warning-ink badge-xs" title="{% trans "Requests to join waiting for an admin" %}">{% blocktrans count counter=membership.waiting %}{{ counter }} to answer{% plural %}{{ counter }} to answer{% endblocktrans %}</span>{% endif %}
           </a>
         </li>
       {% endfor %}

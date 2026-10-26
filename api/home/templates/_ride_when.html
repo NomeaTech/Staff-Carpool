@@ -1,15 +1,15 @@
-{% load i18n %}{% comment %}
+{% load i18n dates %}{% comment %}
   When a ride leaves: its date and time, or a recurring ride's days. Their
   times can differ from day to day, so the lists do not show one of them;
   the ride's page shows each.
 {% endcomment %}
 <span class="inline-flex items-center gap-1">
   {% include "_icon.html" with name="calendar" class="size-4" %}
-  {% if ride.one_time %}{{ ride.leaving_at|date:"D j M" }}{% else %}{{ ride.days }}{% endif %}
+  {% if ride.one_time %}{{ ride.leaving_at|localized:"SHORT_WEEKDAY_DATE_FORMAT" }}{% else %}{{ ride.days }}{% endif %}
 </span>
 {% if ride.one_time %}{% with time=ride.departure_time %}{% if time %}
 <span class="inline-flex items-center gap-1">
   {% include "_icon.html" with name="clock" class="size-4" %}
-  {{ time }}
+  {{ time|time }}
 </span>
 {% endif %}{% endwith %}{% endif %}

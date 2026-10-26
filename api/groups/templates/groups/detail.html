@@ -19,7 +19,7 @@
       <div class="flex flex-wrap items-center gap-2">
         <span class="text-xs font-bold uppercase tracking-widest text-primary">{% trans "Group" %}</span>
         {% if is_admin %}<span class="badge badge-soft badge-primary badge-sm">{% trans "You are an admin" %}</span>
-        {% elif is_member %}<span class="badge border-0 bg-success/30 text-success-content badge-sm">{% trans "Member" %}</span>
+        {% elif is_member %}<span class="badge border-0 bg-success/30 text-success-ink badge-sm">{% trans "Member" %}</span>
         {% elif membership %}<span class="badge badge-soft badge-secondary badge-sm">{% trans "Requested" %}</span>{% endif %}
       </div>
       <h1 class="text-3xl font-bold tracking-tight break-words">{{ group.name }}</h1>

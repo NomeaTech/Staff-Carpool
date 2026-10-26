@@ -1,0 +1,13 @@
+{% load i18n %}{% comment %}
+  A member's rating, rating being their Summary (rides/ratings.py): their
+  average out of 10 and most ticked tags once enough people have rated
+  them, otherwise "Not rated yet"; and how many co-riders said they did not
+  show up, once that is shown.
+{% endcomment %}{% if rating.public %}
+<span class="inline-flex items-center gap-1 text-xs whitespace-nowrap">{% include "_icon.html" with name="star" class="size-3.5 text-warning fill-current" %}<strong class="tabular-nums">{{ rating.average|floatformat:1 }}</strong><span class="text-base-content/60">/ 10 · {% blocktrans count counter=rating.count %}{{ counter }} rating{% plural %}{{ counter }} ratings{% endblocktrans %}</span></span>
+{% if rating.tags %}<span class="flex flex-wrap gap-1 mt-1">{% for label, count in rating.tags %}<span class="badge badge-xs badge-soft badge-success whitespace-nowrap">{{ label }} · {{ count }}</span>{% endfor %}</span>{% endif %}
+{% else %}
+<span class="text-xs text-base-content/60 whitespace-nowrap">{% trans "Not rated yet" %}</span>
+{% endif %}{% if rating.shows_no_shows %}
+<span class="flex items-center gap-1 text-xs text-warning-ink mt-0.5">{% include "_icon.html" with name="alert" class="size-3.5" %}{% blocktrans count counter=rating.no_shows %}Didn't show up for a ride in the past year{% plural %}Didn't show up for {{ counter }} rides in the past year{% endblocktrans %}</span>
+{% endif %}

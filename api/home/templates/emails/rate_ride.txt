@@ -1,0 +1,6 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=recipient.first_name %}Hi {{ name }},{% endblocktrans %}
+
+{% blocktrans %}How was your trip {{ route }}? Rate your co-riders out of 10, or tell us if someone didn't show up or the ride didn't take place. Ratings are anonymous: others only see a member's average score.{% endblocktrans %}
+
+{{ url }}
+{% include "emails/_footer.txt" %}{% endautoescape %}

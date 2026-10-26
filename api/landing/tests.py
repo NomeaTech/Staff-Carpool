@@ -25,3 +25,17 @@ class LegalDocumentTests(TestCase):
         self.assertTrue(privacy.startswith(b"%PDF") and terms.startswith(b"%PDF"))
         # Both links once served the same unrelated file
         self.assertNotEqual(privacy, terms)
+
+
+class OfflinePageTests(TestCase):
+    """The page the service worker shows without a connection (templates/offline.html)."""
+
+    def test_it_is_the_apps_own_page(self):
+        page = self.client.get(reverse("offline"))
+        self.assertContains(page, "You are offline")
+        self.assertContains(page, "LUT Kyyti")
+        self.assertNotContains(page, "Default offline template")
+
+    def test_it_is_translated(self):
+        page = self.client.get(reverse("offline"), HTTP_ACCEPT_LANGUAGE="fi")
+        self.assertContains(page, "Ei internetyhteyttä")

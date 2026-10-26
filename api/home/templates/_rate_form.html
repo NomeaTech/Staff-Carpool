@@ -1,0 +1,86 @@
+{% load i18n privacy dates %}{% comment %}
+  The user's rating form for one trip, trip being a TripRatings (rides/ratings.py),
+  submitted to home.views.save_ratings, which then goes to the home page. For each
+  co-rider: a score out of 10 with what went well, or that they did not
+  show up or are not rated, and a comment only the admins see; or that the
+  ride did not take place. Answers can be changed until the deadline, so
+  the ones given are shown chosen. Each co-rider needs an answer ("Don't
+  rate" is one): the browser says so next to them, and save_ratings checks.
+{% endcomment %}
+<form method="post" action="{% url 'ratings' %}" data-rate-form>
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ next }}">
+  {% for rating in trip.ratings %}
+  <input type="hidden" name="rating" value="{{ rating.pk }}">
+  <fieldset class="rounded-field border border-base-300 p-3 mb-3 transition data-missing:border-error data-missing:bg-error/5 scroll-mt-24">
+    <legend class="sr-only">{% blocktrans with name=rating.rated|display_name:True %}Your rating of {{ name }}{% endblocktrans %}</legend>
+    <div class="flex items-center gap-2 mb-3">
+      {% avatar rating.rated "w-8" "text-xs" %}
+      <div class="min-w-0">
+        <strong class="block text-sm truncate">{{ rating.rated|display_name:True }}</strong>
+        <span class="block text-xs text-base-content/60">{% if rating.rated_is_driver %}{% trans "Driver" %}{% else %}{% trans "Passenger" %}{% endif %} · {{ rating.trip_date|localized:"SHORT_WEEKDAY_MONTH_DAY_FORMAT" }}</span>
+      </div>
+    </div>
+    <div class="grid grid-cols-10 gap-1">
+      {% for score in scores %}
+      <label class="grid place-items-center h-9 rounded-field border border-base-300 text-sm font-semibold tabular-nums cursor-pointer transition hover:border-primary/60 has-[:checked]:border-primary has-[:checked]:bg-primary has-[:checked]:text-primary-content has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary">
+        <input type="radio" name="score_{{ rating.pk }}" value="{{ score }}" class="sr-only" required {% if rating.outcome == "rated" and rating.score == score %}checked{% endif %}>{{ score }}
+      </label>
+      {% endfor %}
+    </div>
+    <div class="grid grid-cols-2 gap-1 mt-1">
+      <label class="grid place-items-center min-h-8 px-2 rounded-field border border-base-300 text-xs text-center cursor-pointer transition hover:border-warning has-[:checked]:border-warning has-[:checked]:bg-warning/25 has-[:checked]:font-semibold has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary">
+        <input type="radio" name="score_{{ rating.pk }}" value="no_show" class="sr-only" required {% if rating.outcome == "no_show" %}checked{% endif %}>{% trans "Didn't show up" %}
+      </label>
+      <label class="grid place-items-center min-h-8 px-2 rounded-field border border-base-300 text-xs text-center cursor-pointer transition hover:border-base-content/40 has-[:checked]:border-base-content/40 has-[:checked]:bg-base-300 has-[:checked]:font-semibold has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary">
+        <input type="radio" name="score_{{ rating.pk }}" value="skipped" class="sr-only" required {% if rating.outcome == "skipped" %}checked{% endif %}>{% trans "Don't rate" %}
+      </label>
+    </div>
+    <p class="hidden text-xs font-semibold text-error mt-2" data-missing-answer role="alert">{% trans "Required" %}</p>
+    {# Only saved with a score #}
+    <p class="text-xs font-semibold mt-3 mb-1">{% trans "What went well? (optional)" %}</p>
+    <div class="flex flex-wrap gap-1">
+      {% for value, label in rating.tag_choices %}
+      <label class="inline-flex items-center gap-1 rounded-full border border-base-300 px-2.5 py-1 text-xs cursor-pointer transition hover:border-success has-[:checked]:border-success has-[:checked]:bg-success/20 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-primary">
+        <input type="checkbox" name="tags_{{ rating.pk }}" value="{{ value }}" class="sr-only" {% if value in rating.tags %}checked{% endif %}>{{ label }}
+      </label>
+      {% endfor %}
+    </div>
+    <details class="mt-2" {% if rating.comment %}open{% endif %}>
+      <summary class="text-xs link link-hover text-base-content/70">{% trans "Add a comment for the LUT Kyyti team" %}</summary>
+      <textarea name="comment_{{ rating.pk }}" maxlength="1000" rows="2" class="textarea textarea-sm w-full mt-1" aria-label="{% trans "Comment for the LUT Kyyti team" %}">{{ rating.comment }}</textarea>
+      <p class="text-xs text-base-content/60 mt-1">{% trans "Only the LUT Kyyti team sees this, not the person you are rating. To report a safety problem, use Report on the ride's page." %}</p>
+    </details>
+    {% if rating.outcome == "not_happened" %}<p class="text-xs text-base-content/60 mt-2">{% trans "You said the ride did not take place." %}</p>{% endif %}
+    {% if rating.review == "pending" %}<p class="text-xs text-warning-ink bg-warning/15 rounded-field p-2 mt-2">{% trans "Your answers about each other disagree, so the LUT Kyyti team will review them before they count." %}</p>{% endif %}
+  </fieldset>
+  {% endfor %}
+  <p class="text-xs text-base-content/50 mb-2">{% blocktrans with deadline=trip.deadline|date:"MONTH_DAY_FORMAT" %}You can answer or change your answer until {{ deadline }}.{% endblocktrans %}</p>
+  <button class="btn btn-primary btn-block" type="submit">{% trans "Submit ratings" %}</button>
+  <button class="btn btn-ghost btn-sm btn-block mt-2" type="submit" name="not_happened" value="1" formnovalidate data-confirm="{% trans "Nobody will be rated for this ride. Continue?" %}">{% trans "The ride didn't take place" %}</button>
+</form>
+<script>
+  // Once per page load, for every rating form on it: instead of the browser's
+  // own message, a co-rider left without an answer is marked and told why.
+  // Hidden radio buttons are "invalid" when their group has none chosen.
+  if (!window.rateFormsChecked) {
+    window.rateFormsChecked = true;
+    let first = true;
+    document.addEventListener("invalid", (event) => {
+      const fieldset = event.target.closest("[data-rate-form] fieldset");
+      if (!fieldset) return;
+      event.preventDefault();
+      fieldset.dataset.missing = "";
+      fieldset.querySelector("[data-missing-answer]").classList.remove("hidden");
+      if (first) fieldset.scrollIntoView({ behavior: "smooth", block: "center" });
+      first = false;
+      setTimeout(() => { first = true; });
+    }, true);
+    document.addEventListener("change", (event) => {
+      const fieldset = event.target.closest("[data-rate-form] fieldset");
+      if (!fieldset || event.target.type !== "radio") return;
+      delete fieldset.dataset.missing;
+      fieldset.querySelector("[data-missing-answer]").classList.add("hidden");
+    });
+  }
+</script>

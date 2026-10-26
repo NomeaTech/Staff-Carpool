@@ -1,6 +1,6 @@
 {% extends "app.html" %}
 
-{% load i18n privacy %}
+{% load i18n privacy dates %}
 
 {% block title %}{{ ride.route_name }} | LUT Kyyti{% endblock %}
 
@@ -29,7 +29,7 @@
       {% endif %}
       <h1 class="text-3xl font-bold tracking-tight mb-1 break-words">{{ ride.route_name }}</h1>
       <p class="text-base-content/60">
-        {% if ride.one_time %}{{ ride.leaving_at|date:"l, j F Y" }}{% else %}{% blocktrans with days=ride.days %}Recurring · {{ days }}{% endblocktrans %}{% endif %}
+        {% if ride.one_time %}{{ ride.leaving_at|localized:"WEEKDAY_DATE_FORMAT" }}{% else %}{% blocktrans with days=ride.days %}Recurring · {{ days }}{% endblocktrans %}{% endif %}
         · {% if ride.one_way %}{% trans "One-way trip" %}{% else %}{% trans "Return trip" %}{% endif %}
       </p>
     </header>
@@ -46,7 +46,7 @@
                 <div class="timeline-end pb-6">
                   <strong class="block">{{ ride.start_json.displayName }}</strong>
                   {# One-time rides only: a recurring ride's times are in its schedule, and differ from day to day #}
-                  {% if ride.one_time and ride.departure_time %}<small class="text-base-content/60">{% trans "Departure" %} · {{ ride.departure_time }}</small>{% endif %}
+                  {% if ride.one_time and ride.departure_time %}<small class="text-base-content/60">{% trans "Departure" %} · {{ ride.departure_time|time }}</small>{% endif %}
                 </div>
                 <hr class="bg-primary/25">
               </li>
@@ -68,7 +68,7 @@
                   <strong class="block">{{ ride.destination_json.displayName }}</strong>
                   {# A one-time ride's return: its time, and its date when it is not the day the ride leaves #}
                   {% with returning=ride.returning_at %}{% if returning %}
-                  <small class="text-base-content/60">{% trans "Returning" %} · {% if returning|date:"Ymd" != ride.leaving_at|date:"Ymd" %}{{ returning|date:"j.n." }} {% endif %}{{ returning|date:"H:i" }}</small>
+                  <small class="text-base-content/60">{% trans "Returning" %} · {% if returning|date:"Ymd" != ride.leaving_at|date:"Ymd" %}{{ returning|localized:"NUMERIC_MONTH_DAY_FORMAT" }} {% endif %}{{ returning|time }}</small>
                   {% endif %}{% endwith %}
                 </div>
               </li>
@@ -93,10 +93,10 @@
               <dd class="font-semibold">{% for option in ride.transport_options %}{{ option.label }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if ride.other and ride.other_field %} ({{ ride.other_field }}){% endif %}</dd>
               {% if ride.one_time %}
                 <dt class="text-base-content/60">{% trans "Departure journey" %}</dt>
-                <dd class="font-semibold">{{ ride.leaving_at|date:"D j M, H:i"|default:"–" }}</dd>
+                <dd class="font-semibold">{{ ride.leaving_at|localized:"SHORT_WEEKDAY_DATETIME_FORMAT"|default:"–" }}</dd>
                 {% if ride.returning_at %}
                 <dt class="text-base-content/60">{% trans "Return journey" %}</dt>
-                <dd class="font-semibold">{{ ride.returning_at|date:"D j M, H:i" }}</dd>
+                <dd class="font-semibold">{{ ride.returning_at|localized:"SHORT_WEEKDAY_DATETIME_FORMAT" }}</dd>
                 {% endif %}
                 {% with seats=ride.seats_left %}{% if seats is not None %}
                 <dt class="text-base-content/60">{% trans "Available seats" %}</dt>
@@ -107,7 +107,7 @@
                 <dt class="text-base-content/60">{% trans "Schedule" %}</dt>
                 <dd class="grid gap-1">
                   {% for day in ride.seat_days %}
-                    <span><span class="font-semibold">{{ day.label }} <span class="tabular-nums">{{ day.leaving }}{% if day.returning %} {{ ride.sign }} {{ day.returning }}{% endif %}</span></span>{% if day.full %}<span class="text-base-content/60"> · {% trans "Full" %}</span>{% elif day.seats_left is not None %}<span class="text-base-content/60"> · {% blocktrans count counter=day.seats_left %}{{ counter }} seat left{% plural %}{{ counter }} seats left{% endblocktrans %}</span>{% endif %}</span>
+                    <span><span class="font-semibold">{{ day.label }} <span class="tabular-nums">{{ day.leaving|time }}{% if day.returning %} {{ ride.sign }} {{ day.returning|time }}{% endif %}</span></span>{% if day.full %}<span class="text-base-content/60"> · {% trans "Full" %}</span>{% elif day.seats_left is not None %}<span class="text-base-content/60"> · {% blocktrans count counter=day.seats_left %}{{ counter }} seat left{% plural %}{{ counter }} seats left{% endblocktrans %}</span>{% endif %}</span>
                   {% endfor %}
                 </dd>
               {% endif %}
@@ -128,10 +128,10 @@
               <dd class="col-span-2 -mt-1 mb-1 whitespace-pre-line break-words rounded-field bg-base-200 p-3">{{ ride.note }}</dd>
               {% endif %}
               <dt class="text-base-content/60">{% trans "Posted" %}</dt>
-              <dd class="font-semibold">{{ ride.created_at|date:"j F Y" }}</dd>
+              <dd class="font-semibold">{{ ride.created_at|date:"DATE_FORMAT" }}</dd>
               {% if ride.updated_at %}
               <dt class="text-base-content/60">{% trans "Last updated" %}</dt>
-              <dd class="font-semibold">{{ ride.updated_at|date:"j F Y, H:i" }}</dd>
+              <dd class="font-semibold">{{ ride.updated_at|date:"DATETIME_FORMAT" }}</dd>
               {% endif %}
             </dl>
           </div>
@@ -158,6 +158,7 @@
               {% avatar ride.driver "w-12" "text-base" %}
               <div>
                 <strong class="block">{% if is_driver %}{{ ride.driver }} <span class="font-normal text-base-content/60">({% trans "you" %})</span>{% else %}{{ ride.driver|display_name:is_partner }}{% endif %}</strong>
+                <span class="block">{% include "_rating.html" with rating=ride.driver.rating %}</span>
                 <span class="text-xs text-base-content/60">{% trans "Verified LUT/LAB account" %}</span>
               </div>
             </div>
@@ -174,8 +175,26 @@
             {% else %}
               <p class="text-xs text-base-content/60 flex gap-2">{% include "_icon.html" with name="lock" class="size-4" %}{% trans "Contact details are shared once the driver accepts your request." %}</p>
             {% endif %}
+            {% if not is_driver %}
+              <button type="button" class="link link-hover text-xs text-base-content/50 self-start mt-1" data-report-member="{{ ride.driver.pk }}" data-report-name="{{ ride.driver|display_name:is_partner }}">{% trans "Report a problem" %}</button>
+            {% endif %}
           </div>
         </section>
+
+        {% if rating_trips %}
+        {# Rating the co-riders after the trip (rides/ratings.py) #}
+        <section id="rate" class="card bg-base-100 border border-primary/40 shadow-sm order-1 lg:order-none scroll-mt-24">
+          <div class="card-body p-5 sm:p-6">
+            <h2 class="card-title text-lg mb-1">{% if rating_trips.0.rates_driver %}{% trans "Rate your driver" %}{% else %}{% trans "Rate your passengers" %}{% endif %}</h2>
+            <p class="text-sm text-base-content/60 mb-2">{% trans "How did the trip go? 1 is poor, 10 is excellent." %}</p>
+            {% for trip in rating_trips %}
+              {% if not forloop.first %}<div class="divider my-1"></div>{% endif %}
+              {% include "_rate_form.html" with next=request.get_full_path|add:"#rate" %}
+            {% endfor %}
+            <p class="text-xs text-base-content/60 flex gap-2 mt-2">{% include "_icon.html" with name="lock" class="size-4" %}{% blocktrans count counter=rating_min_count %}Ratings are anonymous. Members only see a person's average score, once they have been rated {{ counter }} time.{% plural %}Ratings are anonymous. Members only see a person's average score, once they have been rated {{ counter }} times.{% endblocktrans %}</p>
+          </div>
+        </section>
+        {% endif %}
 
         {% if is_driver %}
         <section id="requests" class="card bg-base-100 border border-base-300 shadow-sm order-5 lg:order-none scroll-mt-24">
@@ -187,8 +206,12 @@
               <div class="rounded-field border border-warning/40 bg-warning/5 p-3 mb-2">
                 <div class="flex items-center gap-2">
                   {% avatar ride_request.passenger "w-8" "text-xs" %}
-                  <strong class="text-sm">{{ ride_request.passenger|display_name }}</strong>
-                  <span class="text-xs text-base-content/50 ms-auto">{{ ride_request.created_at|date:"j.n. H:i" }}</span>
+                  <div class="min-w-0">
+                    <strong class="block text-sm">{{ ride_request.passenger|display_name }}</strong>
+                    {% include "_rating.html" with rating=ride_request.passenger.rating %}
+                  </div>
+                  <span class="text-xs text-base-content/50 ms-auto self-start">{{ ride_request.created_at|localized:"NUMERIC_MONTH_DAY_TIME_FORMAT" }}</span>
+                  <button type="button" class="btn btn-ghost btn-xs text-base-content/50 self-start" data-report-member="{{ ride_request.passenger.pk }}" data-report-name="{{ ride_request.passenger|display_name }}">{% trans "Report" %}</button>
                 </div>
                 {% with days=ride_request.day_labels %}{% if days %}
                   <p class="text-sm mt-2">{% include "_icon.html" with name="calendar" class="size-4 inline align-text-bottom" %} {{ days }}</p>
@@ -215,7 +238,11 @@
               <div class="rounded-field border border-base-300 p-3 mb-2">
                 <div class="flex items-center gap-2">
                   {% avatar ride_request.passenger "w-8" "text-xs" %}
-                  <strong class="text-sm grow">{{ ride_request.passenger|display_name:True }}</strong>
+                  <div class="min-w-0 grow">
+                    <strong class="block text-sm">{{ ride_request.passenger|display_name:True }}</strong>
+                    {% include "_rating.html" with rating=ride_request.passenger.rating %}
+                  </div>
+                  <button type="button" class="btn btn-ghost btn-xs text-base-content/50" data-report-member="{{ ride_request.passenger.pk }}" data-report-name="{{ ride_request.passenger|display_name:True }}">{% trans "Report" %}</button>
                   <form method="post" action="{% url 'answer_request' ride_request.id %}" data-confirm="{% trans "Remove this passenger from the ride?" %}">
                     {% csrf_token %}
                     <button class="btn btn-ghost btn-xs text-error" name="action" value="decline">{% trans "Remove" %}</button>
@@ -266,7 +293,7 @@
                       {% for day in ride.seat_days %}
                       <label class="flex items-center gap-3 rounded-field border border-base-300 p-3 transition has-[:checked]:border-primary/40 has-[:checked]:bg-primary/5 {% if day.full %}opacity-60{% else %}cursor-pointer{% endif %}">
                         <input type="checkbox" name="days" value="{{ day.key }}" class="checkbox checkbox-sm checkbox-primary" {% if day.full %}disabled{% endif %}/>
-                        <span class="grow min-w-0"><span class="font-semibold">{{ day.label }}</span> <span class="text-base-content/60 tabular-nums">{{ day.leaving }}{% if day.returning %} {{ ride.sign }} {{ day.returning }}{% endif %}</span></span>
+                        <span class="grow min-w-0"><span class="font-semibold">{{ day.label }}</span> <span class="text-base-content/60 tabular-nums">{{ day.leaving|time }}{% if day.returning %} {{ ride.sign }} {{ day.returning|time }}{% endif %}</span></span>
                         {% if day.full %}<span class="text-xs font-semibold text-base-content/60">{% trans "Full" %}</span>
                         {% elif day.seats_left is not None %}<span class="text-xs text-base-content/60 shrink-0">{% blocktrans count counter=day.seats_left %}{{ counter }} seat left{% plural %}{{ counter }} seats left{% endblocktrans %}</span>{% endif %}
                       </label>
@@ -345,10 +372,55 @@
   document.querySelectorAll("form[data-confirm]").forEach((form) => {
     form.addEventListener("submit", (event) => { if (!confirm(form.dataset.confirm)) event.preventDefault(); });
   });
+  document.querySelectorAll("button[data-confirm]").forEach((button) => {
+    button.addEventListener("click", (event) => { if (!confirm(button.dataset.confirm)) event.preventDefault(); });
+  });
+  // Report buttons open the report dialog about their member
+  document.querySelectorAll("[data-report-member]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const dialog = document.getElementById("report-modal");
+      dialog.querySelector("[name=member]").value = button.dataset.reportMember;
+      dialog.querySelector("[data-report-name]").textContent = button.dataset.reportName;
+      dialog.showModal();
+    });
+  });
   document.getElementById("copy-link").addEventListener("click", function () {
     navigator.clipboard?.writeText(this.dataset.url).then(() => { this.textContent = this.dataset.copied; });
   });
 </script>
+
+{% if reportable %}
+{# Reporting a member to the admins (home.views.report_member); the report buttons fill in who #}
+<dialog id="report-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="report-title">
+  <div class="modal-box">
+    <h3 id="report-title" class="font-bold text-lg">{% trans "Report a problem" %}</h3>
+    <p class="text-sm text-base-content/60 mt-1">{% blocktrans %}Tell the LUT Kyyti team what happened with <strong data-report-name></strong>. Only the team sees your report.{% endblocktrans %}</p>
+    <div role="alert" class="alert alert-error alert-soft text-xs mt-3">{% trans "In an emergency, call 112." %}</div>
+    <form method="post" action="{% url 'report_member' ride.pk %}" class="mt-3">
+      {% csrf_token %}
+      <input type="hidden" name="member">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend text-sm">{% trans "Reason" %}</legend>
+        <select name="reason" class="select w-full" required>
+          <option value="" disabled selected>{% trans "Choose a reason" %}</option>
+          {% for value, label in report_reasons %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+        </select>
+      </fieldset>
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend text-sm">{% trans "What happened?" %}</legend>
+        <textarea name="message" maxlength="2000" rows="4" class="textarea w-full" required></textarea>
+      </fieldset>
+      <div class="modal-action">
+        <button class="btn" type="button" onclick="this.closest('dialog').close()">{% trans "Cancel" %}</button>
+        <button class="btn btn-error" type="submit">{% trans "Send report" %}</button>
+      </div>
+    </form>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>{% trans "Cancel" %}</button>
+  </form>
+</dialog>
+{% endif %}
 
 {% if is_driver %}
 {% comment %}

@@ -157,7 +157,7 @@ document.addEventListener("change", (event) => {
     if (event.target.matches(".options")) {
         updateTransportRequired();
     }
-    // Choosing a language (More page) switches to it
+    // Choosing a language (More page, landing pages) switches to it
     if (event.target.matches("[data-language-select]")) {
         event.target.form.submit();
     }

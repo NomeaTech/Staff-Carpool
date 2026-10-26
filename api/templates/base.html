@@ -18,6 +18,7 @@
     <script src="{% static "js/funcs.js" %}?v={{ STATIC_VERSION }}"></script>
     {% tailwind_css v=TAILWIND_CSS_VERSION %}
     {% endcache %}
+    {% include "_sentry.html" %}
 </head>
 <!-- <body class="bg-gray-50 text-black font-serif leading-normal tracking-normal"> -->
 <body class="bg-base-200">

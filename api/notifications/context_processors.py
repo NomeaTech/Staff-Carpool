@@ -12,7 +12,10 @@ def notifications(request):
     push_public_key: the VAPID public key, when push notifications are on
     (notifications/push.py).
     """
-    if not request.user.is_authenticated:
+    # No user on a request stopped before the login middleware ran, e.g. the
+    # error page for an address that is not in ALLOWED_HOSTS (carpool/errors.py)
+    user = getattr(request, "user", None)
+    if user is None or not user.is_authenticated:
         return {}
     counted = {}
 

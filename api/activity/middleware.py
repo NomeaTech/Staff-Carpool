@@ -1,9 +1,12 @@
+import logging
 from datetime import datetime, time
 
 from django.utils import timezone
 
 from .events import anonymise_old_events, record
 from .models import Event, Kind
+
+logger = logging.getLogger(__name__)
 
 # Mobile browsers say so in their User-Agent ("Mobile" / "Mobi")
 MOBILE = "Mobi"
@@ -18,6 +21,7 @@ class DailyActivityMiddleware:
     Each of these also anonymises the events that have become old enough
     (events.anonymise_old_events), so no scheduled job is needed. It is a
     single indexed UPDATE, which finds nothing to change on most days.
+    It also tells members about trips they can now rate (rides/ratings.py).
     """
 
     def __init__(self, get_response):
@@ -34,5 +38,15 @@ class DailyActivityMiddleware:
                     device = "mobile" if MOBILE in request.headers.get("User-Agent", "") else "desktop"
                     record(Kind.ACTIVE, user, device=device)
                     anonymise_old_events()
+                    remind_ratings(request)
                 request.session["active_on"] = today.isoformat()
         return self.get_response(request)
+
+
+def remind_ratings(request):
+    from rides.ratings import remind
+    try:
+        remind(request)
+    except Exception:
+        # Reminders must never stop the page from loading
+        logger.exception("Could not send rating reminders")

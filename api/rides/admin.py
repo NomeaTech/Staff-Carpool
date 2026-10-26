@@ -8,11 +8,14 @@ from django.contrib.admin import helpers
 from django.contrib.auth import get_user_model
 from django.contrib.gis.geos import LineString, Point
 from django.db import transaction
+from django.db.models import Q
 from django.template.response import TemplateResponse
+from django.urls import reverse
 from django.utils import timezone
+from django.utils.html import format_html
 
 from home.campuses import CAMPUSES
-from .models import Ride, RideRequest, Via
+from .models import Rating, Report, Ride, RideRequest, Via
 from .routes import ROUTE_SRID
 from .test_places import PLACES
 from .transport import TRANSPORT_OPTIONS
@@ -57,6 +60,25 @@ class GenerateRidesForm(forms.Form):
     count = forms.IntegerField(label="Number of rides", initial=100, min_value=1, max_value=10000)
 
 
+# Rides made by the "Make a ride to test ratings" action have this key set in
+# their start_json, so that making a new one replaces the old one
+RATING_TEST_KEY = "rating_test"
+
+# The co-riders on those rides, made the first time one is made
+RATING_TESTERS = [
+    ("rating.tester.one@example.com", "Rating Tester", "One"),
+    ("rating.tester.two@example.com", "Rating Tester", "Two"),
+]
+
+
+class RatingTestRideForm(forms.Form):
+    role = forms.ChoiceField(
+        label="You are the ride's",
+        choices=[("driver", "Driver: you rate both test users"), ("passenger", "Passenger: you rate the test driver")],
+        widget=forms.RadioSelect, initial="driver",
+    )
+
+
 def test_user():
     user, created = get_user_model().objects.get_or_create(
         email=TEST_USER_EMAIL,
@@ -66,6 +88,65 @@ def test_user():
         user.set_unusable_password()
         user.save(update_fields=["password"])
     return user
+
+
+def rating_tester(email, first_name, last_name):
+    user, created = get_user_model().objects.get_or_create(
+        email=email, defaults={"username": email.split("@")[0], "first_name": first_name, "last_name": last_name},
+    )
+    if created:
+        user.set_unusable_password()
+        user.save(update_fields=["password"])
+    return user
+
+
+def rating_test_place(name, lat, lng):
+    """A made-up place, named so that nobody takes the ride for a real one."""
+    return {
+        "id": f"rating-test-{uuid.uuid4().hex}",
+        "displayName": name,
+        "formattedAddress": f"{name} (not a real place)",
+        "location": {"lat": lat, "lng": lng},
+        RATING_TEST_KEY: True,
+    }
+
+
+def rating_test_ride(user, role):
+    """
+    Replaces user's earlier rating test rides, and their ratings, with a ride
+    that left 3 hours ago and can be rated for RATING_WINDOW (rides/ratings.py):
+    user drives the two RATING_TESTERS, or rides with them as a passenger.
+    """
+    from .ratings import RATE_AFTER
+    testers = [rating_tester(*tester) for tester in RATING_TESTERS]
+    driver, passengers = (user, testers) if role == "driver" else (testers[0], [user, testers[1]])
+    start = rating_test_place("RATING TEST start", 61.0650, 28.0943)
+    destination = rating_test_place("RATING TEST finish", 61.0587, 28.1887)
+    # Long enough ago to be rated now
+    left = timezone.localtime() - RATE_AFTER - timedelta(hours=1)
+
+    with transaction.atomic():
+        old = set(Ride.objects.filter(**{f"start_json__{RATING_TEST_KEY}": True}).filter(
+            Q(driver=user) | Q(requests__passenger=user)
+        ).values_list("pk", flat=True))
+        Rating.objects.filter(ride__in=old).delete()
+        Ride.objects.filter(pk__in=old).delete()
+
+        ride = Ride.objects.create(
+            driver=driver, offer=True, max_passengers=3,
+            start=start["formattedAddress"], start_json=start, start_location=point(start),
+            destination=destination["formattedAddress"], destination_json=destination,
+            destination_location=point(destination),
+            route=LineString([point(start), point(destination)], srid=4326).transform(ROUTE_SRID, clone=True),
+            leaving_at_date_time=f"{left:%Y-%m-%dT%H:%M}",
+            note="A ride for testing the rating system, made in the admin. Not a real trip.",
+        )
+        RideRequest.objects.bulk_create([
+            RideRequest(ride=ride, passenger=passenger, status=RideRequest.Status.ACCEPTED,
+                        accepted_at=timezone.now() - timedelta(days=1))
+            for passenger in passengers
+        ])
+    return ride
 
 
 def place(name, postcode, lat, lng):
@@ -145,10 +226,10 @@ def random_ride(driver):
 @admin.register(Ride)
 class RideAdmin(admin.ModelAdmin):
     inlines = [ViaInline, RideRequestInline]
-    actions = ["generate_test_rides", "delete_test_rides"]
+    actions = ["generate_test_rides", "delete_test_rides", "generate_rating_test_ride"]
 
     # Actions that do not act on the selected rides, so they can be run with none selected
-    unselected_actions = {"generate_test_rides", "delete_test_rides"}
+    unselected_actions = {"generate_test_rides", "delete_test_rides", "generate_rating_test_ride"}
 
     def changelist_view(self, request, extra_context=None):
         if request.method == "POST" and request.POST.get("action") in self.unselected_actions:
@@ -184,7 +265,73 @@ class RideAdmin(admin.ModelAdmin):
         self.message_user(request, f"Generated {count} random test rides for {driver.email}.", messages.SUCCESS)
         return None
 
+    @admin.action(description="Make a ride to test ratings")
+    def generate_rating_test_ride(self, request, queryset):
+        form = RatingTestRideForm(request.POST if "apply" in request.POST else None)
+        if not form.is_valid():
+            return TemplateResponse(request, "admin/rides/ride/generate_rating_test_ride.html", {
+                **self.admin_site.each_context(request),
+                "title": "Make a ride to test ratings",
+                "opts": self.model._meta,
+                "form": form,
+                "action_checkbox_name": helpers.ACTION_CHECKBOX_NAME,
+            })
+
+        ride = rating_test_ride(request.user, form.cleaned_data["role"])
+        self.message_user(request, format_html(
+            'Made a ride to test ratings: rate it on <a href="{}#rate">its page</a> or on the <a href="{}">ratings page</a>.',
+            reverse("ride_detail", args=[ride.pk]), reverse("ratings"),
+        ), messages.SUCCESS)
+        return None
+
     @admin.action(description="Delete random test rides")
     def delete_test_rides(self, request, queryset):
         deleted = Ride.objects.filter(**{f"start_json__{TEST_RIDE_KEY}": True}).delete()[1].get(Ride._meta.label, 0)
         self.message_user(request, f"Deleted {deleted} random test rides.", messages.SUCCESS)
+
+
+
+@admin.register(Rating)
+class RatingAdmin(admin.ModelAdmin):
+    """
+    Ratings of co-riders (rides/ratings.py). Disputed ones (review: waiting)
+    do not count until they are counted or discarded here.
+    """
+    list_display = ["rated", "rater", "outcome", "score", "review", "trip_date", "route", "created_at"]
+    list_filter = ["review", "outcome", "trip_date"]
+    search_fields = ["rated__email", "rater__email", "route"]
+    raw_id_fields = ["ride", "rater", "rated"]
+    actions = ["count_ratings", "discard_ratings"]
+
+    @admin.action(description="Count the selected disputed ratings")
+    def count_ratings(self, request, queryset):
+        self.review(request, queryset, Rating.Review.UPHELD)
+
+    @admin.action(description="Discard the selected ratings")
+    def discard_ratings(self, request, queryset):
+        self.review(request, queryset, Rating.Review.DISCARDED)
+
+    def review(self, request, queryset, decision):
+        from .ratings import warn_if_no_shows
+        ratings = list(queryset.select_related("rated"))
+        queryset.update(review=decision, updated_at=timezone.now())
+        if decision == Rating.Review.UPHELD:
+            for member in {rating.rated for rating in ratings if rating.outcome == Rating.Outcome.NO_SHOW}:
+                warn_if_no_shows(member, request)
+        self.message_user(request, f"{len(ratings)} ratings: {decision.label.lower()}.", messages.SUCCESS)
+
+
+@admin.register(Report)
+class ReportAdmin(admin.ModelAdmin):
+    """Members' reports of each other (home.views.report_member). Mark them handled once dealt with."""
+    list_display = ["reported", "reporter", "reason", "route", "created_at", "handled_at"]
+    list_filter = [("handled_at", admin.EmptyFieldListFilter), "reason"]
+    search_fields = ["reported__email", "reporter__email", "message"]
+    readonly_fields = ["reporter", "reported", "ride", "route", "reason", "message", "created_at"]
+    fields = readonly_fields + ["handled_at", "note"]
+    actions = ["mark_handled"]
+
+    @admin.action(description="Mark the selected reports handled")
+    def mark_handled(self, request, queryset):
+        handled = queryset.filter(handled_at=None).update(handled_at=timezone.now())
+        self.message_user(request, f"Marked {handled} reports handled.", messages.SUCCESS)
