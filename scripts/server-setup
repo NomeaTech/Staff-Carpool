@@ -13,6 +13,7 @@
 #   - firewall (ufw) and fail2ban
 #   - /srv/kyyti/<environment>/private_media for the uploaded profile photos,
 #     with a daily copy to /var/backups/kyyti (the databases are backed up by Coolify)
+#   - the kyyti command, for Django commands in the app (kyyti production createsuperuser)
 #   - Coolify (and Docker with it)
 #
 # Then carry on in DEPLOYMENT.md. Once Coolify's dashboard has its own
@@ -221,6 +222,44 @@ EOF
     echo "Daily copies at 03:30 in /var/backups/kyyti"
 }
 
+install_kyyti_command() {
+    step "The kyyti command"
+    cat > /usr/local/bin/kyyti <<'EOF'
+#!/usr/bin/env bash
+# kyyti: run a Django command in the app, without looking up its container
+# (installed by scripts/server-setup).
+#
+#   kyyti production createsuperuser     python manage.py createsuperuser
+#   kyyti staging shell                  python manage.py shell
+#   kyyti production                     a shell in the container
+#
+# Finds the app's running container by the labels Coolify gives it: the
+# project "LUT Kyyti" and the environment's name.
+set -euo pipefail
+
+environment=${1:-}
+case "$environment" in
+    production|staging) shift ;;
+    *) echo "Usage: kyyti <production|staging> [manage.py command]" >&2; exit 1 ;;
+esac
+# The newest first: during a deploy, the new release's
+container=$(docker ps -q --filter label=coolify.projectName=lut-kyyti \
+    --filter "label=coolify.environmentName=$environment" --filter label=coolify.type=application | head -n 1)
+if [ -z "$container" ]; then
+    echo "The $environment app is not running. See its Deployments in Coolify." >&2
+    exit 1
+fi
+tty=-i
+[ -t 0 ] && tty=-it
+if [ $# -eq 0 ]; then
+    exec docker exec $tty "$container" sh
+fi
+exec docker exec $tty "$container" python manage.py "$@"
+EOF
+    chmod 755 /usr/local/bin/kyyti
+    echo "kyyti production createsuperuser (see: kyyti --help)"
+}
+
 install_coolify() {
     step "Coolify"
     if coolify_installed; then
@@ -278,6 +317,7 @@ setup() {
     secure_ssh
     set_up_firewall
     make_data_folders
+    install_kyyti_command
     install_coolify
     print_next_steps
 }

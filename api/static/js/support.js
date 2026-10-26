@@ -1,16 +1,20 @@
 // Error reporting and bug reports with Sentry (carpool/sentry.py). The
-// library is static/js/vendor/sentry-*.js, and its settings come from the
-// page (templates/_sentry.html).
+// library is static/js/vendor/kyyti-support-*.js, and its settings come from
+// the page (templates/_sentry.html). Neither is named after Sentry, and
+// everything goes to Sentry through the app (tunnel), as ad blockers block
+// Sentry's scripts and addresses.
 //
 // - Errors in the page's scripts are sent to Sentry.
 // - Session replay keeps a recording of the last moments in memory and only
 //   sends it with an error or a bug report. All text, inputs and images in
 //   it are hidden.
-// - Links and buttons with data-bug-report (the More page) open Sentry's
-//   feedback form, in the page's language. Its floating button is not
-//   shown: on phones it would cover the dock.
+// - Links with data-bug-report (the More page) open Sentry's feedback form,
+//   in the page's language. Its floating button is not shown: on phones it
+//   would cover the dock. Where this script or the library does not load
+//   (blocked), or the form cannot be opened, the link leads to the app's own
+//   form instead (home/views.py report_bug).
 (function () {
-    const config = document.getElementById("sentry-config");
+    const config = document.getElementById("support-config");
     if (!window.Sentry || !config) {
         return;
     }
@@ -18,6 +22,8 @@
     const feedback = Sentry.feedbackIntegration({
         ...settings.feedback,
         autoInject: false,
+        // The form's element; the default (sentry-feedback) may be hidden by ad blockers
+        id: "kyyti-support",
         // The report is linked to the user's ID, which the team can look up
         showName: false,
         showEmail: false,
@@ -26,6 +32,7 @@
     });
     Sentry.init({
         dsn: settings.dsn,
+        tunnel: settings.tunnel,
         environment: settings.environment,
         release: settings.release,
         sendDefaultPii: false,
@@ -40,7 +47,7 @@
     // The form lives in an element of its own at the end of <body>. Turbo
     // replaces <body> when the page changes, so it is moved to the new one.
     document.addEventListener("turbo:before-render", event => {
-        const host = document.getElementById("sentry-feedback");
+        const host = document.getElementById("kyyti-support");
         if (host) {
             event.detail.newBody.appendChild(host);
         }
@@ -48,7 +55,8 @@
 
     let opening = false;
     document.addEventListener("click", async event => {
-        if (!event.target.closest("[data-bug-report]")) {
+        const link = event.target.closest("[data-bug-report]");
+        if (!link) {
             return;
         }
         event.preventDefault();
@@ -66,6 +74,9 @@
             });
             form.appendToDom();
             form.open();
+        } catch (error) {
+            // The app's own form, as without this script
+            window.Turbo ? Turbo.visit(link.href) : location.assign(link.href);
         } finally {
             opening = false;
         }

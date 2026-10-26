@@ -1,12 +1,20 @@
 {% load static %}
 {% comment %}
   Sends errors in the browser to Sentry, and gives the "Report a bug" links
-  (data-bug-report) their form (carpool/sentry.py, static/js/sentry-setup.js).
+  (data-bug-report) their form (carpool/sentry.py, static/js/support.js).
   Only there with SENTRY_DSN set. Outside the cached part of <head>: the
   settings have the user's ID and the form's texts in the page's language.
+  The scripts are not named after Sentry, as ad blockers block those.
+  The feedback form's window (modal) and screenshot tool are served here
+  too: otherwise the library loads them from Sentry's CDN when the form is
+  opened, which ad blockers block as well. They come from the same release
+  (@sentry/feedback 10.76.2, browser.sentry-cdn.com) and must follow the
+  library, which they add themselves to.
 {% endcomment %}
 {% if sentry_config %}
-{{ sentry_config|json_script:"sentry-config" }}
-<script src="{% static "js/vendor/sentry-10.76.2.replay.feedback.min.js" %}" defer></script>
-<script src="{% static "js/sentry-setup.js" %}?v={{ STATIC_VERSION }}" defer></script>
+{{ sentry_config|json_script:"support-config" }}
+<script src="{% static "js/vendor/kyyti-support-10.76.2.min.js" %}" defer></script>
+<script src="{% static "js/vendor/kyyti-support-modal-10.76.2.min.js" %}" defer></script>
+<script src="{% static "js/vendor/kyyti-support-screenshot-10.76.2.min.js" %}" defer></script>
+<script src="{% static "js/support.js" %}?v={{ STATIC_VERSION }}" defer></script>
 {% endif %}

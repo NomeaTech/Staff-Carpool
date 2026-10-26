@@ -190,13 +190,52 @@ lets Coolify switch releases without downtime.
 
 **Scheduled Tasks**: add the jobs in [CRONJOBS.md](CRONJOBS.md).
 
-Deploy. The first deploy takes longest. Then, in the app's Terminal:
+Deploy. The first deploy takes longest. Then create the admin account
+(see "Running a command in the app" below):
 
 ```
-python manage.py createsuperuser
+kyyti production createsuperuser
 ```
 
 (Not needed if you moved the data from the current server, below.)
+
+## Running a command in the app
+
+Django's commands (`createsuperuser`, `shell`, `changepassword`, …) run in the
+app's container. Coolify names its containers after their IDs, which are random:
+
+| Name starts with | What it is |
+| --- | --- |
+| `fx0gzv3di7uxvwla74ocpxkz-…` | production's app (kyyti.net) |
+| `nfumlq45lf5vteyh6htfbmee-…` | staging's app (test.kyyti.net) |
+| `vxldw6odowx1rrscnbnrfgex` | production's database |
+| `ufwqtp1aialblxae2vajkqqc` | staging's database |
+| `k36idp96tsukciinikiclkzl` | production's Redis |
+| `p2ofvcdafwtvhbz7jixr25oc` | staging's Redis |
+
+The part after the app's ID (`-20261026T225845`) is when that release started;
+each deploy makes a new one.
+
+**From the command line (easiest):** `scripts/server-setup` installs the
+`kyyti` command, which finds the right container itself:
+
+```
+ssh violetta
+kyyti production createsuperuser     # python manage.py createsuperuser
+kyyti staging changepassword <email>  # any manage.py command
+kyyti production shell                # Django's shell
+kyyti production                      # a plain shell in the container
+```
+
+`createsuperuser` asks for a username, an email and a password (twice). Log
+in with the email and password, at https://kyyti.net/admin/ for the admin: it
+asks you to set up two-step verification the first time.
+
+**From Coolify's dashboard:** Projects › LUT Kyyti › **production** ›
+**production-app** › **Terminal**. The list there only shows that app's own
+container (`fx0gzv3di7uxvwla74ocpxkz-…`): choose it and press Connect. The
+terminal starts in `/app/api`, so type `python manage.py createsuperuser`.
+Not the databases' Terminal: they have no Django in them.
 
 ## Releasing
 
@@ -268,7 +307,7 @@ http://localhost:8000. See the top of `compose.yaml`.
 - **A deploy failed:** its log is in the app's Deployments. The old release is
   still serving.
 - **The app shows errors:** the app's Logs, and Sentry.
-- **A shell in the app:** the app's Terminal (e.g. `python manage.py shell`).
+- **A shell in the app:** `kyyti production shell` on the server, or the app's Terminal ("Running a command in the app").
 - **The dashboard cannot be reached at its address:** through an SSH tunnel,
   `ssh -L 8000:localhost:8000 <you>@<server>`, then http://localhost:8000; or
   open its ports again with `sudo bash server-setup unlock-dashboard`.

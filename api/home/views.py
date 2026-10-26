@@ -31,8 +31,10 @@ from django.contrib.gis.measure import D
 from django.contrib.gis.db.models.functions import Distance, LineLocatePoint
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
+from accounts import throttle
 from accounts.models import User
 from activity import events
+from carpool import sentry
 from activity.models import Event, Kind
 from datetime import datetime, time, timedelta
 from django.db import IntegrityError, transaction
@@ -139,6 +141,41 @@ HOME_RIDES = 4
 def more(request):
     """The More tab of the mobile dock: account, settings and help (the navbar's profile picture on desktop)."""
     return render(request, "more.html")
+
+# Bug reports a member can send from the app's own form per hour
+BUG_REPORTS = 10
+BUG_REPORT_WINDOW = 60 * 60
+
+@login_required
+def report_bug(request):
+    """
+    The app's own "Report a bug" form, where Sentry's (static/js/support.js)
+    cannot be opened, e.g. when an ad blocker blocks its script. The server
+    sends the report to Sentry (carpool/sentry.py send_feedback), with the
+    page it was sent from and the browser.
+    """
+    if not settings.SENTRY_DSN:
+        raise Http404
+    # The page the member came from, as Sentry's form would send it
+    page = request.POST.get("page") if request.method == "POST" else request.META.get("HTTP_REFERER")
+    if not url_has_allowed_host_and_scheme(page, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+        page = request.build_absolute_uri(reverse("more"))
+    message = request.POST.get("message", "").strip()[:5000]
+    error = None
+
+    if request.method == "POST":
+        if not message:
+            error = _("Describe the problem before sending the report.")
+        elif throttle.blocked("bug_report", request.user.email, BUG_REPORTS):
+            error = _("You have sent many reports in a short time. Please try again later.")
+        else:
+            throttle.count("bug_report", request.user.email, BUG_REPORT_WINDOW)
+            if sentry.send_feedback(message, request.user, page, request.headers.get("User-Agent", "")):
+                messages.success(request, _("Thank you for your report!"))
+                return redirect("more")
+            error = _("The report could not be sent. Please try again later.")
+
+    return render(request, "report_bug.html", {"page": page, "message": message, "error": error})
 
 @login_required
 def my_rides(request):

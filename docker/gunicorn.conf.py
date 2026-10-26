@@ -5,6 +5,11 @@ bind = "0.0.0.0:8000"
 
 # About 150 MB of memory each. Set WEB_CONCURRENCY in Coolify to change it.
 workers = int(os.getenv("WEB_CONCURRENCY", 3))
+# Each serves this many requests at once, so that requests that wait for
+# another service (errors passed on to Sentry, carpool/sentry.py; Google's
+# and Digitransit's APIs) do not hold up the others
+worker_class = "gthread"
+threads = 4
 
 # A request that takes longer is stopped (e.g. a stuck call to an outside API)
 timeout = 60
