@@ -20,10 +20,14 @@ from django.templatetags.static import static
 from django.views.generic import RedirectView
 
 from .health import health
+from .sentry import tunnel
 
 urlpatterns = [
     # For the deploys' health checks (carpool/health.py)
     path('healthz', health),
+    # Errors and bug reports from the browser, passed on to Sentry (carpool/sentry.py).
+    # Not named after Sentry, which ad blockers block.
+    path('app/support/relay/', tunnel, name="support_relay"),
     path('admin/', admin.site.urls),
     path('rosetta/', include('rosetta.urls')),
     path('app/', include('home.urls')),

@@ -1,0 +1,33 @@
+{% extends "app.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Report a bug" %} | LUT Kyyti{% endblock %}
+
+{% block content %}
+{% comment %}
+  The app's own bug report form (home/views.py report_bug), where Sentry's
+  form cannot be opened, e.g. when an ad blocker blocks it. The texts are
+  the ones of Sentry's form (carpool/sentry.py).
+{% endcomment %}
+<section class="h-app w-full overflow-y-auto pt-[calc(1.75rem+env(safe-area-inset-top))] lg:pt-24 pb-dock lg:pb-10">
+  <div class="max-w-xl mx-auto px-4 grid gap-5">
+    <section class="card bg-base-100 border border-base-300 shadow-sm">
+      <form class="card-body gap-4 p-5" action="{% url 'report_bug' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="page" value="{{ page }}">
+        <h1 class="card-title text-2xl">{% trans "Report a bug" %}</h1>
+        <p class="text-base-content/70">{% trans "Tell us what went wrong. The report is sent with your user ID, the app's version and your browser, so that the team can find the problem." %}</p>
+        {% if error %}
+        <div role="alert" class="alert alert-error alert-soft"><span>{{ error }}</span></div>
+        {% endif %}
+        <label class="fieldset">
+          <span class="fieldset-legend">{% trans "Description" %} <span class="font-normal text-base-content/60">{% trans "(required)" %}</span></span>
+          <textarea name="message" class="textarea h-40 w-full{% if error and not message %} textarea-error{% endif %}" placeholder="{% trans "What went wrong? What did you expect to happen?" %}" maxlength="5000" required>{{ message }}</textarea>
+        </label>
+        <button class="btn btn-primary rounded-full" type="submit">{% trans "Send report" %}</button>
+        <a href="{% url 'more' %}" class="btn btn-ghost rounded-full">{% trans "Cancel" %}</a>
+      </form>
+    </section>
+  </div>
+</section>
+{% endblock %}

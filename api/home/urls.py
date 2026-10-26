@@ -17,6 +17,7 @@ urlpatterns = [
     path("home/welcomed/", welcomed, name="welcomed"),
     path("rides/", my_rides, name="my_rides"),
     path("more/", more, name="more"),
+    path("support/report/", report_bug, name="report_bug"),
     path("notifications/", include("notifications.urls")),
     path("groups/", include("groups.urls")),
     path("search/", search, name="search"),

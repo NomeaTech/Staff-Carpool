@@ -1,5 +1,5 @@
 # Staff-Carpool
-Version: 1.0.0
+Version: 1.0.1
 
 ## Installation instructions
 
@@ -59,6 +59,22 @@ With `SENTRY_DSN` set, errors on the server and in the browser are sent to
 (`api/carpool/sentry.py`). Only the user's ID is sent with them: no names,
 emails, IP addresses or form contents. Bug reports and errors come with a
 replay of the moments before them, with all text and images hidden.
+
+Ad blockers (uBlock Origin, Brave) block Sentry, so:
+- the browser's scripts are served by the app under names of their own
+  (`api/static/js/vendor/kyyti-support-*.js`, `api/static/js/support.js`),
+  the feedback form's window and screenshot tool included, which the library
+  would otherwise load from Sentry's CDN;
+- the browser sends everything to the app (`/app/support/relay/`), which
+  passes it on to Sentry;
+- where the scripts are blocked anyway, "Report a bug" opens the app's own
+  form (`/app/support/report/`), which the server sends to Sentry.
+
+When updating the Sentry library, update all three `kyyti-support-*` files
+to the same version, from https://browser.sentry-cdn.com/<version>/
+(`bundle.replay.feedback.min.js`, `feedback-modal.min.js` and
+`feedback-screenshot.min.js`, without their `sourceMappingURL` line), and
+their names in `api/templates/_sentry.html`.
 
 1. Create a Sentry organisation in the EU region, and in it a Django project.
 2. Copy its DSN (Settings › Projects › *project* › Client Keys) to `.env`.
