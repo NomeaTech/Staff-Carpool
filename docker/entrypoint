@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# docker/entrypoint: what the container does before it starts the app.
+#
+# Only when it starts the app (gunicorn) does it migrate the database: Coolify's
+# scheduled tasks run their commands in the running container, not through here.
+#
+# While a deploy switches over, the old release still serves with the migrated
+# database, so a migration must not break it: add a column in one release and
+# remove the old one in a later one (DEPLOYMENT.md, "Migrations").
+set -e
+
+if [ "$1" = "gunicorn" ]; then
+    # If it fails, the container stops and the old release keeps serving
+    python manage.py migrate --noinput
+    # Store the driving route of rides that do not have one yet. Not needed for
+    # the app to start, so a failure (e.g. Google's API) does not stop the deploy.
+    python manage.py compute_routes || echo "compute_routes failed; the release starts anyway" >&2
+fi
+
+exec "$@"

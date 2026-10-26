@@ -7,6 +7,11 @@ user and the test rides. `analytics.events` is the activity log
 (`api/activity/models.py` lists each kind of event and its `data`). Metabase runs in Docker on the app's server, with
 its own database for its settings, behind nginx.
 
+On a server with Coolify, set it up as in `DEPLOYMENT.md` ("Metabase")
+instead: Coolify runs it and its database, and serves it over HTTPS, so only
+`setup-database.sql` and step 8 below are needed. The steps below are for a
+server without Coolify, with PostgreSQL installed on the server itself.
+
 ## Setting it up (once, on the server)
 
 1. Deploy, so that the analytics views exist (`python manage.py migrate`).

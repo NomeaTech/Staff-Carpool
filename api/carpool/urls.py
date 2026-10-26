@@ -19,7 +19,11 @@ from django.urls import path, include
 from django.templatetags.static import static
 from django.views.generic import RedirectView
 
+from .health import health
+
 urlpatterns = [
+    # For the deploys' health checks (carpool/health.py)
+    path('healthz', health),
     path('admin/', admin.site.urls),
     path('rosetta/', include('rosetta.urls')),
     path('app/', include('home.urls')),

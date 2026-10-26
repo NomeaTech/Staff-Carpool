@@ -1257,3 +1257,55 @@ msgstr "Odotetaan yhteyttä"
 #: templates/offline.html:27
 msgid "Try again"
 msgstr "Yritä uudelleen"
+
+#: carpool/sentry.py home/templates/more.html
+msgid "Report a bug"
+msgstr "Ilmoita virheestä"
+
+#: carpool/sentry.py
+msgid "What went wrong? What did you expect to happen?"
+msgstr "Mikä meni vikaan? Mitä odotit tapahtuvan?"
+
+#: carpool/sentry.py
+msgid "(required)"
+msgstr "(pakollinen)"
+
+#: carpool/sentry.py
+msgid "Send report"
+msgstr "Lähetä ilmoitus"
+
+#: carpool/sentry.py
+msgid "Confirm"
+msgstr "Vahvista"
+
+#: carpool/sentry.py
+msgid "Thank you for your report!"
+msgstr "Kiitos ilmoituksestasi!"
+
+#: carpool/sentry.py
+msgid "Add a screenshot"
+msgstr "Lisää kuvakaappaus"
+
+#: carpool/sentry.py
+msgid "Remove screenshot"
+msgstr "Poista kuvakaappaus"
+
+#: carpool/sentry.py
+msgid "Highlight"
+msgstr "Korosta"
+
+#: carpool/sentry.py
+msgid "Hide"
+msgstr "Piilota"
+
+#: carpool/sentry.py
+msgid "Remove"
+msgstr "Poista"
+
+#: carpool/sentry.py
+msgid "Describe the problem before sending the report."
+msgstr "Kuvaile ongelma ennen ilmoituksen lähettämistä."
+
+#: carpool/sentry.py
+msgid "The report could not be sent. Check your connection and try again."
+msgstr "Ilmoitusta ei voitu lähettää. Tarkista yhteytesi ja yritä uudelleen."

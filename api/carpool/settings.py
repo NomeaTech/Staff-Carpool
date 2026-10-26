@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+from urllib.parse import unquote, urlparse
 from dotenv import load_dotenv
 from django.utils.translation import gettext_lazy as _
 
@@ -42,12 +43,16 @@ TURNSTILE_DEFAULT_CONFIG = {
 # non-empty string, "False" too, would count as on.
 DEBUG = os.getenv("DEBUG", "").strip().lower() in ("1", "true", "yes", "on")
 
-ALLOWED_HOSTS = ['localhost', 'kyyti.net']
-
 # Public address of the site, used for links in emails (e.g. password reset).
 # Requests reach Django through a proxy on localhost, so the address cannot be
 # taken from the request. Leave unset in development to use the request's.
 SITE_URL = os.getenv("SITE_URL", "").rstrip("/")
+# The site's own address is allowed and trusted too, so that e.g. a test
+# server at another address only needs SITE_URL
+SITE_ORIGINS = [SITE_URL] if SITE_URL else []
+
+# localhost: the deploys' health checks (carpool/health.py) ask from inside the container
+ALLOWED_HOSTS = ['localhost', 'kyyti.net', *(urlparse(origin).hostname for origin in SITE_ORIGINS)]
 # Metabase (scripts/metabase), linked from the admin's user statistics when set
 METABASE_URL = os.getenv("METABASE_URL", "").rstrip("/")
 # After how many days the activity log's events (activity/models.py) are
@@ -61,7 +66,7 @@ GROUP_ADMIN_AWAY_DAYS = int(os.getenv("GROUP_ADMIN_AWAY_DAYS", 180))
 # The development server's address is only trusted in development
 DEV_ORIGINS = ['http://localhost:8120'] if DEBUG else []
 
-CSRF_TRUSTED_ORIGINS = ['https://kyyti.net', *DEV_ORIGINS]
+CSRF_TRUSTED_ORIGINS = ['https://kyyti.net', *SITE_ORIGINS, *DEV_ORIGINS]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
@@ -88,6 +93,7 @@ CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
     'https://kyyti.net',
+    *SITE_ORIGINS,
     *DEV_ORIGINS,
 ]
 
@@ -143,6 +149,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     # request.user.is_verified(): logged in with two-step verification
     'django_otp.middleware.OTPMiddleware',
+    # The user's ID on errors sent to Sentry (carpool/sentry.py)
+    'carpool.sentry.UserMiddleware',
     # Records each logged-in user's first visit of the day (activity/)
     'activity.middleware.DailyActivityMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -165,6 +173,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'notifications.context_processors.notifications',
                 'notifications.context_processors.static_version',
+                'carpool.sentry.context',
             ],
         },
     },
@@ -173,20 +182,56 @@ TEMPLATES = [
 WSGI_APPLICATION = 'carpool.wsgi.application'
 
 
+# Added to the URLs of the app's scripts (?v=...), so that a new release has
+# new URLs: the service worker keeps static files (static/js/serviceworker.js),
+# and with DEBUG on, they keep their names when they change. It is the
+# version bump-my-version keeps in pyproject.toml (git ship bumps it).
+def _app_version():
+    import tomllib
+    try:
+        with open(BASE_DIR / "pyproject.toml", "rb") as file:
+            return tomllib.load(file)["tool"]["bumpversion"]["current_version"]
+    except (OSError, KeyError, tomllib.TOMLDecodeError):
+        return "0"
+
+STATIC_VERSION = _app_version()
+
+
 # Cache
 # Template fragments ({% cache ... using="templates" %}) are not cached while
 # DEBUG is on, so template edits show up immediately during development.
+#
+# With REDIS_URL (on the server, DEPLOYMENT.md), all of the app's processes
+# share one cache in Redis: the login throttle (accounts/throttle.py) then
+# counts every attempt, and the old and new release agree while a deploy
+# switches between them. Without it, each process has its own cache.
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-    },
-    "templates": {
-        "BACKEND": "django.core.cache.backends.dummy.DummyCache" if DEBUG
-            else "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "templates",
-    },
-}
+REDIS_URL = os.getenv("REDIS_URL", "")
+if REDIS_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": REDIS_URL,
+        },
+        "templates": {
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache" if DEBUG
+                else "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": REDIS_URL,
+            # Each release has its own fragments, as its templates may have changed
+            "KEY_PREFIX": f"templates-{STATIC_VERSION}",
+        },
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        },
+        "templates": {
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache" if DEBUG
+                else "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "templates",
+        },
+    }
 
 # Sessions are read from the cache, and only fetched from the database on a miss
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
@@ -195,14 +240,18 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# On the server, DATABASE_URL (postgres://user:password@host:port/name, as
+# Coolify shows it, DEPLOYMENT.md). Without it, the database on this machine.
+_database = urlparse(os.getenv("DATABASE_URL", ""))
+
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": "campus_ride",
-        "USER": "postgres",
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+        "NAME": _database.path.lstrip("/") or "campus_ride",
+        "USER": unquote(_database.username or "postgres"),
+        "PASSWORD": unquote(_database.password) if _database.password else os.getenv("POSTGRES_PASSWORD"),
+        "HOST": _database.hostname or "127.0.0.1",
+        "PORT": str(_database.port or 5432),
         # Keep connections open between requests instead of reconnecting each time
         "CONN_MAX_AGE": 60,
         "CONN_HEALTH_CHECKS": True,
@@ -255,20 +304,6 @@ LOCALE_PATHS = [
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
-# Added to the URLs of the app's scripts (?v=...), so that a new release has
-# new URLs: the service worker keeps static files (static/js/serviceworker.js),
-# and with DEBUG on, they keep their names when they change. It is the
-# version bump-my-version keeps in pyproject.toml (git ship bumps it).
-def _app_version():
-    import tomllib
-    try:
-        with open(BASE_DIR / "pyproject.toml", "rb") as file:
-            return tomllib.load(file)["tool"]["bumpversion"]["current_version"]
-    except (OSError, KeyError, tomllib.TOMLDecodeError):
-        return "0"
-
-STATIC_VERSION = _app_version()
 STATIC_ROOT = os.getenv("STATIC_ROOT")
 
 # collectstatic adds a hash of each file's contents to its name (funcs.js ->
@@ -327,6 +362,42 @@ VAPID_PUBLIC_KEY = os.getenv("VAPID_PUBLIC_KEY", "")
 VAPID_PRIVATE_KEY = os.getenv("VAPID_PRIVATE_KEY", "")
 # Who the push services can contact about the notifications sent
 VAPID_SUBJECT = os.getenv("VAPID_SUBJECT", f"mailto:{CONTACT_EMAIL}")
+
+# Error reporting and members' bug reports (carpool/sentry.py). The DSN is
+# the project's "Client Keys (DSN)" in Sentry. Without it, Sentry is off.
+SENTRY_DSN = os.getenv("SENTRY_DSN", "")
+# Tells errors from the test server and production apart in Sentry
+SENTRY_ENVIRONMENT = os.getenv("SENTRY_ENVIRONMENT", "development" if DEBUG else "production")
+# Errors are grouped by release in Sentry, the server's and the browser's alike
+SENTRY_RELEASE = f"lut-kyyti@{STATIC_VERSION}"
+if SENTRY_DSN:
+    import sentry_sdk
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        environment=SENTRY_ENVIRONMENT,
+        release=SENTRY_RELEASE,
+        # No names, emails, IP addresses or cookies (carpool.sentry.UserMiddleware adds the ID)
+        send_default_pii=False,
+        # Forms have members' phone numbers, addresses and messages
+        max_request_body_size="never",
+        # Share of requests whose timings (performance) are recorded, from 0 to 1
+        traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", 0)),
+    )
+
+# Warnings and errors, with their tracebacks, go to the console: on the server
+# that is the container's log, which Coolify shows. With DEBUG on, Django
+# prints them itself.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "plain": {"format": "{levelname} {name}: {message}", "style": "{"},
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "plain"},
+    },
+    "root": {"handlers": [] if DEBUG else ["console"], "level": "WARNING"},
+}
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 CRISPY_TEMPLATE_PACK = "tailwind"

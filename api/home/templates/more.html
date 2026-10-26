@@ -92,6 +92,10 @@
         <li><a href="{% url 'faq' %}" class="py-3">{% include "_icon.html" with name="help" %}<span class="grow">{% trans "Help & FAQ" %}</span>{% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}</a></li>
         <li><a href="{% url 'safety' %}" class="py-3">{% include "_icon.html" with name="shield" %}<span class="grow">{% trans "Safety tips" %}</span>{% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}</a></li>
         <li><a href="{% url 'contact' %}" class="py-3">{% include "_icon.html" with name="email" %}<span class="grow">{% trans "Contact" %}</span>{% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}</a></li>
+        {# Opens Sentry's bug report form (static/js/sentry-setup.js), when Sentry is on #}
+        {% if sentry_config %}
+        <li><button type="button" data-bug-report class="py-3">{% include "_icon.html" with name="alert" %}<span class="grow text-left">{% trans "Report a bug" %}</span></button></li>
+        {% endif %}
         <li><a href="{% url 'privacy-policy' %}" class="py-3">{% include "_icon.html" with name="lock" %}<span class="grow">{% trans "Privacy policy" %}</span>{% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}</a></li>
         <li><a href="{% url 'terms-of-use' %}" class="py-3">{% include "_icon.html" with name="document" %}<span class="grow">{% trans "Terms of use" %}</span>{% include "_icon.html" with name="chevron" class="size-4 text-base-content/40" %}</a></li>
       </ul>

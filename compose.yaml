@@ -1,0 +1,45 @@
+# Runs the production image on your own machine, with its own PostGIS and
+# Redis, to try a release before it is deployed:
+#
+#   docker compose up --build
+#
+# then open http://localhost:8000 (Coolify does not use this file; see
+# DEPLOYMENT.md). The database is empty: create an account with
+#   docker compose exec web python manage.py createsuperuser
+# Remove everything, the data too, with: docker compose down --volumes
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: only-for-trying-the-image-locally
+      DATABASE_URL: postgres://postgres:postgres@db:5432/campus_ride
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - media:/app/api/private_media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  db:
+    image: postgis/postgis:17-3.5
+    environment:
+      POSTGRES_DB: campus_ride
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 2s
+      retries: 30
+
+  redis:
+    image: redis:8-alpine
+
+volumes:
+  database:
+  media:

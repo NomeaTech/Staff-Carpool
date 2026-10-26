@@ -9,5 +9,5 @@
 {% else %}
 <span class="text-xs text-base-content/60 whitespace-nowrap">{% trans "Not rated yet" %}</span>
 {% endif %}{% if rating.shows_no_shows %}
-<span class="flex items-center gap-1 text-xs text-warning-content mt-0.5">{% include "_icon.html" with name="alert" class="size-3.5" %}{% blocktrans count counter=rating.no_shows %}Didn't show up for a ride in the past year{% plural %}Didn't show up for {{ counter }} rides in the past year{% endblocktrans %}</span>
+<span class="flex items-center gap-1 text-xs text-warning-ink mt-0.5">{% include "_icon.html" with name="alert" class="size-3.5" %}{% blocktrans count counter=rating.no_shows %}Didn't show up for a ride in the past year{% plural %}Didn't show up for {{ counter }} rides in the past year{% endblocktrans %}</span>
 {% endif %}

@@ -8,12 +8,12 @@
     <span class="font-bold">{{ ride.route_name }}</span>
     {% if not ride_request %}
       {% if ride.pending %}
-        <span class="badge border-0 bg-warning/30 text-warning-content badge-sm whitespace-nowrap">{% blocktrans count counter=ride.pending %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}</span>
+        <span class="badge border-0 bg-warning/30 text-warning-ink badge-sm whitespace-nowrap">{% blocktrans count counter=ride.pending %}{{ counter }} request{% plural %}{{ counter }} requests{% endblocktrans %}</span>
       {% else %}
         <span class="badge badge-soft badge-primary badge-sm whitespace-nowrap">{% trans "Your ride" %}</span>
       {% endif %}
     {% elif ride_request.status == "accepted" %}
-      <span class="badge border-0 bg-success/30 text-success-content badge-sm">{% trans "Confirmed" %}</span>
+      <span class="badge border-0 bg-success/30 text-success-ink badge-sm">{% trans "Confirmed" %}</span>
     {% elif ride_request.status == "pending" %}
       <span class="badge badge-soft badge-secondary badge-sm">{% trans "Requested" %}</span>
     {% else %}
