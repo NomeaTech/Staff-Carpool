@@ -22,13 +22,16 @@ rollout. Tick items off as they are done, and add new ones as they come up.
 ## Configuration and hosting
 
 - [ ] **Hosting with Coolify** ([DEPLOYMENT.md](DEPLOYMENT.md)):
-  - [ ] Choose the server (EU provider, 4 GB of memory or 8 GB with Metabase) and set up the DNS records.
-  - [ ] Run `scripts/server-setup` on it, then set up Coolify: dashboard address, `lock-dashboard`, two-factor login, GitHub, notifications.
-  - [ ] Set up staging and production, each with its PostGIS database, Redis and the app, with their environment variables (including `SITE_URL`), uploads folder and health check.
+  - [x] Choose the server (`violetta`, Hetzner) and set up the DNS records (Cloudflare).
+  - [x] Run `scripts/server-setup` on it; Coolify's dashboard at https://deploy.kyyti.net, with `lock-dashboard`.
+  - [ ] Coolify: turn on two-factor login (your profile), and set up notifications (Settings › Notifications) for failed deploys and backups.
+  - [ ] Deploy on push: add the `COOLIFY_TOKEN` secret for `.github/workflows/deploy.yml` (DEPLOYMENT.md, "Connect GitHub"). Until then, press Deploy in Coolify.
+  - [x] Set up staging and production, each with its PostGIS database, Redis and the app, with their environment variables, uploads folder, health check, scheduled tasks and daily database backups.
   - [ ] Try a deploy and a rollback on staging, and check that the site stays up during them.
-  - [ ] Move the data from the current server (DEPLOYMENT.md, "Moving from the current server"), keeping its `SECRET_KEY` and VAPID keys.
-  - [ ] Afterwards, remove `.github/workflows/deploy.yml`, which still deploys `testing` to the current server, and shut that server down.
-  - [ ] The Docker image (`Dockerfile`) has not been built yet: the first deploy is its first build. Try it beforehand with `docker compose up --build` if you can.
+  - [x] Move the data from the old server (`bfentorddns.zapto.org`), keeping its `SECRET_KEY` and VAPID keys.
+  - [ ] Staging's database is empty: create an account there (the app's Terminal: `python manage.py createsuperuser`).
+  - [x] `.github/workflows/deploy.yml` deploys with Coolify instead of to the old server.
+  - [ ] Shut the old server down once you are sure. Then delete `/root/migration` on violetta (the old `.env`, the database dump and the setup's API token), and the old deploy secrets in GitHub (`SSH_PRIVATE_KEY`, `SSH_KNOWN_HOSTS`, `SSH_USER`, `SSH_HOST`, `PROJECT_PATH`).
 - [ ] **Backups off the server:** S3 storage in Coolify for the database backups. The uploaded files' daily copies (`/var/backups/kyyti`) are only on the server; copy them elsewhere too (e.g. rclone to the same S3 storage).
 - [ ] Set up the jobs listed in [CRONJOBS.md](CRONJOBS.md) as Coolify scheduled tasks, in both environments.
 - [ ] Add `test.kyyti.net` (staging's address) to the Turnstile widget's hostnames in Cloudflare and to the Google Maps key's allowed websites.
