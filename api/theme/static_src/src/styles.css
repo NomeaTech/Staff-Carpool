@@ -431,3 +431,17 @@
   --tw-ring-offset-shadow: 0 0 #0000;
   --tw-ring-shadow: 0 0 #0000;
 }
+/* daisyUI lets taps on an otp go through its input to the boxes under it, so
+   on iPhones a long press never reaches the input and Safari offers no Paste.
+   The input is made to take taps over all the boxes: the padding reaches past
+   the last one and the negative margin takes it back, so the box after the
+   digits (the :after) stays where daisyUI puts it, and lets taps through. */
+.otp > input {
+  pointer-events: auto;
+  align-self: stretch;
+  padding-inline-end: calc(var(--stride) * 8);
+  margin-inline-end: calc(var(--stride) * -8);
+}
+.otp::after {
+  pointer-events: none;
+}
