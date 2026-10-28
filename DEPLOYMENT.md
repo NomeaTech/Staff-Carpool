@@ -50,7 +50,8 @@ migration must not break the release before it:
 ## What you need
 
 - A server with Ubuntu Server 24.04 LTS (or 22.04/26.04): 2 or more CPUs and
-  4 GB of memory, 8 GB with Metabase. 40 GB of disk or more. A provider in
+  4 GB of memory (Metabase fits with its memory capped, see "Metabase"; 8 GB
+  gives it more room). 40 GB of disk or more. A provider in
   the EU, as the data is members' personal data.
 - Your SSH key on it (`ssh-copy-id <you>@<server>`), and a user with `sudo`.
 - DNS records (A, and AAAA if the server has IPv6) pointing to the server:
@@ -280,10 +281,28 @@ Pick a quiet time, and tell the members of a short break.
 
 ## Metabase
 
-\+ New › Service › Metabase, in production, with the domain
-`https://stats.kyyti.net`. It comes with its own database for its settings;
-add a backup to it as for the app's. In its settings, turn on "Connect To
-Predefined Network", so that it can reach the app's database.
+\+ New › Service › Metabase, in production. Before deploying:
+
+1. **Edit Compose File**: replace `metabase/metabase:latest` with a version
+   (https://github.com/metabase/metabase/releases, e.g. `v0.64.3`), so that a
+   redeploy does not upgrade it unasked: an upgrade cannot be undone. Under the
+   `metabase` service's `environment:`, add:
+   ```
+   - JAVA_OPTS=-Xmx768m
+   - MB_ANON_TRACKING_ENABLED=false
+   ```
+   The first keeps its memory to about 1 GB, so that it fits on a 4 GB server
+   beside the app; the second stops it sending usage data to Metabase.
+2. In the PostgreSQL fields of the General page, **Database Name**: `metabase`
+   (Coolify leaves it empty, and will not save the page without it).
+3. **Network attachment**: "Connect to the predefined Coolify network", so
+   that it can reach the app's database.
+4. Domain: `https://stats.kyyti.net` (or `https://stats.kyyti.net:3000`,
+   if the page gives 404 or 502: the port is the container's).
+5. Its postgresql › Backups: add one as for the app's database.
+
+Deploy, open the address and create Metabase's admin account **right away**:
+until then, anyone can.
 
 Then create the read-only user Metabase asks questions as, in the app's database:
 
@@ -292,10 +311,11 @@ sudo docker exec -i <postgis container> psql -U postgres -d campus_ride \
   -v reader_password='…' -v app_password='…' < scripts/metabase/setup-database.sql
 ```
 
-(`app_password` is for a database Metabase does not use in Coolify.) In
-Metabase, add the database with the host being the database's container name,
-port `5432`, database `campus_ride` and user `metabase_reader`, and carry on
-from step 8 of `scripts/metabase/README.md`.
+(`app_password` is for a database Metabase does not use in Coolify.) On
+violetta, the passwords are in `/root/metabase-passwords`. In Metabase, add the
+database: PostgreSQL, the host being the database's container name, port
+`5432`, database `campus_ride`, user `metabase_reader`, schemas "Only these…":
+`analytics`. Then carry on from step 8 of `scripts/metabase/README.md`.
 
 ## Trying the image on your own machine
 
